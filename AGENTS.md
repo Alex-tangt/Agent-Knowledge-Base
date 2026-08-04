@@ -149,6 +149,14 @@ The `warmup()` function (called from `app.py` lifespan) eagerly triggers BGE-M3 
 - ⬜ 5. README 简历门面 + 终版整理。
 - MCP（延后）：stdio + `list_kbs`/`search`/`ask`，复用 service 层。
 
+## 后续优化待办（Backlog / 简历谈资池）
+
+非本周范围，延后。每条都是可讲的优化故事：
+
+1. **查询改写质量**：改写为关键词组合可能导致语义检索效果下降（尤其多约束复合句丢约束）。问题节点：查询改写（`rag_service._rewrite_query`）、问题分解（eval_service 多路）。关联：`experiments/query-rewrite-optimizer/` 结论（二元意图判断与关键词改写结构性冲突）。
+2. **延迟优化：pool 边界**：`ADAPTIVE_POOL=20` 与候选池实际 ~32（vector+keyword+anchor 合并）的边界是否合理；pre-rerank 候选截断 knob（实测 rerank 线性于池大小，~230ms/对）。关联：`experiments/rerank-latency/`、`experiments/e2e-latency/`。
+3. **混合检索融合机制**：vector + keyword + anchor 三类信号的融合/加权是否最优（anchor 命中过多可能淹没向量信号）。问题节点：`strategies/legal.py` 的 `_add` 合并逻辑。
+
 ## Gotchas
 - **Always activate venv first** (`venv\Scripts\activate` on Windows). Running without it may miss installed dependencies.
 - **Qdrant local mode locks** the storage directory exclusively. Do not run two Python processes that create `VectorStoreService` concurrently against the same `vector_db/`. If you get "already accessed" errors, kill the other process and delete `vector_db/.lock`.
