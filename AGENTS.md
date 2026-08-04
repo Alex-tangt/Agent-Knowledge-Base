@@ -143,7 +143,7 @@ The `warmup()` function (called from `app.py` lifespan) eagerly triggers BGE-M3 
 
 - ✅ 0. 机制落地 + 清理（垃圾已删；`eval_service.py` 迁入 `experiments/query-rewrite-optimizer/`；诊断产物 `llm_refusal_trace.txt`/`diagnostic_output.txt` 留待根因调查）。
 - ✅ 1. 初始基线 commit（本地 + 远程，单根 `e723e5b`）。
-- ✅ 2. 延迟调查（rerank-latency + e2e-latency 两轮实验）：生产 rerank mean ≈15s（CPU 固有，接受为已知限制）；"分钟级"真凶 = 优化器实验的 eval_service（对子查询重排 + pool 100，已记录发现，实验封存不修）；pool 截断延后为 planned optimization；**待办**：模型加载统一加 `local_files_only=True`。
+- ✅ 2. 延迟调查（rerank-latency + e2e-latency 两轮实验）：生产 rerank mean ≈15s（CPU 固有，接受为已知限制）；"分钟级"真凶 = 优化器实验的 eval_service（对子查询重排 + pool 100，已记录发现，实验封存不修）；pool 截断延后为 planned optimization；模型加载已加 `local_files_only=True`（消除冷启动 HF 网络卡死）。
 - ⬜ 3. 拒答根因调查（≤1 天，时间盒）：`experiments/refusal-root-cause/` 基地就绪，定位 prompt vs 检索，最小修复。
 - ⬜ 4. 评估×2：修前基线 + 修后终版，各一轮 50 题，产出唯一 `tests/results_scored.md`（`experiments/e2e-latency/bench_e2e.py` 可复用为延迟视角的基线工具）。
 - ⬜ 5. README 简历门面 + 终版整理。

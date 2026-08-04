@@ -8,6 +8,7 @@ class RerankerService:
             self.model = CrossEncoder(
                 model_name,
                 trust_remote_code=True,
+                local_files_only=True,
             )
             logger.info(f"Reranker model {model_name} loaded successfully")
         except Exception as e:

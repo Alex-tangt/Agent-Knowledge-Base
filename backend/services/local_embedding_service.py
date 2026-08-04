@@ -5,7 +5,7 @@ from utils.logger import logger
 class LocalEmbeddingService:
     def __init__(self, model_name="BAAI/bge-m3"):
         try:
-            self.model = SentenceTransformer(model_name)
+            self.model = SentenceTransformer(model_name, local_files_only=True)
             self._dim = self.model.get_embedding_dimension()
             logger.info(f"Local embedding model {model_name} loaded successfully (dim={self._dim})")
         except Exception as e:
