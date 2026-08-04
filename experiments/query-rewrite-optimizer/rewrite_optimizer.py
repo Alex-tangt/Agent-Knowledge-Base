@@ -5,7 +5,7 @@ import re
 import sys
 import time
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "backend"))
 
 from config.config import API_KEY, BASE_URL, MODEL, BACKEND_DIR
 from utils.logger import logger
@@ -130,7 +130,7 @@ class RewriteOptimizer:
             json.dump(self.log_data, f, ensure_ascii=False, indent=2)
 
     def _get_eval_service(self):
-        from services.eval_service import EvalService
+        from eval_service import EvalService
         return EvalService(pool_size=30)
 
     def _build_metrics_json(self, round_data):

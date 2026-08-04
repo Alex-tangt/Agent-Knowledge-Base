@@ -84,7 +84,7 @@ The `warmup()` function (called from `app.py` lifespan) eagerly triggers BGE-M3 
 - **Reranker**: `BAAI/bge-reranker-v2-m3` cross-encoder, re-ranks candidate pool before feeding to LLM.
 - **Chunking**: Article-aware splitting at "第X条" boundaries (law documents), with title prepended. `ARTICLE_MAX_CHARS=800`. Fallback recursive split for non-law docs.
 - **Hybrid retrieval**: vector search (Qdrant cosine, pool=20) + article-number keyword match + anchor keyword match. Merged, deduplicated, then reranker re-scores → adaptive select (top `ADAPTIVE_MAX=8`).
-- **Query rewriting**: LLM compresses verbose queries into search-friendly phrases before retrieval. Skipped for queries < 20 chars.
+- **Query rewriting**: LLM compresses verbose queries into search-friendly phrases before retrieval (single-mode, unconditional — the <20-char skip was removed, see CONTEXT.md).
 - **No-evidence handling**: if best post-reranker distance > `RELEVANCE_THRESHOLD=0.85`, returns refusal message and skips LLM call. `RELEVANCE_THRESHOLD=None` to disable hard cutoff.
 - **Prompt strategy**: LLM is instructed to answer based on partial context rather than refusing outright. Only refuses when context is completely unrelated.
 - `POST /api/chat/stream` streams **JSON Lines** (`application/jsonl`): each line is `{"type":"content"|"metadata"|"error", ...}`. `content` chunks and `metadata` carry a `sources` array `[{content, source, score, chunk_id}]` for citation display. Scores are post-reranker distances (lower = more relevant).
@@ -141,12 +141,12 @@ The `warmup()` function (called from `app.py` lifespan) eagerly triggers BGE-M3 
 
 ## 当前路线图（2026-08 一周冲刺）
 
-- 0. 机制落地 + 清理（删 `nul`、`server_test.log`、`failure_analysis_post_refactor*`、`results_scored_post_refactor*`、`tests/golden_qa/`、`tests/tech_docs/` 等；诊断产物 `llm_refusal_trace.txt`/`diagnostic_output.txt` 留到根因调查后再处置）。
-- 1. 初始基线 commit（清理后，已知限制在 ADR 声明）。
-- 2. 延迟修复：reranker 候选截断 / pool 缩小 / batch 调参，复测 `rerank_ms`（详见 `Docs/adr/0004` 上下文）。
-- 3. 拒答根因调查（≤1 天，时间盒）：`backend/diagnose_refusals.py` 迁入 `experiments/refusal-root-cause/`，定位 prompt vs 检索，最小修复。
-- 4. 评估×2：修前基线 + 修后终版，各一轮 50 题，产出唯一 `tests/results_scored.md`。
-- 5. README 简历门面 + 终版整理。
+- ✅ 0. 机制落地 + 清理（垃圾已删；`eval_service.py` 迁入 `experiments/query-rewrite-optimizer/`；诊断产物 `llm_refusal_trace.txt`/`diagnostic_output.txt` 留待根因调查）。
+- ✅ 1. 初始基线 commit（本地 + 远程，单根 `e723e5b`）。
+- ✅ 2. 延迟调查（rerank-latency + e2e-latency 两轮实验）：生产 rerank mean ≈15s（CPU 固有，接受为已知限制）；"分钟级"真凶 = 优化器实验的 eval_service（对子查询重排 + pool 100，已记录发现，实验封存不修）；pool 截断延后为 planned optimization；**待办**：模型加载统一加 `local_files_only=True`。
+- ⬜ 3. 拒答根因调查（≤1 天，时间盒）：`experiments/refusal-root-cause/` 基地就绪，定位 prompt vs 检索，最小修复。
+- ⬜ 4. 评估×2：修前基线 + 修后终版，各一轮 50 题，产出唯一 `tests/results_scored.md`（`experiments/e2e-latency/bench_e2e.py` 可复用为延迟视角的基线工具）。
+- ⬜ 5. README 简历门面 + 终版整理。
 - MCP（延后）：stdio + `list_kbs`/`search`/`ask`，复用 service 层。
 
 ## Gotchas

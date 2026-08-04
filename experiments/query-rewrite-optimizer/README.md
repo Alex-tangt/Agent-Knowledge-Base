@@ -11,3 +11,8 @@
 - 完整 9 条决策见 `CONTEXT.md`「查询改写优化器实验」；报告见 `Docs/optimizer_experiment_report.md`、`Docs/optimizer_summary_table.md`、`Docs/exp2-review.md`。
 
 **状态**：已封存（ADR-0004：实验未决 → 记录结论，不再调优）。
+
+**补充发现（2026-08 e2e-latency 调查）**：本实验的评测工具 `eval_service.py` 存在两处问题，且是用户曾观察到的"单次检索 2-3 分钟"的来源：
+1. **对子查询重排（设计错误）**：`_retrieve_multi` 对每个分解后的子查询 `sq` 调用 `_rerank(sq, results)`——用子查询而非原始 query 重排，丢失原始约束，排序语义错误。
+2. **候选爆炸**：`pool_size` 默认 100 × 多路改写（≤5 子查询）→ 数百对 cross-encoder 在 CPU 上 = 分钟级。
+生产路径（`rag_service.rag_chat_stream`）不受影响：单改写 + 池 ≤32 + 对原始 query 重排（正确）。本实验已封存，不修复；记录备查。

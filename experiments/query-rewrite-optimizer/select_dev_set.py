@@ -1,7 +1,7 @@
 """Dev set 筛选工具：从 questions.md 按 best_dist_orig 降序选出候选查询。
 
 Usage（从 backend 目录或项目根目录运行）:
-    python backend/optimizers/select_dev_set.py [--top N] [--output FILE]
+    python experiments/query-rewrite-optimizer/select_dev_set.py [--top N] [--output FILE]
 """
 import argparse
 import asyncio
@@ -10,7 +10,7 @@ import os
 import re
 import sys
 
-sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "backend"))
 
 from utils.logger import logger
 
@@ -40,7 +40,7 @@ async def main():
     questions = parse_questions(questions_path)
     logger.info(f"Parsed {len(questions)} questions from {questions_path}")
 
-    from services.eval_service import EvalService
+    from eval_service import EvalService
     from services.rag_service import RAGService
 
     rag = RAGService()

@@ -19,4 +19,6 @@
 - A. 模型加载统一加 `local_files_only=True`（BGE-M3 与 reranker 均已缓存）——消除冷启动网络卡死。← 主修复
 - B. 检索池 `ADAPTIVE_POOL 20→10`——单查询稳态 rerank 从 ~4.6s 降到 ~2.4s。
 
+**补充结论（e2e-latency 后）**：生产实际池达 ~32，E2E 实测 rerank mean ≈15s（占 60-90%）。**pool 截断已决定延后**——保留为 planned optimization（简历谈资：已测出 rerank 是瓶颈、设计过 pre-rerank 截断 knob、权衡后留待后续）。冷启动 `local_files_only` 修复待实施。
+
 **数据**：`results.md`。
