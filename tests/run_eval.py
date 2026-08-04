@@ -101,7 +101,7 @@ def main():
         f.write("> 由 `tests/run_eval.py` 自动生成；「人工评分」列需评测人手动填写。\n\n")
         f.write("| 类型 | 问题 | RAG回答（含来源） | 检索来源 | LLM-only回答 | 人工评分 |\n")
         f.write("| ---- | ---- | ---- | ---- | ---- | ---- |\n")
-        for qtype, q, rag_ans, rag_src, llm_ans in rows:
+        for qtype, q, rag_ans, rag_src, rag_ctx, llm_ans in rows:
             f.write(
                 f"| {qtype} | {esc(q)} | {esc(rag_ans)} | {esc(rag_src)} | {esc(llm_ans)} |  |\n"
             )
