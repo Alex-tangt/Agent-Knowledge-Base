@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>知识库问答助手</title>
+    <link rel="stylesheet" href="styles.css?v=3">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+</head>
+<body>
+    <!-- 顶部栏 -->
+    <header class="topbar">
+        <div class="brand"><span class="logo">📚</span> 知识库问答助手</div>
+        <div class="topbar-actions">
+            <button class="icon-btn" id="menu-btn" title="设置">☰</button>
+            <button class="icon-btn" id="theme-button" title="主题">🌙</button>
+        </div>
+    </header>
+
+    <!-- 侧边抽屉（文件上传 / 知识库设置） -->
+    <div class="overlay" id="overlay"></div>
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-head">
+            <h2>设置</h2>
+            <button class="icon-btn" id="close-btn">✕</button>
+        </div>
+
+        <div class="card" id="kb-selector-card">
+            <h3>知识库选择</h3>
+            <select class="kb-select" id="kb-select">
+                <option value="documents">政策法规知识库</option>
+            </select>
+            <div class="kb-info" id="kb-info"></div>
+        </div>
+
+        <div class="card" id="document-upload">
+            <h3>知识库文件</h3>
+            <div class="row">
+                <label class="file-input-wrap">📎 选择文件
+                    <input type="file" id="file-input" accept=".pdf,.txt,.md">
+                </label>
+                <button class="btn btn-primary" onclick="uploadDocument()">上传</button>
+                <button class="btn btn-danger clear-documents" onclick="clearDocuments()">清空</button>
+            </div>
+            <div class="upload-status"></div>
+            <div id="document-count">当前文档数量: 0</div>
+        </div>
+
+        <div class="card" id="rag-controls">
+            <h3>知识库回答</h3>
+            <div class="switch">
+                <span>启用知识库模式</span>
+                <label class="toggle">
+                    <input type="checkbox" checked>
+                    <span class="track"></span>
+                </label>
+            </div>
+            <div class="hint" style="margin-top:6px">检索：向量 + 关键词 + Reranker 重排序</div>
+        </div>
+    </aside>
+
+    <!-- 主对话区 -->
+    <div class="main" id="main-area">
+        <div class="chat-history" id="chat-history">
+            <div class="message system-message">
+                <span class="sender">系统</span>
+                <span class="content">AI 助手已上线！请输入您的问题，输入 'exit' 退出。</span>
+            </div>
+        </div>
+
+        <div class="input-area" id="input-area">
+            <div class="input-box">
+                <button class="emoji-button" onclick="showEmojis()">😊</button>
+                <input type="text" class="input-entry" id="input-entry" placeholder="模型加载中，请稍候..." disabled onkeypress="if(event.key === 'Enter') sendMessage()">
+                <button class="send-button" onclick="sendMessage()" disabled>发送</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 模型加载覆盖层 -->
+    <div class="loading-overlay" id="loading-overlay">
+        <div class="loading-card">
+            <div class="loading-spinner"></div>
+            <h2>模型加载中...</h2>
+            <div class="loading-steps">
+                <div class="loading-step" id="step-embedding">
+                    <span class="step-icon">⏳</span>
+                    <span>Embedding 模型 (BGE-M3)</span>
+                </div>
+                <div class="loading-step" id="step-reranker">
+                    <span class="step-icon">⏳</span>
+                    <span>Reranker 模型 (bge-reranker-v2-m3)</span>
+                </div>
+            </div>
+            <p class="loading-hint">首次启动需加载模型到内存，约 30-60 秒</p>
+        </div>
+    </div>
+
+    <!-- 表情选择窗口 -->
+    <div class="emoji-window" id="emoji-window" style="display: none;">
+        <h3>选择表情</h3>
+        <div class="emoji-grid" id="emoji-grid"></div>
+    </div>
+
+    <!-- 侧边抽屉 / 主题切换：独立经典脚本，不依赖 ES 模块是否加载成功 -->
+    <script>
+    (function () {
+        function openSb() {
+            var s = document.getElementById('sidebar');
+            var o = document.getElementById('overlay');
+            if (s) s.classList.add('open');
+            if (o) o.classList.add('open');
+        }
+        function closeSb() {
+            var s = document.getElementById('sidebar');
+            var o = document.getElementById('overlay');
+            if (s) s.classList.remove('open');
+            if (o) o.classList.remove('open');
+        }
+        var mb = document.getElementById('menu-btn');
+        var cb = document.getElementById('close-btn');
+        var ov = document.getElementById('overlay');
+        var tb = document.getElementById('theme-button');
+        if (mb) mb.addEventListener('click', openSb);
+        if (cb) cb.addEventListener('click', closeSb);
+        if (ov) ov.addEventListener('click', closeSb);
+        if (tb) tb.addEventListener('click', function () {
+            var dark = document.body.classList.toggle('dark');
+            tb.textContent = dark ? '☀️' : '🌙';
+            try { localStorage.setItem('theme', dark ? 'dark' : 'light'); } catch (e) {}
+        });
+        window.openSidebar = openSb;
+        window.closeSidebar = closeSb;
+    })();
+    </script>
+
+    <script type="module" src="script.js?v=3"></script>
+</body>
+</html>

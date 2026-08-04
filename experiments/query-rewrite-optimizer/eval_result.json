@@ -1,0 +1,59 @@
+{
+  "summary": {
+    "avg_score": 0.0,
+    "avg_delta_dist": 0.0,
+    "avg_intent_drift": 0.0
+  },
+  "per_query": [
+    {
+      "query": "劳动合同法规定试用期最长是多久？",
+      "rewritten": "劳动合同法规定试用期最长是多久？",
+      "best_dist_orig": 0.0094,
+      "best_dist_rewrite": 0.0094,
+      "norm_delta_best_dist": 0.0,
+      "intent_drift": 0,
+      "split_count": 1,
+      "score": 0.0
+    },
+    {
+      "query": "消费者在网购中享有哪些基本权利？",
+      "rewritten": "消费者在网购中享有哪些基本权利？",
+      "best_dist_orig": 0.124,
+      "best_dist_rewrite": 0.124,
+      "norm_delta_best_dist": 0.0,
+      "intent_drift": 0,
+      "split_count": 1,
+      "score": 0.0
+    },
+    {
+      "query": "个人信息保护法对企业数据收集有什么要求？",
+      "rewritten": "个人信息保护法对企业数据收集有什么要求？",
+      "best_dist_orig": 0.1261,
+      "best_dist_rewrite": 0.1261,
+      "norm_delta_best_dist": 0.0,
+      "intent_drift": 0,
+      "split_count": 1,
+      "score": 0.0
+    },
+    {
+      "query": "食品安全法对食品添加剂有什么规定？",
+      "rewritten": "食品安全法对食品添加剂有什么规定？",
+      "best_dist_orig": 0.0033,
+      "best_dist_rewrite": 0.0033,
+      "norm_delta_best_dist": 0.0,
+      "intent_drift": 0,
+      "split_count": 1,
+      "score": 0.0
+    },
+    {
+      "query": "未成年人保护法对网络游戏有什么限制？",
+      "rewritten": "未成年人保护法对网络游戏有什么限制？",
+      "best_dist_orig": 0.0072,
+      "best_dist_rewrite": 0.0072,
+      "norm_delta_best_dist": 0.0,
+      "intent_drift": 0,
+      "split_count": 1,
+      "score": 0.0
+    }
+  ]
+}

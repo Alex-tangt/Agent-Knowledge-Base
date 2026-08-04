@@ -1,0 +1,16 @@
+fastapi
+uvicorn
+openai
+python-dotenv
+pydantic
+langchain
+langchain-core
+langchain-community
+langchain-openai
+langchain-text-splitters
+qdrant-client
+pypdf
+python-multipart
+sentence-transformers
+flagembedding
+langsmith

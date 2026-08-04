@@ -1,0 +1,16 @@
+{
+  "documents": {
+    "name": "documents",
+    "label": "政策法规知识库",
+    "description": "中国政策法规文档",
+    "split_strategy": "legal",
+    "retrieval_strategy": "legal"
+  },
+  "tech_docs": {
+    "name": "tech_docs",
+    "label": "技术文档库",
+    "description": "RAG 技术文档",
+    "split_strategy": "default",
+    "retrieval_strategy": "default"
+  }
+}
