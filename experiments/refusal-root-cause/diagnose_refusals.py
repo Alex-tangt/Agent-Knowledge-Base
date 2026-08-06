@@ -4,6 +4,9 @@ import os
 import sys
 import time
 
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "backend"))
+os.chdir(os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "backend"))
+
 from services.rag_service import RAGService, NO_EVIDENCE_MESSAGE
 from config.config import ADAPTIVE_MAX, RELEVANCE_THRESHOLD, ADAPTIVE_FACTOR
 
@@ -16,9 +19,13 @@ QUERIES = [
         "label": "Query 2: 个人信息保护法维权",
         "text": "我发现某APP未经同意收集我的个人信息，可以依据个人信息保护法要求什么？",
     },
+    {
+        "label": "Query 3: 违法辞退救济（基线误拒案例）",
+        "text": "公司违法辞退员工，员工可以主张哪些救济与赔偿？",
+    },
 ]
 
-OUTPUT_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), "tests", "llm_refusal_trace.txt")
+OUTPUT_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "trace_result.txt")
 
 
 def _summarise_docs(label, retrieved):
