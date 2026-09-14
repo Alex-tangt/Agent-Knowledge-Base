@@ -13,7 +13,7 @@ legal_web/          # 适配层实例 / 回归锚点
   requirements.txt  .env  vector_db/  uploads/
 memory_agent/       # 记忆能力包（MCP + skill）
   mcp_server.py  runtime.py  _bootstrap.py  settings.py  build_index.py
-  corpus/  memory/  eval/  requirements.txt  vector_db/  README.md
+  corpus/  memory/  skill/  eval/  requirements.txt  vector_db/  README.md
 tests/unit/         # ragcore 核心 + memory_agent 单测（pytest）
 experiments/  docs/
 ```
@@ -41,6 +41,7 @@ pip install -r legal_web/requirements.txt
 ### memory_agent (记忆能力包)
 - Build the derived memory index (loads BGE-M3; ~6 min per 60 entries on CPU): `venv\Scripts\python.exe memory_agent/build_index.py` → `memory_agent/vector_db/` (gitignored).
 - Run as stdio MCP: `venv\Scripts\python.exe memory_agent/mcp_server.py`. Tools: `memory_search`, `memory_get`, `memory_add`, `memory_supersede`, `memory_archive` (后两个是破坏性变更，默认只返回 preview，需 `confirm=true` 才落盘). Registered in `~/.config/opencode/opencode.json` as `memory-agent` (takes effect after opencode restart).
+- **Skill**: source `memory_agent/skill/SKILL.md` (ships with the package) → install to `~/.config/opencode/skills/memory-agent/`; it tells the agent when to search/get/add and that supersede/archive need explicit user consent. See ADR-0012.
 - **stdout is the MCP protocol channel** — all logging must go to stderr; `_bootstrap.configure_stderr_logging()` must run before importing `ragcore`.
 - The memory index uses its **own** Qdrant path, and the client is opened **per operation** (no long-held lock) — it can coexist with `legal_web`; see ADR-0008 D5.
 
@@ -199,9 +200,14 @@ The `warmup()` function (called from `app.py` lifespan) eagerly triggers BGE-M3 
 - ✅ 更名（#9 第二轮，2026-09-14 完成）：GitHub 仓库已改为 `Alex-tangt/Agent-Knowledge-Base`，`origin` 是干净 URL（原嵌的明文 token 已移除）；本地目录已改名（会话内被 MCP 子进程 CWD 锁住，由用户在会话外完成）。在新路径复跑锚点验收：`pytest tests/unit -q` → 71 passed、legal_web 导入冒烟 → import-ok。venv 采用"移动后原样验证"策略，一律用 `venv\Scripts\python.exe -m ...`（`Scripts\*.exe` 内嵌旧绝对路径已失效，不使用）。详见 `docs/adr/0007`。
 - ✅ 读路径最小闭环（#10，2026-09-14）：`memory_agent` 条目级派生索引（复用 `ragcore` BGE-M3 + Qdrant，独立路径）+ stdio MCP `memory_search`/`memory_get`；60 条（20 可写 KB / 40 只读本仓库）。决策见 `docs/adr/0008`。
 - ✅ 写入网关（#11，2026-09-14）：MCP `memory_add`——写前检索去重（命中近似只报告、不写）、frontmatter 镜像 `kb.py check` 校验（另强制 domain↔type）、路径级单文件 git commit（只提交本条目，避开并发会话的脏改动）。决策见 `docs/adr/0009`；单测 `tests/unit/test_memory_writer.py`（106 passed 全绿）。
+<<<<<<< HEAD
 - ✅ 生命周期工具（#12，2026-09-14）：MCP `memory_supersede`（新建 + 双向标注 `supersedes`/`superseded_by`，新旧同一次 commit）与 `memory_archive`（置 `status: archived` + `archive_reason`，永不删文件）；两者默认只返回 `confirmation_required` 预览，需 `confirm=true` 才落盘。决策见 `docs/adr/0010`；单测 `tests/unit/test_memory_writer.py`（117 passed 全绿）。
 - ✅ 惰性预热（#19 第一步，2026-09-14）：MCP 服务**默认不再预热** BGE-M3（要低延迟可设 `MEMORY_WARMUP=1`）。实测启动私有内存 **3953MB → 54MB**。根因：每个 opencode 会话各拉起一份 MCP、各吃 ~3.9GB（BGE-M3 权重 2.17GB + torch 运行时 + 加载峰值），三条并行会话把系统 commit 打满 → `Out of memory` / 卡死 / `uv_spawn` 失败。剩余项（共享单实例 / 换小模型）见 issue #19。
 - 下一步：索引增量一致性（#13，含"代目录 + 指针切换"与写后刷新钩子）；随后 #15 BEIR、#16 写路径 sandbox 套件、#17 dogfood。（#14 skill 骨架已装到全局 `skills/memory-agent`。）
+=======
+- ✅ skill（#14，2026-09-14）：`memory_agent/skill/SKILL.md`（源，安装到全局 `~/.config/opencode/skills/memory-agent/`）——读/写/生命周期工具用法 + 破坏性确认规则（先预览、用户同意后才 `confirm=true`）。决策见 `docs/adr/0012`；行为验收在 #17 dogfood，不在本票。
+- 下一步：索引增量一致性（#13）；随后 #15 BEIR、#16 写路径 sandbox 套件、#17 dogfood。
+>>>>>>> feat/14-skill
 
 ## 后续优化待办（Backlog / 简历谈资池）
 
