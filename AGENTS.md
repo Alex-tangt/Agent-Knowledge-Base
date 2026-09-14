@@ -171,7 +171,7 @@ The `warmup()` function (called from `app.py` lifespan) eagerly triggers BGE-M3 
 项目升级为 **Agent-Knowledge-Base**：hero = agent 记忆能力包（MCP + skill），`legal_web` 退为适配层实例 / 回归锚点。决策见 `docs/adr/0005`–`0007`，领域语言见 `CONTEXT.md`。
 
 - ✅ 甲⁺ 布局重排（#9 第一轮）：`backend/` 拆为 `ragcore/` + `legal_web/`，新建 `memory_agent/`；T1 锚点复现（71 passed + 导入冒烟 + 启动冒烟，见 `memory_agent/eval/baseline_A.md`）。
-- ⏳ 更名（#9 第二轮）：GitHub 仓库已改为 `Alex-tangt/Agent-Knowledge-Base`，`origin` 已换成干净 URL（原嵌的明文 token 已移除）；**本地目录改名待用户执行**——opencode 的 MCP 子进程以仓库目录为 CWD，锁住目录，无法在会话内重命名（命令见 issue #9）。
+- ✅ 更名（#9 第二轮，2026-09-14 完成）：GitHub 仓库已改为 `Alex-tangt/Agent-Knowledge-Base`，`origin` 是干净 URL（原嵌的明文 token 已移除）；本地目录已改名（会话内被 MCP 子进程 CWD 锁住，由用户在会话外完成）。在新路径复跑锚点验收：`pytest tests/unit -q` → 71 passed、legal_web 导入冒烟 → import-ok。venv 采用"移动后原样验证"策略，一律用 `venv\Scripts\python.exe -m ...`（`Scripts\*.exe` 内嵌旧绝对路径已失效，不使用）。详见 `docs/adr/0007`。
 - 下一步：`memory_agent` 读路径最小闭环（#10，stdio MCP `memory_search`/`memory_get`）。
 
 ## 后续优化待办（Backlog / 简历谈资池）
