@@ -166,3 +166,17 @@ The `warmup()` function (called from `app.py` lifespan) eagerly triggers BGE-M3 
 - **Article-aware splitting** requires ≥3 "第X条" markers to activate; documents with fewer markers fall back to recursive splitting.
 - `backend/fetch_laws.py` — law document scraper. One-off experiments live in `experiments/` (see its README).
 - Git history uses loose Conventional-Commit-style prefixes in Chinese (e.g. `feat:`, `chore:`). Match that when committing.
+
+## Agent skills
+
+### Issue tracker
+
+Issues live as GitHub issues in this repo, via the `gh` CLI. See `docs/agents/issue-tracker.md`.
+
+### Triage labels
+
+Five canonical roles, default strings. See `docs/agents/triage-labels.md`.
+
+### Domain docs
+
+Single-context: `CONTEXT.md` + `docs/adr/`. See `docs/agents/domain.md`.
