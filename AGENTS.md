@@ -216,7 +216,7 @@ The `warmup()` function (called from `app.py` lifespan) eagerly triggers BGE-M3 
 - ✅ 共享单实例（#19 根治，2026-09-14）：拓扑改为「一个常驻 HTTP daemon（持有唯一一份 BGE-M3）+ 每会话一个 stdio 代理」——N 会话从 `N × 3.9GB` 降为 `1 × 3.9GB + N × 几十MB`。`mcp_server.py --transport http` + `/health` + DNS-rebinding 防护；`proxy.py` 幂等拉起（启动权文件锁，避免冷启动竞态）+ 透明转发；进程内串行化 store/索引/写入。决策见 `docs/adr/0013`；验收（真实模型）见 `memory_agent/eval/issue19_acceptance.md`（最终 `154 passed`）。opencode 接入从「跑 `mcp_server.py`」改为「跑 `proxy.py`」（`~/.config/opencode/opencode.json`，重启生效）。
 - ✅ 写路径 sandbox 套件（#16，2026-09-14）：真实 KB 克隆 + 隔离索引，25/25 通过且两次运行一致、真实 KB 前后逐字不变；顺带校准 `DEDUP_THRESHOLD` 0.92→0.88（`experiments/dedup-threshold-calibration/`，回写 ADR-0009）。证据见 `memory_agent/eval/write_path_sandbox_results.md`。
 - ✅ #17 dogfood（2026-09-14）：经 MCP 真写一条决策 + 双通道盲测 recall（独立进程 + 独立子代理，同 score），证据见 `memory_agent/eval/dogfood_17.md`；关闭 **#17**。检索质量（#15）归独立叙事 **#21**，不占 MVP 收尾。
-- ✅ 三仓库只读语料（#7 收尾，2026-09-15）：用户故事 #17 落地——只读语料从"本仓库"扩到 **三个项目仓库的 Markdown 文档**（只索引 `.md`，不索引代码）。仓库清单 gitignored（`readonly_repos.json` + `.example`），`<label>/` 前缀消歧义，噪声目录排除。索引 `gen-2`：**135 条 = 26 可写 KB + 109 只读文档**（agent-knowledge-base / kg-triplet-sft / agent-infra）。MCP 接缝验收 **15/15**（`readonly_corpus_17.py` + `_results.md`）。顺带修掉 MCP 工具错误消息被吞的缺陷（`ValueError` → `ToolError`）。决策见 `docs/adr/0014`。**#7 全部用户故事落地，epic 可关闭。**
+- ✅ 三仓库只读语料（#7 收尾，2026-09-15）：用户故事 #17 落地——只读语料从"本仓库"扩到 **三个项目仓库的 Markdown 文档**（只索引 `.md`，不索引代码）。仓库清单 gitignored（`readonly_repos.json` + `.example`），`<label>/` 前缀消歧义，噪声目录排除。索引 `gen-2`：**134 条 = 26 可写 KB + 108 只读文档**（agent-knowledge-base / kg-triplet-sft / agent-infra）。MCP 接缝验收 **15/15**（`readonly_corpus_17.py` + `_results.md`）。顺带修掉 MCP 工具错误消息被吞的缺陷（`ValueError` → `ToolError`）。决策见 `docs/adr/0014`。**#7 全部用户故事落地，epic 可关闭。**
 
 ## 后续优化待办（Backlog / 简历谈资池）
 

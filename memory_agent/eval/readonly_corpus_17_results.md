@@ -28,7 +28,7 @@
 | `agent-infra` | `D:\python_work\work2026-8\Agent-infra` | 22 |
 
 索引 `gen-2`：验收脚本运行时 **134 条 = 26 可写 KB + 108 只读文档**（含中途补写的 ADR-0014
-与博客）；写完本文后增量刷新为 **135 条**。自洽：`entries == points`，`consistent=true`。
+与博客）；写完本文后一度为 **135 条**，随后移除仓库内 blog 副本（发布版以 Tech-blog 为唯一出处），**最终 134 条 = 26 可写 + 108 只读**。自洽：`entries == points`，`consistent=true`。
 
 ## 验收输出（MCP 工具返回值，节选）
 
