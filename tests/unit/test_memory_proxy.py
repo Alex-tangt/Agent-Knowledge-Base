@@ -133,3 +133,38 @@ def test_status_cli_reports_up(monkeypatch, capsys):
     monkeypatch.setattr(proxy, "health_ok", lambda *a, **k: True)
     assert proxy.main(["--status"]) == 0
     assert capsys.readouterr().out.strip() == "ok"
+
+
+def test_stop_reports_down_when_not_running(monkeypatch, tmp_path, capsys):
+    monkeypatch.setattr(proxy, "health_ok", lambda *a, **k: False)
+    monkeypatch.setattr(proxy, "daemon_pid_path", lambda port: str(tmp_path / "d.pid"))
+    assert proxy.main(["--stop"]) == 0
+    assert capsys.readouterr().out.strip() == "down"
+
+
+def test_stop_kills_daemon_via_pid_file(monkeypatch, tmp_path):
+    pid_file = tmp_path / "d.pid"
+    pid_file.write_text("4321", encoding="utf-8")
+    state = {"up": True, "killed": []}
+
+    def fake_health(*a, **k):
+        return state["up"]
+
+    def fake_kill(pid):
+        state["killed"].append(pid)
+        state["up"] = False
+
+    monkeypatch.setattr(proxy, "health_ok", fake_health)
+    monkeypatch.setattr(proxy, "daemon_pid_path", lambda port: str(pid_file))
+    monkeypatch.setattr(proxy, "_kill_pid", fake_kill)
+
+    assert proxy.stop_daemon(timeout=1.0) == "stopped"
+    assert state["killed"] == [4321]
+    assert not pid_file.exists()
+
+
+def test_stop_fails_without_pid_file(monkeypatch, tmp_path):
+    monkeypatch.setattr(proxy, "health_ok", lambda *a, **k: True)
+    monkeypatch.setattr(proxy, "daemon_pid_path",
+                        lambda port: str(tmp_path / "missing.pid"))
+    assert proxy.stop_daemon(timeout=0.5) == "failed"

@@ -31,6 +31,7 @@ from memory_agent.settings import (  # noqa: E402
     MCP_HTTP_HOST,
     MCP_HTTP_PATH,
     MCP_HTTP_PORT,
+    daemon_pid_path,
 )
 
 SERVER_SCRIPT = os.path.join(_HERE, "mcp_server.py")
@@ -126,6 +127,62 @@ def _wait_ready(host: str, port: int, timeout: float) -> bool:
     return False
 
 
+def _read_pid(pid_path: str) -> int | None:
+    try:
+        with open(pid_path, "r", encoding="utf-8") as handle:
+            return int(handle.read().strip())
+    except (OSError, ValueError):
+        return None
+
+
+def _kill_pid(pid: int) -> None:
+    if os.name == "nt":
+        subprocess.run(["taskkill", "/PID", str(pid), "/T", "/F"],
+                       capture_output=True, text=True)
+    else:  # pragma: no cover - 本仓库以 Windows 为主
+        import signal
+        os.kill(pid, signal.SIGTERM)
+
+
+def stop_daemon(host: str = MCP_HTTP_HOST, port: int = MCP_HTTP_PORT,
+                timeout: float = 10.0) -> str:
+    """手动停止 daemon（回收 ~3.9GB）。返回 "down" / "stopped" / "failed"。
+
+    只做显式的手动停止——不做自动空闲卸载（见 ADR-0013 D2：空闲卸载会把"反复加载
+    模型"变成常态，且"所有依赖者已退出"的检测本身不可靠）。
+    """
+    pid_path = daemon_pid_path(port)
+    if not health_ok(host, port):
+        _remove_pid_file(pid_path)
+        _log("daemon not running")
+        return "down"
+
+    pid = _read_pid(pid_path)
+    if pid is None:
+        _log(f"daemon is up but PID file is missing ({pid_path}); 请手动结束该进程")
+        return "failed"
+
+    _log(f"stopping daemon pid={pid}")
+    _kill_pid(pid)
+    deadline = time.monotonic() + timeout
+    while time.monotonic() < deadline:
+        if not health_ok(host, port, timeout=0.5):
+            _remove_pid_file(pid_path)
+            _log("daemon stopped")
+            return "stopped"
+        time.sleep(0.25)
+
+    _log("daemon did not stop in time")
+    return "failed"
+
+
+def _remove_pid_file(pid_path: str) -> None:
+    try:
+        os.remove(pid_path)
+    except OSError:
+        pass
+
+
 def ensure_daemon(host: str = MCP_HTTP_HOST, port: int = MCP_HTTP_PORT,
                   path: str = MCP_HTTP_PATH, timeout: float = DEFAULT_START_TIMEOUT,
                   log_path: str = DAEMON_LOG) -> bool:
@@ -208,6 +265,8 @@ def _build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--path", default=MCP_HTTP_PATH)
     parser.add_argument("--ensure", action="store_true",
                         help="只确保 daemon 在跑，不做转发（运维/测试用）")
+    parser.add_argument("--stop", action="store_true",
+                        help="手动停止 daemon（回收内存；不做自动卸载）")
     parser.add_argument("--status", action="store_true",
                         help="打印 daemon 健康状态后退出")
     return parser
@@ -220,6 +279,11 @@ def main(argv: list[str] | None = None) -> int:
         ok = health_ok(args.host, args.port)
         print("ok" if ok else "down")
         return 0 if ok else 1
+
+    if args.stop:
+        result = stop_daemon(args.host, args.port)
+        print(result)
+        return 0 if result in {"down", "stopped"} else 1
 
     if args.ensure:
         return 0 if ensure_daemon(args.host, args.port, args.path) else 1

@@ -34,6 +34,11 @@ MCP_HTTP_PATH = os.environ.get("MEMORY_MCP_PATH", "/mcp")
 # daemon 的日志：走 gitignored 的索引目录，便于排查（proxy 拉起 daemon 时子进程内重定向）。
 DAEMON_LOG = os.environ.get("MEMORY_DAEMON_LOG") or os.path.join(INDEX_DIR, "daemon.log")
 
+
+def daemon_pid_path(port: int) -> str:
+    """daemon 的 PID 文件（按端口区分）：供 `proxy.py --stop` 手动停止。"""
+    return os.path.join(os.path.dirname(DAEMON_LOG), f"daemon-{port}.pid")
+
 # 条目级嵌入：单条超长时截断（按 section 切分的例外留待需要时再开）
 MAX_ENTRY_CHARS = 6000
 MAX_CORPUS_FILE_BYTES = 1_000_000

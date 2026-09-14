@@ -55,7 +55,8 @@ venv\Scripts\python.exe memory_agent/mcp_server.py --transport http
 #      "enabled": true,
 #      "timeout": 20000
 #    }
-#    代理会在会话启动时幂等确保 daemon 在跑；运维：proxy.py --status / --ensure
+#    代理会在会话启动时幂等确保 daemon 在跑；运维：proxy.py --status / --ensure / --stop
+#    --stop 手动停掉 daemon（回收 ~3.9GB）；不做自动空闲卸载（见 ADR-0013 D2）
 #    单会话/手动仍可直接跑 mcp_server.py（默认 stdio，不共享）。
 ```
 

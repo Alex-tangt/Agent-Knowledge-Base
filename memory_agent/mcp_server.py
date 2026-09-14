@@ -13,6 +13,7 @@ memory_reindex / memory_index_status。真相源是 Markdown；索引是派生�
 from __future__ import annotations
 
 import argparse
+import atexit
 import os
 import sys
 import threading
@@ -29,6 +30,7 @@ from memory_agent.settings import (  # noqa: E402
     MCP_HTTP_HOST,
     MCP_HTTP_PATH,
     MCP_HTTP_PORT,
+    daemon_pid_path,
     warmup_on_start,
 )
 
@@ -255,6 +257,7 @@ def main(argv: list[str] | None = None) -> None:
             f"memory-agent HTTP daemon: http://{args.host}:{args.port}{args.path} "
             f"(health: /health, warmup: {_resolve_warmup(args)})"
         )
+        _write_pid_file(args.port)
         mcp.run(
             transport="streamable-http",
             host=args.host,
@@ -265,6 +268,25 @@ def main(argv: list[str] | None = None) -> None:
         return
 
     mcp.run(transport="stdio")
+
+
+def _write_pid_file(port: int) -> None:
+    """记下 daemon PID，供 `proxy.py --stop` 手动停止（不搞自动空闲卸载）。"""
+    path = daemon_pid_path(port)
+    try:
+        os.makedirs(os.path.dirname(path), exist_ok=True)
+        with open(path, "w", encoding="utf-8") as handle:
+            handle.write(str(os.getpid()))
+        atexit.register(_remove_pid_file, path)
+    except OSError as exc:  # noqa: BLE001 - PID 文件失败不该挡住服务
+        logger.warning(f"无法写 daemon PID 文件 {path}: {exc}")
+
+
+def _remove_pid_file(path: str) -> None:
+    try:
+        os.remove(path)
+    except OSError:
+        pass
 
 
 if __name__ == "__main__":

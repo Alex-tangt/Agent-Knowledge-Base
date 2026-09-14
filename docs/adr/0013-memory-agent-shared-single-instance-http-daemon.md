@@ -27,7 +27,7 @@ opencode 会话 A/B/C …（每会话一个 proxy.py，stdio）
 - `proxy --ensure` 幂等：已在跑直接返回；否则由**唯一抢到启动权文件锁**的进程 spawn daemon（`DETACHED_PROCESS`，子进程内把 stdout/stderr 重定向到 `memory_agent/vector_db/daemon.log`）。
 - **必须**有启动权锁：否则 N 个会话同时冷启动会各 spawn 一个 daemon、各加载一份模型，把内存打爆（验收首轮实测踩到）。陈旧锁（>120s）可回收。
 - 就绪探测 = `GET /health`（daemon 上的自定义路由），不是"端口被占"。daemon 崩溃/不可达时代理返回清晰错误，不静默。
-- daemon 起来后常驻到手动停或重启机器；**不做空闲卸载**（那会把"反复加载"变成常态，回到最初的问题）。
+- daemon 起来后常驻到手动停或重启机器；**不做空闲卸载**（那会把"反复加载"变成常态，回到最初的问题）。手动回收用 `proxy.py --stop`（daemon 启动时写 PID 文件，按端口区分）。之所以不自动化「所有依赖者退出就停」：强杀时 GET 流断开、服务端会话可能要等 `session_idle_timeout`（默认 1800s）才回收，"零依赖者"检测不可靠；且检测与拉起之间有竞态。
 
 **D3 并发 = 进程内串行化（daemon 要服务 N 会话）。**
 - 实测 Qdrant local mode **同一进程内也不能并发开两个 client**（4 线程 3 个立刻 `RuntimeError`），退避重试兜不住。`VectorStoreService._session` 加模块级 `RLock` 串行化「构造→操作→close」。

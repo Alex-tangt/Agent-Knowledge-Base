@@ -55,3 +55,14 @@ def test_transport_security_allows_only_loopback():
 def test_health_route_is_registered():
     paths = {route.path for route in mcp_server.mcp._custom_starlette_routes}
     assert "/health" in paths
+
+
+def test_write_pid_file_records_and_removes(monkeypatch, tmp_path):
+    path = tmp_path / "daemon-8765.pid"
+    monkeypatch.setattr(mcp_server, "daemon_pid_path", lambda port: str(path))
+
+    mcp_server._write_pid_file(8765)
+    assert path.read_text(encoding="utf-8") == str(os.getpid())
+
+    mcp_server._remove_pid_file(str(path))
+    assert not path.exists()

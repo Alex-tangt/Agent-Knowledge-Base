@@ -42,7 +42,7 @@ pip install -r legal_web/requirements.txt
 - Build the derived memory index (loads BGE-M3; ~6 min per 60 entries on CPU): `venv\Scripts\python.exe memory_agent/build_index.py` → builds a new generation `memory_agent/vector_db/gen-N/` and atomically switches the `CURRENT` pointer (issue #13; gitignored).
 - **拓扑（#19 / ADR-0013）：一个常驻 daemon + 每会话一个 stdio 代理。** 所有会话共享 daemon 里那一份 BGE-M3（~3.9GB 只付一次），代理每会话仅几十 MB。
   - 启动 daemon：`venv\Scripts\python.exe memory_agent/mcp_server.py --transport http`（默认 `127.0.0.1:8765`，默认 eager 预热；`--no-warmup` 可关）。`GET /health` 是就绪探测。
-  - 代理（opencode 的 `local` 命令，已注册为 `memory-agent`）：`venv\Scripts\python.exe memory_agent/proxy.py`——幂等确保 daemon 在跑（带启动权文件锁，不会 N 会话重复拉起），再把本会话 stdio 转发到 `/mcp`。运维：`proxy.py --status` / `--ensure`。日志 `memory_agent/vector_db/daemon.log`（gitignored）。
+  - 代理（opencode 的 `local` 命令，已注册为 `memory-agent`）：`venv\Scripts\python.exe memory_agent/proxy.py`——幂等确保 daemon 在跑（带启动权文件锁，不会 N 会话重复拉起），再把本会话 stdio 转发到 `/mcp`。运维：`proxy.py --status` / `--ensure` / `--stop`（手动停 daemon 回收 ~3.9GB；不做自动空闲卸载，见 ADR-0013 D2）。日志 `memory_agent/vector_db/daemon.log`（gitignored）。
   - 单会话/手动仍可 `mcp_server.py`（默认 `--transport stdio`）。
 - Tools: `memory_search`, `memory_get`, `memory_add`, `memory_supersede`, `memory_archive` (后两个是破坏性变更，默认只返回 preview，需 `confirm=true` 才落盘), plus `memory_reindex` (分块全量重建：`cursor=None` 开始，拿 cursor 续调到 `done=true`) and `memory_index_status`. Writes auto-refresh the index incrementally.
 - **Skill**: source `memory_agent/skill/SKILL.md` (ships with the package) → install to `~/.config/opencode/skills/memory-agent/`; it tells the agent when to search/get/add and that supersede/archive need explicit user consent. See ADR-0012.
