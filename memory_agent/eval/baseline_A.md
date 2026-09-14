@@ -58,7 +58,7 @@ Invoke-RestMethod "http://127.0.0.1:8000/api/documents/count?kb_name=documents"
 
 结果：`ready:true` 约 22s；`/` → 200（index.html）、`/script.js` → 200（`StaticFiles` 挂载正确）；`/api/kb/list` 读到 `legal_web/kb_registry.json` 的 2 个 KB；`/api/documents/count` → `{"count":3799}`，日志 `VectorStoreService initialized with Qdrant local mode` → 确认 `VECTOR_DB_PATH` 落 `legal_web/vector_db`。
 
-**副作用观察**：启动日志出现一次对外 HF 请求（`HEAD https://huggingface.co/BAAI/bge-m3/resolve/refs%2Fpr%2F130/model.safetensors.index.json → 404`），尽管两个加载器都设了 `local_files_only=True`。离线主机上可能表现为超时等待。已单独开 issue 讨论，不属本次重构。
+**副作用观察**：启动日志出现一次对外 HF 请求（`HEAD https://huggingface.co/BAAI/bge-m3/resolve/refs%2Fpr%2F130/model.safetensors.index.json → 404`），尽管两个加载器都设了 `local_files_only=True`。离线主机上可能表现为超时等待。已单独开 issue #18 讨论，不属本次重构。
 
 结论：甲⁺ 布局重排未改变 `ragcore` 行为，锚点（单测 + 导入冒烟 + 启动冒烟）保持可复现。
 
