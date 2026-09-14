@@ -31,7 +31,7 @@ memory_agent/
 ├── memory/authoring.py    # 渲染 frontmatter + 镜像 kb.py check 的校验        (#11)
 ├── memory/writer.py       # 写入网关：搜索→去重→校验→落盘→commit→增量刷新    (#11,#12,#13)
 ├── build_index.py         # CLI：从 Markdown 全量重建（新代 + 切指针）        (#10,#13)
-├── eval/                  # 检索与写路径证据：baseline_A.md、issue19_acceptance.md、BEIR (#9,#15,#16,#19)
+├── eval/                  # 运行时证据：baseline_A.md（锚点）、issue19_acceptance.md（#19）、write_path_sandbox.py + _results.md（#16）、BEIR (#9,#15,#16,#19)
 └── (skill)                # 见 #14：指导 agent 何时 search/read/add 及破坏性确认规则
 ```
 
@@ -58,6 +58,12 @@ venv\Scripts\python.exe memory_agent/mcp_server.py --transport http
 #    代理会在会话启动时幂等确保 daemon 在跑；运维：proxy.py --status / --ensure / --stop
 #    --stop 手动停掉 daemon（回收 ~3.9GB）；不做自动空闲卸载（见 ADR-0013 D2）
 #    单会话/手动仍可直接跑 mcp_server.py（默认 stdio，不共享）。
+```
+
+写路径确定性 sandbox 套件（#16，需 BGE-M3；真实 KB 只读、不污染）：
+
+```powershell
+venv\Scripts\python.exe memory_agent/eval/write_path_sandbox.py
 ```
 
 工具：

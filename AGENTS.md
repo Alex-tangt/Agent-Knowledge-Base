@@ -49,6 +49,8 @@ pip install -r legal_web/requirements.txt
 - **并发**：单 daemon 服务 N 会话，进程内串行化——Qdrant local mode 同进程也不能并发开 client，`VectorStoreService._session` 有 `RLock`；`memory/locks.py` 的 `INDEX_LOCK`/`WRITE_LOCK` 管索引与写入临界区（单写者）。见 ADR-0013 D3。
 - **stdout 是 MCP 协议通道**（stdio 模式与代理都是）：所有日志必须走 stderr。`_bootstrap.configure_stderr_logging()` 必须在 import `ragcore` 之前跑；`proxy.py` 不 import ragcore，诊断一律 stderr。
 - The memory index uses its **own** Qdrant path (`memory_agent/vector_db/<gen>/qdrant`, resolved via the `CURRENT` pointer), and the client is opened **per operation** (no long-held lock) — it can coexist with `legal_web`; see ADR-0008 D5. Full rebuilds build a new generation and atomically swap the pointer; an interrupted rebuild never leaves "empty index + stale manifest" (ADR-0011).
+- **Write-path sandbox suite (#16)**: `venv\Scripts\python.exe memory_agent/eval/write_path_sandbox.py` — clones the real KB (committed state) into a temp dir, builds the index with `MEMORY_INDEX_DIR` in temp and `MEMORY_READONLY_ROOTS=""`, then asserts only external behavior (MCP tool responses + file/git state): dedup/report-only, `allow_duplicate`, supersede, archive, frontmatter compliance, rollback. 25 checks; evidence + pass matrix in `memory_agent/eval/write_path_sandbox_results.md`. The real KB is read-only to it (`git status`/`rev-parse`) and stays byte-identical.
+- **env knobs** (`memory_agent/settings.py`, read at import): `AGENT_KB_DIR` (truth source), `MEMORY_INDEX_DIR` (index root), `MEMORY_READONLY_ROOTS` (`os.pathsep`-separated; **empty = no read-only corpus**, used by the sandbox), `MEMORY_REINDEX_BATCH`, `MEMORY_DEDUP_THRESHOLD` (default **0.88**, calibrated in #16 → ADR-0009), `MEMORY_WARMUP`.
 
 ## Working directory
 Paths are anchored in code, not to CWD: `ROOT_DIR` / `RAGCORE_DIR` / `LEGAL_WEB_DIR` in `ragcore/config/config.py`, `FRONTEND_DIR` in `legal_web/app.py`. `legal_web/app.py` boots correctly from **any** CWD.
@@ -136,7 +138,8 @@ The `warmup()` function (called from `app.py` lifespan) eagerly triggers BGE-M3 
 - **Versioning**: JS/CSS files use `?v=N` cache busting. Increment when changing any JS module.
 
 ## Tests
-- **单元测试**：`tests/unit/`（pytest）——`test_document_service.py`、`test_rag_service.py`、`test_session_memory.py`、`test_memory_corpus.py`、`test_memory_index.py`、`test_memory_index_qdrant.py`、`test_memory_reindex.py`、`test_memory_writer.py`、`test_memory_lazy_warmup.py`、`test_memory_concurrency.py`、`test_memory_proxy.py`、`test_mcp_server_cli.py`。运行：`venv\Scripts\python.exe -m pytest tests/unit -q`（154 passed）。
+- **单元测试**：`tests/unit/`（pytest）——`test_document_service.py`、`test_rag_service.py`、`test_session_memory.py`、`test_memory_corpus.py`、`test_memory_index.py`、`test_memory_index_qdrant.py`、`test_memory_reindex.py`、`test_memory_writer.py`、`test_memory_lazy_warmup.py`、`test_memory_concurrency.py`、`test_memory_proxy.py`、`test_mcp_server_cli.py`。运行：`venv\Scripts\python.exe -m pytest tests/unit -q`（160 passed）。
+- **写路径 sandbox 套件（#16，真实 KB 版，需 BGE-M3）**：`venv\Scripts\python.exe memory_agent/eval/write_path_sandbox.py`——不在 `tests/unit` 内（运行时证据），证据见 `memory_agent/eval/write_path_sandbox_results.md`。
 - Smoke test: `venv\Scripts\python.exe legal_web/test_langsmith.py`.
 - **启动冒烟（boot 闸门）**：后台起 `legal_web/app.py`，独立探测 `/api/status` → `ready:true`、`/` 与 `/script.js` → 200、`/api/kb/list`、`/api/documents/count?kb_name=documents`，再杀进程树确认端口与 Qdrant 锁释放。命令与结果见 `memory_agent/eval/baseline_A.md`（比"单测 + 导入冒烟"更强的收工锚点）。
 - RAG vs LLM-only eval: from repo root run `venv\Scripts\python.exe legal_web/tests/run_eval.py` (backend on :8000, KB built). Parses `legal_web/tests/questions.md` and writes `legal_web/tests/results.md`. Fill `legal_web/tests/failure_analysis.md` for failure cases. `legal_web/tests/score_eval.py` does LLM-as-judge multi-dimension scoring.
@@ -210,7 +213,8 @@ The `warmup()` function (called from `app.py` lifespan) eagerly triggers BGE-M3 
 - ✅ 惰性预热（#19 第一步，2026-09-14）：MCP 服务**默认不再预热** BGE-M3（要低延迟可设 `MEMORY_WARMUP=1`）。实测启动私有内存 **3953MB → 54MB**。根因：每个 opencode 会话各拉起一份 MCP、各吃 ~3.9GB（BGE-M3 权重 2.17GB + torch 运行时 + 加载峰值），三条并行会话把系统 commit 打满 → `Out of memory` / 卡死 / `uv_spawn` 失败。剩余项（共享单实例 / 换小模型）见 issue #19。
 - ✅ 索引一致性（#13，2026-09-14）：代目录 + `CURRENT` 指针原子切换（中断不留「空索引 + 陈旧 manifest」，`search` 自洽核对失败显式报错）；按条目增量刷新（hash 未变跳过、孤儿点按稳定 `uuid5(entry_id)` 删除）、写后自动刷新钩子；分块 `memory_reindex(cursor,batch)` 全量重建 + `memory_index_status`。决策见 `docs/adr/0011`；单测 `test_memory_reindex.py`（135 passed 全绿）；真实重建 gen-1：68 条 = 68 点，`refresh` 68 skipped / 0 embedded。
 - ✅ 共享单实例（#19 根治，2026-09-14）：拓扑改为「一个常驻 HTTP daemon（持有唯一一份 BGE-M3）+ 每会话一个 stdio 代理」——N 会话从 `N × 3.9GB` 降为 `1 × 3.9GB + N × 几十MB`。`mcp_server.py --transport http` + `/health` + DNS-rebinding 防护；`proxy.py` 幂等拉起（启动权文件锁，避免冷启动竞态）+ 透明转发；进程内串行化 store/索引/写入。决策见 `docs/adr/0013`；验收（真实模型）见 `memory_agent/eval/issue19_acceptance.md`（最终 `154 passed`）。opencode 接入从「跑 `mcp_server.py`」改为「跑 `proxy.py`」（`~/.config/opencode/opencode.json`，重启生效）。
-- 下一步：#16 写路径 sandbox 套件、#17 dogfood；随后 #15 BEIR。
+- ✅ 写路径 sandbox 套件（#16，2026-09-14）：真实 KB 克隆 + 隔离索引，25/25 通过且两次运行一致、真实 KB 前后逐字不变；顺带校准 `DEDUP_THRESHOLD` 0.92→0.88（`experiments/dedup-threshold-calibration/`，回写 ADR-0009）。证据见 `memory_agent/eval/write_path_sandbox_results.md`。
+- 下一步：#17 dogfood；随后 #15 BEIR。
 
 ## 后续优化待办（Backlog / 简历谈资池）
 

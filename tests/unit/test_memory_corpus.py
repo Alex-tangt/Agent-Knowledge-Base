@@ -1,12 +1,29 @@
 """corpus 装载与条目解析（不依赖模型 / 向量库）。"""
 import os
 
+from memory_agent import settings
 from memory_agent.corpus.loader import (
     load_corpus,
     load_kb_entries,
     load_readonly_entries,
 )
 from memory_agent.memory.entries import Entry, parse_frontmatter
+
+
+# ---- 只读根的环境覆盖（#16 sandbox 使能） ----
+
+def test_readonly_roots_default_is_repo(monkeypatch):
+    monkeypatch.delenv("MEMORY_READONLY_ROOTS", raising=False)
+    assert settings._readonly_roots() == [settings.ROOT_DIR]
+
+
+def test_readonly_roots_env_override(monkeypatch, tmp_path):
+    monkeypatch.setenv("MEMORY_READONLY_ROOTS", "")
+    assert settings._readonly_roots() == []
+
+    a, b = tmp_path / "a", tmp_path / "b"
+    monkeypatch.setenv("MEMORY_READONLY_ROOTS", f"{a}{os.pathsep}{b}")
+    assert settings._readonly_roots() == [os.path.abspath(str(a)), os.path.abspath(str(b))]
 
 
 def _write(path, text):

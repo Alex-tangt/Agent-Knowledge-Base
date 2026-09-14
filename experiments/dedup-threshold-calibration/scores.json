@@ -1,0 +1,240 @@
+{
+  "summary": {
+    "entries": 21,
+    "positives_full_min": 0.9491481926185958,
+    "positives_body_min": 0.9927293394618828,
+    "positives_body_p05": 0.999999999901982,
+    "positives_body_median": 0.9999999999989989,
+    "negatives_max": 0.7917168514771308,
+    "negatives_p95": 0.779899036710181,
+    "negatives_median": 0.6860677583264403,
+    "gap_min_positive_minus_max_negative": 0.20101248798475202,
+    "sweep": [
+      {
+        "threshold": 0.8,
+        "missed_body_readds": 0,
+        "false_flags": 0
+      },
+      {
+        "threshold": 0.84,
+        "missed_body_readds": 0,
+        "false_flags": 0
+      },
+      {
+        "threshold": 0.86,
+        "missed_body_readds": 0,
+        "false_flags": 0
+      },
+      {
+        "threshold": 0.88,
+        "missed_body_readds": 0,
+        "false_flags": 0
+      },
+      {
+        "threshold": 0.9,
+        "missed_body_readds": 0,
+        "false_flags": 0
+      },
+      {
+        "threshold": 0.91,
+        "missed_body_readds": 0,
+        "false_flags": 0
+      },
+      {
+        "threshold": 0.92,
+        "missed_body_readds": 0,
+        "false_flags": 0
+      },
+      {
+        "threshold": 0.93,
+        "missed_body_readds": 0,
+        "false_flags": 0
+      },
+      {
+        "threshold": 0.94,
+        "missed_body_readds": 0,
+        "false_flags": 0
+      },
+      {
+        "threshold": 0.95,
+        "missed_body_readds": 0,
+        "false_flags": 0
+      },
+      {
+        "threshold": 0.96,
+        "missed_body_readds": 0,
+        "false_flags": 0
+      }
+    ]
+  },
+  "rows": [
+    {
+      "id": "decisions/KB-0001-knowledge-base-architecture",
+      "title": "KB-0001 — Global knowledge base architecture: Markdown + skill, separate from Obsidian, RAG as phase 2",
+      "self_full": 0.9815401385682166,
+      "self_body": 0.9999999999980842,
+      "self_title": 0.7299120956382457,
+      "nearest_other_full": 0.7917168514771308
+    },
+    {
+      "id": "decisions/KB-0002-growth-control-and-retrieval-ladder",
+      "title": "KB-0002 — Growth control ('bounded index, unbounded body') and the L0→L3 retrieval ladder with update windows",
+      "self_full": 0.9747979929645982,
+      "self_body": 0.9999999999977524,
+      "self_title": 0.7467015597487672,
+      "nearest_other_full": 0.7772484246411543
+    },
+    {
+      "id": "decisions/KB-0003-open-l3-embeddings-for-memory-package",
+      "title": "KB-0003 — Open the L3 (embeddings) window early for the agent memory package",
+      "self_full": 0.988053067928667,
+      "self_body": 0.999999999999461,
+      "self_title": 0.7874805945363399,
+      "nearest_other_full": 0.7616461309935555
+    },
+    {
+      "id": "decisions/kb-options-research-2026-09-12",
+      "title": "Research memo — agent-operable knowledge base options (2026-09-12)",
+      "self_full": 0.9677839580753784,
+      "self_body": 0.9927293394618828,
+      "self_title": 0.6398948937912587,
+      "nearest_other_full": 0.779899036710181
+    },
+    {
+      "id": "projects/agent-infra/overview",
+      "title": "Agent-infra — project overview and decision index",
+      "self_full": 0.9752171709005588,
+      "self_body": 0.9999999999988273,
+      "self_title": 0.6010790960881381,
+      "nearest_other_full": 0.6584946222698671
+    },
+    {
+      "id": "projects/kg-triplet-sft/boundaries",
+      "title": "kg-triplet-sft — honest boundaries (do not over-claim)",
+      "self_full": 0.9585758800221938,
+      "self_body": 0.9999999999990725,
+      "self_title": 0.4863361797465696,
+      "nearest_other_full": 0.7743688353949209
+    },
+    {
+      "id": "projects/kg-triplet-sft/data",
+      "title": "kg-triplet-sft — dataset facts",
+      "self_full": 0.9507530399076701,
+      "self_body": 0.9999999999991189,
+      "self_title": 0.474914144192794,
+      "nearest_other_full": 0.6852491715924737
+    },
+    {
+      "id": "projects/kg-triplet-sft/evaluation",
+      "title": "kg-triplet-sft — referent-level evaluation and baselines",
+      "self_full": 0.9491481926185958,
+      "self_body": 0.9999999999789264,
+      "self_title": 0.586079567546415,
+      "nearest_other_full": 0.6860677583264403
+    },
+    {
+      "id": "projects/kg-triplet-sft/overview",
+      "title": "kg-triplet-sft — project overview and decision index",
+      "self_full": 0.9739454880271811,
+      "self_body": 0.999999999901982,
+      "self_title": 0.5926995264908479,
+      "nearest_other_full": 0.6959084903615564
+    },
+    {
+      "id": "projects/kg-triplet-sft/results",
+      "title": "kg-triplet-sft — measured results (mask repair, base, curve, LightRAG)",
+      "self_full": 0.9514161505003107,
+      "self_body": 0.9999999999974943,
+      "self_title": 0.6203528223767716,
+      "nearest_other_full": 0.7297203939870536
+    },
+    {
+      "id": "projects/kg-triplet-sft/training",
+      "title": "kg-triplet-sft — canonical masked training recipe and cost",
+      "self_full": 0.9633779201617161,
+      "self_body": 0.9999999999990361,
+      "self_title": 0.6255413073584779,
+      "nearest_other_full": 0.638096146931918
+    },
+    {
+      "id": "projects/rag-knowledge-base/overview",
+      "title": "RAG Knowledge Base — reusable personal RAG tool (policy/legal flagship demo)",
+      "self_full": 0.9704928104292067,
+      "self_body": 0.9999999999932063,
+      "self_title": 0.6758764855907331,
+      "nearest_other_full": 0.6854291180959255
+    },
+    {
+      "id": "topics/agent-engineering-playbook",
+      "title": "Agent engineering playbook — porting, cost, collaboration boundaries, token economy, env isolation",
+      "self_full": 0.9541158155802779,
+      "self_body": 0.9999999999992056,
+      "self_title": 0.6281776878779488,
+      "nearest_other_full": 0.6647320212730483
+    },
+    {
+      "id": "topics/cloud-gpu-platforms",
+      "title": "Cloud GPU platforms for small-model fine-tuning — comparison, cost function, operating flow",
+      "self_full": 0.9715762664419464,
+      "self_body": 0.9999999999989384,
+      "self_title": 0.6571716044464667,
+      "nearest_other_full": 0.6215060634036081
+    },
+    {
+      "id": "topics/decision-quality-and-ach",
+      "title": "Decision quality and Analysis of Competing Hypotheses — verified reference",
+      "self_full": 0.9741095127222983,
+      "self_body": 0.9999999999990173,
+      "self_title": 0.6187343188951029,
+      "nearest_other_full": 0.5974751394932643
+    },
+    {
+      "id": "topics/huggingface-token-and-publishing",
+      "title": "Hugging Face: token storage (hf auth login) and model publishing",
+      "self_full": 0.9792530741904213,
+      "self_body": 0.9999999999991884,
+      "self_title": 0.7378079683491426,
+      "nearest_other_full": 0.5802930048543904
+    },
+    {
+      "id": "topics/issue19-alpha",
+      "title": "issue19 add alpha",
+      "self_full": 0.9514033614909365,
+      "self_body": 0.999999999999786,
+      "self_title": 0.8362225403590438,
+      "nearest_other_full": 0.43875570525521834
+    },
+    {
+      "id": "topics/opencode-proxy-and-network",
+      "title": "opencode network: route through a local HTTP proxy on Windows",
+      "self_full": 0.9737639714012614,
+      "self_body": 0.9999999999989989,
+      "self_title": 0.6850974531254261,
+      "nearest_other_full": 0.6660257634684033
+    },
+    {
+      "id": "topics/opencode-secrets-handling",
+      "title": "opencode config: handling API keys (don't externalize to env as a security fix)",
+      "self_full": 0.9743113566619537,
+      "self_body": 0.9999999999993675,
+      "self_title": 0.7054735726728086,
+      "nearest_other_full": 0.7000303725890256
+    },
+    {
+      "id": "topics/training-error-catalog",
+      "title": "Training / inference error catalog (symptom → root cause → fix)",
+      "self_full": 0.9761591509120295,
+      "self_body": 0.9999999999983624,
+      "self_title": 0.6572165460322554,
+      "nearest_other_full": 0.7140001574956594
+    },
+    {
+      "id": "topics/training-version-matrix",
+      "title": "Training stack version matrix (LLaMA-Factory / Unsloth / transformers / accelerate / peft)",
+      "self_full": 0.9796453156001204,
+      "self_body": 0.9999999999992475,
+      "self_title": 0.7562295150249405,
+      "nearest_other_full": 0.7345466167417783
+    }
+  ]
+}

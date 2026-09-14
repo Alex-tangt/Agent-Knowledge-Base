@@ -13,7 +13,16 @@ ROOT_DIR = os.path.dirname(MEMORY_AGENT_DIR)
 KB_DIR = os.environ.get("AGENT_KB_DIR") or r"C:\Users\Tan\.config\opencode\knowledge"
 
 # 只读语料根：本仓库（不含子模块）。后续票据再扩到其它项目仓库。
-READONLY_ROOTS = [ROOT_DIR]
+# `MEMORY_READONLY_ROOTS` 可覆盖（os.pathsep 分隔的绝对/相对路径；空串 = 无只读语料）。
+# sandbox/评测套件用它把索引限制在可写 KB 内，避免把整个代码仓库也索引进去（#16）。
+def _readonly_roots() -> list[str]:
+    raw = os.environ.get("MEMORY_READONLY_ROOTS")
+    if raw is None:
+        return [ROOT_DIR]
+    return [os.path.abspath(part) for part in raw.split(os.pathsep) if part.strip()]
+
+
+READONLY_ROOTS = _readonly_roots()
 
 # 派生索引：代目录 + 指针（issue #13 / ADR-0011）。
 # 每代是独立目录 INDEX_DIR/<gen>/{qdrant/,manifest.json}；CURRENT 是指针文件，
@@ -44,8 +53,10 @@ MAX_ENTRY_CHARS = 6000
 MAX_CORPUS_FILE_BYTES = 1_000_000
 
 # 写入门禁：写前检索命中的余弦相似度 >= 此值即判为近似重复（只报告、不写）。
-# 初值偏保守（宁漏报不误报，误报会白挡一次合法写入）；待 #16 在真实 KB 上校准。
-DEDUP_THRESHOLD = float(os.environ.get("MEMORY_DEDUP_THRESHOLD", "0.92"))
+# 0.88 由 #16 在真实 KB 上校准（详见 docs/adr/0009 的「校准」小节与
+# experiments/dedup-threshold-calibration/）：实测不同条目最近邻 ≤0.792、
+# 精确重加最低 0.949，0.88 落在间隔中部，比原 0.92 多留出同义重加的捕获余量。
+DEDUP_THRESHOLD = float(os.environ.get("MEMORY_DEDUP_THRESHOLD", "0.88"))
 
 
 def warmup_on_start() -> bool:
