@@ -20,6 +20,7 @@ import sys
 
 from memory_agent.memory import authoring
 from memory_agent.memory.entries import parse_frontmatter
+from memory_agent.memory.locks import WRITE_LOCK, locked
 from memory_agent.settings import DEDUP_THRESHOLD, KB_DIR
 
 SUPERSEDABLE_STATUS = frozenset({"current", "draft"})
@@ -42,6 +43,7 @@ class MemoryWriter:
 
     # ------------------------------------------------------------------ add
 
+    @locked(WRITE_LOCK)
     def add(
         self,
         *,
@@ -110,6 +112,7 @@ class MemoryWriter:
 
     # ------------------------------------------------------------- supersede
 
+    @locked(WRITE_LOCK)
     def supersede(
         self,
         *,
@@ -201,6 +204,7 @@ class MemoryWriter:
 
     # --------------------------------------------------------------- archive
 
+    @locked(WRITE_LOCK)
     def archive(
         self,
         *,

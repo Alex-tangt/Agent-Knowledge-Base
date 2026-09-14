@@ -18,6 +18,7 @@ from memory_agent.memory.entries import Entry
 from memory_agent.memory.errors import IndexConsistencyError
 from memory_agent.memory.index import _now, upsert_entries
 from memory_agent.memory.layout import IndexLayout
+from memory_agent.memory.locks import INDEX_LOCK, locked
 from memory_agent.settings import COLLECTION_NAME, DEFAULT_REINDEX_BATCH
 
 
@@ -47,6 +48,7 @@ class Reindexer:
             result = self.reindex(cursor=result["cursor"], batch=batch)
         return result
 
+    @locked(INDEX_LOCK)
     def reindex(self, cursor: dict | None = None, batch: int = DEFAULT_REINDEX_BATCH) -> dict:
         batch = max(1, min(int(batch), 256))
         if cursor is None:

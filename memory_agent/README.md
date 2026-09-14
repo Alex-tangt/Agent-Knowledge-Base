@@ -2,34 +2,36 @@
 
 Agent-Knowledge-Base 的第一个能力：让 coding agent 通过 MCP 语义检索、读取、并**安全写入**长期记忆。
 
-- 产品形状与架构：`docs/adr/0005`（产品升级）、`docs/adr/0006`（Markdown 真相源 + 派生索引 + 写入网关）、`docs/adr/0007`（布局与更名）、`docs/adr/0008`（读路径接缝：MCP 选型 / 语料范围 / stdio 铁律）、`docs/adr/0009`（写路径：commit 归属范围 + 去重命中语义）。
+- 产品形状与架构：`docs/adr/0005`（产品升级）、`docs/adr/0006`（Markdown 真相源 + 派生索引 + 写入网关）、`docs/adr/0007`（布局与更名）、`docs/adr/0008`（读路径接缝：MCP 选型 / 语料范围 / stdio 铁律）、`docs/adr/0009`（写路径：commit 归属范围 + 去重命中语义）、`docs/adr/0011`（索引一致性：代目录 + 指针切换）、`docs/adr/0013`（拓扑：共享单实例 daemon + 代理）。
 - 需求全貌（user stories / 决策 / 测试口径）：GitHub issue #7；实现票据 #10–#17。
 
 ## 约定（不变量）
 
 - **真相源是 Markdown**（条目 + frontmatter），向量索引是派生、可丢弃的。
 - **只暴露 MCP 工具，不暴露裸文件写**；破坏性写（supersede / archive）需确认，永不原地改写或删除。
-- 传输：**stdio**；引擎**进程内**调用 `ragcore`（模型每进程一份内存）；索引走**独立** Qdrant 路径，且 client 按操作开/关——可与 `legal_web` 并存（见 ADR-0008 D5）。
+- 传输（#19 / ADR-0013）：**一个常驻 HTTP daemon 持有唯一一份引擎，每会话一个 stdio 代理转发**（N 会话共享，内存 `1×3.9GB` 而非 `N×`）；另保留纯 stdio 模式供单会话/手动。索引走**独立** Qdrant 路径，client 按操作开/关——可与 `legal_web` 并存（见 ADR-0008 D5）；单 daemon 的进程内串行化见 ADR-0013 D3。
 - **stdout 是协议通道**：日志必须走 stderr。`memory_agent` 在 import ragcore 之前抢配 root logger（见 `_bootstrap.py`）。
 
-## 现状（#10 读路径 + #11 写入网关 + #12 生命周期 + #13 索引一致性）
+## 现状（#10 读路径 + #11 写入网关 + #12 生命周期 + #13 索引一致性 + #19 共享单实例）
 
 ```
 memory_agent/
-├── mcp_server.py          # stdio MCP：search/get/add/supersede/archive/reindex/status
+├── mcp_server.py          # MCP 服务：默认 stdio；--transport http 起共享 daemon （+ 可选 /health）(#10-#13,#19)
+├── proxy.py               # 每会话瘦代理：幂等确保 daemon 在跑 + stdio<->HTTP 转发          (#19)
 ├── runtime.py             # 先立 stderr 日志，再装配索引 / 写入网关单例
 ├── _bootstrap.py          # stdio 安全日志 + ragcore sys.path 垫片
-├── settings.py            # 真相源 / 索引根 / 指针名 / 集合名 / 去重阈值（勿命名 config.py，会遮蔽 ragcore 的 config 包）
+├── settings.py            # 真相源 / 索引根 / 指针名 / 集合名 / 去重阈值 / daemon 端点（勿命名 config.py，会遮蔽 ragcore 的 config 包）
 ├── corpus/loader.py       # KB 条目 + 只读语料 的发现与噪声排除              (#10)
 ├── memory/entries.py      # frontmatter 解析 -> Entry；稳定点 id（uuid5）    (#10,#13)
 ├── memory/index.py        # 当前代视图：检索 + 增量 refresh（hash 跳过/孤儿清理）(#10,#13)
 ├── memory/layout.py       # 代目录 + CURRENT 指针 + 原子切换                 (#13)
 ├── memory/reindex.py      # 分块全量重建（新代建好再切指针 + 自洽核对）       (#13)
 ├── memory/errors.py       # IndexNotBuiltError / IndexConsistencyError       (#13)
+├── memory/locks.py        # 进程内 INDEX/WRITE 锁（单 daemon 并发安全）        (#19)
 ├── memory/authoring.py    # 渲染 frontmatter + 镜像 kb.py check 的校验        (#11)
 ├── memory/writer.py       # 写入网关：搜索→去重→校验→落盘→commit→增量刷新    (#11,#12,#13)
 ├── build_index.py         # CLI：从 Markdown 全量重建（新代 + 切指针）        (#10,#13)
-├── eval/                  # 检索与写路径证据：baseline_A.md、BEIR nDCG@10、写路径套件 (#9,#15,#16)
+├── eval/                  # 检索与写路径证据：baseline_A.md、issue19_acceptance.md、BEIR (#9,#15,#16,#19)
 └── (skill)                # 见 #14：指导 agent 何时 search/read/add 及破坏性确认规则
 ```
 
@@ -42,13 +44,19 @@ memory_agent/
 # 1) 建索引（会加载 BGE-M3，CPU 上 ~6 min/60 条）
 venv\Scripts\python.exe memory_agent/build_index.py
 
-# 2) 手动冒烟（任意 MCP 客户端同理）
-#    opencode 接入（~/.config/opencode/opencode.json）：
+# 2) 启动共享 daemon（常驻单实例，持有唯一一份引擎；默认 eager 预热）
+venv\Scripts\python.exe memory_agent/mcp_server.py --transport http
+#    就绪探测：Get-Item/Invoke-RestMethod http://127.0.0.1:8765/health
+
+# 3) opencode 接入（~/.config/opencode/opencode.json）——指向**代理**，每会话一个瘦进程：
 #    "memory-agent": {
 #      "type": "local",
-#      "command": ["<repo>/venv/Scripts/python.exe", "<repo>/memory_agent/mcp_server.py"],
-#      "enabled": true
+#      "command": ["<repo>/venv/Scripts/python.exe", "<repo>/memory_agent/proxy.py"],
+#      "enabled": true,
+#      "timeout": 20000
 #    }
+#    代理会在会话启动时幂等确保 daemon 在跑；运维：proxy.py --status / --ensure
+#    单会话/手动仍可直接跑 mcp_server.py（默认 stdio，不共享）。
 ```
 
 工具：

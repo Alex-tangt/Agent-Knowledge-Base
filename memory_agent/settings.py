@@ -26,6 +26,14 @@ COLLECTION_NAME = "memory_entries"
 # 全量重建的分块大小：单次只嵌入 N 条，远小于 MCP 客户端几十秒的调用超时（D3）。
 DEFAULT_REINDEX_BATCH = int(os.environ.get("MEMORY_REINDEX_BATCH", "16"))
 
+# 共享 daemon 的 HTTP 端点（issue #19）：单实例常驻，多个 opencode 会话经 proxy 转发。
+# 只绑本机回环；端口固定，proxy 用 /health 判断「是不是我们的 daemon 在跑」。
+MCP_HTTP_HOST = os.environ.get("MEMORY_MCP_HOST", "127.0.0.1")
+MCP_HTTP_PORT = int(os.environ.get("MEMORY_MCP_PORT", "8765"))
+MCP_HTTP_PATH = os.environ.get("MEMORY_MCP_PATH", "/mcp")
+# daemon 的日志：走 gitignored 的索引目录，便于排查（proxy 拉起 daemon 时子进程内重定向）。
+DAEMON_LOG = os.environ.get("MEMORY_DAEMON_LOG") or os.path.join(INDEX_DIR, "daemon.log")
+
 # 条目级嵌入：单条超长时截断（按 section 切分的例外留待需要时再开）
 MAX_ENTRY_CHARS = 6000
 MAX_CORPUS_FILE_BYTES = 1_000_000

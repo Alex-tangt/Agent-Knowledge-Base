@@ -12,7 +12,7 @@ legal_web/          # 适配层实例 / 回归锚点
   ingest.py  fetch_laws.py  test_langsmith.py  kb_registry.json
   requirements.txt  .env  vector_db/  uploads/
 memory_agent/       # 记忆能力包（MCP + skill）
-  mcp_server.py  runtime.py  _bootstrap.py  settings.py  build_index.py
+  mcp_server.py  proxy.py  runtime.py  _bootstrap.py  settings.py  build_index.py
   corpus/  memory/  skill/  eval/  requirements.txt  vector_db/  README.md
 tests/unit/         # ragcore 核心 + memory_agent 单测（pytest）
 experiments/  docs/
@@ -40,9 +40,14 @@ pip install -r legal_web/requirements.txt
 
 ### memory_agent (记忆能力包)
 - Build the derived memory index (loads BGE-M3; ~6 min per 60 entries on CPU): `venv\Scripts\python.exe memory_agent/build_index.py` → builds a new generation `memory_agent/vector_db/gen-N/` and atomically switches the `CURRENT` pointer (issue #13; gitignored).
-- Run as stdio MCP: `venv\Scripts\python.exe memory_agent/mcp_server.py`. Tools: `memory_search`, `memory_get`, `memory_add`, `memory_supersede`, `memory_archive` (后两个是破坏性变更，默认只返回 preview，需 `confirm=true` 才落盘), plus `memory_reindex` (分块全量重建：`cursor=None` 开始，拿 cursor 续调到 `done=true`) and `memory_index_status`. Writes auto-refresh the index incrementally. Registered in `~/.config/opencode/opencode.json` as `memory-agent` (takes effect after opencode restart).
+- **拓扑（#19 / ADR-0013）：一个常驻 daemon + 每会话一个 stdio 代理。** 所有会话共享 daemon 里那一份 BGE-M3（~3.9GB 只付一次），代理每会话仅几十 MB。
+  - 启动 daemon：`venv\Scripts\python.exe memory_agent/mcp_server.py --transport http`（默认 `127.0.0.1:8765`，默认 eager 预热；`--no-warmup` 可关）。`GET /health` 是就绪探测。
+  - 代理（opencode 的 `local` 命令，已注册为 `memory-agent`）：`venv\Scripts\python.exe memory_agent/proxy.py`——幂等确保 daemon 在跑（带启动权文件锁，不会 N 会话重复拉起），再把本会话 stdio 转发到 `/mcp`。运维：`proxy.py --status` / `--ensure`。日志 `memory_agent/vector_db/daemon.log`（gitignored）。
+  - 单会话/手动仍可 `mcp_server.py`（默认 `--transport stdio`）。
+- Tools: `memory_search`, `memory_get`, `memory_add`, `memory_supersede`, `memory_archive` (后两个是破坏性变更，默认只返回 preview，需 `confirm=true` 才落盘), plus `memory_reindex` (分块全量重建：`cursor=None` 开始，拿 cursor 续调到 `done=true`) and `memory_index_status`. Writes auto-refresh the index incrementally.
 - **Skill**: source `memory_agent/skill/SKILL.md` (ships with the package) → install to `~/.config/opencode/skills/memory-agent/`; it tells the agent when to search/get/add and that supersede/archive need explicit user consent. See ADR-0012.
-- **stdout is the MCP protocol channel** — all logging must go to stderr; `_bootstrap.configure_stderr_logging()` must run before importing `ragcore`.
+- **并发**：单 daemon 服务 N 会话，进程内串行化——Qdrant local mode 同进程也不能并发开 client，`VectorStoreService._session` 有 `RLock`；`memory/locks.py` 的 `INDEX_LOCK`/`WRITE_LOCK` 管索引与写入临界区（单写者）。见 ADR-0013 D3。
+- **stdout 是 MCP 协议通道**（stdio 模式与代理都是）：所有日志必须走 stderr。`_bootstrap.configure_stderr_logging()` 必须在 import `ragcore` 之前跑；`proxy.py` 不 import ragcore，诊断一律 stderr。
 - The memory index uses its **own** Qdrant path (`memory_agent/vector_db/<gen>/qdrant`, resolved via the `CURRENT` pointer), and the client is opened **per operation** (no long-held lock) — it can coexist with `legal_web`; see ADR-0008 D5. Full rebuilds build a new generation and atomically swap the pointer; an interrupted rebuild never leaves "empty index + stale manifest" (ADR-0011).
 
 ## Working directory
@@ -131,7 +136,7 @@ The `warmup()` function (called from `app.py` lifespan) eagerly triggers BGE-M3 
 - **Versioning**: JS/CSS files use `?v=N` cache busting. Increment when changing any JS module.
 
 ## Tests
-- **单元测试**：`tests/unit/`（pytest）——`test_document_service.py`、`test_rag_service.py`、`test_session_memory.py`、`test_memory_corpus.py`、`test_memory_index.py`、`test_memory_index_qdrant.py`、`test_memory_reindex.py`、`test_memory_writer.py`、`test_memory_lazy_warmup.py`。运行：`venv\Scripts\python.exe -m pytest tests/unit -q`（135 passed）。
+- **单元测试**：`tests/unit/`（pytest）——`test_document_service.py`、`test_rag_service.py`、`test_session_memory.py`、`test_memory_corpus.py`、`test_memory_index.py`、`test_memory_index_qdrant.py`、`test_memory_reindex.py`、`test_memory_writer.py`、`test_memory_lazy_warmup.py`、`test_memory_concurrency.py`、`test_memory_proxy.py`、`test_mcp_server_cli.py`。运行：`venv\Scripts\python.exe -m pytest tests/unit -q`（154 passed）。
 - Smoke test: `venv\Scripts\python.exe legal_web/test_langsmith.py`.
 - **启动冒烟（boot 闸门）**：后台起 `legal_web/app.py`，独立探测 `/api/status` → `ready:true`、`/` 与 `/script.js` → 200、`/api/kb/list`、`/api/documents/count?kb_name=documents`，再杀进程树确认端口与 Qdrant 锁释放。命令与结果见 `memory_agent/eval/baseline_A.md`（比"单测 + 导入冒烟"更强的收工锚点）。
 - RAG vs LLM-only eval: from repo root run `venv\Scripts\python.exe legal_web/tests/run_eval.py` (backend on :8000, KB built). Parses `legal_web/tests/questions.md` and writes `legal_web/tests/results.md`. Fill `legal_web/tests/failure_analysis.md` for failure cases. `legal_web/tests/score_eval.py` does LLM-as-judge multi-dimension scoring.
@@ -204,7 +209,8 @@ The `warmup()` function (called from `app.py` lifespan) eagerly triggers BGE-M3 
 - ✅ skill 骨架（#14，2026-09-14）：`memory_agent/skill/SKILL.md`（源，安装到全局 `~/.config/opencode/skills/memory-agent/`）——读/写/生命周期工具用法 + 破坏性确认规则（先预览、用户同意后才 `confirm=true`）。决策见 `docs/adr/0012`；行为验收在 #17 dogfood，不在本票。
 - ✅ 惰性预热（#19 第一步，2026-09-14）：MCP 服务**默认不再预热** BGE-M3（要低延迟可设 `MEMORY_WARMUP=1`）。实测启动私有内存 **3953MB → 54MB**。根因：每个 opencode 会话各拉起一份 MCP、各吃 ~3.9GB（BGE-M3 权重 2.17GB + torch 运行时 + 加载峰值），三条并行会话把系统 commit 打满 → `Out of memory` / 卡死 / `uv_spawn` 失败。剩余项（共享单实例 / 换小模型）见 issue #19。
 - ✅ 索引一致性（#13，2026-09-14）：代目录 + `CURRENT` 指针原子切换（中断不留「空索引 + 陈旧 manifest」，`search` 自洽核对失败显式报错）；按条目增量刷新（hash 未变跳过、孤儿点按稳定 `uuid5(entry_id)` 删除）、写后自动刷新钩子；分块 `memory_reindex(cursor,batch)` 全量重建 + `memory_index_status`。决策见 `docs/adr/0011`；单测 `test_memory_reindex.py`（135 passed 全绿）；真实重建 gen-1：68 条 = 68 点，`refresh` 68 skipped / 0 embedded。
-- 下一步：#16 写路径 sandbox 套件、#17 dogfood；随后 #15 BEIR、#19-A 共享单实例。
+- ✅ 共享单实例（#19 根治，2026-09-14）：拓扑改为「一个常驻 HTTP daemon（持有唯一一份 BGE-M3）+ 每会话一个 stdio 代理」——N 会话从 `N × 3.9GB` 降为 `1 × 3.9GB + N × 几十MB`。`mcp_server.py --transport http` + `/health` + DNS-rebinding 防护；`proxy.py` 幂等拉起（启动权文件锁，避免冷启动竞态）+ 透明转发；进程内串行化 store/索引/写入。决策见 `docs/adr/0013`；验收（真实模型）见 `memory_agent/eval/issue19_acceptance.md`（最终 `154 passed`）。opencode 接入从「跑 `mcp_server.py`」改为「跑 `proxy.py`」（`~/.config/opencode/opencode.json`，重启生效）。
+- 下一步：#16 写路径 sandbox 套件、#17 dogfood；随后 #15 BEIR。
 
 ## 后续优化待办（Backlog / 简历谈资池）
 
@@ -216,8 +222,8 @@ The `warmup()` function (called from `app.py` lifespan) eagerly triggers BGE-M3 
 
 ## Gotchas
 - **Always activate venv first** (`venv\Scripts\activate` on Windows). Running without it may miss installed dependencies.
-- **Qdrant local mode 的锁按操作持有**（`VectorStoreService` 每次操作开/关一个 client，见 ADR-0008 D5）。`legal_web` 与 `memory_agent` 现在可以并存；只有两个进程的重活**恰好撞在同一瞬间**才会短暂争锁，靠内置退避重试兜住。若仍报 "already accessed"：确认没有残留进程，必要时删 `.lock`。
-- **stdio MCP: stdout is the protocol channel.** `ragcore/utils/logger.py` configures logging to `sys.stdout`; `memory_agent` must grab the root logger to stderr *before* importing `ragcore` (`_bootstrap.configure_stderr_logging`). Any stray stdout write corrupts the JSON-RPC stream.
+- **Qdrant local mode 的锁按操作持有**（`VectorStoreService` 每次操作开/关一个 client，见 ADR-0008 D5）。`legal_web` 与 `memory_agent` 现在可以并存；只有两个进程的重活**恰好撞在同一瞬间**才会短暂争锁，靠内置退避重试兜住。若仍报 "already accessed"：确认没有残留进程，必要时删 `.lock`。**同进程内也不能并发开 client**（单 daemon 服务 N 会话时）——`VectorStoreService._session` 用模块级 `RLock` 串行化，见 ADR-0013 D3。
+- **stdio MCP: stdout is the protocol channel.** `ragcore/utils/logger.py` configures logging to `sys.stdout`; `memory_agent` must grab the root logger to stderr *before* importing `ragcore` (`_bootstrap.configure_stderr_logging`). Any stray stdout write corrupts the JSON-RPC stream. `proxy.py` 同理：它不 import ragcore，所有诊断写 stderr，stdout 只留给 stdio 协议。
 - **Qdrant local mode 清空集合不要丢集合**：实测 `delete_collection` / `recreate_collection` 只摘元数据，同名 `create_collection` 会让磁盘上的旧点**复活**（3 → 0 → 3，静默失效）。`VectorStoreService.clear_all_documents` 改用空 filter 的 `FilterSelector` 删光点；回归见 `tests/unit/test_vector_store_clear.py`。
 - **Don't name a `memory_agent` module `config.py`** — under `python memory_agent/x.py` it shadows ragcore's top-level `config` package (`ModuleNotFoundError: No module named 'config.config'`). It's `settings.py`; use `memory_agent.`-prefixed absolute imports.
 - **First run** after `pip install` downloads BGE-M3 (~2.2GB) and bge-reranker-v2-m3 (~2.2GB) from HuggingFace. Subsequent runs load from cache instantly.

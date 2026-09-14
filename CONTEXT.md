@@ -73,6 +73,14 @@ _Avoid_: 就地清空重建、把"删集合再建"当原子
 检索前核对 manifest 条数与集合点数是否相等；不等即显式报错，绝不静默返回空结果。
 _Avoid_: 表面正常、实际搜不到
 
+**共享单实例 daemon（Shared Single-instance Daemon）**：
+唯一持有嵌入引擎的常驻进程；所有 opencode 会话共享它，而不是各自加载一份模型。只绑本机回环，`/health` 供就绪探测。
+_Avoid_: 每会话一份引擎、把 daemon 当可选优化
+
+**代理（Proxy）**：
+opencode 每会话的 `local` 命令：先幂等确保 daemon 在跑，再把本会话 stdio 请求透明转发过去。是"谁的进程生命周期负责拉起 daemon"这一问题的答案（见 ADR-0013 D1）。
+_Avoid_: 把代理当第二份引擎、让 opencode 直连 remote 却不解决 daemon 启动
+
 ---
 
 ## 查询改写优化器实验（Query Rewriting Optimizer）
