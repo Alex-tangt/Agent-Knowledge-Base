@@ -8,8 +8,9 @@
 - supersede 新建条目并双向标注，旧条目置 `superseded`；archive 只置 `archived`，
   两者都不删文件。
 
-已知边界：写入后不刷新派生索引（增量 reindex 属 #13）；因此在重建前，新条目
-不会被后续 memory_search / 去重检索看到。
+写入成功后**增量刷新派生索引**（#13）：只重嵌受影响条目、hash 未变跳过、删除/改名
+无残留；刷新失败不回滚已提交的文件（真相源已落盘，派生索引下次刷新即可追平），但会
+在返回值 `index` 字段里如实报告 `ok:false`。
 """
 from __future__ import annotations
 
@@ -104,6 +105,7 @@ class MemoryWriter:
             "path": abs_path,
             "commit": commit,
             "warnings": prepared["warnings"],
+            "index": self._refresh_index(),
         }
 
     # ------------------------------------------------------------- supersede
@@ -194,6 +196,7 @@ class MemoryWriter:
             "commit": commit,
             "preview": preview,
             "warnings": prepared["warnings"],
+            "index": self._refresh_index(),
         }
 
     # --------------------------------------------------------------- archive
@@ -255,6 +258,7 @@ class MemoryWriter:
             "path": entry["abs_path"],
             "commit": commit,
             "preview": preview,
+            "index": self._refresh_index(),
         }
 
     # ------------------------------------------------------------- internals
@@ -372,6 +376,16 @@ class MemoryWriter:
             for hit in hits
             if hit["score"] >= threshold
         ]
+
+    def _refresh_index(self) -> dict:
+        """写入后增量刷新派生索引（#13）。索引刷新失败不使写入失败。"""
+        refresh = getattr(self._index, "refresh", None)
+        if refresh is None:
+            return {"ok": True, "skipped": True, "reason": "index 不支持 refresh"}
+        try:
+            return {"ok": True, **refresh()}
+        except Exception as exc:  # noqa: BLE001 - 派生索引失败不该吞掉已提交的写入
+            return {"ok": False, "error": str(exc)}
 
     def _write_all(self, writes: list[tuple[str, str]], rollback: dict) -> None:
         """写文件并过 KB 外部闸门；失败则回滚（restore 原文或删除新文件）。"""

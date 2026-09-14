@@ -112,10 +112,20 @@ class VectorStoreService:
             logger.info(f"Created Qdrant collection '{self.collection_name}' with dim={EMBEDDING_DIMENSION}")
 
     @langsmith_service.trace(name="vector_store_add", metadata={"service": "VectorStoreService"})
-    def add_documents(self, documents, metadata_list=None):
+    def add_documents(self, documents, metadata_list=None, ids=None):
+        """写入向量点。
+
+        ids 省略时生成随机 uuid；调用方给稳定 id（如 uuid5(entry_id)）即可让同一
+        条目重复 upsert 覆盖旧点，而不是产生重复点（memory_agent 增量索引依赖此）。
+        """
         try:
             texts = [doc.page_content if hasattr(doc, 'page_content') else doc for doc in documents]
-            ids = [str(uuid.uuid4()) for _ in range(len(documents))]
+            if ids is None:
+                ids = [str(uuid.uuid4()) for _ in range(len(documents))]
+            else:
+                ids = [str(i) for i in ids]
+                if len(ids) != len(documents):
+                    raise ValueError("ids 长度必须与 documents 一致")
 
             if metadata_list is None:
                 metadata_list = []

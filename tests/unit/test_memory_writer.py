@@ -388,7 +388,9 @@ def test_mcp_surface_exposes_only_scoped_tools():
     tools = {tool.name: tool for tool in mcp_server.mcp._tool_manager.list_tools()}
     assert set(tools) == {
         "memory_search", "memory_get", "memory_add", "memory_supersede", "memory_archive",
+        "memory_reindex", "memory_index_status",
     }
+    assert set(tools["memory_reindex"].parameters["properties"]) == {"cursor", "batch"}
     assert set(tools["memory_add"].parameters["properties"]) == {
         "title", "body", "domain", "type", "tags", "slug", "sources",
         "status", "allow_duplicate",
