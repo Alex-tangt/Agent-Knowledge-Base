@@ -20,7 +20,8 @@ _ROOT = os.path.dirname(_HERE)
 sys.path[:] = [p for p in sys.path if os.path.abspath(p or os.getcwd()) != _HERE]
 sys.path.insert(0, _ROOT)
 
-from memory_agent.runtime import get_index  # noqa: E402  (导入即配 stderr 日志 + ragcore 路径)
+from memory_agent.runtime import get_index, get_writer  # noqa: E402  (导入即配 stderr 日志 + ragcore 路径)
+from memory_agent.memory.writer import MemoryWriteError  # noqa: E402
 
 from mcp.server import MCPServer  # noqa: E402
 from utils.logger import logger  # noqa: E402
@@ -29,8 +30,9 @@ mcp = MCPServer(
     "memory-agent",
     version="0.1.0",
     instructions=(
-        "Agent 长期记忆读路径：memory_search 语义检索条目，memory_get 读回真实 Markdown。"
-        "只读语料（writable=false）不可写入。"
+        "Agent 长期记忆：memory_search 语义检索条目，memory_get 读回真实 Markdown，"
+        "memory_add 写入新条目（先去重，命中近似则不写并返回候选）。"
+        "只读语料（writable=false）不可写入；没有裸文件写工具。"
     ),
 )
 
@@ -55,6 +57,39 @@ def memory_get(entry_id: str) -> dict:
         raise ValueError(f"未知条目 id：{entry_id}（先用 memory_search 取 id）")
     except FileNotFoundError as exc:
         raise ValueError(f"条目文件已不存在（索引孤儿，需重建）：{exc}")
+
+
+@mcp.tool()
+def memory_add(
+    title: str,
+    body: str,
+    domain: str,
+    type: str,
+    tags: list[str],
+    slug: str | None = None,
+    sources: list[str] | None = None,
+    status: str = "current",
+    allow_duplicate: bool = False,
+) -> dict:
+    """新增一条长期记忆（唯一写入口：不覆盖、不删除、不原地编辑已有条目）。
+
+    写入前先去重——命中近似条目时**不写**，返回候选 id/score，交由调用方决定
+    （确认不同则 allow_duplicate=true 重试；要替换则用 memory_supersede, #12）。
+    写入 = frontmatter 过 KB 校验 + 一个新 git commit（只含本条目文件）。
+
+    - domain: topics | decisions | projects/<slug>
+    - type: topic | decision | research | project-knowledge（须与 domain 匹配）
+    - tags: 取 tags.md 的受控标签
+    - slug: 英文 slug；省略时从 title 派生（纯中文标题请显式给）
+    """
+    try:
+        return get_writer().add(
+            title=title, body=body, domain=domain, type=type, tags=tags,
+            slug=slug, sources=sources, status=status,
+            allow_duplicate=allow_duplicate,
+        )
+    except MemoryWriteError as exc:
+        raise ValueError(str(exc))
 
 
 def _warmup() -> None:

@@ -24,3 +24,7 @@ COLLECTION_NAME = "memory_entries"
 # 条目级嵌入：单条超长时截断（按 section 切分的例外留待需要时再开）
 MAX_ENTRY_CHARS = 6000
 MAX_CORPUS_FILE_BYTES = 1_000_000
+
+# 写入门禁：写前检索命中的余弦相似度 >= 此值即判为近似重复（只报告、不写）。
+# 初值偏保守（宁漏报不误报，误报会白挡一次合法写入）；待 #16 在真实 KB 上校准。
+DEDUP_THRESHOLD = float(os.environ.get("MEMORY_DEDUP_THRESHOLD", "0.92"))

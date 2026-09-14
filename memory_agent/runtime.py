@@ -12,8 +12,10 @@ _bootstrap.ensure_ragcore_on_path()
 
 from memory_agent.corpus.loader import load_corpus  # noqa: E402
 from memory_agent.memory.index import MemoryIndex  # noqa: E402
+from memory_agent.memory.writer import MemoryWriter  # noqa: E402
 
 _index: MemoryIndex | None = None
+_writer: MemoryWriter | None = None
 
 
 def build_index() -> dict:
@@ -41,3 +43,17 @@ def reset_index() -> None:
     """测试用：丢弃单例。"""
     global _index
     _index = None
+
+
+def get_writer() -> MemoryWriter:
+    """取写入网关单例（复用索引做去重检索）。"""
+    global _writer
+    if _writer is None:
+        _writer = MemoryWriter(get_index())
+    return _writer
+
+
+def reset_writer() -> None:
+    """测试用：丢弃写入网关单例。"""
+    global _writer
+    _writer = None
