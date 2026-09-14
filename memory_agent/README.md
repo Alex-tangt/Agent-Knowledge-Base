@@ -29,7 +29,7 @@ memory_agent/
 ├── memory/authoring.py    # 渲染 frontmatter + 镜像 kb.py check 的校验        (#11)
 ├── memory/writer.py       # 写入网关：搜索→去重→校验→落盘→commit→增量刷新    (#11,#12,#13)
 ├── build_index.py         # CLI：从 Markdown 全量重建（新代 + 切指针）        (#10,#13)
-├── eval/                  # 检索与写路径证据：baseline_A.md、BEIR nDCG@10、写路径套件 (#9,#15,#16)
+├── eval/                  # 运行时证据：baseline_A.md（锚点）、write_path_sandbox.py + _results.md（#16）、BEIR (#15)
 └── (skill)                # 见 #14：指导 agent 何时 search/read/add 及破坏性确认规则
 ```
 
@@ -49,6 +49,12 @@ venv\Scripts\python.exe memory_agent/build_index.py
 #      "command": ["<repo>/venv/Scripts/python.exe", "<repo>/memory_agent/mcp_server.py"],
 #      "enabled": true
 #    }
+```
+
+写路径确定性 sandbox 套件（#16，需 BGE-M3；真实 KB 只读、不污染）：
+
+```powershell
+venv\Scripts\python.exe memory_agent/eval/write_path_sandbox.py
 ```
 
 工具：
