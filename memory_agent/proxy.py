@@ -17,6 +17,7 @@ import argparse
 import os
 import subprocess
 import sys
+import tempfile
 import time
 import urllib.request
 
@@ -35,6 +36,7 @@ from memory_agent.settings import (  # noqa: E402
 SERVER_SCRIPT = os.path.join(_HERE, "mcp_server.py")
 DEFAULT_START_TIMEOUT = 30.0
 DEFAULT_HEALTH_TIMEOUT = 1.0
+STALE_LOCK_SECONDS = 120.0
 
 
 def _log(message: str) -> None:
@@ -55,6 +57,50 @@ def health_ok(host: str = MCP_HTTP_HOST, port: int = MCP_HTTP_PORT,
         return False
 
 
+def _lock_path(port: int) -> str:
+    return os.path.join(tempfile.gettempdir(), f"memory-agent-daemon-{port}.lock")
+
+
+def _try_acquire_lock(lock_path: str) -> int | None:
+    """原子抢「启动权」：返回 fd 表示抢到；None 表示别人在起。
+
+    没有这把锁，N 个会话同时冷启动会各自 spawn 一个 daemon —— 每个都加载一份模型，
+    直接把内存打爆（实测）。抢到的负责 spawn + 等就绪，其余只等健康检查。
+    """
+    for attempt in range(2):
+        try:
+            fd = os.open(lock_path, os.O_CREAT | os.O_EXCL | os.O_WRONLY)
+            os.write(fd, str(os.getpid()).encode())
+            return fd
+        except FileExistsError:
+            if attempt == 0 and _lock_is_stale(lock_path):
+                try:
+                    os.remove(lock_path)
+                except OSError:
+                    pass
+                continue
+            return None
+    return None
+
+
+def _lock_is_stale(lock_path: str) -> bool:
+    try:
+        return (time.time() - os.path.getmtime(lock_path)) > STALE_LOCK_SECONDS
+    except OSError:
+        return False
+
+
+def _release_lock(lock_path: str, fd: int) -> None:
+    try:
+        os.close(fd)
+    except OSError:
+        pass
+    try:
+        os.remove(lock_path)
+    except OSError:
+        pass
+
+
 def _spawn_daemon(host: str, port: int, path: str, log_path: str) -> None:
     os.makedirs(os.path.dirname(log_path), exist_ok=True)
     creationflags = 0
@@ -71,26 +117,44 @@ def _spawn_daemon(host: str, port: int, path: str, log_path: str) -> None:
         )
 
 
+def _wait_ready(host: str, port: int, timeout: float) -> bool:
+    deadline = time.monotonic() + timeout
+    while time.monotonic() < deadline:
+        if health_ok(host, port):
+            return True
+        time.sleep(0.25)
+    return False
+
+
 def ensure_daemon(host: str = MCP_HTTP_HOST, port: int = MCP_HTTP_PORT,
                   path: str = MCP_HTTP_PATH, timeout: float = DEFAULT_START_TIMEOUT,
                   log_path: str = DAEMON_LOG) -> bool:
-    """幂等确保 daemon 在跑：已在跑直接返回 True；否则后台拉起并等就绪。"""
+    """幂等确保 daemon 在跑：已在跑直接返回；否则**由唯一抢到锁的进程**拉起并等就绪。"""
     if health_ok(host, port):
         _log(f"daemon already up at {host}:{port}")
         return True
 
-    _log(f"starting daemon: {host}:{port} (log: {log_path})")
-    _spawn_daemon(host, port, path, log_path)
+    lock_path = _lock_path(port)
+    fd = _try_acquire_lock(lock_path)
+    if fd is None:
+        # 另一个会话正在起——只等，不重复 spawn（否则 N 份模型一起加载把内存打爆）。
+        _log(f"daemon is starting elsewhere; waiting for {host}:{port}")
+        return _wait_ready(host, port, timeout)
 
-    deadline = time.monotonic() + timeout
-    while time.monotonic() < deadline:
-        if health_ok(host, port):
-            _log("daemon ready")
+    try:
+        if health_ok(host, port):  # 抢锁后复查：可能刚好被别的进程起好了
+            _log(f"daemon already up at {host}:{port}")
             return True
-        time.sleep(0.25)
-
-    _log(f"daemon did not become ready within {timeout:.0f}s; see {log_path}")
-    return False
+        _log(f"starting daemon: {host}:{port} (log: {log_path})")
+        _spawn_daemon(host, port, path, log_path)
+        ready = _wait_ready(host, port, timeout)
+        if ready:
+            _log("daemon ready")
+        else:
+            _log(f"daemon did not become ready within {timeout:.0f}s; see {log_path}")
+        return ready
+    finally:
+        _release_lock(lock_path, fd)
 
 
 async def _serve(host: str, port: int, path: str) -> None:

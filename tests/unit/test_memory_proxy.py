@@ -6,6 +6,7 @@ import http.server
 import os
 import sys
 import threading
+import time
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 sys.path.insert(0, os.path.join(ROOT, "ragcore"))
@@ -51,7 +52,7 @@ def test_ensure_short_circuits_when_already_healthy(monkeypatch):
     monkeypatch.setattr(proxy, "health_ok", lambda *a, **k: True)
     monkeypatch.setattr(proxy, "_spawn_daemon", lambda *a, **k: spawned.append(1))
 
-    assert proxy.ensure_daemon(timeout=1.0) is True
+    assert proxy.ensure_daemon(port=1, timeout=1.0) is True
     assert spawned == []
 
 
@@ -69,7 +70,7 @@ def test_ensure_spawns_then_waits_until_ready(monkeypatch):
     monkeypatch.setattr(proxy, "health_ok", fake_health)
     monkeypatch.setattr(proxy, "_spawn_daemon", fake_spawn)
 
-    assert proxy.ensure_daemon(timeout=1.0) is True
+    assert proxy.ensure_daemon(port=1, timeout=1.0) is True
     assert spawned == [1]
 
 
@@ -77,7 +78,49 @@ def test_ensure_returns_false_on_timeout(monkeypatch):
     monkeypatch.setattr(proxy, "health_ok", lambda *a, **k: False)
     monkeypatch.setattr(proxy, "_spawn_daemon", lambda *a, **k: None)
 
-    assert proxy.ensure_daemon(timeout=0.01) is False
+    assert proxy.ensure_daemon(port=1, timeout=0.01) is False
+
+
+def test_loser_does_not_spawn_while_another_starter_holds_lock(monkeypatch):
+    """抢不到锁的会话只等待，绝不再 spawn 一个 daemon（否则 N 份模型一起加载）。"""
+    lock_path = proxy._lock_path(2)
+    fd = os.open(lock_path, os.O_CREAT | os.O_EXCL | os.O_WRONLY)
+    spawned = []
+    calls = {"n": 0}
+
+    def fake_health(*a, **k):
+        calls["n"] += 1
+        return calls["n"] > 1  # 顶部检查 False，进入等待分支后变 True
+
+    monkeypatch.setattr(proxy, "health_ok", fake_health)
+    monkeypatch.setattr(proxy, "_spawn_daemon", lambda *a, **k: spawned.append(1))
+    try:
+        assert proxy.ensure_daemon(port=2, timeout=1.0) is True
+    finally:
+        os.close(fd)
+        os.remove(lock_path)
+    assert spawned == []
+
+
+def test_stale_lock_is_reclaimed(monkeypatch):
+    lock_path = proxy._lock_path(3)
+    fd = os.open(lock_path, os.O_CREAT | os.O_EXCL | os.O_WRONLY)
+    os.close(fd)
+    old = time.time() - proxy.STALE_LOCK_SECONDS - 10
+    os.utime(lock_path, (old, old))
+    spawned = []
+
+    def fake_health(*a, **k):
+        return bool(spawned)
+
+    monkeypatch.setattr(proxy, "health_ok", fake_health)
+    monkeypatch.setattr(proxy, "_spawn_daemon", lambda *a, **k: spawned.append(1))
+    try:
+        assert proxy.ensure_daemon(port=3, timeout=1.0) is True
+    finally:
+        if os.path.exists(lock_path):
+            os.remove(lock_path)
+    assert spawned == [1]
 
 
 def test_status_cli_reports_down(monkeypatch, capsys):
