@@ -6,7 +6,7 @@
 
 - 目录名 = 实验短名（kebab-case），如 `refusal-root-cause`。
 - 每个目录必须包含一个 `README.md`（记录：问题 → 假设 → 设置 → 数据 → 结论）。
-- 可运行的脚本留在目录内，禁止把脚本丢在 `backend/` 根或 `tests/` 里当孤儿。
+- 可运行的脚本留在目录内，禁止把脚本丢在 `ragcore/`/`legal_web/` 根或 `tests/` 里当孤儿。
 - 跑完必须写结论；没有结论的实验目录不算完成。
 - **进度反馈**：耗时的实验脚本必须带进度条（tqdm）或阶段打印，禁止无输出地长跑；模型加载用 `local_files_only=True`（缓存优先），避免 HF 网络检查卡死。教训：rerank-latency POC 曾因无进度 + HF 重试卡死 15 分钟。
 

@@ -1,6 +1,6 @@
 """E2E 延迟定位：对运行中的后端逐条跑问题，解析 metadata.timing 四段耗时。
 
-前提：backend 已在 :8000 运行且模型 ready（GET /api/status -> ready=true）。
+前提：legal_web 后端已在 :8000 运行且模型 ready（GET /api/status -> ready=true）。
 用法：
     venv/Scripts/python.exe experiments/e2e-latency/bench_e2e.py [N]
 输出：本目录 results.md + stdout 摘要。

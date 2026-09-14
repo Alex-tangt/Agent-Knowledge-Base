@@ -16,8 +16,8 @@ DeepSeek 的多维度 LLM-as-judge**：一次请求返回忠实度、相关性�
 
 用法
 ----
-     python tests/score_eval.py            # 全量 53 题评测（含 RAG 与 LLM-only 对比）
-     python tests/score_eval.py --smoke    # 仅前 3 题（快速验证裁判模型可用）
+     venv/Scripts/python.exe legal_web/tests/score_eval.py            # 全量 53 题评测（含 RAG 与 LLM-only 对比）
+     venv/Scripts/python.exe legal_web/tests/score_eval.py --smoke    # 仅前 3 题（快速验证裁判模型可用）
  """
 
 import os
@@ -29,9 +29,8 @@ import random
 import argparse
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-REPO = os.path.dirname(HERE)
-BACKEND = os.path.join(REPO, "backend")
-sys.path.insert(0, BACKEND)
+ROOT = os.path.dirname(os.path.dirname(HERE))
+sys.path.insert(0, os.path.join(ROOT, "ragcore"))
 sys.path.insert(0, HERE)
 
 from config.config import API_KEY, BASE_URL, MODEL

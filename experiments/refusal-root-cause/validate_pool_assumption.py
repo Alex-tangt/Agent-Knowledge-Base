@@ -3,14 +3,14 @@
   1. 高分case的相关chunk在top-100内能重排进top-8
   2. false-refusal case中pool=100是否有pool=20漏掉的好chunk（距离<0.5）
 
-用法: cd backend && python ../tests/validate_pool_assumption.py
+用法: venv/Scripts/python.exe experiments/refusal-root-cause/validate_pool_assumption.py
 """
 import sys
 import os
 import time
 
-ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-sys.path.insert(0, os.path.join(ROOT_DIR, "backend"))
+ROOT_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+sys.path.insert(0, os.path.join(ROOT_DIR, "ragcore"))
 
 from services.rag_service import RAGService
 

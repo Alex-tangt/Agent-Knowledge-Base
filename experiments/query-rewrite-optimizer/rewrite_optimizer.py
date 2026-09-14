@@ -5,9 +5,9 @@ import re
 import sys
 import time
 
-sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "backend"))
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "ragcore"))
 
-from config.config import API_KEY, BASE_URL, MODEL, BACKEND_DIR
+from config.config import API_KEY, BASE_URL, MODEL, LEGAL_WEB_DIR
 from utils.logger import logger
 import openai
 
@@ -40,9 +40,9 @@ TEST_SET = [
     "我发现某APP未经同意收集我的个人信息，可以依据个人信息保护法要求什么？",
 ]
 
-STATE_FILE = os.path.join(BACKEND_DIR, "optimizer_state.json")
-LOG_FILE = os.path.join(BACKEND_DIR, "optimizer_log.json")
-REPORT_FILE = os.path.join(BACKEND_DIR, "optimizer_report.md")
+STATE_FILE = os.path.join(LEGAL_WEB_DIR, "optimizer_state.json")
+LOG_FILE = os.path.join(LEGAL_WEB_DIR, "optimizer_log.json")
+REPORT_FILE = os.path.join(LEGAL_WEB_DIR, "optimizer_report.md")
 
 OPTIMIZER_SYSTEM_PROMPT = f"""你是一个查询改写prompt优化专家。你的目标是通过迭代改进改写系统提示词，
 让改写后的搜索查询在向量检索中获得更好的命中效果。
@@ -319,7 +319,7 @@ class RewriteOptimizer:
         })
         self._save_log()
 
-        test_out = os.path.join(BACKEND_DIR, "optimizer_test_result.json")
+        test_out = os.path.join(LEGAL_WEB_DIR, "optimizer_test_result.json")
         with open(test_out, "w", encoding="utf-8") as f:
             json.dump(test_result, f, ensure_ascii=False, indent=2)
         logger.info(f"Test result saved to {test_out}")

@@ -1,6 +1,22 @@
 # AGENTS.md
 
-FastAPI + vanilla-JS RAG chat app。目标形状为**个人 RAG 工具**（service 层 + 切分策略为可复用核心，适配层对外暴露，政策法规问答为旗舰 demo，见 `docs/adr/0001`）。起点是大学 NLP 课程作业（政策法规问答助手）。Backend serves the frontend as static files, so there is no separate frontend build or server.
+FastAPI + vanilla-JS RAG 应用，已重构为三模块单仓：`ragcore/`（可复用核心）、`legal_web/`（适配层实例 / 回归锚点——FastAPI 应用 + 前端）、`memory_agent/`（agent 记忆能力包，MCP + skill）。目标形状为 **Agent-Knowledge-Base**（hero = 记忆能力包；政策法规问答 web 退为适配层实例与回归锚点，见 `docs/adr/0005`–`0007`）。起点是大学 NLP 课程作业（政策法规问答助手）。Backend serves the frontend as static files, so there is no separate frontend build or server.
+
+## 目录布局
+
+```
+ragcore/            # 可复用核心（零 FastAPI 依赖）
+  services/  strategies/  models/  config/  utils/  agents/
+legal_web/          # 适配层实例 / 回归锚点
+  app.py  api/  frontend/  data/raw/  tests/
+  ingest.py  fetch_laws.py  test_langsmith.py  kb_registry.json
+  requirements.txt  .env  vector_db/  uploads/
+memory_agent/       # 记忆能力包（MCP + skill），骨架见 memory_agent/README.md，票据 #10+ 填充
+tests/unit/         # ragcore 核心单测（pytest）
+experiments/  docs/
+```
+
+`ragcore` 与 `legal_web` 之间用 **sys.path 垫片**连接：入口（`legal_web/app.py`、`legal_web/ingest.py`、`tests/unit/conftest.py`、实验脚本）把 `ragcore/` 加入 `sys.path`，包名保持 `services/`、`config/`、`utils/`、`strategies/`、`agents/` 不变。`agents/`（router_graph + session_memory）属核心——`rag_service` 直接 import 它们。
 
 ## Virtual environment (REQUIRED)
 The project uses a venv at the repo root (`venv/`). Always activate it first:
@@ -8,36 +24,36 @@ The project uses a venv at the repo root (`venv/`). Always activate it first:
 # From repo root
 venv\Scripts\activate       # Windows
 # source venv/bin/activate  # macOS/Linux
-pip install -r backend/requirements.txt
+pip install -r legal_web/requirements.txt
 ```
 `venv/` is gitignored. If it doesn't exist, create it: `python -m venv venv`.
 
 ## Run / develop
-- Activate venv (see above), then: `cd backend && python app.py` (uses uvicorn on `0.0.0.0:8000`). Open `http://localhost:8000`.
+- Activate venv (see above), then: `venv\Scripts\python.exe legal_web/app.py` (uses uvicorn on `0.0.0.0:8000`). Open `http://localhost:8000`.
   - Startup takes ~1s to serve the frontend page.
   - Models (BGE-M3 embedding + bge-reranker-v2-m3) load in background (~30-40s); the frontend shows a loading screen with step-by-step progress.
-- Build or rebuild the knowledge base: `cd backend && python ingest.py` ingests `../data/raw/*` into Qdrant local mode (`./vector_db`). Documents can also be added at runtime via the upload endpoint.
-- The frontend is served from `/` via `StaticFiles(directory="../frontend")`. No build step — edit `frontend/*.html|css|js` directly.
+- Build or rebuild the knowledge base: `venv\Scripts\python.exe legal_web/ingest.py` ingests `legal_web/data/raw/*` into Qdrant local mode (`legal_web/vector_db`). Documents can also be added at runtime via the upload endpoint.
+- The frontend is served from `/` via `StaticFiles(directory="legal_web/frontend")`. No build step — edit `legal_web/frontend/*.html|css|js` directly.
 - There is **no lint, typecheck, or CI config** in this repo. Don't invent those commands.
 
 ## Working directory
-Paths are anchored to the backend directory (`BACKEND_DIR` in `config/config.py`, `FRONTEND_DIR` in `app.py`). `cd backend && python app.py` boots correctly from **any** CWD.
+Paths are anchored in code, not to CWD: `ROOT_DIR` / `RAGCORE_DIR` / `LEGAL_WEB_DIR` in `ragcore/config/config.py`, `FRONTEND_DIR` in `legal_web/app.py`. `legal_web/app.py` boots correctly from **any** CWD.
 
 ## Environment (`.env`)
-`backend/.env` is required and **gitignored**. `backend/config/config.py` raises `ValueError` at import if these are missing:
+`legal_web/.env` is required and **gitignored**. `ragcore/config/config.py` loads it by explicit path (no CWD dependency) and raises `ValueError` at import if these are missing:
 - `API_KEY`, `BASE_URL`, `Model` (capital `M` — not `MODEL`).
-- LangSmith is optional: tracing activates when `LANGSMITH_API_KEY` is set and `LANGSMITH_TRACING=true` (default true). Without the key, trace calls pass through silently (`backend/services/langsmith_service.py`).
+- LangSmith is optional: tracing activates when `LANGSMITH_API_KEY` is set and `LANGSMITH_TRACING=true` (default true). Without the key, trace calls pass through silently (`ragcore/services/langsmith_service.py`).
 
 ## Dependencies
-- `backend/requirements.txt` — authoritative dependency set for this project.
+- `legal_web/requirements.txt` — authoritative dependency set for this project.
   - Key deps: `fastapi`, `uvicorn`, `openai`, `qdrant-client`, `sentence-transformers`, `flagembedding`, `langchain`, `langchain-core`, `langchain-community`, `langchain-openai`, `langchain-text-splitters`, `pydantic`, `python-dotenv`, `pypdf`, `langsmith`, `python-multipart`.
 - Root `requirements.txt` — pinned versions (UTF-8, was UTF-16 LE before a fix).
 
 ## Architecture / entrypoints
-- `backend/app.py` — FastAPI app, CORS (`*`), mounts API router under `API_PREFIX="/api"` and static files at `/`. Lifespan event triggers background model warmup.
-- `backend/api/routes.py` — endpoints (see below). Services are created via **lazy singleton getters** (`_get_rag_service()`, etc.), not module-level globals, to keep imports fast.
-- `backend/utils/model_status.py` — shared `STATUS` dict tracking model loading state (`embedding`, `reranker`, `ready`). Polled by frontend loading screen.
-- `backend/agents/` — Agent-related modules:
+- `legal_web/app.py` — FastAPI app, CORS (`*`), mounts API router under `API_PREFIX="/api"` and static files at `/`. Lifespan event triggers background model warmup.
+- `legal_web/api/routes.py` — endpoints (see below). Services are created via **lazy singleton getters** (`_get_rag_service()`, etc.), not module-level globals, to keep imports fast.
+- `ragcore/utils/model_status.py` — shared `STATUS` dict tracking model loading state (`embedding`, `reranker`, `ready`). Polled by frontend loading screen.
+- `ragcore/agents/` — Agent-related modules:
   - `router_graph.py` — LangGraph-based intent classifier that auto-routes queries to the correct knowledge base.
   - `session_memory.py` — In-memory conversation memory for query rewriting context.
 
@@ -54,7 +70,7 @@ Paths are anchored to the backend directory (`BACKEND_DIR` in `config/config.py`
 | `GET` | `/health` | Liveness check (`{"status":"healthy"}`). |
 | `GET` | `/status` | Model loading status (`{"embedding":"ready","reranker":"ready","ready":true}`). |
 
-### Services (`backend/services/`)
+### Services (`ragcore/services/`)
 | Service | Role |
 |---------|------|
 | `rag_service` | Core RAG pipeline: query rewriting → auto-routing → hybrid retrieval (vector + keyword + anchor) → reranker → LLM generation. Delegates to `chat_service` when `use_rag=False`. Supports multi-KB via `get_vector_store(kb_name)`. |
@@ -64,7 +80,7 @@ Paths are anchored to the backend directory (`BACKEND_DIR` in `config/config.py`
 | `reranker_service` | Cross-encoder reranker (`BAAI/bge-reranker-v2-m3`). Lazy-init on first use. |
 | `local_embedding_service` | Text embedding (`BAAI/bge-m3`, 1024-dim). Lazy-init on first use. |
 | `langsmith_service` | Optional LangSmith tracing (no-op when key not configured). |
-| `kb_registry` | Knowledge base registry — maps KB names to Qdrant collections. Persisted to `backend/kb_registry.json`. |
+| `kb_registry` | Knowledge base registry — maps KB names to Qdrant collections. Persisted to `legal_web/kb_registry.json`. |
 
 ### Lazy-loading strategy
 All heavy imports and model loads are deferred to avoid blocking HTTP startup:
@@ -78,8 +94,8 @@ All heavy imports and model loads are deferred to avoid blocking HTTP startup:
 The `warmup()` function (called from `app.py` lifespan) eagerly triggers BGE-M3 + reranker loading in a background thread so they are ready before the user sends their first message.
 
 ## RAG specifics
-- Knowledge base: 21 Chinese legal/government documents in `data/raw/`. `data/SOURCES.md` lists sources.
-- **Vector store**: Qdrant local mode (`backend/vector_db/`), one collection per knowledge base. Default: `documents`.
+- Knowledge base: 21 Chinese legal/government documents in `legal_web/data/raw/`. `legal_web/data/SOURCES.md` lists sources.
+- **Vector store**: Qdrant local mode (`legal_web/vector_db/`), one collection per knowledge base. Default: `documents`.
 - **Embedding**: `BAAI/bge-m3` (1024-dim) via `sentence-transformers`, `normalize_embeddings=True`.
 - **Reranker**: `BAAI/bge-reranker-v2-m3` cross-encoder, re-ranks candidate pool before feeding to LLM.
 - **Chunking**: Article-aware splitting at "第X条" boundaries (law documents), with title prepended. `ARTICLE_MAX_CHARS=800`. Fallback recursive split for non-law docs.
@@ -90,14 +106,14 @@ The `warmup()` function (called from `app.py` lifespan) eagerly triggers BGE-M3 
 - `POST /api/chat/stream` streams **JSON Lines** (`application/jsonl`): each line is `{"type":"content"|"metadata"|"error", ...}`. `content` chunks and `metadata` carry a `sources` array `[{content, source, score, chunk_id}]` for citation display. Scores are post-reranker distances (lower = more relevant).
 
 ## Multi-KB & Agent routing
-- **KB Registry**: `backend/services/kb_registry.py` manages KB metadata. Stored as JSON at `backend/kb_registry.json`. Default KB: `documents` (政策法规知识库).
-- **Auto-routing**: When `kb_name="auto"`, the LangGraph router agent (`backend/agents/router_graph.py`) classifies the query and selects the best KB. Otherwise, uses the explicitly specified KB.
-- **Session memory**: `backend/agents/session_memory.py` stores recent conversation turns per `session_id`. Used for context-aware query rewriting (future enhancement).
+- **KB Registry**: `ragcore/services/kb_registry.py` manages KB metadata. Stored as JSON at `legal_web/kb_registry.json`. Default KB: `documents` (政策法规知识库).
+- **Auto-routing**: When `kb_name="auto"`, the LangGraph router agent (`ragcore/agents/router_graph.py`) classifies the query and selects the best KB. Otherwise, uses the explicitly specified KB.
+- **Session memory**: `ragcore/agents/session_memory.py` stores recent conversation turns per `session_id`. Used for context-aware query rewriting (future enhancement).
 - Create additional KBs via `POST /api/kb/create`, ingest docs into them via `POST /api/documents/upload?kb_name=`.
 
 ## Frontend
 - Vanilla JS SPA with ES modules, served as static files. No build step.
-- `frontend/script.js` — main controller. `frontend/js/` — modules: `apiService`, `messageHandler`, `ragUI`, `config`, `themeManager`, `emojiManager`, `documentManager`.
+- `legal_web/frontend/script.js` — main controller. `legal_web/frontend/js/` — modules: `apiService`, `messageHandler`, `ragUI`, `config`, `themeManager`, `emojiManager`, `documentManager`.
 - **Loading screen**: On page load, shows a two-step progress indicator (Embedding / Reranker). Polls `GET /api/status` every 1s. When `ready=true`, hides overlay and enables chat input.
 - **Source citations**: Collapsed card list under each AI message. Score badges color-coded: green (<0.35), yellow (0.35-0.60), red (>0.60).
 - **RAG toggle**: Sidebar switch. Stored as `kbRagMode` in localStorage.
@@ -105,9 +121,9 @@ The `warmup()` function (called from `app.py` lifespan) eagerly triggers BGE-M3 
 - **Versioning**: JS/CSS files use `?v=N` cache busting. Increment when changing any JS module.
 
 ## Tests
-- **单元测试**：`tests/unit/`（pytest）——`test_document_service.py`、`test_rag_service.py`、`test_session_memory.py`。运行：`python -m pytest tests/unit -q`。
-- Smoke test: `cd backend && python test_langsmith.py`.
-- RAG vs LLM-only eval: from repo root run `python tests/run_eval.py` (backend on :8000, KB built). Parses `tests/questions.md` and writes `tests/results.md`. Fill `tests/failure_analysis.md` for failure cases. `tests/score_eval.py` does LLM-as-judge multi-dimension scoring.
+- **单元测试**：`tests/unit/`（pytest）——`test_document_service.py`、`test_rag_service.py`、`test_session_memory.py`。运行：`venv\Scripts\python.exe -m pytest tests/unit -q`。
+- Smoke test: `venv\Scripts\python.exe legal_web/test_langsmith.py`.
+- RAG vs LLM-only eval: from repo root run `venv\Scripts\python.exe legal_web/tests/run_eval.py` (backend on :8000, KB built). Parses `legal_web/tests/questions.md` and writes `legal_web/tests/results.md`. Fill `legal_web/tests/failure_analysis.md` for failure cases. `legal_web/tests/score_eval.py` does LLM-as-judge multi-dimension scoring.
 
 ## 开发工作流（AI 必走，请求先进来路由）
 
@@ -145,13 +161,17 @@ The `warmup()` function (called from `app.py` lifespan) eagerly triggers BGE-M3 
 - ✅ 1. 初始基线 commit（本地 + 远程，单根 `e723e5b`）。
 - ✅ 2. 延迟调查（rerank-latency + e2e-latency 两轮实验）：生产 rerank mean ≈15s（CPU 固有，接受为已知限制）；"分钟级"真凶 = 优化器实验的 eval_service（对子查询重排 + pool 100，已记录发现，实验封存不修）；pool 截断延后为 planned optimization；模型加载已加 `local_files_only=True`（消除冷启动 HF 网络卡死）。
 - ✅ 3. 拒答根因调查（≤1 天，时间盒）：结论=机制健康（基线误拒率 2.4%、无答案拒答率 91.7%），唯一误拒为 reranker 边界分(0.87>0.85)+anchor 污染，选 A 接受现状并记录（详见 `experiments/refusal-root-cause/`）。
-- ✅ 4. 评估×2 → 因选 A 无二次评估，`tests/results_scored.md` 即唯一最终证据（拒答 21→12，context_precision 3.4→4.8，source_recall 1.0）。
+- ✅ 4. 评估×2 → 因选 A 无二次评估，`legal_web/tests/results_scored.md` 即唯一最终证据（拒答 21→12，context_precision 3.4→4.8，source_recall 1.0）。
 - ✅ 5. README 简历门面（评测证据 + 工程纪律 + 目录修正）+ 终版整理。
 - MCP（延后）：stdio + `list_kbs`/`search`/`ask`，复用 service 层。
 
 ## 方向重定向（2026-09-14）
 
-项目升级为 **Agent-Knowledge-Base**：hero = agent 记忆能力包（MCP + skill），`legal_web` 退为适配层实例 / 回归锚点。布局甲⁺（`ragcore/` + `legal_web/` + `memory_agent/`）与更名待执行。决策见 `docs/adr/0005`–`0007`，领域语言见 `CONTEXT.md`。
+项目升级为 **Agent-Knowledge-Base**：hero = agent 记忆能力包（MCP + skill），`legal_web` 退为适配层实例 / 回归锚点。决策见 `docs/adr/0005`–`0007`，领域语言见 `CONTEXT.md`。
+
+- ✅ 甲⁺ 布局重排（#9 第一轮）：`backend/` 拆为 `ragcore/` + `legal_web/`，新建 `memory_agent/`；T1 锚点复现（71 passed + import-ok，见 `memory_agent/eval/baseline_A.md`）。
+- ⏳ 仓库与本地目录更名 `Agent-Knowledge-Base`（GitHub rename + 本地目录 + venv 重建 + remote 重设 + 文档/KB sources 同步）待执行（#9 第二轮）。
+- 下一步：`memory_agent` 读路径最小闭环（#10，stdio MCP `memory_search`/`memory_get`）。
 
 ## 后续优化待办（Backlog / 简历谈资池）
 
@@ -159,16 +179,16 @@ The `warmup()` function (called from `app.py` lifespan) eagerly triggers BGE-M3 
 
 1. **查询改写质量**：改写为关键词组合可能导致语义检索效果下降（尤其多约束复合句丢约束）。问题节点：查询改写（`rag_service._rewrite_query`）、问题分解（eval_service 多路）。关联：`experiments/query-rewrite-optimizer/` 结论（二元意图判断与关键词改写结构性冲突）。
 2. **延迟优化：pool 边界**：`ADAPTIVE_POOL=20` 与候选池实际 ~32（vector+keyword+anchor 合并）的边界是否合理；pre-rerank 候选截断 knob（实测 rerank 线性于池大小，~230ms/对）。关联：`experiments/rerank-latency/`、`experiments/e2e-latency/`。
-3. **混合检索融合机制**：vector + keyword + anchor 三类信号的融合/加权是否最优（anchor 命中过多可能淹没向量信号）。问题节点：`strategies/legal.py` 的 `_add` 合并逻辑。
+3. **混合检索融合机制**：vector + keyword + anchor 三类信号的融合/加权是否最优（anchor 命中过多可能淹没向量信号）。问题节点：`ragcore/strategies/legal.py` 的 `_add` 合并逻辑。
 
 ## Gotchas
 - **Always activate venv first** (`venv\Scripts\activate` on Windows). Running without it may miss installed dependencies.
-- **Qdrant local mode locks** the storage directory exclusively. Do not run two Python processes that create `VectorStoreService` concurrently against the same `vector_db/`. If you get "already accessed" errors, kill the other process and delete `vector_db/.lock`.
+- **Qdrant local mode locks** the storage directory exclusively. Do not run two Python processes that create `VectorStoreService` concurrently against the same `vector_db/`. If you get "already accessed" errors, kill the other process and delete `legal_web/vector_db/.lock`.
 - **First run** after `pip install` downloads BGE-M3 (~2.2GB) and bge-reranker-v2-m3 (~2.2GB) from HuggingFace. Subsequent runs load from cache instantly.
 - **`RELEVANCE_THRESHOLD=0.85`** is a generous post-reranker value; the prompt handles most boundary cases. Use `experiments/relevance-calibration/calibrate_relevance.py` to recalibrate if needed.
 - **Browser cache** — after frontend changes, increment the `?v=N` query string on JS/CSS links in `index.html` AND in all `import` statements across all JS files. Otherwise browsers serve stale cached versions.
 - **Article-aware splitting** requires ≥3 "第X条" markers to activate; documents with fewer markers fall back to recursive splitting.
-- `backend/fetch_laws.py` — law document scraper. One-off experiments live in `experiments/` (see its README).
+- `legal_web/fetch_laws.py` — law document scraper. One-off experiments live in `experiments/` (see its README).
 - Git history uses loose Conventional-Commit-style prefixes in Chinese (e.g. `feat:`, `chore:`). Match that when committing.
 
 ## Agent skills

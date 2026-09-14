@@ -1,9 +1,9 @@
 import json
 import os
-from config.config import BACKEND_DIR
+from config.config import LEGAL_WEB_DIR
 from utils.logger import logger
 
-KB_REGISTRY_FILE = os.path.join(BACKEND_DIR, "kb_registry.json")
+KB_REGISTRY_FILE = os.path.join(LEGAL_WEB_DIR, "kb_registry.json")
 
 
 def _load():

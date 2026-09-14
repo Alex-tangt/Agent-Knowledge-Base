@@ -4,6 +4,9 @@
 import sys
 import os
 
+# 导入垫片：可复用核心 ragcore/ 加入 sys.path
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "ragcore"))
+
 def test_imports():
     """测试所有必要的导入"""
     print("测试模块导入...")

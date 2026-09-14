@@ -2,14 +2,13 @@
 """RAG vs LLM-only 对比评测脚本（任务书 §2.6 测试与分析要求）。
 
 前提：
-1. 已构建知识库：在 backend/ 下运行 `python ingest.py`；
-2. 后端已启动：在 backend/ 下运行 `python app.py`（默认 http://localhost:8000）。
+1. 已构建知识库：`venv/Scripts/python.exe legal_web/ingest.py`；
+2. 后端已启动：`venv/Scripts/python.exe legal_web/app.py`（默认 http://localhost:8000）。
 
-用法：
-    cd backend
-    python tests/run_eval.py
+用法（仓库根）：
+    venv/Scripts/python.exe legal_web/tests/run_eval.py
 输出：
-    tests/results.md  （对比表格，含人工评分列待填）
+    legal_web/tests/results.md  （对比表格，含人工评分列待填）
 """
 import json
 import os

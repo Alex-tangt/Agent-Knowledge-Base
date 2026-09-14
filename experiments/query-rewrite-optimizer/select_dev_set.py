@@ -1,6 +1,6 @@
 """Dev set 筛选工具：从 questions.md 按 best_dist_orig 降序选出候选查询。
 
-Usage（从 backend 目录或项目根目录运行）:
+Usage（从仓库根运行）:
     python experiments/query-rewrite-optimizer/select_dev_set.py [--top N] [--output FILE]
 """
 import argparse
@@ -10,7 +10,7 @@ import os
 import re
 import sys
 
-sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "backend"))
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "ragcore"))
 
 from utils.logger import logger
 

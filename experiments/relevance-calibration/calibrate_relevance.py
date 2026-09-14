@@ -1,10 +1,11 @@
 """校准相关性拒答阈值 (Qdrant + BGE-M3 版本)。
 
 用法:
-    cd backend && python calibrate_relevance.py
+    venv/Scripts/python.exe experiments/relevance-calibration/calibrate_relevance.py
 """
+import os
 import sys
-sys.path.insert(0, ".")
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "ragcore"))
 
 from config.config import QDRANT_COLLECTION_NAME
 from services.vector_store_service import VectorStoreService

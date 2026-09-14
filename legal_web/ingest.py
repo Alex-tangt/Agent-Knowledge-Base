@@ -1,19 +1,20 @@
-"""将 data/raw 下的领域文档批量灌入向量库，构建可复现的知识库。
+"""将 legal_web/data/raw 下的领域文档批量灌入向量库，构建可复现的知识库。
 
-用法：
-    cd backend
-    python ingest.py
+用法（仓库根）：
+    venv\\Scripts\\python.exe legal_web/ingest.py
 """
 import os
 import sys
 
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+_HERE = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, os.path.join(_HERE, "..", "ragcore"))
+sys.path.insert(0, _HERE)
 
 from services.document_service import DocumentService
 from services.vector_store_service import VectorStoreService
 from utils.logger import logger
 
-RAW_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "data", "raw")
+RAW_DIR = os.path.join(_HERE, "data", "raw")
 
 
 def list_raw_files(raw_dir: str):

@@ -1,6 +1,13 @@
 import os
 from dotenv import load_dotenv
 
+# 目录锚点：ragcore/config/config.py 向上三级 = 仓库根
+ROOT_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+RAGCORE_DIR = os.path.join(ROOT_DIR, "ragcore")
+LEGAL_WEB_DIR = os.path.join(ROOT_DIR, "legal_web")
+
+# .env 位于适配层 legal_web/；显式锚定，不依赖启动目录
+load_dotenv(os.path.join(LEGAL_WEB_DIR, ".env"))
 load_dotenv()
 
 API_KEY = os.getenv("API_KEY")
@@ -20,9 +27,8 @@ LANGSMITH_PROJECT = os.getenv("LANGSMITH_PROJECT", "rag-knowledge-base")
 LANGSMITH_ENDPOINT = os.getenv("LANGSMITH_ENDPOINT", "https://api.smith.langchain.com")
 LANGSMITH_TRACING = os.getenv("LANGSMITH_TRACING", "true").lower() == "true"
 
-BACKEND_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-VECTOR_DB_PATH = os.path.join(BACKEND_DIR, "vector_db")
-UPLOAD_DIR = os.path.join(BACKEND_DIR, "uploads")
+VECTOR_DB_PATH = os.environ.get("VECTOR_DB_PATH") or os.path.join(LEGAL_WEB_DIR, "vector_db")
+UPLOAD_DIR = os.environ.get("UPLOAD_DIR") or os.path.join(LEGAL_WEB_DIR, "uploads")
 
 ARTICLE_MAX_CHARS = 800
 

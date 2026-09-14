@@ -1,4 +1,4 @@
-"""抓取真实法典全文到 data/raw/。
+"""抓取真实法典全文到 legal_web/data/raw/。
 
 来源均为公开、合规的官方或公开转载站点（中国人大网 / 最高检 / 部委镜像 / 公开转载），
 文本为法律法规全文，属公共领域，仅供学习参考。
@@ -7,7 +7,7 @@ import os, sys, requests
 from bs4 import BeautifulSoup
 
 sys.path.insert(0, ".")
-RAW = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data", "raw")
+RAW = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "raw")
 os.makedirs(RAW, exist_ok=True)
 
 UA = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"}

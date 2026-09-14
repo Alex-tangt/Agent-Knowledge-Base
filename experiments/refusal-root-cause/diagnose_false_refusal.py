@@ -4,9 +4,9 @@ import asyncio
 import json
 from pathlib import Path
 
-backend_dir = Path(__file__).resolve().parent.parent / "backend"
-sys.path.insert(0, str(backend_dir))
-os.chdir(str(backend_dir))
+ragcore_dir = Path(__file__).resolve().parent.parent.parent / "ragcore"
+sys.path.insert(0, str(ragcore_dir))
+os.chdir(str(Path(__file__).resolve().parent.parent.parent / "legal_web"))
 
 from services.rag_service import (
     RAGService,

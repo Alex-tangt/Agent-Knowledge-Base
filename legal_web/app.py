@@ -1,5 +1,10 @@
 import os
+import sys
 import asyncio
+
+# 导入垫片：把可复用核心 ragcore/ 加入 sys.path（保留 services/config/... 原包名）
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "ragcore"))
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
@@ -56,8 +61,8 @@ app.add_middleware(
 # 注册API路由
 app.include_router(router, prefix=API_PREFIX)
 
-# 静态文件服务（提供前端界面），路径锚定到 backend/ 所在位置，避免依赖启动目录
-FRONTEND_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "frontend"))
+# 静态文件服务（提供前端界面），路径锚定到 legal_web/frontend，避免依赖启动目录
+FRONTEND_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "frontend")
 app.mount("/", StaticFiles(directory=FRONTEND_DIR, html=True), name="static")
 
 

@@ -53,9 +53,13 @@ build/
 dist/
 *.egg-info/
 
-# Generated vector database (rebuild via backend/ingest.py)
+# Generated vector database (rebuild via legal_web/ingest.py)
 #
-backend/vector_db/
+legal_web/vector_db/
+
+# Runtime uploads
+#
+legal_web/uploads/
 
 # Trae IDE
 #
