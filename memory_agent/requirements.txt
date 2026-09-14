@@ -1,0 +1,5 @@
+# memory_agent 自有依赖。
+# 复用 ragcore 引擎的依赖（qdrant-client / sentence-transformers / pyyaml /
+# python-dotenv / langsmith）见 legal_web/requirements.txt —— 本包进程内调用
+# ragcore，不重复声明。
+mcp>=2.2,<3

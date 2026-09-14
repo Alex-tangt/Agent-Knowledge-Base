@@ -57,6 +57,10 @@ dist/
 #
 legal_web/vector_db/
 
+# Generated memory index (rebuild via memory_agent/build_index.py)
+#
+memory_agent/vector_db/
+
 # Runtime uploads
 #
 legal_web/uploads/
