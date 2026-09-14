@@ -130,7 +130,7 @@ The `warmup()` function (called from `app.py` lifespan) eagerly triggers BGE-M3 
 - **Versioning**: JS/CSS files use `?v=N` cache busting. Increment when changing any JS module.
 
 ## Tests
-- **单元测试**：`tests/unit/`（pytest）——`test_document_service.py`、`test_rag_service.py`、`test_session_memory.py`、`test_memory_corpus.py`、`test_memory_index.py`、`test_memory_writer.py`。运行：`venv\Scripts\python.exe -m pytest tests/unit -q`（106 passed）。
+- **单元测试**：`tests/unit/`（pytest）——`test_document_service.py`、`test_rag_service.py`、`test_session_memory.py`、`test_memory_corpus.py`、`test_memory_index.py`、`test_memory_writer.py`、`test_memory_lazy_warmup.py`。运行：`venv\Scripts\python.exe -m pytest tests/unit -q`（122 passed）。
 - Smoke test: `venv\Scripts\python.exe legal_web/test_langsmith.py`.
 - **启动冒烟（boot 闸门）**：后台起 `legal_web/app.py`，独立探测 `/api/status` → `ready:true`、`/` 与 `/script.js` → 200、`/api/kb/list`、`/api/documents/count?kb_name=documents`，再杀进程树确认端口与 Qdrant 锁释放。命令与结果见 `memory_agent/eval/baseline_A.md`（比"单测 + 导入冒烟"更强的收工锚点）。
 - RAG vs LLM-only eval: from repo root run `venv\Scripts\python.exe legal_web/tests/run_eval.py` (backend on :8000, KB built). Parses `legal_web/tests/questions.md` and writes `legal_web/tests/results.md`. Fill `legal_web/tests/failure_analysis.md` for failure cases. `legal_web/tests/score_eval.py` does LLM-as-judge multi-dimension scoring.
@@ -184,7 +184,8 @@ The `warmup()` function (called from `app.py` lifespan) eagerly triggers BGE-M3 
 - ✅ 读路径最小闭环（#10，2026-09-14）：`memory_agent` 条目级派生索引（复用 `ragcore` BGE-M3 + Qdrant，独立路径）+ stdio MCP `memory_search`/`memory_get`；60 条（20 可写 KB / 40 只读本仓库）。决策见 `docs/adr/0008`。
 - ✅ 写入网关（#11，2026-09-14）：MCP `memory_add`——写前检索去重（命中近似只报告、不写）、frontmatter 镜像 `kb.py check` 校验（另强制 domain↔type）、路径级单文件 git commit（只提交本条目，避开并发会话的脏改动）。决策见 `docs/adr/0009`；单测 `tests/unit/test_memory_writer.py`（106 passed 全绿）。
 - ✅ 生命周期工具（#12，2026-09-14）：MCP `memory_supersede`（新建 + 双向标注 `supersedes`/`superseded_by`，新旧同一次 commit）与 `memory_archive`（置 `status: archived` + `archive_reason`，永不删文件）；两者默认只返回 `confirmation_required` 预览，需 `confirm=true` 才落盘。决策见 `docs/adr/0010`；单测 `tests/unit/test_memory_writer.py`（117 passed 全绿）。
-- 下一步：索引增量一致性（#13，含"代目录 + 指针切换"与写后刷新钩子）；随后 #14 skill、#15 BEIR、#16 写路径 sandbox 套件、#17 dogfood。
+- ✅ 惰性预热（#19 第一步，2026-09-14）：MCP 服务**默认不再预热** BGE-M3（要低延迟可设 `MEMORY_WARMUP=1`）。实测启动私有内存 **3953MB → 54MB**。根因：每个 opencode 会话各拉起一份 MCP、各吃 ~3.9GB（BGE-M3 权重 2.17GB + torch 运行时 + 加载峰值），三条并行会话把系统 commit 打满 → `Out of memory` / 卡死 / `uv_spawn` 失败。剩余项（共享单实例 / 换小模型）见 issue #19。
+- 下一步：索引增量一致性（#13，含"代目录 + 指针切换"与写后刷新钩子）；随后 #15 BEIR、#16 写路径 sandbox 套件、#17 dogfood。（#14 skill 骨架已装到全局 `skills/memory-agent`。）
 
 ## 后续优化待办（Backlog / 简历谈资池）
 

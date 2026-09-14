@@ -28,3 +28,13 @@ MAX_CORPUS_FILE_BYTES = 1_000_000
 # 写入门禁：写前检索命中的余弦相似度 >= 此值即判为近似重复（只报告、不写）。
 # 初值偏保守（宁漏报不误报，误报会白挡一次合法写入）；待 #16 在真实 KB 上校准。
 DEDUP_THRESHOLD = float(os.environ.get("MEMORY_DEDUP_THRESHOLD", "0.92"))
+
+
+def warmup_on_start() -> bool:
+    """服务启动时是否预热嵌入模型。
+
+    默认**关**（issue #19）：BGE-M3 常驻约 3.9GB 私有内存，每个 opencode 会话都会拉起
+    一份 MCP，无条件预热会把系统 commit 打满。改为惰性——首次真正检索时才加载。
+    需要低延迟的场景可设 `MEMORY_WARMUP=1` 换回预热。
+    """
+    return os.environ.get("MEMORY_WARMUP", "0").strip().lower() in {"1", "true", "yes", "on"}

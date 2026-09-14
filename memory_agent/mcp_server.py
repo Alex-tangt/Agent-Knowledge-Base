@@ -146,8 +146,23 @@ def _warmup() -> None:
         logger.warning(f"memory index warmup failed: {exc}")
 
 
-def main() -> None:
+def _start_warmup(*, enabled: bool) -> bool:
+    """按需启动预热线程，返回是否真的启动了。
+
+    默认不启动（issue #19）：BGE-M3 约 3.9GB 私有内存，而且每个 opencode 会话都会拉起
+    一份 MCP——无条件预热 = 每会话白付 3.9GB。改为首次真正检索时才加载。
+    """
+    if not enabled:
+        logger.info("skip warmup：惰性加载，首次检索时才载入嵌入模型（#19）")
+        return False
     threading.Thread(target=_warmup, name="memory-warmup", daemon=True).start()
+    return True
+
+
+def main() -> None:
+    from memory_agent.settings import warmup_on_start
+
+    _start_warmup(enabled=warmup_on_start())
     mcp.run(transport="stdio")
 
 
