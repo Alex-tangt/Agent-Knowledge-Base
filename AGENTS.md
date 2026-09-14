@@ -11,12 +11,14 @@ legal_web/          # 适配层实例 / 回归锚点
   app.py  api/  frontend/  data/raw/  tests/
   ingest.py  fetch_laws.py  test_langsmith.py  kb_registry.json
   requirements.txt  .env  vector_db/  uploads/
-memory_agent/       # 记忆能力包（MCP + skill），骨架见 memory_agent/README.md，票据 #10+ 填充
-tests/unit/         # ragcore 核心单测（pytest）
+memory_agent/       # 记忆能力包（MCP + skill）
+  mcp_server.py  runtime.py  _bootstrap.py  settings.py  build_index.py
+  corpus/  memory/  eval/  requirements.txt  vector_db/  README.md
+tests/unit/         # ragcore 核心 + memory_agent 单测（pytest）
 experiments/  docs/
 ```
 
-`ragcore` 与 `legal_web` 之间用 **sys.path 垫片**连接：入口（`legal_web/app.py`、`legal_web/ingest.py`、`tests/unit/conftest.py`、实验脚本）把 `ragcore/` 加入 `sys.path`，包名保持 `services/`、`config/`、`utils/`、`strategies/`、`agents/` 不变。`agents/`（router_graph + session_memory）属核心——`rag_service` 直接 import 它们。
+`ragcore` 与 `legal_web` / `memory_agent` 之间用 **sys.path 垫片**连接：入口（`legal_web/app.py`、`legal_web/ingest.py`、`memory_agent/*.py`、`tests/unit/conftest.py`、实验脚本）把 `ragcore/` 加入 `sys.path`，包名保持 `services/`、`config/`、`utils/`、`strategies/`、`agents/` 不变。`agents/`（router_graph + session_memory）属核心——`rag_service` 直接 import 它们。`memory_agent` 自身用 `memory_agent.` 前缀绝对导入（其模块名**不得**叫 `config`，会遮蔽 ragcore 的 `config` 包，见 ADR-0008）。
 
 ## Virtual environment (REQUIRED)
 The project uses a venv at the repo root (`venv/`). Always activate it first:
@@ -36,6 +38,12 @@ pip install -r legal_web/requirements.txt
 - The frontend is served from `/` via `StaticFiles(directory="legal_web/frontend")`. No build step — edit `legal_web/frontend/*.html|css|js` directly.
 - There is **no lint, typecheck, or CI config** in this repo. Don't invent those commands.
 
+### memory_agent (记忆能力包)
+- Build the derived memory index (loads BGE-M3; ~6 min per 60 entries on CPU): `venv\Scripts\python.exe memory_agent/build_index.py` → `memory_agent/vector_db/` (gitignored).
+- Run as stdio MCP: `venv\Scripts\python.exe memory_agent/mcp_server.py`. Tools: `memory_search`, `memory_get`. Registered in `~/.config/opencode/opencode.json` as `memory-agent` (takes effect after opencode restart).
+- **stdout is the MCP protocol channel** — all logging must go to stderr; `_bootstrap.configure_stderr_logging()` must run before importing `ragcore`.
+- The memory index uses its **own** Qdrant path; it must **not** run concurrently with `legal_web` (local-mode lock + heavy models).
+
 ## Working directory
 Paths are anchored in code, not to CWD: `ROOT_DIR` / `RAGCORE_DIR` / `LEGAL_WEB_DIR` in `ragcore/config/config.py`, `FRONTEND_DIR` in `legal_web/app.py`. `legal_web/app.py` boots correctly from **any** CWD.
 
@@ -48,6 +56,7 @@ Paths are anchored in code, not to CWD: `ROOT_DIR` / `RAGCORE_DIR` / `LEGAL_WEB_
 - `legal_web/requirements.txt` — authoritative dependency set for this project.
   - Key deps: `fastapi`, `uvicorn`, `openai`, `qdrant-client`, `sentence-transformers`, `flagembedding`, `langchain`, `langchain-core`, `langchain-community`, `langchain-openai`, `langchain-text-splitters`, `pydantic`, `python-dotenv`, `pypdf`, `langsmith`, `python-multipart`.
 - Root `requirements.txt` — pinned versions (UTF-8, was UTF-16 LE before a fix).
+- `memory_agent/requirements.txt` — only its own dep (`mcp>=2.2,<3`); engine deps are reused from `legal_web/requirements.txt` since it calls `ragcore` in-process.
 
 ## Architecture / entrypoints
 - `legal_web/app.py` — FastAPI app, CORS (`*`), mounts API router under `API_PREFIX="/api"` and static files at `/`. Lifespan event triggers background model warmup.
@@ -121,7 +130,7 @@ The `warmup()` function (called from `app.py` lifespan) eagerly triggers BGE-M3 
 - **Versioning**: JS/CSS files use `?v=N` cache busting. Increment when changing any JS module.
 
 ## Tests
-- **单元测试**：`tests/unit/`（pytest）——`test_document_service.py`、`test_rag_service.py`、`test_session_memory.py`。运行：`venv\Scripts\python.exe -m pytest tests/unit -q`。
+- **单元测试**：`tests/unit/`（pytest）——`test_document_service.py`、`test_rag_service.py`、`test_session_memory.py`、`test_memory_corpus.py`、`test_memory_index.py`。运行：`venv\Scripts\python.exe -m pytest tests/unit -q`（89 passed）。
 - Smoke test: `venv\Scripts\python.exe legal_web/test_langsmith.py`.
 - **启动冒烟（boot 闸门）**：后台起 `legal_web/app.py`，独立探测 `/api/status` → `ready:true`、`/` 与 `/script.js` → 200、`/api/kb/list`、`/api/documents/count?kb_name=documents`，再杀进程树确认端口与 Qdrant 锁释放。命令与结果见 `memory_agent/eval/baseline_A.md`（比"单测 + 导入冒烟"更强的收工锚点）。
 - RAG vs LLM-only eval: from repo root run `venv\Scripts\python.exe legal_web/tests/run_eval.py` (backend on :8000, KB built). Parses `legal_web/tests/questions.md` and writes `legal_web/tests/results.md`. Fill `legal_web/tests/failure_analysis.md` for failure cases. `legal_web/tests/score_eval.py` does LLM-as-judge multi-dimension scoring.
@@ -172,7 +181,8 @@ The `warmup()` function (called from `app.py` lifespan) eagerly triggers BGE-M3 
 
 - ✅ 甲⁺ 布局重排（#9 第一轮）：`backend/` 拆为 `ragcore/` + `legal_web/`，新建 `memory_agent/`；T1 锚点复现（71 passed + 导入冒烟 + 启动冒烟，见 `memory_agent/eval/baseline_A.md`）。
 - ✅ 更名（#9 第二轮，2026-09-14 完成）：GitHub 仓库已改为 `Alex-tangt/Agent-Knowledge-Base`，`origin` 是干净 URL（原嵌的明文 token 已移除）；本地目录已改名（会话内被 MCP 子进程 CWD 锁住，由用户在会话外完成）。在新路径复跑锚点验收：`pytest tests/unit -q` → 71 passed、legal_web 导入冒烟 → import-ok。venv 采用"移动后原样验证"策略，一律用 `venv\Scripts\python.exe -m ...`（`Scripts\*.exe` 内嵌旧绝对路径已失效，不使用）。详见 `docs/adr/0007`。
-- 下一步：`memory_agent` 读路径最小闭环（#10，stdio MCP `memory_search`/`memory_get`）。
+- ✅ 读路径最小闭环（#10，2026-09-14）：`memory_agent` 条目级派生索引（复用 `ragcore` BGE-M3 + Qdrant，独立路径）+ stdio MCP `memory_search`/`memory_get`；60 条（20 可写 KB / 40 只读本仓库）。决策见 `docs/adr/0008`。
+- 下一步：写入路径（#11 `memory_add` + 去重 + 校验 + git commit；#12 supersede/archive）。
 
 ## 后续优化待办（Backlog / 简历谈资池）
 
@@ -184,7 +194,9 @@ The `warmup()` function (called from `app.py` lifespan) eagerly triggers BGE-M3 
 
 ## Gotchas
 - **Always activate venv first** (`venv\Scripts\activate` on Windows). Running without it may miss installed dependencies.
-- **Qdrant local mode locks** the storage directory exclusively. Do not run two Python processes that create `VectorStoreService` concurrently against the same `vector_db/`. If you get "already accessed" errors, kill the other process and delete `legal_web/vector_db/.lock`.
+- **Qdrant local mode locks** the storage directory exclusively. Do not run two Python processes that create `VectorStoreService` concurrently against the same `vector_db/`. If you get "already accessed" errors, kill the other process and delete `legal_web/vector_db/.lock`. The memory index has its own path (`memory_agent/vector_db/`) — but two `memory_agent` processes still conflict with each other, and neither may run alongside `legal_web`.
+- **stdio MCP: stdout is the protocol channel.** `ragcore/utils/logger.py` configures logging to `sys.stdout`; `memory_agent` must grab the root logger to stderr *before* importing `ragcore` (`_bootstrap.configure_stderr_logging`). Any stray stdout write corrupts the JSON-RPC stream.
+- **Don't name a `memory_agent` module `config.py`** — under `python memory_agent/x.py` it shadows ragcore's top-level `config` package (`ModuleNotFoundError: No module named 'config.config'`). It's `settings.py`; use `memory_agent.`-prefixed absolute imports.
 - **First run** after `pip install` downloads BGE-M3 (~2.2GB) and bge-reranker-v2-m3 (~2.2GB) from HuggingFace. Subsequent runs load from cache instantly.
 - **`RELEVANCE_THRESHOLD=0.85`** is a generous post-reranker value; the prompt handles most boundary cases. Use `experiments/relevance-calibration/calibrate_relevance.py` to recalibrate if needed.
 - **Browser cache** — after frontend changes, increment the `?v=N` query string on JS/CSS links in `index.html` AND in all `import` statements across all JS files. Otherwise browsers serve stale cached versions.
