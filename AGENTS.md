@@ -149,6 +149,10 @@ The `warmup()` function (called from `app.py` lifespan) eagerly triggers BGE-M3 
 - ✅ 5. README 简历门面（评测证据 + 工程纪律 + 目录修正）+ 终版整理。
 - MCP（延后）：stdio + `list_kbs`/`search`/`ask`，复用 service 层。
 
+## 方向重定向（2026-09-14）
+
+项目升级为 **Agent-Knowledge-Base**：hero = agent 记忆能力包（MCP + skill），`legal_web` 退为适配层实例 / 回归锚点。布局甲⁺（`ragcore/` + `legal_web/` + `memory_agent/`）与更名待执行。决策见 `docs/adr/0005`–`0007`，领域语言见 `CONTEXT.md`。
+
 ## 后续优化待办（Backlog / 简历谈资池）
 
 非本周范围，延后。每条都是可讲的优化故事：

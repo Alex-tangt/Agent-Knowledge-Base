@@ -1,6 +1,6 @@
 # 0001 目标形状：个人 RAG 工具（服务核心 + 适配层 + 旗舰 demo）
 
-Status: accepted
+Status: accepted (amended by ADR-0005)
 
 决定项目定位为**可复用的个人 RAG 检索/问答工具**：以 service 层 + 切分策略为可复用核心，通过适配层对外暴露——FastAPI 网页（政策法规问答旗舰 demo）与 MCP 服务器（延后）。不重写为面向大众的通用 RAG 框架。
 
