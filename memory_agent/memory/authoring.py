@@ -20,6 +20,8 @@ SLUG_RE = re.compile(r"^[a-z0-9][a-z0-9-]*$")
 _TAG_RE = re.compile(r"^[a-z0-9][a-z0-9-]*$")
 _DATE_RE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
 _DOMAIN_RE = re.compile(r"^(topics|decisions|projects/[a-z0-9][a-z0-9-]*)$")
+_FM_BLOCK_RE = re.compile(r"\A(---[ \t]*\r?\n)(.*?)(\r?\n---[ \t]*(?:\r?\n|$))", re.DOTALL)
+_TOP_KEY_RE = re.compile(r"^([A-Za-z0-9_]+):")
 
 # 领域 <-> type 的对应关系由 KB 目录约定决定（kb.py 不检查，但写网关要守住）。
 TYPE_FOR_DOMAIN = {
@@ -89,8 +91,12 @@ def render_entry(
     updated: str,
     sources: list[str] | None,
     body: str,
+    extra: dict[str, str] | None = None,
 ) -> str:
-    """渲染一条 KB 条目的完整 Markdown（frontmatter + 标题 + 正文）。"""
+    """渲染一条 KB 条目的完整 Markdown（frontmatter + 标题 + 正文）。
+
+    extra 是 frontmatter 的附加标量字段（生命周期标注用，如 supersedes）。
+    """
     lines = [
         "---",
         f"id: {entry_id}",
@@ -103,8 +109,36 @@ def render_entry(
     if sources:
         lines.append("sources:")
         lines += [f"  - {_yaml_scalar(source)}" for source in sources]
+    for key, value in (extra or {}).items():
+        lines.append(f"{key}: {_yaml_scalar(str(value))}")
     lines += ["---", "", f"# {title}", "", body.strip(), ""]
     return "\n".join(lines)
+
+
+def update_frontmatter_fields(text: str, updates: dict[str, str]) -> str:
+    """就地改写 frontmatter 里的顶层标量字段：已有的换值，没有的插到块末。
+
+    只动命名的那几行——正文、未知字段、字段顺序、行尾风格都原样保留；这正是
+    生命周期工具「不原地编辑正文、不丢信息」的实现方式。无 frontmatter 时抛错。
+    """
+    match = _FM_BLOCK_RE.match(text)
+    if not match:
+        raise ValueError("条目缺少合法 frontmatter，无法做生命周期标注")
+    head, inner, tail = match.group(1), match.group(2), match.group(3)
+    newline = "\r\n" if "\r\n" in head else "\n"
+    lines = inner.split(newline)
+
+    for key, value in updates.items():
+        rendered = f"{key}: {_yaml_scalar(str(value))}"
+        for index, line in enumerate(lines):
+            key_match = _TOP_KEY_RE.match(line)
+            if key_match and key_match.group(1) == key:
+                lines[index] = rendered
+                break
+        else:
+            lines.append(rendered)
+
+    return head + newline.join(lines) + tail + text[match.end():]
 
 
 def validate_entry(
