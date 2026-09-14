@@ -12,9 +12,13 @@ Status: accepted
 `confirm=False`（默认）只做完整校验并返回 `{status:"confirmation_required", preview}`，
 不落盘；调用方把 `preview` 给用户看、得到明确同意后，再以 `confirm=True` 重试。
 
-理由：opencode 客户端当前**没有声明 MCP elicitation 能力**（`CLIENT_OPTIONS.capabilities`
-里该项被注释，挂着 issue #23066），所以服务端 `ctx.elicit` 发不出去（详见 ADR-0009 同轮
-调研，结论已记入全局 KB）。C 方案把"问不问人"的责任放在 skill 约定，而不是协议层。
+理由：opencode 客户端当前**没有声明 MCP elicitation 能力**（`packages/opencode/src/mcp/index.ts`
+的 `CLIENT_OPTIONS.capabilities` 里 `elicitation: {}` 被注释，挂着
+`anomalyco/opencode` issue #23066），所以服务端 `ctx.elicit` 发不出去。C 方案把"问不问人"的
+责任放在 skill 约定，而不是协议层。
+
+> 待办：这条事实是可复用的跨项目平台知识，应写回全局记忆库（本轮 #12 未做，避免越界动
+> 另一个仓库的工作树）。
 
 > 代价（已知）：C 的真实检验不在 #12 的单测（单测只能验"默认不写"），而在 **#17 dogfood**——
 > agent 有没有不问人就传 `confirm=true`。反证条件：dogfood 观察到不问就写 → 升级到
