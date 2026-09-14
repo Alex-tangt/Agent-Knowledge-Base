@@ -22,6 +22,7 @@ from __future__ import annotations
 import json
 import os
 import shutil
+import stat
 import subprocess
 import sys
 import tempfile
@@ -155,7 +156,14 @@ def main() -> int:
         print(f"\n已写入 {OUT_PATH}")
         return 0
     finally:
-        shutil.rmtree(sandbox, ignore_errors=True)
+        def _on_error(func, target, _exc):  # noqa: ANN001
+            try:
+                os.chmod(target, stat.S_IWRITE)
+                func(target)
+            except OSError:
+                pass
+
+        shutil.rmtree(sandbox, onerror=_on_error)
 
 
 if __name__ == "__main__":

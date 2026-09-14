@@ -23,6 +23,7 @@ import json
 import os
 import re
 import shutil
+import stat
 import subprocess
 import sys
 import tempfile
@@ -417,6 +418,19 @@ def _clone(source_kb: str, dest: str) -> None:
     _run(["git", "clone", "--quiet", source_kb, dest])
 
 
+def _rmtree(path: str) -> None:
+    """删临时沙箱：git clone 的对象文件是只读的，Windows 下 rmtree 需先清只读位。"""
+
+    def _on_error(func, target, _exc):  # noqa: ANN001
+        try:
+            os.chmod(target, stat.S_IWRITE)
+            func(target)
+        except OSError:
+            pass
+
+    shutil.rmtree(path, onerror=_on_error)
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description="写路径确定性 sandbox 套件（#16）")
     parser.add_argument("--source-kb", default=DEFAULT_SOURCE_KB)
@@ -457,7 +471,7 @@ def main() -> int:
         if keep:
             print(f"\n[keep] 保留沙箱目录：{sandbox_root}")
         else:
-            shutil.rmtree(sandbox_root, ignore_errors=True)
+            _rmtree(sandbox_root)
 
     passed = sum(1 for row in suite.rows if row["ok"])
     total = len(suite.rows)
