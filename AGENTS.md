@@ -158,12 +158,28 @@ The `warmup()` function (called from `app.py` lifespan) eagerly triggers BGE-M3 
 实验只进 `experiments/<name>/`。每个实验目录必须含 `README.md`（问题 → 假设 → 设置 → 数据 → 结论）。无结论的实验不算完成。
 
 ### 健康闸门（收工前必跑）
-1. `git status` 干净——无未提交工作。
+1. `git status` 干净——无未提交工作（那批 CRLF-only 的 ` M` 假脏除外：`git diff --numstat` 应为空）。
 2. 本文件与实际目录树一致。
 3. 无垃圾文件（日志、临时产物、迭代残留如 `post_refactor*`、`nul`）。
 4. 每个实验目录有结论文件。
 5. 改动有决策路径落点（`docs/adr/` 或 `experiments/` 记录）。
 6. 每个功能过可解释性闸门：一句话讲不清 = 不该进基线。
+
+### Git 工作纪律（并行会话）
+
+**一个工作树只有一个写者。** git 的 working tree 是单 HEAD + 单 index，`checkout` / `switch` / `reset` / `rebase` / `stash` 全是**仓库级**操作——并行会话共用一个工作树时，谁切分支就把别人眼前的文件换掉。2026-09-14 实测踩过：三个"并行"会话共用一个工作树，结果提交落到别人的分支上、工作内容被切换覆盖，排查了很久。
+
+- **要并行 → 一会话一 `git worktree`（单仓库即可，不需要多 clone）**：
+  `git worktree add ..\wk-<n> feat/<n>-<slug>`；用完 `git worktree remove ..\wk-<n>`。
+- **工作树里一律用主树 venv 的绝对路径**（`venv/` 是 gitignored，工作树里没有）：
+  `D:\python_work\work2026-4\Agent-Knowledge-Base\venv\Scripts\python.exe -m pytest tests/unit -q`。
+- **MCP 注册是绝对路径**（指向主树的 `memory_agent/mcp_server.py`）：会话在哪个工作树，跑的都是主树那份 MCP 代码；改 MCP 代码要生效，改主树并重启会话。
+- **只提交自己的文件**：`git add -- <自己的路径>`；**禁止** `git add -A` / `git add .` / `git commit -a`——工作树常年带着别的会话的脏改动。
+- **那批 CRLF-only 的 ` M` 不要提交**：它们 `git diff --numstat` 为空（无内容改动），是 autocrlf 的 stat 假脏。
+- 提交前先看 staged 集合：`git status --short` + `git diff --cached --stat`。
+- **分支一票一条**：`feat/<n>-<slug>`，关闭票据后合回 `master`。提交已在别的分支上要挪，用 `cherry-pick`，**不改写共享分支历史**。
+- 一个单元 = 一个 commit（见"单元"），消息沿用本仓库的宽松前缀（`feat:` / `fix:` / `docs:` / `chore:`，中文描述）。
+- 密钥 / token 永不进提交。
 
 ## 当前路线图（2026-08 一周冲刺）
 
