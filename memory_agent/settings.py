@@ -13,7 +13,16 @@ ROOT_DIR = os.path.dirname(MEMORY_AGENT_DIR)
 KB_DIR = os.environ.get("AGENT_KB_DIR") or r"C:\Users\Tan\.config\opencode\knowledge"
 
 # 只读语料根：本仓库（不含子模块）。后续票据再扩到其它项目仓库。
-READONLY_ROOTS = [ROOT_DIR]
+# `MEMORY_READONLY_ROOTS` 可覆盖（os.pathsep 分隔的绝对/相对路径；空串 = 无只读语料）。
+# sandbox/评测套件用它把索引限制在可写 KB 内，避免把整个代码仓库也索引进去（#16）。
+def _readonly_roots() -> list[str]:
+    raw = os.environ.get("MEMORY_READONLY_ROOTS")
+    if raw is None:
+        return [ROOT_DIR]
+    return [os.path.abspath(part) for part in raw.split(os.pathsep) if part.strip()]
+
+
+READONLY_ROOTS = _readonly_roots()
 
 # 派生索引：代目录 + 指针（issue #13 / ADR-0011）。
 # 每代是独立目录 INDEX_DIR/<gen>/{qdrant/,manifest.json}；CURRENT 是指针文件，
