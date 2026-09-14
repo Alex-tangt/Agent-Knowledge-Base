@@ -46,10 +46,11 @@ description: 通过 memory-agent MCP 工具读写 agent 长期记忆——检索
      `projects/*`→`project-knowledge`
    - `tags`：从 KB 的 `tags.md` 受控表取，不要自造
    - `slug`：英文 slug；纯中文标题请显式给
-4. 成功返回 `{status:"written", id, path, commit, warnings}`；`warnings` 要转述给用户。
-5. **索引不会自动刷新**（#13 之前）：刚写入的条目在重建前 `memory_search` 搜不到、`memory_get`
-   也读不到。写完后要点出 `id`；需要立刻可检索就调 `memory_reindex`（未暴露时改用
-   `build_index.py`，需停服务）。
+4. 成功返回 `{status:"written", id, path, commit, warnings, index}`；`warnings` 要转述给用户。
+   写入会**自动增量刷新**派生索引（只重嵌受影响条目），紧接着的 `memory_search` 就能搜到。
+5. `index` 字段是刷新的如实报告：`{ok:false, error}` 表示索引刷新失败（文件已提交、真相源没丢），
+   此时改调 `memory_reindex(cursor=None, batch=16)` 分块全量重建，拿 `cursor` 续调到 `done=true`；
+   `memory_index_status()` 可查当前代与是否自洽。
 
 ## 破坏性操作：必须先确认
 
@@ -80,4 +81,4 @@ description: 通过 memory-agent MCP 工具读写 agent 长期记忆——检索
 
 - 全局 KB 约定：`C:\Users\Tan\.config\opencode\knowledge\AGENTS.md`（`agent-kb` skill 的落点）。
 - 设计：`docs/adr/0008`（读路径）、`0009`（写入网关）、`0010`（生命周期工具）、
-  `0012`（本 skill 的位置与确认规则归属）。
+  `0011`（索引一致性：代目录 + 指针切换 + 增量刷新）、`0012`（本 skill 的位置与确认规则归属）。
