@@ -40,6 +40,25 @@ venv\Scripts\python.exe -m pytest tests/unit -q
 - [x] legal_web 导入冒烟 `import app, api.routes, services, strategies, agents; ...` → **import-ok**
 - [x] `config.config` 路径锚点核对：`LEGAL_WEB_DIR` / `VECTOR_DB_PATH` / `UPLOAD_DIR` 均落在 `legal_web/`
 - [x] `compileall ragcore legal_web memory_agent tests experiments` → exit 0
+- [x] **启动冒烟（boot 闸门）** → 见下
 
-结论：甲⁺ 布局重排未改变 `ragcore` 行为，锚点保持可复现。
+### 启动冒烟（boot 闸门）——比"单测 + 导入冒烟"更强
+
+单测与导入冒烟只到 import 级，覆盖不到 uvicorn lifespan / `StaticFiles` 挂载 / 真实端点。补一个运行时闸门（后台启动 + 子进程内重定向 + 独立探测就绪；勿用 `Start-Process -Redirect*`）：
+
+```powershell
+# 启动后独立探测（就绪约 22s）
+Invoke-RestMethod http://127.0.0.1:8000/api/status
+Invoke-WebRequest  http://127.0.0.1:8000/ -UseBasicParsing
+Invoke-WebRequest  http://127.0.0.1:8000/script.js -UseBasicParsing
+Invoke-RestMethod  http://127.0.0.1:8000/api/kb/list
+Invoke-RestMethod "http://127.0.0.1:8000/api/documents/count?kb_name=documents"
+# 收尾：杀进程树，确认 8000 释放、Qdrant 锁释放
+```
+
+结果：`ready:true` 约 22s；`/` → 200（index.html）、`/script.js` → 200（`StaticFiles` 挂载正确）；`/api/kb/list` 读到 `legal_web/kb_registry.json` 的 2 个 KB；`/api/documents/count` → `{"count":3799}`，日志 `VectorStoreService initialized with Qdrant local mode` → 确认 `VECTOR_DB_PATH` 落 `legal_web/vector_db`。
+
+**副作用观察**：启动日志出现一次对外 HF 请求（`HEAD https://huggingface.co/BAAI/bge-m3/resolve/refs%2Fpr%2F130/model.safetensors.index.json → 404`），尽管两个加载器都设了 `local_files_only=True`。离线主机上可能表现为超时等待。已单独开 issue 讨论，不属本次重构。
+
+结论：甲⁺ 布局重排未改变 `ragcore` 行为，锚点（单测 + 导入冒烟 + 启动冒烟）保持可复现。
 
