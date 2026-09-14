@@ -9,7 +9,7 @@ Agent-Knowledge-Base 的第一个能力：让 coding agent 通过 MCP 语义检�
 
 - **真相源是 Markdown**（条目 + frontmatter），向量索引是派生、可丢弃的。
 - **只暴露 MCP 工具，不暴露裸文件写**；破坏性写（supersede / archive）需确认，永不原地改写或删除。
-- 传输：**stdio**；引擎**进程内**调用 `ragcore`（因 Qdrant 本地模式独占锁 + 模型重）；**不与 `legal_web` 并发**运行。
+- 传输：**stdio**；引擎**进程内**调用 `ragcore`（模型每进程一份内存）；索引走**独立** Qdrant 路径，且 client 按操作开/关——可与 `legal_web` 并存（见 ADR-0008 D5）。
 - **stdout 是协议通道**：日志必须走 stderr。`memory_agent` 在 import ragcore 之前抢配 root logger（见 `_bootstrap.py`）。
 
 ## 现状（#10 读路径最小闭环）

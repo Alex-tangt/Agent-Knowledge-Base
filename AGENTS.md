@@ -42,7 +42,7 @@ pip install -r legal_web/requirements.txt
 - Build the derived memory index (loads BGE-M3; ~6 min per 60 entries on CPU): `venv\Scripts\python.exe memory_agent/build_index.py` → `memory_agent/vector_db/` (gitignored).
 - Run as stdio MCP: `venv\Scripts\python.exe memory_agent/mcp_server.py`. Tools: `memory_search`, `memory_get`. Registered in `~/.config/opencode/opencode.json` as `memory-agent` (takes effect after opencode restart).
 - **stdout is the MCP protocol channel** — all logging must go to stderr; `_bootstrap.configure_stderr_logging()` must run before importing `ragcore`.
-- The memory index uses its **own** Qdrant path; it must **not** run concurrently with `legal_web` (local-mode lock + heavy models).
+- The memory index uses its **own** Qdrant path, and the client is opened **per operation** (no long-held lock) — it can coexist with `legal_web`; see ADR-0008 D5.
 
 ## Working directory
 Paths are anchored in code, not to CWD: `ROOT_DIR` / `RAGCORE_DIR` / `LEGAL_WEB_DIR` in `ragcore/config/config.py`, `FRONTEND_DIR` in `legal_web/app.py`. `legal_web/app.py` boots correctly from **any** CWD.
@@ -194,7 +194,7 @@ The `warmup()` function (called from `app.py` lifespan) eagerly triggers BGE-M3 
 
 ## Gotchas
 - **Always activate venv first** (`venv\Scripts\activate` on Windows). Running without it may miss installed dependencies.
-- **Qdrant local mode locks** the storage directory exclusively. Do not run two Python processes that create `VectorStoreService` concurrently against the same `vector_db/`. If you get "already accessed" errors, kill the other process and delete `legal_web/vector_db/.lock`. The memory index has its own path (`memory_agent/vector_db/`) — but two `memory_agent` processes still conflict with each other, and neither may run alongside `legal_web`.
+- **Qdrant local mode 的锁按操作持有**（`VectorStoreService` 每次操作开/关一个 client，见 ADR-0008 D5）。`legal_web` 与 `memory_agent` 现在可以并存；只有两个进程的重活**恰好撞在同一瞬间**才会短暂争锁，靠内置退避重试兜住。若仍报 "already accessed"：确认没有残留进程，必要时删 `.lock`。
 - **stdio MCP: stdout is the protocol channel.** `ragcore/utils/logger.py` configures logging to `sys.stdout`; `memory_agent` must grab the root logger to stderr *before* importing `ragcore` (`_bootstrap.configure_stderr_logging`). Any stray stdout write corrupts the JSON-RPC stream.
 - **Don't name a `memory_agent` module `config.py`** — under `python memory_agent/x.py` it shadows ragcore's top-level `config` package (`ModuleNotFoundError: No module named 'config.config'`). It's `settings.py`; use `memory_agent.`-prefixed absolute imports.
 - **First run** after `pip install` downloads BGE-M3 (~2.2GB) and bge-reranker-v2-m3 (~2.2GB) from HuggingFace. Subsequent runs load from cache instantly.

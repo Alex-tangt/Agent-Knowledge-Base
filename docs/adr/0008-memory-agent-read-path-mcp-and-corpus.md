@@ -10,7 +10,9 @@ issue #10（读路径最小闭环）落地时确定的四个接缝。本 ADR 只
 
 **D2 #10 只读语料 = 本仓库（Agent-Knowledge-Base）。** 可写 = 全局 KB 条目（frontmatter 带 `id`）。理由：自足、可当场验证 `writable:false`，一次把闭环跑通；issue 里"三个项目仓库"未点名，留后续票据扩展（`corpus/loader.py` 的 `READONLY_ROOTS` 即扩展点）。
 
-**D3 派生索引用独立 Qdrant 路径 `memory_agent/vector_db/`。** Qdrant local mode 独占锁，与 `legal_web/vector_db` 共用必冲突。索引 + `manifest.json` 都是派生物，可丢弃、可由 Markdown 全量重建（`memory_agent/build_index.py`）。
+**D3 派生索引用独立 Qdrant 路径 `memory_agent/vector_db/`。** 与 `legal_web/vector_db` 分开（各自的生命周期与重建时机不同）。索引 + `manifest.json` 都是派生物，可丢弃、可由 Markdown 全量重建（`memory_agent/build_index.py`）。
+
+**D5 Qdrant local client 按操作开/关，不缓存。** 实测锁语义：锁在 **client 构造期**持有、`close()` 释放，构造函数无绕过开关。旧实现把 client 缓存在 `VectorStoreService._client` 上，锁从构造一直持有到进程结束——opencode 常驻的 MCP 服务因此整天独占存储目录，索引重建 / CLI / 冒烟脚本全被挡（实测 `RuntimeError: Storage folder ... already accessed by another instance`）。改为每次操作 `with self._session()` 开关一个 client：开销实测 **open 17.6ms + query 1.2ms + close 0.2ms ≈ 19ms**（1024 维 × 60 点），相对单次嵌入是噪声；锁只在调用期存在，并配 6 次递增退避重试应对撞车。回归测试：`tests/unit/test_vector_store_locking.py`（同进程内构造第二个 client 必须成功）。
 
 **D4 `memory_get` 从文件读回，不从索引读。** 真相源是 Markdown（ADR-0006）；索引只负责找到条目，内容取文件。索引与文件不一致时以文件为准。
 
@@ -22,5 +24,5 @@ issue #10（读路径最小闭环）落地时确定的四个接缝。本 ADR 只
 ## Consequences
 
 - 新增依赖 `mcp>=2.2,<3`（`memory_agent/requirements.txt`）；引擎依赖仍复用 `legal_web/requirements.txt`。
-- `memory_agent` 进程内调用 ragcore，**不可与 `legal_web` 并发**运行（Qdrant 锁 + 模型重）。
+- 因 D5，`memory_agent` 与 `legal_web` **可以并存**运行（锁不再长期占用）；两者同时重活时仍可能短暂撞锁，靠退避重试兜住。引擎模型仍是每进程一份内存（2.2GB×2），这是内存代价，不是正确性问题。
 - 已知债务：`memory_agent` import `ragcore` 会连带触发 `ragcore/config/config.py`，后者要求 `legal_web/.env` 里的 LLM 三项存在——**读路径并不需要 LLM**。独立发布前需解开该耦合（另行开票）。
