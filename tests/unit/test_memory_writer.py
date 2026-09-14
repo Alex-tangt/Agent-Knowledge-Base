@@ -7,6 +7,7 @@ import json
 import os
 import subprocess
 import sys
+import threading
 
 import pytest
 
@@ -380,6 +381,34 @@ def test_archive_refuses_already_archived_entry(tmp_path):
         MemoryWriter(index, kb_dir=str(repo)).archive(
             entry_id="topics/existing", reason="again", confirm=True
         )
+
+
+def test_concurrent_adds_are_serialized(tmp_path):
+    """两个会话同时写不同条目：WRITE_LOCK 串行化，不得撞 .git/index.lock。"""
+    repo = _repo(tmp_path)
+    writer = MemoryWriter(FakeIndex(), kb_dir=str(repo))
+    head_before = _git(repo, "rev-parse", "HEAD").strip()
+    results, errors = {}, {}
+    barrier = threading.Barrier(2)
+
+    def add_one(slug):
+        barrier.wait()
+        try:
+            results[slug] = _add(writer, slug=slug, title=f"Topic {slug}", body=f"body {slug}")
+        except Exception as exc:  # noqa: BLE001 - 收集并发错误
+            errors[slug] = repr(exc)
+
+    threads = [threading.Thread(target=add_one, args=(s,)) for s in ("alpha", "beta")]
+    for thread in threads:
+        thread.start()
+    for thread in threads:
+        thread.join()
+
+    assert errors == {}, f"并发写入失败：{errors}"
+    assert {r["status"] for r in results.values()} == {"written"}
+    written = _git(repo, "log", "--name-only", "--format=", "-2").split()
+    assert sorted(written) == ["topics/alpha.md", "topics/beta.md"]
+    assert _git(repo, "rev-parse", "HEAD").strip() != head_before
 
 
 def test_mcp_surface_exposes_only_scoped_tools():

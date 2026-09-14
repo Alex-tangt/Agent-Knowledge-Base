@@ -1,4 +1,5 @@
 import time
+import threading
 import uuid
 from contextlib import contextmanager
 
@@ -25,6 +26,11 @@ from utils.model_status import EMBEDDING_DIMENSION, STATUS
 # local mode 独占锁：被别的进程挡住时短暂重试（锁只在别的进程的调用期存在）
 _LOCK_RETRY_ATTEMPTS = 6
 _LOCK_RETRY_DELAY = 0.05
+
+# 同一进程内的 client 互斥（issue #19）：Qdrant local mode 的独占锁是「按目录 + 全进程」
+# 的——同一进程里并发构造第二个 client 也会直接 RuntimeError（实测 4 线程 3 个立刻失败），
+# 退避重试兜不住。单实例 daemon 并发服务多会话时必须把这把锁串起来。
+_SESSION_LOCK = threading.RLock()
 
 
 class VectorStoreService:
@@ -94,12 +100,17 @@ class VectorStoreService:
 
     @contextmanager
     def _session(self):
-        """打开一个仅在本次操作内有效的 Qdrant client（锁随 close 释放）。"""
-        client = self._open_client()
-        try:
-            yield client
-        finally:
-            client.close()
+        """打开一个仅在本次操作内有效的 Qdrant client（锁随 close 释放）。
+
+        进程内再串一道 `_SESSION_LOCK`：Qdrant local mode 同进程也不能并发开 client。
+        锁覆盖「构造 -> 操作 -> close」整段，故同一进程的检索/写入天然排队。
+        """
+        with _SESSION_LOCK:
+            client = self._open_client()
+            try:
+                yield client
+            finally:
+                client.close()
 
     def _ensure_collection(self, client):
         try:

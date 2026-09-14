@@ -18,6 +18,7 @@ from memory_agent import _bootstrap
 from memory_agent.memory.entries import Entry, point_id_for
 from memory_agent.memory.errors import IndexConsistencyError, IndexNotBuiltError
 from memory_agent.memory.layout import IndexLayout
+from memory_agent.memory.locks import INDEX_LOCK, locked
 from memory_agent.settings import COLLECTION_NAME, MAX_ENTRY_CHARS
 
 MANIFEST_VERSION = 1
@@ -120,6 +121,7 @@ class MemoryIndex:
 
     # ------------------------------------------------------------ full build
 
+    @locked(INDEX_LOCK)
     def rebuild(self, entries: list[Entry]) -> dict:
         """把给定条目全量写入**当前显式路径**（清空 -> 逐条写 -> 落 manifest）。
 
@@ -146,6 +148,7 @@ class MemoryIndex:
 
     # -------------------------------------------------------------- refresh
 
+    @locked(INDEX_LOCK)
     def refresh(self, entries: list[Entry] | None = None) -> dict:
         """按条目增量重建当前代：hash 未变跳过、变更重嵌、消失的条目清点。
 
@@ -199,6 +202,7 @@ class MemoryIndex:
 
     # ------------------------------------------------------------------ read
 
+    @locked(INDEX_LOCK)
     def search(self, query: str, k: int = 5, writable_only: bool = False) -> list[dict]:
         """条目级语义检索。score 为余弦相似度（越大越相关）。
 
@@ -230,6 +234,7 @@ class MemoryIndex:
         hits.sort(key=lambda hit: hit["score"], reverse=True)
         return hits
 
+    @locked(INDEX_LOCK)
     def get(self, entry_id: str) -> dict:
         """按 id 读回真实 Markdown 内容（真相源是文件，不是索引）。"""
         self._sync()
@@ -243,6 +248,7 @@ class MemoryIndex:
             content = handle.read()
         return {"id": entry_id, "content": content, **meta}
 
+    @locked(INDEX_LOCK)
     def stats(self) -> dict:
         self._sync()
         return {
@@ -252,6 +258,7 @@ class MemoryIndex:
             "built_at": self._built_at,
         }
 
+    @locked(INDEX_LOCK)
     def status(self) -> dict:
         """当前代 / 条数 / 点数 / 是否自洽（供 memory_index_status）。"""
         self._sync()
