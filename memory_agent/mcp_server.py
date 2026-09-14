@@ -35,6 +35,10 @@ from memory_agent.settings import (  # noqa: E402
 )
 
 from mcp.server import MCPServer  # noqa: E402
+# 工具里的「预期失败」必须 raise ToolError，不能 raise ValueError：后者被 SDK 当崩溃，
+# 客户端只看到 `Error executing tool <name>`，写入网关那些面向调用方的提示（去重候选 /
+# 校验失败 / 只读拒写）全被吞掉。#17 验收时实测并修正。
+from mcp.server.mcpserver.exceptions import ToolError  # noqa: E402
 from mcp.server.transport_security import TransportSecuritySettings  # noqa: E402
 from starlette.responses import JSONResponse  # noqa: E402
 from utils.logger import logger  # noqa: E402
@@ -81,9 +85,9 @@ def memory_get(entry_id: str) -> dict:
     try:
         return get_index().get(entry_id)
     except KeyError:
-        raise ValueError(f"未知条目 id：{entry_id}（先用 memory_search 取 id）")
+        raise ToolError(f"未知条目 id：{entry_id}（先用 memory_search 取 id）")
     except FileNotFoundError as exc:
-        raise ValueError(f"条目文件已不存在（索引孤儿，需重建）：{exc}")
+        raise ToolError(f"条目文件已不存在（索引孤儿，需重建）：{exc}")
 
 
 @mcp.tool()
@@ -116,7 +120,7 @@ def memory_add(
             allow_duplicate=allow_duplicate,
         )
     except MemoryWriteError as exc:
-        raise ValueError(str(exc))
+        raise ToolError(str(exc))
 
 
 @mcp.tool()
@@ -144,7 +148,7 @@ def memory_supersede(
             tags=tags, slug=slug, sources=sources, confirm=confirm,
         )
     except MemoryWriteError as exc:
-        raise ValueError(str(exc))
+        raise ToolError(str(exc))
 
 
 @mcp.tool()
@@ -158,7 +162,7 @@ def memory_archive(entry_id: str, reason: str, confirm: bool = False) -> dict:
     try:
         return get_writer().archive(entry_id=entry_id, reason=reason, confirm=confirm)
     except MemoryWriteError as exc:
-        raise ValueError(str(exc))
+        raise ToolError(str(exc))
 
 
 @mcp.tool()
@@ -173,7 +177,7 @@ def memory_reindex(cursor: dict | None = None, batch: int = 16) -> dict:
     try:
         return reindex(cursor=cursor, batch=batch)
     except IndexConsistencyError as exc:
-        raise ValueError(str(exc))
+        raise ToolError(str(exc))
 
 
 @mcp.tool()

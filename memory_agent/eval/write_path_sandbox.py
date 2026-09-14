@@ -29,6 +29,8 @@ import sys
 import tempfile
 import traceback
 
+from mcp.server.mcpserver.exceptions import ToolError
+
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 if ROOT not in sys.path:
     sys.path.insert(0, ROOT)
@@ -319,7 +321,7 @@ def run_checks(suite: Suite, mcp, kb_dir: str, index_dir: str,
     error_raised = False
     try:
         mcp.memory_archive(entry_id=copy_id, reason="   ", confirm=True)
-    except ValueError:
+    except (ValueError, ToolError):
         error_raised = True
     suite.check("5a archive 缺 reason 被拒", error_raised)
 
@@ -368,7 +370,7 @@ def run_checks(suite: Suite, mcp, kb_dir: str, index_dir: str,
             title="Sandbox rollback", body="Should never land.",
             domain="topics", type="topic", tags=[tag], slug=ROLLBACK_SLUG,
         )
-    except ValueError:
+    except (ValueError, ToolError):
         rejected = True
     finally:
         with open(tools_kb, "w", encoding="utf-8") as handle:
