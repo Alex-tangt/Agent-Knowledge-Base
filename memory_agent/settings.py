@@ -40,8 +40,10 @@ MAX_ENTRY_CHARS = 6000
 MAX_CORPUS_FILE_BYTES = 1_000_000
 
 # 写入门禁：写前检索命中的余弦相似度 >= 此值即判为近似重复（只报告、不写）。
-# 初值偏保守（宁漏报不误报，误报会白挡一次合法写入）；待 #16 在真实 KB 上校准。
-DEDUP_THRESHOLD = float(os.environ.get("MEMORY_DEDUP_THRESHOLD", "0.92"))
+# 0.88 由 #16 在真实 KB 上校准（详见 docs/adr/0009 的「校准」小节与
+# experiments/dedup-threshold-calibration/）：实测不同条目最近邻 ≤0.792、
+# 精确重加最低 0.949，0.88 落在间隔中部，比原 0.92 多留出同义重加的捕获余量。
+DEDUP_THRESHOLD = float(os.environ.get("MEMORY_DEDUP_THRESHOLD", "0.88"))
 
 
 def warmup_on_start() -> bool:
