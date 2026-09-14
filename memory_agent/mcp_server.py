@@ -1,6 +1,7 @@
-"""stdio MCP server：读路径最小闭环（issue #10）。
+"""stdio MCP server：读路径最小闭环（issue #10）+ 写路径（#11/#12）。
 
-暴露 memory_search / memory_get。真相源是 Markdown；索引是派生物。
+暴露 memory_search / memory_get / memory_add / memory_supersede / memory_archive。
+真相源是 Markdown；索引是派生物。破坏性变更（supersede / archive）需 confirm=true。
 opencode 接入（opencode.json）：
     "memory-agent": {
       "type": "local",
@@ -31,7 +32,9 @@ mcp = MCPServer(
     version="0.1.0",
     instructions=(
         "Agent 长期记忆：memory_search 语义检索条目，memory_get 读回真实 Markdown，"
-        "memory_add 写入新条目（先去重，命中近似则不写并返回候选）。"
+        "memory_add 写入新条目（先去重，命中近似则不写并返回候选）；"
+        "memory_supersede 替代旧条目（新旧双向标注），memory_archive 只标记退役、不删文件。"
+        "supersede / archive 是破坏性变更，先看 preview，再以 confirm=true 重试。"
         "只读语料（writable=false）不可写入；没有裸文件写工具。"
     ),
 )
@@ -88,6 +91,48 @@ def memory_add(
             slug=slug, sources=sources, status=status,
             allow_duplicate=allow_duplicate,
         )
+    except MemoryWriteError as exc:
+        raise ValueError(str(exc))
+
+
+@mcp.tool()
+def memory_supersede(
+    old_id: str,
+    title: str,
+    body: str,
+    domain: str,
+    type: str,
+    tags: list[str],
+    slug: str | None = None,
+    sources: list[str] | None = None,
+    confirm: bool = False,
+) -> dict:
+    """用新条目替代一条旧记忆（破坏性：旧条目被标注退役，但**文件保留**）。
+
+    confirm=False（默认）不落盘，只返回 `{status:"confirmation_required", preview}`；
+    调用方必须先把它给用户看、得到明确同意，再以 confirm=True 重试。
+    落盘 = 新条目（frontmatter 带 supersedes=<old_id>）+ 旧条目改
+    status: superseded / superseded_by=<new_id>，两个文件在同一个 commit 里。
+    """
+    try:
+        return get_writer().supersede(
+            old_id=old_id, title=title, body=body, domain=domain, type=type,
+            tags=tags, slug=slug, sources=sources, confirm=confirm,
+        )
+    except MemoryWriteError as exc:
+        raise ValueError(str(exc))
+
+
+@mcp.tool()
+def memory_archive(entry_id: str, reason: str, confirm: bool = False) -> dict:
+    """把一条记忆标记退役（破坏性：改 status 为 archived，**文件永不删除**）。
+
+    `reason` 会写进 frontmatter 的 archive_reason 字段（归档必须留下为什么）。
+    confirm=False（默认）不落盘，只返回 `{status:"confirmation_required", preview}`；
+    得到用户明确同意后，再以 confirm=True 重试。
+    """
+    try:
+        return get_writer().archive(entry_id=entry_id, reason=reason, confirm=confirm)
     except MemoryWriteError as exc:
         raise ValueError(str(exc))
 
