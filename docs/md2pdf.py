@@ -5,7 +5,7 @@ import re, html as htmlmod
 from pathlib import Path
 from fpdf import FPDF
 
-DOCS = Path(r"D:\python_work\work2026-4\RAG Knowledge Base\Docs")
+DOCS = Path(r"D:\python_work\work2026-4\RAG Knowledge Base\docs")
 FONT = r"C:\Windows\Fonts\msyh.ttc"
 SRC = DOCS / "report_draft.html"
 OUT = DOCS / "report_draft.pdf"

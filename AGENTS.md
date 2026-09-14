@@ -1,6 +1,6 @@
 # AGENTS.md
 
-FastAPI + vanilla-JS RAG chat app。目标形状为**个人 RAG 工具**（service 层 + 切分策略为可复用核心，适配层对外暴露，政策法规问答为旗舰 demo，见 `Docs/adr/0001`）。起点是大学 NLP 课程作业（政策法规问答助手）。Backend serves the frontend as static files, so there is no separate frontend build or server.
+FastAPI + vanilla-JS RAG chat app。目标形状为**个人 RAG 工具**（service 层 + 切分策略为可复用核心，适配层对外暴露，政策法规问答为旗舰 demo，见 `docs/adr/0001`）。起点是大学 NLP 课程作业（政策法规问答助手）。Backend serves the frontend as static files, so there is no separate frontend build or server.
 
 ## Virtual environment (REQUIRED)
 The project uses a venv at the repo root (`venv/`). Always activate it first:
@@ -111,7 +111,7 @@ The `warmup()` function (called from `app.py` lifespan) eagerly triggers BGE-M3 
 
 ## 开发工作流（AI 必走，请求先进来路由）
 
-> 本项目执行者是 AI（用户提供思路、AI 开发）。纪律内嵌在流程节点里，不是孤立清单。详见 `Docs/adr/0004-dev-discipline-ai-self-maintenance.md`。
+> 本项目执行者是 AI（用户提供思路、AI 开发）。纪律内嵌在流程节点里，不是孤立清单。详见 `docs/adr/0004-dev-discipline-ai-self-maintenance.md`。
 
 任何工作请求先路由：
 - **缺陷** → 根因流程：先测量/复现定位 → 修复 → 留回归证据。
@@ -123,7 +123,7 @@ The `warmup()` function (called from `app.py` lifespan) eagerly triggers BGE-M3 
 任何可独立验证、可一句话解释的增量即一个单元：修一个 bug、做一次优化、加一个工具都是单元。判定：一句话能说清 + 能独立验证 → 立即 commit；否则拆小或合并。不要等一个 feature 全做完才提交。
 
 ### 决策闸门
-大改动前用一句话向用户说明"是什么/为什么/风险"。硬决策（难逆转 / 反直觉 / 真权衡）必须经用户确认，并写进 `Docs/adr/`。例行工作自主执行，不需要逐个请示。
+大改动前用一句话向用户说明"是什么/为什么/风险"。硬决策（难逆转 / 反直觉 / 真权衡）必须经用户确认，并写进 `docs/adr/`。例行工作自主执行，不需要逐个请示。
 
 ### 地图同步
 结构一变就更新本文件与 `CONTEXT.md`。AGENTS.md 必须始终描述真实目录树，不允许文档脱离实际。
@@ -136,7 +136,7 @@ The `warmup()` function (called from `app.py` lifespan) eagerly triggers BGE-M3 
 2. 本文件与实际目录树一致。
 3. 无垃圾文件（日志、临时产物、迭代残留如 `post_refactor*`、`nul`）。
 4. 每个实验目录有结论文件。
-5. 改动有决策路径落点（`Docs/adr/` 或 `experiments/` 记录）。
+5. 改动有决策路径落点（`docs/adr/` 或 `experiments/` 记录）。
 6. 每个功能过可解释性闸门：一句话讲不清 = 不该进基线。
 
 ## 当前路线图（2026-08 一周冲刺）

@@ -145,4 +145,4 @@ Validation: a separate test set (5+ queries) is run once after optimization stop
 - The pool=100 assumption has been validated on real queries. Pool=20 already captures the best chunk; pool=100 recovers 5-6 additional context chunks.
 - False refusals were traced to the post-retrieval pipeline (adaptive selection + LLM instruction), not retrieval coverage. This spec does not directly address them — they remain a separate concern.
 - Query rewriting was confirmed to be the highest-impact optimization lever based on root-cause analysis of the false refusal cases.
-- The `Docs/rag_testing_research.md` contains the full research backing the framework design decisions.
+- The `docs/rag_testing_research.md` contains the full research backing the framework design decisions.

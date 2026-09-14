@@ -96,4 +96,4 @@ python tests/score_eval.py          # 结果写入 tests/results_scored.md + fai
 
 ## 8. 结论
 
-必做功能均通过实时验证；53 题自动评测取得忠实度 4.93、事实正确性 4.72、无答案拒答率 100%，完整结果见 `tests/results_scored.md`。已知短板（保守拒答、检索精度、工程化）即企业级演进的优先项，详见 `Docs/report_draft.md` 第 4 节。
+必做功能均通过实时验证；53 题自动评测取得忠实度 4.93、事实正确性 4.72、无答案拒答率 100%，完整结果见 `tests/results_scored.md`。已知短板（保守拒答、检索精度、工程化）即企业级演进的优先项，详见 `docs/report_draft.md` 第 4 节。

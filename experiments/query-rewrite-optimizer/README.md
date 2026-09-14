@@ -8,7 +8,7 @@
 
 **结论**：
 - 核心发现：**二元 intent_drift 与关键词改写结构性冲突**——16 条 query 中 15/16 被判 drift=1。改为 0.0~1.0 连续打分，权重从 0.3 降至 0.1（CONTEXT.md 决策 #9）。
-- 完整 9 条决策见 `CONTEXT.md`「查询改写优化器实验」；报告见 `Docs/optimizer_experiment_report.md`、`Docs/optimizer_summary_table.md`、`Docs/exp2-review.md`。
+- 完整 9 条决策见 `CONTEXT.md`「查询改写优化器实验」；报告见 `docs/optimizer_experiment_report.md`、`docs/optimizer_summary_table.md`、`docs/exp2-review.md`。
 
 **状态**：已封存（ADR-0004：实验未决 → 记录结论，不再调优）。
 
