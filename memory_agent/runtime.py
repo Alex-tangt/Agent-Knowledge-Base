@@ -10,8 +10,8 @@ from memory_agent import _bootstrap
 _bootstrap.configure_stderr_logging()
 _bootstrap.ensure_ragcore_on_path()
 
-from memory_agent.corpus.loader import load_corpus  # noqa: E402
 from memory_agent.memory.index import MemoryIndex  # noqa: E402
+from memory_agent.memory.reindex import Reindexer  # noqa: E402
 from memory_agent.memory.writer import MemoryWriter  # noqa: E402
 
 _index: MemoryIndex | None = None
@@ -19,14 +19,20 @@ _writer: MemoryWriter | None = None
 
 
 def build_index() -> dict:
-    """从 Markdown 真相源全量重建派生索引，返回统计。"""
-    entries = load_corpus()
-    index = MemoryIndex()
-    return index.rebuild(entries)
+    """从 Markdown 真相源全量重建（新代 + 原子切指针），返回统计。
+
+    CLI 入口用；服务端分块重建走 `memory_reindex`。
+    """
+    return Reindexer().run_all()
+
+
+def reindex(cursor: dict | None = None, batch: int = 16) -> dict:
+    """分块全量重建一步；cursor=None 开始新一轮，返回 cursor 续调。"""
+    return Reindexer().reindex(cursor=cursor, batch=batch)
 
 
 def get_index() -> MemoryIndex:
-    """取索引单例；未构建时抛出可执行的提示。"""
+    """取索引单例（跟随指针指向的当前代）；未构建时抛出可执行的提示。"""
     global _index
     if _index is None:
         index = MemoryIndex()

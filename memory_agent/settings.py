@@ -15,11 +15,16 @@ KB_DIR = os.environ.get("AGENT_KB_DIR") or r"C:\Users\Tan\.config\opencode\knowl
 # 只读语料根：本仓库（不含子模块）。后续票据再扩到其它项目仓库。
 READONLY_ROOTS = [ROOT_DIR]
 
-# 派生索引：独立 Qdrant 路径 + manifest
+# 派生索引：代目录 + 指针（issue #13 / ADR-0011）。
+# 每代是独立目录 INDEX_DIR/<gen>/{qdrant/,manifest.json}；CURRENT 是指针文件，
+# 全量重建在**新代**里建好后用 os.replace 原子切换指针——中断只留下一个未接管的
+# 代目录，旧代照常服务，绝不出现「空索引 + 陈旧 manifest」。
 INDEX_DIR = os.environ.get("MEMORY_INDEX_DIR") or os.path.join(MEMORY_AGENT_DIR, "vector_db")
-INDEX_DB_PATH = os.path.join(INDEX_DIR, "qdrant")
-MANIFEST_PATH = os.path.join(INDEX_DIR, "manifest.json")
+POINTER_NAME = "CURRENT"
 COLLECTION_NAME = "memory_entries"
+
+# 全量重建的分块大小：单次只嵌入 N 条，远小于 MCP 客户端几十秒的调用超时（D3）。
+DEFAULT_REINDEX_BATCH = int(os.environ.get("MEMORY_REINDEX_BATCH", "16"))
 
 # 条目级嵌入：单条超长时截断（按 section 切分的例外留待需要时再开）
 MAX_ENTRY_CHARS = 6000

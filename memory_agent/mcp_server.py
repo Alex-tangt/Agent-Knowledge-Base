@@ -21,7 +21,8 @@ _ROOT = os.path.dirname(_HERE)
 sys.path[:] = [p for p in sys.path if os.path.abspath(p or os.getcwd()) != _HERE]
 sys.path.insert(0, _ROOT)
 
-from memory_agent.runtime import get_index, get_writer  # noqa: E402  (导入即配 stderr 日志 + ragcore 路径)
+from memory_agent.runtime import get_index, get_writer, reindex  # noqa: E402  (导入即配 stderr 日志 + ragcore 路径)
+from memory_agent.memory.errors import IndexConsistencyError  # noqa: E402
 from memory_agent.memory.writer import MemoryWriteError  # noqa: E402
 
 from mcp.server import MCPServer  # noqa: E402
@@ -35,6 +36,8 @@ mcp = MCPServer(
         "memory_add 写入新条目（先去重，命中近似则不写并返回候选）；"
         "memory_supersede 替代旧条目（新旧双向标注），memory_archive 只标记退役、不删文件。"
         "supersede / archive 是破坏性变更，先看 preview，再以 confirm=true 重试。"
+        "写入会自动增量刷新索引；索引不自洽时用 memory_reindex 分块全量重建"
+        "（拿 cursor 续调到 done=true），memory_index_status 查当前代与自洽性。"
         "只读语料（writable=false）不可写入；没有裸文件写工具。"
     ),
 )
@@ -135,6 +138,30 @@ def memory_archive(entry_id: str, reason: str, confirm: bool = False) -> dict:
         return get_writer().archive(entry_id=entry_id, reason=reason, confirm=confirm)
     except MemoryWriteError as exc:
         raise ValueError(str(exc))
+
+
+@mcp.tool()
+def memory_reindex(cursor: dict | None = None, batch: int = 16) -> dict:
+    """分块全量重建派生索引（从 Markdown 真相源恢复；新代 + 原子切指针）。
+
+    单次调用只嵌入 batch 条（默认 16），避免超过 MCP 调用超时。`cursor=None` 开始
+    新一轮，返回 `{done,total,processed,cursor,gen}`；拿返回的 `cursor` 原样续调，
+    直到 `done=true`（此时指针已切换，新索引生效）。
+    中断安全：完成前指针不动，旧索引继续服务；核对 manifest 条数 == 点数，不等则报错。
+    """
+    try:
+        return reindex(cursor=cursor, batch=batch)
+    except IndexConsistencyError as exc:
+        raise ValueError(str(exc))
+
+
+@mcp.tool()
+def memory_index_status() -> dict:
+    """查当前索引代：`{built, gen, entries, points, consistent, built_at, path}`。
+
+    `consistent=false` 表示 manifest 条数 ≠ 集合点数（需 memory_reindex 重建）。
+    """
+    return get_index().status()
 
 
 def _warmup() -> None:

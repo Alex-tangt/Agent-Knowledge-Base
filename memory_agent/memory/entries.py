@@ -7,12 +7,22 @@ from __future__ import annotations
 import hashlib
 import os
 import re
+import uuid
 from dataclasses import dataclass, field
 
 import yaml
 
 _FRONTMATTER_RE = re.compile(r"\A---[ \t]*\r?\n(.*?)\r?\n---[ \t]*(?:\r?\n|$)", re.DOTALL)
 _HEADING_RE = re.compile(r"^#\s+(.+?)\s*$", re.MULTILINE)
+
+
+def point_id_for(entry_id: str) -> str:
+    """条目 id -> 稳定的 Qdrant 点 id（uuid5）。
+
+    增量重建会按条目 upsert；点 id 必须由 entry_id 决定（而非随机），否则同一
+    条目会被写成多个点、数量核对与孤儿清理都会失真。
+    """
+    return str(uuid.uuid5(uuid.NAMESPACE_URL, f"memory_agent:{entry_id}"))
 
 
 def parse_frontmatter(text: str) -> tuple[dict, str]:

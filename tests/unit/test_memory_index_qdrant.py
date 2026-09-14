@@ -54,3 +54,25 @@ def test_rebuild_search_filter_and_get_on_real_qdrant(tmp_path):
     # 再来一次：清空重建不得残留旧点
     index.rebuild(entries)
     assert len(index.search("body", k=5)) == 2
+
+
+def test_incremental_refresh_skips_unchanged_and_drops_orphans(tmp_path):
+    store = VectorStoreService(collection_name="mem", db_path=str(tmp_path / "qdrant"),
+                               embeddings=StubEmbeddings())
+    index = MemoryIndex(store=store, manifest_path=str(tmp_path / "manifest.json"))
+    a = _entry(tmp_path, "kb/a.md", '---\nid: a\ntitle: "A"\n---\n\n# A\n\nbody a\n',
+               writable=True, entry_id="a")
+    b = _entry(tmp_path, "kb/b.md", '---\nid: b\ntitle: "B"\n---\n\n# B\n\nbody b\n',
+               writable=True, entry_id="b")
+    index.rebuild([a, b])
+
+    c = _entry(tmp_path, "kb/c.md", '---\nid: c\ntitle: "C"\n---\n\n# C\n\nbody c\n',
+               writable=True, entry_id="c")
+    index._entry_loader = lambda: [a, c]  # b 消失（删/改名）、a 未变、c 新增
+
+    stats = index.refresh()
+
+    assert stats == {"entries": 2, "added": 1, "updated": 0, "skipped": 1,
+                     "removed": 1, "embedded": 1}
+    assert {h["id"] for h in index.search("body", k=5)} == {"a", "c"}
+    assert index.status()["consistent"] is True

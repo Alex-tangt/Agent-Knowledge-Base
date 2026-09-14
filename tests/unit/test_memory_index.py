@@ -5,6 +5,7 @@ import os
 import pytest
 
 from memory_agent.memory.entries import Entry
+from memory_agent.memory.errors import IndexConsistencyError
 from memory_agent.memory.index import MemoryIndex
 
 
@@ -15,6 +16,7 @@ class FakeStore:
         self.cleared = 0
         self.texts = []
         self.metas = []
+        self._ids = []
         self._hits = hits or []
         self.last_filter = "unset"
 
@@ -22,11 +24,37 @@ class FakeStore:
         self.cleared += 1
         self.texts = []
         self.metas = []
+        self._ids = []
 
-    def add_documents(self, documents, metadata_list=None):
-        self.texts.extend(list(documents))
-        self.metas.extend(list(metadata_list or []))
-        return []
+    def add_documents(self, documents, metadata_list=None, ids=None):
+        docs = list(documents)
+        metas = list(metadata_list or [])
+        ids = list(ids) if ids is not None else [None] * len(docs)
+        for doc, meta, point_id in zip(docs, metas, ids):
+            if point_id is not None and point_id in self._ids:
+                index = self._ids.index(point_id)
+                self.texts[index] = doc
+                self.metas[index] = meta
+            else:
+                self.texts.append(doc)
+                self.metas.append(meta)
+                self._ids.append(point_id)
+        return ids
+
+    def get_document_count(self):
+        return len(self.metas)
+
+    def delete_documents(self, ids):
+        wanted = set(str(i) for i in ids)
+        kept_texts, kept_metas, kept_ids = [], [], []
+        for doc, meta, point_id in zip(self.texts, self.metas, self._ids):
+            if point_id in wanted:
+                continue
+            kept_texts.append(doc)
+            kept_metas.append(meta)
+            kept_ids.append(point_id)
+        self.texts, self.metas, self._ids = kept_texts, kept_metas, kept_ids
+        return True
 
     def search_documents(self, query, k=3, payload_filter=None):
         self.last_filter = payload_filter
@@ -177,3 +205,62 @@ def test_get_raises_when_source_file_is_gone(tmp_path):
 
     with pytest.raises(FileNotFoundError):
         index.get("gone")
+
+
+def test_refresh_embeds_only_changed_and_new(tmp_path):
+    store = FakeStore()
+    index = MemoryIndex(store=store, manifest_path=os.path.join(tmp_path, "m.json"))
+    a = _entry(tmp_path, "kb/a.md", "# A\n\nbody-a\n", entry_id="a")
+    b = _entry(tmp_path, "kb/b.md", "# B\n\nbody-b\n", entry_id="b")
+    index.rebuild([a, b])
+
+    a2 = _entry(tmp_path, "kb/a.md", "# A\n\nbody-a2\n", entry_id="a")
+    c = _entry(tmp_path, "kb/c.md", "# C\n\nbody-c\n", entry_id="c")
+
+    stats = index.refresh(entries=[a2, b, c])
+
+    assert stats == {"entries": 3, "added": 1, "updated": 1, "skipped": 1,
+                     "removed": 0, "embedded": 2}
+    assert len(store.metas) == 3
+
+
+def test_refresh_removes_orphans_without_residue(tmp_path):
+    store = FakeStore()
+    index = MemoryIndex(store=store, manifest_path=os.path.join(tmp_path, "m.json"))
+    a = _entry(tmp_path, "kb/a.md", "# A\n", entry_id="a")
+    b = _entry(tmp_path, "kb/b.md", "# B\n", entry_id="b")
+    index.rebuild([a, b])
+
+    stats = index.refresh(entries=[a])
+
+    assert stats["removed"] == 1
+    assert len(store.metas) == 1
+    with pytest.raises(KeyError):
+        index.get("b")
+
+
+def test_refresh_on_empty_corpus_is_noop(tmp_path):
+    index = MemoryIndex(store=FakeStore(), manifest_path=os.path.join(tmp_path, "m.json"))
+    stats = index.refresh(entries=[])
+    assert stats["entries"] == 0
+    assert stats["embedded"] == 0
+
+
+def test_search_raises_when_manifest_and_points_disagree(tmp_path):
+    store = FakeStore()
+    index = MemoryIndex(store=store, manifest_path=os.path.join(tmp_path, "m.json"))
+    index.rebuild([_entry(tmp_path, "kb/a.md", "# A\n", entry_id="a")])
+    store.metas.clear()  # 模拟集合被清空、manifest 未更新的不自洽状态
+
+    with pytest.raises(IndexConsistencyError):
+        index.search("q")
+
+
+def test_status_reports_consistency(tmp_path):
+    store = FakeStore()
+    index = MemoryIndex(store=store, manifest_path=os.path.join(tmp_path, "m.json"))
+    index.rebuild([_entry(tmp_path, "kb/a.md", "# A\n", entry_id="a")])
+
+    assert index.status()["consistent"] is True
+    store.metas.clear()
+    assert index.status()["consistent"] is False
