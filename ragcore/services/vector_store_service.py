@@ -13,15 +13,16 @@ from utils.model_status import EMBEDDING_DIMENSION, STATUS
 
 
 class VectorStoreService:
-    def __init__(self, collection_name=None):
+    def __init__(self, collection_name=None, db_path=None):
         self.collection_name = collection_name or QDRANT_COLLECTION_NAME
+        self._db_path = db_path or VECTOR_DB_PATH
         self._client = None
         self._embeddings = None
         self._initialized = False
 
     def _init_client(self):
         if self._client is None:
-            self._client = QdrantClient(path=VECTOR_DB_PATH)
+            self._client = QdrantClient(path=self._db_path)
             self._ensure_collection()
             logger.info(f"VectorStoreService initialized with Qdrant local mode, collection={self.collection_name}")
 
