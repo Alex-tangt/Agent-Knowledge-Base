@@ -194,7 +194,7 @@ The `warmup()` function (called from `app.py` lifespan) eagerly triggers BGE-M3 
 
 - ✅ 0. 机制落地 + 清理（垃圾已删；`eval_service.py` 迁入 `experiments/query-rewrite-optimizer/`；诊断产物 `llm_refusal_trace.txt`/`diagnostic_output.txt` 留待根因调查）。
 - ✅ 1. 初始基线 commit（本地 + 远程，单根 `e723e5b`）。
-- ✅ 2. 延迟调查（rerank-latency + e2e-latency 两轮实验）：生产 rerank mean ≈15s（CPU 固有，接受为已知限制）；"分钟级"真凶 = 优化器实验的 eval_service（对子查询重排 + pool 100，已记录发现，实验封存不修）；pool 截断延后为 planned optimization；模型加载已加 `local_files_only=True`（消除冷启动 HF 网络卡死）。
+- ✅ 2. 延迟调查（rerank-latency + e2e-latency 两轮实验）：生产 rerank mean ≈15s（CPU 固有，接受为已知限制）；"分钟级"真凶 = 优化器实验的 eval_service（对子查询重排 + pool 100，已记录发现，实验封存不修）；pool 截断延后为 planned optimization；模型加载已加 `local_files_only=True`（不下载权重；仍有少量 HF 元数据请求，实测不阻塞，见 #18）。
 - ✅ 3. 拒答根因调查（≤1 天，时间盒）：结论=机制健康（基线误拒率 2.4%、无答案拒答率 91.7%），唯一误拒为 reranker 边界分(0.87>0.85)+anchor 污染，选 A 接受现状并记录（详见 `experiments/refusal-root-cause/`）。
 - ✅ 4. 评估×2 → 因选 A 无二次评估，`legal_web/tests/results_scored.md` 即唯一最终证据（拒答 21→12，context_precision 3.4→4.8，source_recall 1.0）。
 - ✅ 5. README 简历门面（评测证据 + 工程纪律 + 目录修正）+ 终版整理。
@@ -210,11 +210,11 @@ The `warmup()` function (called from `app.py` lifespan) eagerly triggers BGE-M3 
 - ✅ 写入网关（#11，2026-09-14）：MCP `memory_add`——写前检索去重（命中近似只报告、不写）、frontmatter 镜像 `kb.py check` 校验（另强制 domain↔type）、路径级单文件 git commit（只提交本条目，避开并发会话的脏改动）。决策见 `docs/adr/0009`；单测 `tests/unit/test_memory_writer.py`（106 passed 全绿）。
 - ✅ 生命周期工具（#12，2026-09-14）：MCP `memory_supersede`（新建 + 双向标注 `supersedes`/`superseded_by`，新旧同一次 commit）与 `memory_archive`（置 `status: archived` + `archive_reason`，永不删文件）；两者默认只返回 `confirmation_required` 预览，需 `confirm=true` 才落盘。决策见 `docs/adr/0010`；单测 `tests/unit/test_memory_writer.py`（117 passed 全绿）。
 - ✅ skill 骨架（#14，2026-09-14）：`memory_agent/skill/SKILL.md`（源，安装到全局 `~/.config/opencode/skills/memory-agent/`）——读/写/生命周期工具用法 + 破坏性确认规则（先预览、用户同意后才 `confirm=true`）。决策见 `docs/adr/0012`；行为验收在 #17 dogfood，不在本票。
-- ✅ 惰性预热（#19 第一步，2026-09-14）：MCP 服务**默认不再预热** BGE-M3（要低延迟可设 `MEMORY_WARMUP=1`）。实测启动私有内存 **3953MB → 54MB**。根因：每个 opencode 会话各拉起一份 MCP、各吃 ~3.9GB（BGE-M3 权重 2.17GB + torch 运行时 + 加载峰值），三条并行会话把系统 commit 打满 → `Out of memory` / 卡死 / `uv_spawn` 失败。剩余项（共享单实例 / 换小模型）见 issue #19。
+- ✅ 惰性预热（#19 第一步，2026-09-14）：MCP 服务**默认不再预热** BGE-M3（要低延迟可设 `MEMORY_WARMUP=1`）。实测启动私有内存 **3953MB → 54MB**。根因：每个 opencode 会话各拉起一份 MCP、各吃 ~3.9GB（BGE-M3 权重 2.17GB + torch 运行时 + 加载峰值），三条并行会话把系统 commit 打满 → `Out of memory` / 卡死 / `uv_spawn` 失败。#19 已关闭（共享单实例根治，见下）；「换小模型」为独立正交备选，另行评估。
 - ✅ 索引一致性（#13，2026-09-14）：代目录 + `CURRENT` 指针原子切换（中断不留「空索引 + 陈旧 manifest」，`search` 自洽核对失败显式报错）；按条目增量刷新（hash 未变跳过、孤儿点按稳定 `uuid5(entry_id)` 删除）、写后自动刷新钩子；分块 `memory_reindex(cursor,batch)` 全量重建 + `memory_index_status`。决策见 `docs/adr/0011`；单测 `test_memory_reindex.py`（135 passed 全绿）；真实重建 gen-1：68 条 = 68 点，`refresh` 68 skipped / 0 embedded。
 - ✅ 共享单实例（#19 根治，2026-09-14）：拓扑改为「一个常驻 HTTP daemon（持有唯一一份 BGE-M3）+ 每会话一个 stdio 代理」——N 会话从 `N × 3.9GB` 降为 `1 × 3.9GB + N × 几十MB`。`mcp_server.py --transport http` + `/health` + DNS-rebinding 防护；`proxy.py` 幂等拉起（启动权文件锁，避免冷启动竞态）+ 透明转发；进程内串行化 store/索引/写入。决策见 `docs/adr/0013`；验收（真实模型）见 `memory_agent/eval/issue19_acceptance.md`（最终 `154 passed`）。opencode 接入从「跑 `mcp_server.py`」改为「跑 `proxy.py`」（`~/.config/opencode/opencode.json`，重启生效）。
 - ✅ 写路径 sandbox 套件（#16，2026-09-14）：真实 KB 克隆 + 隔离索引，25/25 通过且两次运行一致、真实 KB 前后逐字不变；顺带校准 `DEDUP_THRESHOLD` 0.92→0.88（`experiments/dedup-threshold-calibration/`，回写 ADR-0009）。证据见 `memory_agent/eval/write_path_sandbox_results.md`。
-- ✅ dogfood 收尾记忆包 MVP（#17，2026-09-14）：经 MCP 真写一条决策 + 双通道盲测 recall（独立进程 + 独立子代理，同 score），证据见 `memory_agent/eval/dogfood_17.md`；关闭 #7。检索优化叙事独立推进（**#21**，含 #15 BEIR 子问题，不占 MVP 收尾）。
+- ✅ #17 dogfood（2026-09-14）：经 MCP 真写一条决策 + 双通道盲测 recall（独立进程 + 独立子代理，同 score），证据见 `memory_agent/eval/dogfood_17.md`；关闭 **#17**。**#7（MVP epic）保持 OPEN**——剩余：用户故事 #17「三个项目仓库只读语料」（当前语料仅 KB + 本仓库，尚未接入）。检索质量（#15）归独立叙事 **#21**，不占 MVP 收尾。
 
 ## 后续优化待办（Backlog / 简历谈资池）
 
