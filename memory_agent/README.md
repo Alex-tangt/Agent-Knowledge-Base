@@ -2,7 +2,7 @@
 
 Agent-Knowledge-Base 的第一个能力：让 coding agent 通过 MCP 语义检索、读取、并**安全写入**长期记忆。
 
-- 产品形状与架构：`docs/adr/0005`（产品升级）、`docs/adr/0006`（Markdown 真相源 + 派生索引 + 写入网关）、`docs/adr/0007`（布局与更名）、`docs/adr/0008`（读路径接缝：MCP 选型 / 语料范围 / stdio 铁律）、`docs/adr/0009`（写路径：commit 归属范围 + 去重命中语义）、`docs/adr/0011`（索引一致性：代目录 + 指针切换）、`docs/adr/0013`（拓扑：共享单实例 daemon + 代理）。
+- 产品形状与架构：`docs/adr/0005`（产品升级）、`docs/adr/0006`（Markdown 真相源 + 派生索引 + 写入网关）、`docs/adr/0007`（布局与更名）、`docs/adr/0008`（读路径接缝：MCP 选型 / 语料范围 / stdio 铁律）、`docs/adr/0009`（写路径：commit 归属范围 + 去重命中语义）、`docs/adr/0011`（索引一致性：代目录 + 指针切换）、`docs/adr/0013`（拓扑：共享单实例 daemon + 代理）、`docs/adr/0014`（只读语料：带标签的多仓库文档）。
 - 需求全貌（user stories / 决策 / 测试口径）：GitHub issue #7；实现票据 #10–#17。
 
 ## 约定（不变量）
@@ -20,8 +20,9 @@ memory_agent/
 ├── proxy.py               # 每会话瘦代理：幂等确保 daemon 在跑 + stdio<->HTTP 转发          (#19)
 ├── runtime.py             # 先立 stderr 日志，再装配索引 / 写入网关单例
 ├── _bootstrap.py          # stdio 安全日志 + ragcore sys.path 垫片
-├── settings.py            # 真相源 / 索引根 / 指针名 / 集合名 / 去重阈值 / daemon 端点（勿命名 config.py，会遮蔽 ragcore 的 config 包）
-├── corpus/loader.py       # KB 条目 + 只读语料 的发现与噪声排除              (#10)
+├── settings.py            # 真相源 / 索引根 / 只读仓库清单 / 指针名 / 集合名 / 去重阈值 / daemon 端点（勿命名 config.py，会遮蔽 ragcore 的 config 包）
+├── readonly_repos.json    # 本地只读仓库清单（gitignored；模板见 .example.json）(#17)
+├── corpus/loader.py       # KB 条目 + 多仓库只读文档 的发现、标签消歧与噪声排除 (#10,#17)
 ├── memory/entries.py      # frontmatter 解析 -> Entry；稳定点 id（uuid5）    (#10,#13)
 ├── memory/index.py        # 当前代视图：检索 + 增量 refresh（hash 跳过/孤儿清理）(#10,#13)
 ├── memory/layout.py       # 代目录 + CURRENT 指针 + 原子切换                 (#13)
@@ -31,7 +32,7 @@ memory_agent/
 ├── memory/authoring.py    # 渲染 frontmatter + 镜像 kb.py check 的校验        (#11)
 ├── memory/writer.py       # 写入网关：搜索→去重→校验→落盘→commit→增量刷新    (#11,#12,#13)
 ├── build_index.py         # CLI：从 Markdown 全量重建（新代 + 切指针）        (#10,#13)
-├── eval/                  # 运行时证据：baseline_A.md（锚点）、issue19_acceptance.md（#19）、write_path_sandbox.py + _results.md（#16）、BEIR (#9,#15,#16,#19)
+├── eval/                  # 运行时证据：baseline_A.md（锚点）、issue19_acceptance.md（#19）、write_path_sandbox.py + _results.md（#16）、readonly_corpus_17.py（#17 三仓库只读）、dogfood_17.md
 └── (skill)                # 见 #14：指导 agent 何时 search/read/add 及破坏性确认规则
 ```
 
@@ -58,6 +59,17 @@ venv\Scripts\python.exe memory_agent/mcp_server.py --transport http
 #    代理会在会话启动时幂等确保 daemon 在跑；运维：proxy.py --status / --ensure / --stop
 #    --stop 手动停掉 daemon（回收 ~3.9GB）；不做自动空闲卸载（见 ADR-0013 D2）
 #    单会话/手动仍可直接跑 mcp_server.py（默认 stdio，不共享）。
+```
+
+只读仓库清单（用户故事 #17）：把要检索的**项目仓库文档**写进 `memory_agent/readonly_repos.json`
+（gitignored；复制 `readonly_repos.example.json` 改）。只索引 `.md`，不索引代码；`label` 用于
+跨仓库消歧义。**改完必须重启 daemon**（见 `docs/adr/0014`）。
+
+```json
+[
+  {"label": "agent-knowledge-base", "path": "."},
+  {"label": "agent-infra", "path": "D:/python_work/work2026-8/Agent-infra"}
+]
 ```
 
 写路径确定性 sandbox 套件（#16，需 BGE-M3；真实 KB 只读、不污染）：
