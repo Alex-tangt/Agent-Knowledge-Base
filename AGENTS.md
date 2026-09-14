@@ -214,7 +214,7 @@ The `warmup()` function (called from `app.py` lifespan) eagerly triggers BGE-M3 
 - ✅ 索引一致性（#13，2026-09-14）：代目录 + `CURRENT` 指针原子切换（中断不留「空索引 + 陈旧 manifest」，`search` 自洽核对失败显式报错）；按条目增量刷新（hash 未变跳过、孤儿点按稳定 `uuid5(entry_id)` 删除）、写后自动刷新钩子；分块 `memory_reindex(cursor,batch)` 全量重建 + `memory_index_status`。决策见 `docs/adr/0011`；单测 `test_memory_reindex.py`（135 passed 全绿）；真实重建 gen-1：68 条 = 68 点，`refresh` 68 skipped / 0 embedded。
 - ✅ 共享单实例（#19 根治，2026-09-14）：拓扑改为「一个常驻 HTTP daemon（持有唯一一份 BGE-M3）+ 每会话一个 stdio 代理」——N 会话从 `N × 3.9GB` 降为 `1 × 3.9GB + N × 几十MB`。`mcp_server.py --transport http` + `/health` + DNS-rebinding 防护；`proxy.py` 幂等拉起（启动权文件锁，避免冷启动竞态）+ 透明转发；进程内串行化 store/索引/写入。决策见 `docs/adr/0013`；验收（真实模型）见 `memory_agent/eval/issue19_acceptance.md`（最终 `154 passed`）。opencode 接入从「跑 `mcp_server.py`」改为「跑 `proxy.py`」（`~/.config/opencode/opencode.json`，重启生效）。
 - ✅ 写路径 sandbox 套件（#16，2026-09-14）：真实 KB 克隆 + 隔离索引，25/25 通过且两次运行一致、真实 KB 前后逐字不变；顺带校准 `DEDUP_THRESHOLD` 0.92→0.88（`experiments/dedup-threshold-calibration/`，回写 ADR-0009）。证据见 `memory_agent/eval/write_path_sandbox_results.md`。
-- 下一步：#17 dogfood；随后 #15 BEIR。
+- 下一步：#17 dogfood 收尾记忆包 MVP（#7）；检索优化叙事独立推进（**#21**，含 #15 BEIR 子问题，不占 MVP 收尾）。
 
 ## 后续优化待办（Backlog / 简历谈资池）
 
