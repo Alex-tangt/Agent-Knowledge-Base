@@ -171,7 +171,7 @@ The `warmup()` function (called from `app.py` lifespan) eagerly triggers BGE-M3 
 项目升级为 **Agent-Knowledge-Base**：hero = agent 记忆能力包（MCP + skill），`legal_web` 退为适配层实例 / 回归锚点。决策见 `docs/adr/0005`–`0007`，领域语言见 `CONTEXT.md`。
 
 - ✅ 甲⁺ 布局重排（#9 第一轮）：`backend/` 拆为 `ragcore/` + `legal_web/`，新建 `memory_agent/`；T1 锚点复现（71 passed + 导入冒烟 + 启动冒烟，见 `memory_agent/eval/baseline_A.md`）。
-- ⏳ 仓库与本地目录更名 `Agent-Knowledge-Base`（GitHub rename + 本地目录 + venv 重建 + remote 重设 + 文档/KB sources 同步）待执行（#9 第二轮）。
+- ⏳ 更名（#9 第二轮）：GitHub 仓库已改为 `Alex-tangt/Agent-Knowledge-Base`，`origin` 已换成干净 URL（原嵌的明文 token 已移除）；**本地目录改名待用户执行**——opencode 的 MCP 子进程以仓库目录为 CWD，锁住目录，无法在会话内重命名（命令见 issue #9）。
 - 下一步：`memory_agent` 读路径最小闭环（#10，stdio MCP `memory_search`/`memory_get`）。
 
 ## 后续优化待办（Backlog / 简历谈资池）

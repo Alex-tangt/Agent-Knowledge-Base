@@ -22,3 +22,14 @@ Consequences: 一次性改名动作（GitHub 仓库、本地目录、venv 重建
 - **锚点复现**：`pytest tests/unit -q` → 71 passed；legal_web 导入冒烟 → import-ok；`compileall` exit 0。证据见 `memory_agent/eval/baseline_A.md`。
 - **未完成**：仓库与本地目录更名 `Agent-Knowledge-Base`（GitHub rename + 本地目录 + venv 重建 + remote 重设 + 文档/KB sources 同步）留待第二轮。
 
+## 执行记录（2026-09-14，第二轮：更名）
+
+- **GitHub**：`gh repo rename Agent-Knowledge-Base` → `Alex-tangt/Agent-Knowledge-Base`（旧 URL 由 GitHub 自动重定向）。
+- **remote**：`gh` 已把 `origin` 改写为 `https://github.com/Alex-tangt/Agent-Knowledge-Base.git`——**原嵌的明文 token 随之移除**。已验证 git 的 `github.com` 凭据走全局 `credential.https://github.com.helper = gh auth git-credential`，推送不受影响；token 轮换由用户在 GitHub 侧单独完成。
+- **venv 策略**：决定"移动后原样验证"而非重建——`venv\Scripts\python.exe` 按自身位置解析 `pyvenv.cfg`，`python -m ...` 可用；已知代价是 `Scripts\*.exe`（49 个控制台脚本）内嵌旧绝对路径会失效，但项目约定从不使用它们（一律 `venv\Scripts\python.exe -m ...`）。
+- **本地目录改名：受阻，待用户执行**。`Rename-Item` 连续两次失败（共享冲突）：本机运行着 3 个 `opencode.exe`，各自派生 `markitdown-mcp.exe`（stdio MCP，CWD = 仓库目录），以仓库目录为当前目录的进程锁住目录，会话内无法重命名。**不在会话内杀进程**（可能波及其他会话）。
+- **硬编码路径清理**：`docs/md2pdf.py` 原写死 `D:\python_work\work2026-4\RAG Knowledge Base\docs` → 改为 `Path(__file__).resolve().parent`（改名不致失效）。
+- **函数性标识不改**：`LANGSMITH_PROJECT` 默认仍为 `rag-knowledge-base`（改则断掉已有 trace 历史）、HF 模型名不变。只同步人类可见的仓库/目录引用。
+- **待验证**（用户改目录后）：新路径 `pytest tests/unit -q` 71 passed、导入冒烟、启动冒烟。
+
+
