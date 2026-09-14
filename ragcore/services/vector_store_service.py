@@ -7,6 +7,7 @@ from qdrant_client.models import (
     Distance,
     FieldCondition,
     Filter,
+    FilterSelector,
     MatchValue,
     PointStruct,
     VectorParams,
@@ -281,11 +282,19 @@ class VectorStoreService:
 
     @langsmith_service.trace(name="vector_store_clear", metadata={"service": "VectorStoreService"})
     def clear_all_documents(self):
+        """清空集合内所有点。
+
+        实测（local mode）：`delete_collection` / `recreate_collection` 只摘掉元数据，
+        同名 `create_collection` 会把磁盘上的旧点**复活**（3 -> 0 -> 3）。所以这里
+        不丢集合，改用空 filter 的 `FilterSelector` 删光所有点。
+        """
         try:
             with self._session() as client:
-                client.delete_collection(self.collection_name)
-                self._ensure_collection(client)
-            logger.info(f"Recreated collection '{self.collection_name}' (all documents cleared)")
+                client.delete(
+                    collection_name=self.collection_name,
+                    points_selector=FilterSelector(filter=Filter()),
+                )
+            logger.info(f"Cleared all documents in collection '{self.collection_name}'")
             return True
         except Exception as e:
             logger.error(f"Error clearing documents: {e}")

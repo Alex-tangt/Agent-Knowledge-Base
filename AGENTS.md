@@ -72,7 +72,7 @@ Paths are anchored in code, not to CWD: `ROOT_DIR` / `RAGCORE_DIR` / `LEGAL_WEB_
 | `POST` | `/chat/stream` | Chat streaming (RAG or LLM-only, JSONL SSE). Accepts `kb_name` and `session_id` params. Model services are instantiated lazily on first call. |
 | `POST` | `/documents/upload?kb_name=` | Upload document (.pdf/.txt/.md), process (load/split/embed), store in specified Qdrant collection. |
 | `GET` | `/documents/count?kb_name=` | Return chunk count in specified Qdrant collection. |
-| `DELETE` | `/documents/clear?kb_name=` | Delete and recreate the specified Qdrant collection (full clear). |
+| `DELETE` | `/documents/clear?kb_name=` | Clear all points in the specified Qdrant collection (keeps the collection). |
 | `GET` | `/kb/list` | List all registered knowledge bases. |
 | `POST` | `/kb/create?name=&label=&description=` | Create a new knowledge base (new Qdrant collection). |
 | `DELETE` | `/kb/{name}` | Delete a knowledge base (cannot delete default `documents`). |
@@ -196,6 +196,7 @@ The `warmup()` function (called from `app.py` lifespan) eagerly triggers BGE-M3 
 - **Always activate venv first** (`venv\Scripts\activate` on Windows). Running without it may miss installed dependencies.
 - **Qdrant local mode 的锁按操作持有**（`VectorStoreService` 每次操作开/关一个 client，见 ADR-0008 D5）。`legal_web` 与 `memory_agent` 现在可以并存；只有两个进程的重活**恰好撞在同一瞬间**才会短暂争锁，靠内置退避重试兜住。若仍报 "already accessed"：确认没有残留进程，必要时删 `.lock`。
 - **stdio MCP: stdout is the protocol channel.** `ragcore/utils/logger.py` configures logging to `sys.stdout`; `memory_agent` must grab the root logger to stderr *before* importing `ragcore` (`_bootstrap.configure_stderr_logging`). Any stray stdout write corrupts the JSON-RPC stream.
+- **Qdrant local mode 清空集合不要丢集合**：实测 `delete_collection` / `recreate_collection` 只摘元数据，同名 `create_collection` 会让磁盘上的旧点**复活**（3 → 0 → 3，静默失效）。`VectorStoreService.clear_all_documents` 改用空 filter 的 `FilterSelector` 删光点；回归见 `tests/unit/test_vector_store_clear.py`。
 - **Don't name a `memory_agent` module `config.py`** — under `python memory_agent/x.py` it shadows ragcore's top-level `config` package (`ModuleNotFoundError: No module named 'config.config'`). It's `settings.py`; use `memory_agent.`-prefixed absolute imports.
 - **First run** after `pip install` downloads BGE-M3 (~2.2GB) and bge-reranker-v2-m3 (~2.2GB) from HuggingFace. Subsequent runs load from cache instantly.
 - **`RELEVANCE_THRESHOLD=0.85`** is a generous post-reranker value; the prompt handles most boundary cases. Use `experiments/relevance-calibration/calibrate_relevance.py` to recalibrate if needed.
