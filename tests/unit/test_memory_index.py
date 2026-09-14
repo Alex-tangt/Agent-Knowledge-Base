@@ -16,6 +16,7 @@ class FakeStore:
         self.texts = []
         self.metas = []
         self._hits = hits or []
+        self.last_filter = "unset"
 
     def clear_all_documents(self):
         self.cleared += 1
@@ -27,8 +28,13 @@ class FakeStore:
         self.metas.extend(list(metadata_list or []))
         return []
 
-    def search_documents(self, query, k=3):
-        hits = self._hits[:k]
+    def search_documents(self, query, k=3, payload_filter=None):
+        self.last_filter = payload_filter
+        hits = self._hits
+        if payload_filter:
+            hits = [h for h in hits
+                    if all(h["meta"].get(key) == value for key, value in payload_filter.items())]
+        hits = hits[:k]
         if hits:
             return {
                 "documents": [[h["text"] for h in hits]],
@@ -115,18 +121,29 @@ def test_search_maps_payloads_and_sorts_by_score(tmp_path):
     assert results[0]["snippet"] == "high"
 
 
-def test_search_writable_only_filters_readonly(tmp_path):
+def test_search_pushes_writable_filter_down_to_store(tmp_path):
     hits = [
         {"text": "a", "score": 0.9, "meta": {"entry_id": "a", "title": "A", "writable": False,
                                              "source": "r/a.md"}},
         {"text": "b", "score": 0.5, "meta": {"entry_id": "b", "title": "B", "writable": True,
                                              "source": "kb/b.md"}},
     ]
-    index = MemoryIndex(store=FakeStore(hits), manifest_path=os.path.join(tmp_path, "m.json"))
+    store = FakeStore(hits)
+    index = MemoryIndex(store=store, manifest_path=os.path.join(tmp_path, "m.json"))
 
     results = index.search("q", k=2, writable_only=True)
 
+    assert store.last_filter == {"writable": True}
     assert [r["id"] for r in results] == ["b"]
+
+
+def test_search_without_writable_only_passes_no_filter(tmp_path):
+    store = FakeStore()
+    index = MemoryIndex(store=store, manifest_path=os.path.join(tmp_path, "m.json"))
+
+    index.search("q", k=2)
+
+    assert store.last_filter is None
 
 
 def test_search_rejects_empty_query(tmp_path):

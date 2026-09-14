@@ -73,18 +73,20 @@ class MemoryIndex:
         }
 
     def search(self, query: str, k: int = 5, writable_only: bool = False) -> list[dict]:
-        """条目级语义检索。score 为余弦相似度（越大越相关）。"""
+        """条目级语义检索。score 为余弦相似度（越大越相关）。
+
+        writable_only 的过滤在向量库侧执行（否则 top-k 之后再筛会欠填）。
+        """
         if not query or not query.strip():
             raise ValueError("query 不能为空")
-        result = self.store.search_documents(query, k=k)
+        payload_filter = {"writable": True} if writable_only else None
+        result = self.store.search_documents(query, k=k, payload_filter=payload_filter)
         documents = result["documents"][0]
         metadatas = result["metadatas"][0]
         scores = result["distances"][0]
 
         hits: list[dict] = []
         for text, meta, score in zip(documents, metadatas, scores):
-            if writable_only and not meta.get("writable"):
-                continue
             hits.append({
                 "id": meta.get("entry_id"),
                 "title": meta.get("title"),

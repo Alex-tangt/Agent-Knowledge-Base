@@ -1,6 +1,13 @@
 import uuid
 from qdrant_client import QdrantClient
-from qdrant_client.models import Distance, VectorParams, PointStruct
+from qdrant_client.models import (
+    Distance,
+    FieldCondition,
+    Filter,
+    MatchValue,
+    PointStruct,
+    VectorParams,
+)
 from config.config import (
     USE_LOCAL_EMBEDDINGS,
     LOCAL_EMBEDDING_MODEL,
@@ -13,11 +20,11 @@ from utils.model_status import EMBEDDING_DIMENSION, STATUS
 
 
 class VectorStoreService:
-    def __init__(self, collection_name=None, db_path=None):
+    def __init__(self, collection_name=None, db_path=None, embeddings=None):
         self.collection_name = collection_name or QDRANT_COLLECTION_NAME
         self._db_path = db_path or VECTOR_DB_PATH
         self._client = None
-        self._embeddings = None
+        self._embeddings = embeddings
         self._initialized = False
 
     def _init_client(self):
@@ -101,13 +108,22 @@ class VectorStoreService:
             self._ensure_collection()
 
     @langsmith_service.trace(name="vector_store_search", metadata={"service": "VectorStoreService"})
-    def search_documents(self, query, k=3):
+    def search_documents(self, query, k=3, payload_filter=None):
+        """向量检索。payload_filter 为 {字段: 值} 的精确匹配约束，在 Qdrant 侧过滤
+        （而非取回后再筛），以避免过滤后欠填。"""
         try:
             self._ensure_collection_exists()
             query_vec = self.embeddings.embed_query(query)
+            query_filter = None
+            if payload_filter:
+                query_filter = Filter(must=[
+                    FieldCondition(key=key, match=MatchValue(value=value))
+                    for key, value in payload_filter.items()
+                ])
             results = self.client.query_points(
                 collection_name=self.collection_name,
                 query=query_vec,
+                query_filter=query_filter,
                 limit=k,
                 with_payload=True,
             )
