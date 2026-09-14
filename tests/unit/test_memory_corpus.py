@@ -1,4 +1,5 @@
 """corpus 装载与条目解析（不依赖模型 / 向量库）。"""
+import json
 import os
 
 from memory_agent import settings
@@ -10,20 +11,64 @@ from memory_agent.corpus.loader import (
 from memory_agent.memory.entries import Entry, parse_frontmatter
 
 
-# ---- 只读根的环境覆盖（#16 sandbox 使能） ----
-
-def test_readonly_roots_default_is_repo(monkeypatch):
+def _no_config(monkeypatch, tmp_path):
+    """把只读仓库配置指向不存在的文件，隔离机器本地配置。"""
     monkeypatch.delenv("MEMORY_READONLY_ROOTS", raising=False)
-    assert settings._readonly_roots() == [settings.ROOT_DIR]
+    monkeypatch.setenv(
+        "MEMORY_READONLY_REPOS_CONFIG", str(tmp_path / "readonly_repos.json")
+    )
+
+
+# ---- 只读根：默认 / 环境覆盖 / 配置文件（#16 sandbox 使能；#7 用户故事 17） ----
+
+def test_readonly_roots_default_is_repo(monkeypatch, tmp_path):
+    _no_config(monkeypatch, tmp_path)
+    assert settings._readonly_roots() == [(settings.DEFAULT_READONLY_LABEL, settings.ROOT_DIR)]
 
 
 def test_readonly_roots_env_override(monkeypatch, tmp_path):
     monkeypatch.setenv("MEMORY_READONLY_ROOTS", "")
     assert settings._readonly_roots() == []
 
-    a, b = tmp_path / "a", tmp_path / "b"
+    a, b = tmp_path / "repo-a", tmp_path / "repo-b"
     monkeypatch.setenv("MEMORY_READONLY_ROOTS", f"{a}{os.pathsep}{b}")
-    assert settings._readonly_roots() == [os.path.abspath(str(a)), os.path.abspath(str(b))]
+    assert settings._readonly_roots() == [
+        ("repo-a", os.path.abspath(str(a))),
+        ("repo-b", os.path.abspath(str(b))),
+    ]
+
+
+def test_readonly_roots_from_config_file(monkeypatch, tmp_path):
+    repos = tmp_path / "repos"
+    config = tmp_path / "readonly_repos.json"
+    config.write_text(json.dumps([
+        {"label": "alpha", "path": str(repos / "alpha")},
+        {"path": "."},
+    ]), encoding="utf-8")
+    monkeypatch.delenv("MEMORY_READONLY_ROOTS", raising=False)
+    monkeypatch.setenv("MEMORY_READONLY_REPOS_CONFIG", str(config))
+
+    roots = settings._readonly_roots()
+
+    assert roots[0] == ("alpha", os.path.abspath(str(repos / "alpha")))
+    assert roots[1][0] == settings.DEFAULT_READONLY_LABEL
+    assert roots[1][1] == settings.ROOT_DIR
+
+
+def test_readonly_roots_config_dedupes_and_uniquifies(monkeypatch, tmp_path):
+    config = tmp_path / "readonly_repos.json"
+    config.write_text(json.dumps([
+        {"label": "same", "path": "a"},
+        {"label": "same", "path": "b"},
+        {"label": "dup", "path": "a"},
+    ]), encoding="utf-8")
+    monkeypatch.delenv("MEMORY_READONLY_ROOTS", raising=False)
+    monkeypatch.setenv("MEMORY_READONLY_REPOS_CONFIG", str(config))
+
+    roots = settings._readonly_roots()
+
+    assert [label for label, _ in roots] == ["same", "same-2"]
+    assert roots[1][1] == os.path.abspath(os.path.join(settings.ROOT_DIR, "b"))
 
 
 def _write(path, text):
@@ -113,11 +158,13 @@ def test_load_readonly_entries_excludes_noise_dirs_and_raw_data(tmp_path):
     _write(os.path.join(tmp_path, "venv", "lib", "b.md"), "# B\n")
     _write(os.path.join(tmp_path, ".git", "c.md"), "# C\n")
     _write(os.path.join(tmp_path, "node_modules", "d.md"), "# D\n")
+    _write(os.path.join(tmp_path, "outputs", "gen.md"), "# G\n")
+    _write(os.path.join(tmp_path, ".playwright-cli", "e.md"), "# E\n")
     _write(os.path.join(tmp_path, "notes.txt"), "not markdown\n")
 
-    entries = load_readonly_entries([str(tmp_path)])
+    entries = load_readonly_entries([("repo", str(tmp_path))])
 
-    assert [e.source for e in entries] == ["docs/a.md"]
+    assert [e.source for e in entries] == ["repo/docs/a.md"]
     assert entries[0].writable is False
 
 
@@ -128,9 +175,21 @@ def test_load_readonly_entries_skips_oversized_files(tmp_path, monkeypatch):
         handle.write(b"# S\n")
     monkeypatch.setattr("memory_agent.corpus.loader.MAX_CORPUS_FILE_BYTES", 10)
 
-    entries = load_readonly_entries([str(tmp_path)])
+    entries = load_readonly_entries([("repo", str(tmp_path))])
 
-    assert [e.source for e in entries] == ["small.md"]
+    assert [e.source for e in entries] == ["repo/small.md"]
+
+
+def test_load_readonly_entries_labels_avoid_cross_repo_id_collision(tmp_path):
+    first, second = tmp_path / "one", tmp_path / "two"
+    _write(str(first / "README.md"), "# One\n")
+    _write(str(second / "README.md"), "# Two\n")
+
+    entries = load_readonly_entries([("one", str(first)), ("two", str(second))])
+
+    by_id = {e.id: e for e in entries}
+    assert set(by_id) == {"repo:one/README.md", "repo:two/README.md"}
+    assert {e.title for e in entries} == {"One", "Two"}
 
 
 # ---- 合并 ----
@@ -141,10 +200,10 @@ def test_load_corpus_dedupes_and_flags_writable(tmp_path):
     _write(os.path.join(kb, "topics", "x.md"), '---\nid: topics/x\n---\n\n# KB X\n')
     _write(os.path.join(repo, "docs", "y.md"), "# Repo Y\n")
 
-    entries = load_corpus(kb_dir=kb, readonly_roots=[repo])
+    entries = load_corpus(kb_dir=kb, readonly_roots=[("repo", repo)])
 
     by_id = {e.id: e for e in entries}
-    assert set(by_id) == {"topics/x", "repo:docs/y.md"}
+    assert set(by_id) == {"topics/x", "repo:repo/docs/y.md"}
     assert by_id["topics/x"].writable is True
-    assert by_id["repo:docs/y.md"].writable is False
+    assert by_id["repo:repo/docs/y.md"].writable is False
     assert entries[0].writable is True  # 可写条目排在前

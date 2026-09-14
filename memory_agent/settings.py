@@ -1,9 +1,11 @@
-"""memory_agent 配置：真相源位置 + 派生索引位置。
+"""memory_agent 配置：真相源位置 + 只读仓库清单 + 派生索引位置。
 
-真相源是 Markdown（见 docs/adr/0006）：可写 = 全局 KB 条目，只读 = 本仓库文本。
+真相源是 Markdown（见 docs/adr/0006）：可写 = 全局 KB 条目，只读 = 若干项目仓库的
+Markdown 文档（带标签消歧义，见 docs/adr/0014）。
 派生索引（Qdrant local mode）必须落在独立目录——local mode 独占锁，不能与
 legal_web/vector_db 共用。
 """
+import json
 import os
 
 MEMORY_AGENT_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -12,14 +14,87 @@ ROOT_DIR = os.path.dirname(MEMORY_AGENT_DIR)
 # 可写真相源：全局 KB（条目 + frontmatter）
 KB_DIR = os.environ.get("AGENT_KB_DIR") or r"C:\Users\Tan\.config\opencode\knowledge"
 
-# 只读语料根：本仓库（不含子模块）。后续票据再扩到其它项目仓库。
-# `MEMORY_READONLY_ROOTS` 可覆盖（os.pathsep 分隔的绝对/相对路径；空串 = 无只读语料）。
-# sandbox/评测套件用它把索引限制在可写 KB 内，避免把整个代码仓库也索引进去（#16）。
-def _readonly_roots() -> list[str]:
+# 只读语料：若干**带标签的项目仓库文档**（只取 Markdown，不索引代码）。
+# 标签用于消歧义——不同仓库里同名文件（README.md / CONTEXT.md）的相对路径会撞车，
+# 故 source = "<label>/<rel>"，只读条目 id = "repo:<label>/<rel>"（见 corpus/loader.py）。
+#
+# 配置优先级：
+# 1. `MEMORY_READONLY_ROOTS` 显式设置（os.pathsep 分隔；**空串 = 无只读语料**）——
+#    sandbox/评测套件用它把索引限制在可写 KB 内（#16）。
+# 2. 否则读 gitignored 的 `readonly_repos.json`（`[{label, path}]`，相对路径按仓库根解析）。
+# 3. 都没有 → 默认仅本仓库（自足、可发布；目录名即标签）。
+DEFAULT_READONLY_CONFIG_FILE = os.path.join(MEMORY_AGENT_DIR, "readonly_repos.json")
+DEFAULT_READONLY_LABEL = os.path.basename(ROOT_DIR.rstrip("\\/")) or "repo"
+
+
+def _readonly_config_file() -> str:
+    """配置路径在调用时解析，便于测试用环境变量隔离机器本地配置。"""
+    return os.environ.get("MEMORY_READONLY_REPOS_CONFIG") or DEFAULT_READONLY_CONFIG_FILE
+
+
+def _label_from_path(path: str) -> str:
+    return os.path.basename(os.path.abspath(path).rstrip("\\/")) or "repo"
+
+
+def _read_readonly_config() -> list[dict] | None:
+    """读只读仓库配置；文件不存在或非法时返回 None（回落到默认）。"""
+    config_file = _readonly_config_file()
+    if not os.path.isfile(config_file):
+        return None
+    try:
+        with open(config_file, "r", encoding="utf-8") as handle:
+            data = json.load(handle)
+    except (OSError, json.JSONDecodeError):
+        return None
+    if isinstance(data, dict):
+        data = data.get("roots")
+    if not isinstance(data, list):
+        return None
+    return [item for item in data if isinstance(item, dict)]
+
+
+def _uniquify(labels: list[str]) -> list[str]:
+    """重复标签加 `-2`、`-3` 后缀，保证 source / id 唯一。"""
+    seen: dict[str, int] = {}
+    out: list[str] = []
+    for label in labels:
+        seen[label] = seen.get(label, 0) + 1
+        out.append(label if seen[label] == 1 else f"{label}-{seen[label]}")
+    return out
+
+
+def _readonly_roots() -> list[tuple[str, str]]:
+    """返回 [(label, 绝对路径)]，已按路径去重、标签唯一化。"""
     raw = os.environ.get("MEMORY_READONLY_ROOTS")
-    if raw is None:
-        return [ROOT_DIR]
-    return [os.path.abspath(part) for part in raw.split(os.pathsep) if part.strip()]
+    if raw is not None:
+        paths = [os.path.abspath(part) for part in raw.split(os.pathsep) if part.strip()]
+        items = [(_label_from_path(p), p) for p in paths]
+    else:
+        config = _read_readonly_config()
+        if config is None:
+            items = [(DEFAULT_READONLY_LABEL, ROOT_DIR)]
+        else:
+            items = []
+            for item in config:
+                path = str(item.get("path") or "").strip()
+                if not path:
+                    continue
+                if not os.path.isabs(path):
+                    path = os.path.normpath(os.path.join(ROOT_DIR, path))
+                label = str(item.get("label") or "").strip() or _label_from_path(path)
+                items.append((label, os.path.abspath(path)))
+
+    deduped: list[tuple[str, str]] = []
+    seen_paths: set[str] = set()
+    for label, path in items:
+        key = os.path.normcase(os.path.normpath(path))
+        if key in seen_paths:
+            continue
+        seen_paths.add(key)
+        deduped.append((label, path))
+
+    labels = _uniquify([label for label, _ in deduped])
+    return [(label, path) for label, (_, path) in zip(labels, deduped)]
 
 
 READONLY_ROOTS = _readonly_roots()

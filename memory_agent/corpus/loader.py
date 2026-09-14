@@ -2,7 +2,8 @@
 
 两类语料：
 - 可写：全局 KB 条目（必须有 frontmatter `id`；索引/模板/元文件不是条目）。
-- 只读：本仓库文本（普通 Markdown，无 frontmatter 也可；payload 标 writable:false）。
+- 只读：若干**带标签的项目仓库文档**（只取 Markdown，不索引代码；无 frontmatter
+  也可，payload 标 `writable:false`）。source = `"<label>/<rel>"` 以消歧义。
 """
 from __future__ import annotations
 
@@ -16,6 +17,9 @@ EXCLUDE_DIR_NAMES = frozenset({
     ".idea", ".vscode", ".pytest_cache", ".mypy_cache", ".ruff_cache",
     ".trae", ".tox", "vector_db", "uploads", "dist", "build",
     ".egg-info", "_generated",
+    # 其它项目仓库里常见的生成物 / 工具缓存 / 数据目录（#7 用户故事 17）：
+    "outputs", "dataset", ".scratch", ".playwright-cli", ".pi-agent",
+    ".pi", ".claude", ".codex", ".uv", ".cache", "models",
 })
 
 # 相对仓库根的排除前缀（原始语料 / 生成数据）
@@ -73,21 +77,40 @@ def load_kb_entries(kb_dir: str | None = None) -> list[Entry]:
     return entries
 
 
-def load_readonly_entries(roots: list[str] | None = None) -> list[Entry]:
-    """装载只读语料（本仓库 Markdown），writable=False。"""
+def _normalize_roots(
+    roots: list | None,
+) -> list[tuple[str, str]]:
+    """把只读根规整为 [(label, abs_path)]。
+
+    接受 `(label, path)` 元组（settings.READONLY_ROOTS 的形状）或裸路径字符串
+    （label 由目录名派生，兼容环境覆盖与旧测试）。
+    """
+    items = list(READONLY_ROOTS if roots is None else roots)
+    out: list[tuple[str, str]] = []
+    for root in items:
+        if isinstance(root, (tuple, list)):
+            label, path = str(root[0]), str(root[1])
+        else:
+            path = str(root)
+            label = os.path.basename(os.path.abspath(path).rstrip("\\/")) or "repo"
+        out.append((label, os.path.abspath(path)))
+    return out
+
+
+def load_readonly_entries(roots: list | None = None) -> list[Entry]:
+    """装载只读语料（项目仓库 Markdown），writable=False，source 带仓库标签前缀。"""
     entries: list[Entry] = []
-    for root in roots or READONLY_ROOTS:
-        root = os.path.abspath(root)
+    for label, root in _normalize_roots(roots):
         if not os.path.isdir(root):
             continue
         for full, rel in _iter_markdown(root):
-            entries.append(Entry.from_file(full, source=rel, writable=False))
+            entries.append(Entry.from_file(full, source=f"{label}/{rel}", writable=False))
     return entries
 
 
 def load_corpus(
     kb_dir: str | None = None,
-    readonly_roots: list[str] | None = None,
+    readonly_roots: list | None = None,
 ) -> list[Entry]:
     """装载全部语料，按 id 去重（KB 优先），返回稳定排序的条目列表。"""
     entries = load_kb_entries(kb_dir) + load_readonly_entries(readonly_roots)

@@ -61,6 +61,11 @@ legal_web/vector_db/
 #
 memory_agent/vector_db/
 
+# Local read-only corpus repo list (machine-specific absolute paths).
+# Copy readonly_repos.example.json to readonly_repos.json and edit.
+#
+memory_agent/readonly_repos.json
+
 # Runtime uploads
 #
 legal_web/uploads/
