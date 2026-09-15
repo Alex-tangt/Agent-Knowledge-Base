@@ -45,7 +45,7 @@ def upsert_entries(store, entries: list[Entry], max_chars: int = MAX_ENTRY_CHARS
 class MemoryIndex:
     def __init__(self, store=None, manifest_path: str | None = None,
                  db_path: str | None = None, layout: IndexLayout | None = None,
-                 entry_loader=None):
+                 entry_loader=None, retriever=None, reranker=None):
         self._store = store
         self._layout = layout or IndexLayout()
         self._entry_loader = entry_loader
@@ -58,6 +58,9 @@ class MemoryIndex:
         self._entries: dict[str, dict] = {}
         self._built_at: str | None = None
         self._store_lock = threading.Lock()
+        self._retriever = retriever
+        self._explicit_retriever = retriever is not None
+        self._injected_reranker = reranker
         self._sync()
 
     # ------------------------------------------------------------- lifecycle
@@ -84,6 +87,8 @@ class MemoryIndex:
         self._entries = {}
         self._built_at = None
         self._store = None  # 新一代 = 新 Qdrant 目录，旧句柄作废
+        if not self._explicit_retriever:
+            self._retriever = None  # 检索器持有旧 store，一并作废
         if gen is None:
             self._manifest_path = None
             self._db_path = None
@@ -108,6 +113,18 @@ class MemoryIndex:
                     self._store = VectorStoreService(
                         collection_name=COLLECTION_NAME, db_path=self._db_path)
         return self._store
+
+    @property
+    def retriever(self):
+        """记忆检索接缝（策略召回 + 可选重排），跟随当前代的 store。"""
+        if self._retriever is None:
+            from memory_agent.memory.retrieval import MemoryRetriever, default_reranker_factory
+            from memory_agent.settings import RERANK_ENABLED
+            factory = default_reranker_factory if (
+                self._injected_reranker is None and RERANK_ENABLED) else None
+            self._retriever = MemoryRetriever(
+                self.store, reranker=self._injected_reranker, reranker_factory=factory)
+        return self._retriever
 
     @property
     def gen(self) -> str | None:
@@ -213,13 +230,10 @@ class MemoryIndex:
             raise ValueError("query 不能为空")
         self._ensure_consistent()
         payload_filter = {"writable": True} if writable_only else None
-        result = self.store.search_documents(query, k=k, payload_filter=payload_filter)
-        documents = result["documents"][0]
-        metadatas = result["metadatas"][0]
-        scores = result["distances"][0]
 
         hits: list[dict] = []
-        for text, meta, score in zip(documents, metadatas, scores):
+        for score, text, meta in self.retriever.retrieve(
+                query, k=k, payload_filter=payload_filter):
             hits.append({
                 "id": meta.get("entry_id"),
                 "title": meta.get("title"),

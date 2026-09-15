@@ -73,7 +73,8 @@ def memory_search(query: str, k: int = 5, writable_only: bool = False) -> list[d
     """语义检索长期记忆条目（可写 KB 记忆 + 只读项目语料）。
 
     返回条目级命中：id / title / source / writable / type / tags / status / score / snippet。
-    score 是余弦相似度（越大越相关）。用 memory_get(id) 读回完整 Markdown。
+    score 越大越相关：检索链路是向量 + 关键词混合召回（关键词命中批次分数 >1，
+    其余为余弦相似度 ∈[-1,1]）。用 memory_get(id) 读回完整 Markdown。
     writable=false 的是只读参考语料，不可写入。
     """
     return get_index().search(query, k=k, writable_only=writable_only)

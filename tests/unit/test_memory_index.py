@@ -12,12 +12,13 @@ from memory_agent.memory.index import MemoryIndex
 class FakeStore:
     """只实现 MemoryIndex 用到的那部分 VectorStoreService 契约。"""
 
-    def __init__(self, hits=None):
+    def __init__(self, hits=None, keyword_hits=None):
         self.cleared = 0
         self.texts = []
         self.metas = []
         self._ids = []
         self._hits = hits or []
+        self._keyword_hits = keyword_hits or []
         self.last_filter = "unset"
 
     def clear_all_documents(self):
@@ -55,6 +56,9 @@ class FakeStore:
             kept_ids.append(point_id)
         self.texts, self.metas, self._ids = kept_texts, kept_metas, kept_ids
         return True
+
+    def search_by_keywords(self, keywords, source_filter=None):
+        return self._keyword_hits
 
     def search_documents(self, query, k=3, payload_filter=None):
         self.last_filter = payload_filter
@@ -244,6 +248,23 @@ def test_refresh_on_empty_corpus_is_noop(tmp_path):
     stats = index.refresh(entries=[])
     assert stats["entries"] == 0
     assert stats["embedded"] == 0
+
+
+def test_search_routes_through_strategy_and_merges_keyword_hits(tmp_path):
+    hits = [
+        {"text": "vector doc", "score": 0.9,
+         "meta": {"entry_id": "v", "title": "V", "writable": True, "source": "kb/v.md"}},
+    ]
+    keyword_hits = [
+        {"document": "keyword doc", "matched": 1, "score": 3,
+         "metadata": {"entry_id": "k", "title": "K", "writable": True, "source": "kb/k.md"}},
+    ]
+    index = MemoryIndex(store=FakeStore(hits, keyword_hits),
+                        manifest_path=os.path.join(tmp_path, "m.json"))
+
+    results = index.search("记忆检索", k=5)
+
+    assert [r["id"] for r in results] == ["k", "v"]
 
 
 def test_search_raises_when_manifest_and_points_disagree(tmp_path):

@@ -170,8 +170,9 @@ class LegalRetrievalStrategy(RetrievalStrategy):
         self.enable_article_match = enable_article_match
         self.enable_anchor_match = enable_anchor_match
 
-    def retrieve(self, query: str, vector_store, pool_size: int) -> dict:
-        pool = vector_store.search_documents(query, k=pool_size)
+    def retrieve(self, query: str, vector_store, pool_size: int,
+                 payload_filter: dict | None = None) -> dict:
+        pool = vector_store.search_documents(query, k=pool_size, payload_filter=payload_filter)
         law, num = _parse_article(query)
 
         extra_docs, extra_metas = [], []

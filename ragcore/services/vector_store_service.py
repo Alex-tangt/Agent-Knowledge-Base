@@ -242,6 +242,40 @@ class VectorStoreService:
             logger.error(f"Error in keyword search: {e}")
             return []
 
+    @langsmith_service.trace(name="vector_store_keywords", metadata={"service": "VectorStoreService"})
+    def search_by_keywords(self, keywords, source_filter=None):
+        """多关键词子串匹配：一次扫描，命中任一关键词即入选。
+
+        返回 `[{"document", "metadata", "matched", "score"}]`，按
+        (命中关键词数, 命中次数) 降序。`matched` 供调用方做融合加权。
+        与 `search_by_anchors` 的区别：不做强/弱锚点门槛，纯命中即召回。
+        """
+        try:
+            keywords = [k for k in (keywords or []) if k]
+            if not keywords:
+                return []
+            with self._session() as client:
+                docs, metas = self._scroll_all(client)
+            out = []
+            for doc, meta in zip(docs, metas):
+                if source_filter and source_filter not in (meta.get("source") or ""):
+                    continue
+                matched = [k for k in keywords if k in doc]
+                if not matched:
+                    continue
+                out.append({
+                    "document": doc,
+                    "metadata": meta,
+                    "matched": len(matched),
+                    "score": sum(doc.count(k) for k in matched),
+                })
+            out.sort(key=lambda x: (x["matched"], x["score"]), reverse=True)
+            logger.info(f"keywords {keywords} matched {len(out)} chunks")
+            return out
+        except Exception as e:
+            logger.error(f"Error in keywords search: {e}")
+            return []
+
     @langsmith_service.trace(name="vector_store_anchors", metadata={"service": "VectorStoreService"})
     def search_by_anchors(self, anchors, source_filter=None):
         try:

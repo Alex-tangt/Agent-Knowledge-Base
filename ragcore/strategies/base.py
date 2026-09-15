@@ -22,6 +22,11 @@ class RetrievalStrategy(ABC):
     """
 
     @abstractmethod
-    def retrieve(self, query: str, vector_store, pool_size: int) -> dict:
-        """在指定向量库上执行领域相关的混合检索，返回候选集。"""
+    def retrieve(self, query: str, vector_store, pool_size: int,
+                 payload_filter: dict | None = None) -> dict:
+        """在指定向量库上执行领域相关的混合检索，返回候选集。
+
+        payload_filter 为 {字段: 值} 的精确匹配约束（如 memory_agent 的
+        `{"writable": true}`），有则下沉到向量通道；关键词通道按元数据后筛。
+        """
         raise NotImplementedError

@@ -134,6 +134,15 @@ COLLECTION_NAME = "memory_entries"
 # 全量重建的分块大小：单次只嵌入 N 条，远小于 MCP 客户端几十秒的调用超时（D3）。
 DEFAULT_REINDEX_BATCH = int(os.environ.get("MEMORY_REINDEX_BATCH", "16"))
 
+# 检索策略（issue #24）：向量 + 关键词混合召回的候选池大小。
+RETRIEVAL_POOL = int(os.environ.get("MEMORY_RETRIEVAL_POOL", "20"))
+
+# 是否在检索链路里启用交叉编码器重排（目标链路 = 向量 + 关键词 + rerank）。
+# 默认**关**：daemon 已有 BGE-M3（~3.9GB），再加 reranker 会重演 #19 的内存压力。
+# 评测 / 需要目标链路的场景显式打开。模型名可覆盖（复用 ragcore RerankerService）。
+RERANK_ENABLED = os.environ.get("MEMORY_RERANK", "0").strip().lower() in {"1", "true", "yes", "on"}
+RERANK_MODEL = os.environ.get("MEMORY_RERANK_MODEL", "BAAI/bge-reranker-v2-m3")
+
 # 共享 daemon 的 HTTP 端点（issue #19）：单实例常驻，多个 opencode 会话经 proxy 转发。
 # 只绑本机回环；端口固定，proxy 用 /health 判断「是不是我们的 daemon 在跑」。
 MCP_HTTP_HOST = os.environ.get("MEMORY_MCP_HOST", "127.0.0.1")
