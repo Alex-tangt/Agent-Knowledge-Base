@@ -283,9 +283,10 @@ The `warmup()` function (called from `app.py` lifespan) eagerly triggers BGE-M3 
 - ✅ 默认检索融合对照与选型（#30，2026-09-15）：默认（rerank 关）融合由「关键词优先」改为**加法关键词增强** `score = 余弦 + 0.05 × (命中词数/关键词数)`——记忆检索 recall@1 **0.2500 → 0.7074**（纯向量 0.6407）、nDCG@10 0.5739→**0.8817**、MRR 0.4936→**0.8731**；β 平台 **[0.05,0.08]**。**RRF / 等权归一化在本语料反而 < 纯向量**（关键词路低精度：CJK 二元组一题命中 ~55 噪声条）。rerank 增量 **+0.1741 recall@1 / +0.0892 nDCG@10**，且**旧/新融合在 rerank 下逐位相同**（候选并集相同、交叉编码器与融合顺序无关）→ 修融合只影响**默认（rerank 关）**体验；rerank 是否默认开是延迟/内存权衡（供 #29）。池默认 **14 确认**（`ADR-0022` provisional 解除）。决策就地 amend `docs/adr/0022`（D4–D6）；证据 `experiments/fusion-selection/`；单测 **231 passed**。
 - **排队**：**#27 软拒答**（收窄为"保留硬闸门 + 只软化措辞"，`docs/adr/0023`）。
 - **#15 BEIR 已关闭**（被 #24 的三档消融取代，对外可比性需要时再开）。
-- **P2 前置 ✅ 已决**（#31）：**就地 amend** `docs/adr/0018`（D2.1–D2.4：authn 在 `/mcp` 边界 → 会话上下文 → 工具层 authz；proxy 非信任源）+ `docs/adr/0019`（D4–D6：检索归 store、各平面用各自原生、分数/阈值/评测按平面；本地走 Qdrant 原生 sparse+RRF + fastembed）。证据 `experiments/qdrant-local-mode-capabilities/`。**P2 拆票待 P1（#26）后**，以两 ADR 为准。
+- **P2 前置 ✅ 已决**（#31）：**就地 amend** `docs/adr/0018`（D2.1–D2.4：authn 在 `/mcp` 边界 → 会话上下文 → 工具层 authz；proxy 非信任源）+ `docs/adr/0019`（D4–D6：检索归 store、各平面用各自原生、分数/阈值/评测按平面；本地走 Qdrant 原生 sparse+RRF + fastembed）。证据 `experiments/qdrant-local-mode-capabilities/`。**P2 已拆票**（2026-09-15）：**#32 ✅ 网关** · **#33 云 store 适配器**（blocked by #30 → **已解锁**）· **#34 隔离绕过套件**（blocked by #32 → **已解锁**）；均以两 ADR 为准。
 - ✅ **网关 authn/authz（#32，feat/32-gateway-authz）**：`memory_agent/gateway/`——`/mcp` 边界 authn（进程配置 / Bearer token）→ 请求期身份上下文 → 工具层**强制过滤注入**（tenant + classification/residency，白名单构造、**只可收窄**、越权拒绝）；审计 JSONL；**proxy 非信任源**。就地 amend `docs/adr/0018`（D2.5–D2.8）/ `docs/adr/0019`（D3 多值 `payload_filter` → Qdrant `MatchAny`）。验收：**248 passed** + 套件 13/13（`memory_agent/eval/gateway_authz_32_results.md`）。→ 解锁 **#34 隔离绕过套件**。
 - env knob 变更：`MEMORY_RETRIEVAL_POOL` 默认 **20 → 14**（`docs/adr/0022`：质量 + 延迟双优）。
+- **合并后锚点（2026-09-15，#30 + #32）**：`pytest tests/unit -q` → **253 passed**；网关套件 **13/13**；启动冒烟 **须设 `HF_HUB_OFFLINE=1`**（否则弱网下 warmup 卡在 HF 元数据重试 → 闸门假失败；见 **#18** 已重开）。
 
 ## 后续优化待办（Backlog / 简历谈资池）
 
@@ -302,6 +303,7 @@ The `warmup()` function (called from `app.py` lifespan) eagerly triggers BGE-M3 
 - **Qdrant local mode 清空集合不要丢集合**：实测 `delete_collection` / `recreate_collection` 只摘元数据，同名 `create_collection` 会让磁盘上的旧点**复活**（3 → 0 → 3，静默失效）。`VectorStoreService.clear_all_documents` 改用空 filter 的 `FilterSelector` 删光点；回归见 `tests/unit/test_vector_store_clear.py`。
 - **包命名空间（ADR-0024）**：`ragcore` 是真包——一律 `from ragcore.services.reranker_service import ...` 这样带 `ragcore.` 前缀导入；**不要再加 sys.path 垫片，也不要再用裸 `services/`、`config/` 顶层名**。`memory_agent` 依赖已安装的 `ragcore`（`pip install -e ragcore -e memory_agent`），并继续用 `memory_agent.` 前缀绝对导入。
 - **First run** after `pip install` downloads BGE-M3 (~2.2GB) and bge-reranker-v2-m3 (~2.2GB) from HuggingFace. Subsequent runs load from cache instantly.
+- **启动冒烟/离线启动须设 `HF_HUB_OFFLINE=1`**（可加 `TRANSFORMERS_OFFLINE=1`）：即便 `local_files_only=True`，仍会发 HF 元数据 `HEAD`；**网络不可达时退避重试会把 warmup 拖到分钟级**（实测 >120s 未 ready，端点却正常）。设离线后 ready ~30s。见 **#18**。
 - **`RELEVANCE_THRESHOLD=0.85`** is a generous post-reranker value; the prompt handles most boundary cases. Use `experiments/relevance-calibration/calibrate_relevance.py` to recalibrate if needed.
 - **别把「一个语料的杠杆」外推到另一个语料**（2026-09-15 严重误判）：memory 的 rerank 截断收益（226s→15s，长条目）不能外推到 legal（块 ≤820 token，长度从来不是约束）。**先做分钟级 census（长度分布 / recall@k / 命中位置）再排多小时评测**。详见「开发工作流 · 廉价测量优先」。
 - **Browser cache** — after frontend changes, increment the `?v=N` query string on JS/CSS links in `index.html` AND in all `import` statements across all JS files. Otherwise browsers serve stale cached versions.
