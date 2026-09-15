@@ -3,15 +3,22 @@
 - DefaultSplitStrategy：纯递归切分（条文感知的通用兜底）
 - DefaultRetrievalStrategy：混合召回（向量语义 + 关键词子串），可退回纯向量
 
-混合召回的融合口径与 LegalRetrievalStrategy 一致：关键词命中排在向量命中之前，
-再按分数降序。这里用「>1 的分数」编码关键词命中，使默认的「分数越大越相关」
-排序天然把它排到余弦相似度（∈[-1,1]）之上。
+**融合口径（#30，2026-09-15）**：加法关键词增强——`score = 余弦 + keyword_weight *
+(命中关键词数 / 关键词总数)`。旧口径是「关键词命中分数 >1，无条件排在余弦之前」，
+实测在记忆语料上把 recall@1 从 0.6407 拖到 0.2500（关键词噪声淹没向量信号，见
+`experiments/fusion-selection/` 与 `docs/adr/0022` 的 #30 追加节）。新口径下关键词只在
+权重幅度内给「有词面佐证」的候选加分，不再翻转明显更高的余弦；关键词独占候选
+（不在向量池里）作为池尾补充。
 """
 import re
 
 from langchain_core.documents import Document
 from ragcore.config.config import ARTICLE_MAX_CHARS
 from ragcore.strategies.base import SplitStrategy, RetrievalStrategy
+
+# 关键词增强的默认权重（#30）：在 45 题评测集上，beta∈[0.05, 0.08] 是 recall@1 平台
+# （0.7074）；>0.1 开始把纯向量本来对的题压掉，<0.05 增益不足。取平台下沿 0.05。
+DEFAULT_KEYWORD_WEIGHT = 0.05
 
 _CJK_RUN_RE = re.compile(r"[\u4e00-\u9fff]+")
 _WORD_RE = re.compile(r"[A-Za-z0-9][A-Za-z0-9_.\-]*")
@@ -77,19 +84,30 @@ class DefaultSplitStrategy(SplitStrategy):
 
 
 class DefaultRetrievalStrategy(RetrievalStrategy):
-    """通用混合召回：向量语义 + 关键词子串。
+    """通用混合召回：向量语义 + 关键词子串（加法增强）。
 
     - `enable_keyword=False` 退回纯向量（消融 / 兼容）。
     - 关键词通道要求 vector_store 提供 `search_by_keywords`；缺失则静默跳过
       （基类契约只要求 `search_documents`）。
-    - 关键词命中的条目分数 = `1.0 + 命中关键词占比`（>1），保证排在余弦之上。
+    - 融合分数 = `余弦 + keyword_weight * (matched / len(keywords))`：关键词只加分，
+      且幅度有界（默认 0.05），不会像旧口径那样无条件压过余弦。
+    - `keyword_weight=0` 时分数即余弦（纯向量排序）；关键词独占候选（不在向量池里）
+      以 `keyword_weight * 强度` 排在池尾补充，最多 `keyword_cap` 条。
+    - 候选身份按 `metadata.entry_id`（缺失回退文本）去重——**跨仓库同文**是不同条目，
+      不应被文本去重折叠。
     """
 
     def __init__(self, enable_keyword: bool = True, keyword_cap: int = 6,
-                 max_keywords: int = 12):
+                 max_keywords: int = 12,
+                 keyword_weight: float = DEFAULT_KEYWORD_WEIGHT):
         self.enable_keyword = enable_keyword
         self.keyword_cap = keyword_cap
         self.max_keywords = max_keywords
+        self.keyword_weight = keyword_weight
+
+    @staticmethod
+    def _identity(doc: str, meta: dict) -> str:
+        return meta.get("entry_id") or doc
 
     def retrieve(self, query: str, vector_store, pool_size: int,
                  payload_filter: dict | None = None) -> dict:
@@ -102,32 +120,49 @@ class DefaultRetrievalStrategy(RetrievalStrategy):
         if not keywords or searcher is None:
             return pool
 
-        extras = []
+        # 关键词匹配强度（全量命中，不截断——向量池内的命中也要参与加分）。
+        strength: dict[str, float] = {}
+        extras: list[tuple[str, str, dict]] = []
         for match in searcher(keywords):
             meta = match.get("metadata") or {}
             if payload_filter and any(
                 meta.get(key) != value for key, value in payload_filter.items()
             ):
                 continue
+            key = self._identity(match["document"], meta)
             matched = max(1, int(match.get("matched", 1)))
-            extras.append((1.0 + matched / len(keywords), match["document"], meta))
-            if len(extras) >= self.keyword_cap:
-                break
+            norm = matched / len(keywords)
+            if norm > strength.get(key, 0.0):
+                strength[key] = norm
+            extras.append((key, match["document"], meta))
 
         pool_docs = pool["documents"][0] if pool.get("documents") else []
         pool_metas = pool["metadatas"][0] if pool.get("metadatas") else []
         pool_dists = pool["distances"][0] if pool.get("distances") else []
 
-        seen = {extra[1] for extra in extras}
-        docs = [extra[1] for extra in extras]
-        metas = [extra[2] for extra in extras]
-        dists = [extra[0] for extra in extras]
+        scored: list[tuple[float, str, dict]] = []
+        seen: set[str] = set()
         for doc, meta, dist in zip(pool_docs, pool_metas, pool_dists):
-            if doc in seen:
+            key = self._identity(doc, meta or {})
+            if key in seen:
                 continue
-            seen.add(doc)
-            docs.append(doc)
-            metas.append(meta)
-            dists.append(dist)
+            seen.add(key)
+            scored.append(
+                (float(dist) + self.keyword_weight * strength.get(key, 0.0), doc, meta))
 
-        return {"documents": [docs], "metadatas": [metas], "distances": [dists]}
+        added = 0
+        for key, doc, meta in extras:
+            if key in seen:
+                continue
+            seen.add(key)
+            scored.append((self.keyword_weight * strength.get(key, 0.0), doc, meta))
+            added += 1
+            if added >= self.keyword_cap:
+                break
+
+        scored.sort(key=lambda item: item[0], reverse=True)
+        return {
+            "documents": [[item[1] for item in scored]],
+            "metadatas": [[item[2] for item in scored]],
+            "distances": [[item[0] for item in scored]],
+        }

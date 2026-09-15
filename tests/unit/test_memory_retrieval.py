@@ -51,7 +51,7 @@ def test_without_reranker_keeps_strategy_order():
         keyword_hits=[_keyword_hit("kw doc", 1, "k")],
     )
     result = MemoryRetriever(store).retrieve("记忆检索", k=5)
-    assert [m["entry_id"] for _, _, m in result] == ["k", "v"]
+    assert [m["entry_id"] for _, _, m in result] == ["v", "k"]
 
 
 def test_reranker_reorders_and_reports_logits():
@@ -96,4 +96,4 @@ def test_payload_filter_pushed_to_vector_and_keyword_channels():
     )
     result = MemoryRetriever(store).retrieve("记忆", k=5, payload_filter={"writable": True})
     assert store.vector_calls == [{"writable": True}]
-    assert [m["entry_id"] for _, _, m in result] == ["kw", "w"]
+    assert [m["entry_id"] for _, _, m in result] == ["w", "kw"]

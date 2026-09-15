@@ -1,7 +1,11 @@
 """DefaultRetrievalStrategy：混合召回（向量 + 关键词）与关键词抽取。
 
 不碰模型 / Qdrant：用假 store 锁住融合顺序与过滤语义。
+
+融合口径（#30）：**加法关键词增强**——`score = 余弦 + keyword_weight * (命中词数/关键词数)`。
+关键词不再无条件压过余弦（旧行为），只在权重幅度内把「有词面佐证」的候选往上提。
 """
+
 import pytest
 
 from ragcore.strategies.default import DefaultRetrievalStrategy, extract_keywords
@@ -70,32 +74,69 @@ def _keyword_hit(text, matched, entry_id, writable=True):
 
 
 class TestDefaultRetrievalStrategy:
-    def test_keyword_hits_rank_above_vector(self):
+    def test_keyword_matched_vector_doc_is_boosted(self):
         store = FakeVectorStore(
-            vector_hits=[_vector_hit("vec doc", 0.9, "v")],
-            keyword_hits=[_keyword_hit("kw doc", 1, "k")],
+            vector_hits=[_vector_hit("doc a", 0.80, "a"), _vector_hit("doc b", 0.78, "b")],
+            keyword_hits=[_keyword_hit("doc b", 3, "b")],
         )
         result = DefaultRetrievalStrategy().retrieve("记忆检索", store, pool_size=5)
         docs = result["documents"][0]
         dists = result["distances"][0]
-        assert docs == ["kw doc", "vec doc"]
-        assert dists[0] > 1.0 > dists[1]
+        assert docs == ["doc b", "doc a"]
+        assert dists[0] == pytest.approx(0.78 + 0.05)
+        assert dists[1] == pytest.approx(0.80)
+
+    def test_keyword_boost_does_not_override_large_cosine_gap(self):
+        store = FakeVectorStore(
+            vector_hits=[_vector_hit("doc a", 0.90, "a"), _vector_hit("doc b", 0.50, "b")],
+            keyword_hits=[_keyword_hit("doc b", 3, "b")],
+        )
+        result = DefaultRetrievalStrategy().retrieve("记忆检索", store, pool_size=5)
+        assert result["documents"][0] == ["doc a", "doc b"]
+
+    def test_keyword_weight_zero_keeps_cosine_order(self):
+        store = FakeVectorStore(
+            vector_hits=[_vector_hit("doc a", 0.80, "a"), _vector_hit("doc b", 0.78, "b")],
+            keyword_hits=[_keyword_hit("doc b", 3, "b")],
+        )
+        result = DefaultRetrievalStrategy(keyword_weight=0.0).retrieve(
+            "记忆检索", store, pool_size=5)
+        assert result["documents"][0] == ["doc a", "doc b"]
+
+    def test_keyword_only_extras_rank_below_vector(self):
+        store = FakeVectorStore(
+            vector_hits=[_vector_hit("vec doc", 0.5, "v")],
+            keyword_hits=[_keyword_hit("kw doc", 3, "k")],
+        )
+        result = DefaultRetrievalStrategy().retrieve("记忆检索", store, pool_size=5)
+        docs = result["documents"][0]
+        assert docs == ["vec doc", "kw doc"]
+        assert result["distances"][0][0] > result["distances"][0][1]
 
     def test_dedup_keyword_hit_already_in_vector_pool(self):
         store = FakeVectorStore(
-            vector_hits=[_vector_hit("same doc", 0.9, "s")],
-            keyword_hits=[_keyword_hit("same doc", 1, "s")],
+            vector_hits=[_vector_hit("same doc", 0.78, "s")],
+            keyword_hits=[_keyword_hit("same doc", 3, "s")],
         )
-        result = DefaultRetrievalStrategy().retrieve("记忆", store, pool_size=5)
+        result = DefaultRetrievalStrategy().retrieve("记忆检索", store, pool_size=5)
         assert result["documents"][0] == ["same doc"]
+        assert result["distances"][0][0] == pytest.approx(0.83)
+
+    def test_dedup_by_entry_id_not_text(self):
+        store = FakeVectorStore(
+            vector_hits=[_vector_hit("same text", 0.80, "a"), _vector_hit("same text", 0.70, "b")],
+            keyword_hits=[],
+        )
+        result = DefaultRetrievalStrategy().retrieve("记忆检索", store, pool_size=5)
+        assert result["documents"][0] == ["same text", "same text"]
 
     def test_enable_keyword_false_is_pure_vector(self):
         store = FakeVectorStore(
             vector_hits=[_vector_hit("vec doc", 0.5, "v")],
-            keyword_hits=[_keyword_hit("kw doc", 1, "k")],
+            keyword_hits=[_keyword_hit("kw doc", 3, "k")],
         )
         result = DefaultRetrievalStrategy(enable_keyword=False).retrieve(
-            "记忆", store, pool_size=5)
+            "记忆检索", store, pool_size=5)
         assert result["documents"][0] == ["vec doc"]
         assert all(call[0] == "vector" for call in store.calls)
 
@@ -103,21 +144,21 @@ class TestDefaultRetrievalStrategy:
         store = FakeVectorStore(
             vector_hits=[],
             keyword_hits=[
-                _keyword_hit("readonly doc", 1, "r", writable=False),
-                _keyword_hit("writable doc", 1, "w", writable=True),
+                _keyword_hit("readonly doc", 3, "r", writable=False),
+                _keyword_hit("writable doc", 3, "w", writable=True),
             ],
         )
         result = DefaultRetrievalStrategy().retrieve(
-            "记忆", store, pool_size=5, payload_filter={"writable": True})
+            "记忆检索", store, pool_size=5, payload_filter={"writable": True})
         assert result["documents"][0] == ["writable doc"]
 
     def test_keyword_cap_limits_extras(self):
         store = FakeVectorStore(
             vector_hits=[],
-            keyword_hits=[_keyword_hit(f"doc {i}", 1, str(i)) for i in range(10)],
+            keyword_hits=[_keyword_hit(f"doc {i}", 3, str(i)) for i in range(10)],
         )
         result = DefaultRetrievalStrategy(keyword_cap=3).retrieve(
-            "记忆", store, pool_size=5)
+            "记忆检索", store, pool_size=5)
         assert len(result["documents"][0]) == 3
 
     def test_store_without_keyword_channel_falls_back(self):
@@ -126,7 +167,7 @@ class TestDefaultRetrievalStrategy:
                 return {"documents": [["only"]], "metadatas": [[{"entry_id": "o"}]],
                         "distances": [[0.5]]}
 
-        result = DefaultRetrievalStrategy().retrieve("记忆", VectorOnly(), pool_size=5)
+        result = DefaultRetrievalStrategy().retrieve("记忆检索", VectorOnly(), pool_size=5)
         assert result["documents"][0] == ["only"]
 
     def test_empty_query_skips_keyword_channel(self):
