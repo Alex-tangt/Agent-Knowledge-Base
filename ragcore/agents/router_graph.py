@@ -2,7 +2,7 @@
 import json
 from langgraph.graph import StateGraph, END
 from typing import TypedDict, List, Optional
-from config.config import API_KEY, BASE_URL, MODEL
+from config.llm import require_llm
 from utils.logger import logger
 import openai
 
@@ -22,9 +22,11 @@ class RouterState(TypedDict):
 
 class RouterAgent:
     def __init__(self):
+        llm = require_llm()
+        self.model = llm.model
         self.client = openai.AsyncOpenAI(
-            api_key=API_KEY,
-            base_url=BASE_URL,
+            api_key=llm.api_key,
+            base_url=llm.base_url,
         )
 
     async def classify(self, query: str, kb_list: List[dict]) -> dict:
@@ -40,7 +42,7 @@ class RouterAgent:
 
         try:
             response = await self.client.chat.completions.create(
-                model=MODEL,
+                model=self.model,
                 messages=[
                     {"role": "system", "content": prompt},
                     {"role": "user", "content": query},

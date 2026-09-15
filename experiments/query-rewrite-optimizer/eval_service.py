@@ -6,7 +6,7 @@ import time
 
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "ragcore"))
 
-from config.config import MODEL, QDRANT_COLLECTION_NAME, ADAPTIVE_POOL, USE_LOCAL_RERANKER
+from config.config import QDRANT_COLLECTION_NAME, ADAPTIVE_POOL, USE_LOCAL_RERANKER
 from utils.logger import logger
 
 
@@ -31,7 +31,7 @@ class EvalService:
             return 0.0
         try:
             response = await self.rag.client.chat.completions.create(
-                model=MODEL,
+                model=self.rag.model,
                 messages=[{
                     "role": "system",
                     "content": (

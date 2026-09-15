@@ -59,10 +59,11 @@ class VectorStoreService:
                 self._embeddings = LocalEmbeddingService(LOCAL_EMBEDDING_MODEL)
             else:
                 from langchain_openai import OpenAIEmbeddings
-                from config.config import API_KEY, BASE_URL
+                from config.llm import require_llm
+                llm = require_llm()
                 self._embeddings = OpenAIEmbeddings(
-                    api_key=API_KEY,
-                    base_url=BASE_URL,
+                    api_key=llm.api_key,
+                    base_url=llm.base_url,
                 )
             STATUS["embedding"] = "ready"
             logger.info("Embedding model ready")

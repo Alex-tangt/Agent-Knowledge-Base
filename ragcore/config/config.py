@@ -1,31 +1,17 @@
+"""core 层配置：目录锚点 + 模型名 + 检索阈值。
+
+**本层无密钥、import 不校验**：路径 / 模型名 / 阈值都是无凭证即可用的值，任何进程
+（含只做检索、不用 LLM 的 `memory_agent`）都能安全 import。
+
+LLM 凭证（API_KEY / BASE_URL / Model）与可选的 LangSmith 配置在 `config/llm.py`——
+那一层惰性加载 `legal_web/.env` 并只在构造 LLM client 时校验。分层契约见 ADR-0016。
+"""
 import os
-from dotenv import load_dotenv
 
 # 目录锚点：ragcore/config/config.py 向上三级 = 仓库根
 ROOT_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 RAGCORE_DIR = os.path.join(ROOT_DIR, "ragcore")
 LEGAL_WEB_DIR = os.path.join(ROOT_DIR, "legal_web")
-
-# .env 位于适配层 legal_web/；显式锚定，不依赖启动目录
-load_dotenv(os.path.join(LEGAL_WEB_DIR, ".env"))
-load_dotenv()
-
-API_KEY = os.getenv("API_KEY")
-if not API_KEY:
-    raise ValueError("API_KEY环境变量未设置！请检查.env文件配置")
-
-BASE_URL = os.getenv("BASE_URL")
-if not BASE_URL:
-    raise ValueError("BASE_URL环境变量未设置！请检查.env文件配置")
-
-MODEL = os.getenv("Model")
-if not MODEL:
-    raise ValueError("MODEL环境变量未设置！请检查.env文件配置")
-
-LANGSMITH_API_KEY = os.getenv("LANGSMITH_API_KEY")
-LANGSMITH_PROJECT = os.getenv("LANGSMITH_PROJECT", "rag-knowledge-base")
-LANGSMITH_ENDPOINT = os.getenv("LANGSMITH_ENDPOINT", "https://api.smith.langchain.com")
-LANGSMITH_TRACING = os.getenv("LANGSMITH_TRACING", "true").lower() == "true"
 
 VECTOR_DB_PATH = os.environ.get("VECTOR_DB_PATH") or os.path.join(LEGAL_WEB_DIR, "vector_db")
 UPLOAD_DIR = os.environ.get("UPLOAD_DIR") or os.path.join(LEGAL_WEB_DIR, "uploads")

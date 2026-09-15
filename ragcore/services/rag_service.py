@@ -4,11 +4,11 @@ import time
 import json
 import os
 from config.config import (
-    API_KEY, BASE_URL, MODEL, ADAPTIVE_POOL, ADAPTIVE_MAX,
-    ADAPTIVE_FACTOR, RELEVANCE_THRESHOLD,
+    ADAPTIVE_POOL, ADAPTIVE_MAX, ADAPTIVE_FACTOR, RELEVANCE_THRESHOLD,
     USE_LOCAL_RERANKER, LOCAL_RERANKER_MODEL,
     QDRANT_COLLECTION_NAME,
 )
+from config.llm import require_llm
 from services.vector_store_service import VectorStoreService
 from services.langsmith_service import langsmith_service
 from strategies import get_retrieval_strategy
@@ -25,9 +25,11 @@ PROMPT_NO_EVIDENCE = (
 class RAGService:
     def __init__(self):
         try:
+            llm = require_llm()
+            self.model = llm.model
             self.client = openai.AsyncOpenAI(
-                api_key=API_KEY,
-                base_url=BASE_URL,
+                api_key=llm.api_key,
+                base_url=llm.base_url,
             )
 
             self._vector_stores = {}
@@ -216,7 +218,7 @@ Answer:
                 max_tokens_val = 60
 
             response = await self.client.chat.completions.create(
-                model=MODEL,
+                model=self.model,
                 messages=[{
                     "role": "system",
                     "content": system_prompt
@@ -296,7 +298,7 @@ Answer:
                 metadata={
                     "service": "RAGService",
                     "message_count": len(messages),
-                    "model": MODEL
+                    "model": self.model
                 }
             ):
                 t_start = time.time()
@@ -351,7 +353,7 @@ Answer:
                 ]
 
                 response = await self.client.chat.completions.create(
-                    model=MODEL,
+                    model=self.model,
                     messages=rag_messages,
                     temperature=0,
                     stream=True,

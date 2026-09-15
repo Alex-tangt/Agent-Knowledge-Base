@@ -2,15 +2,20 @@ import os
 import functools
 import time
 from typing import Optional, Dict, Any, Callable
-from config.config import LANGSMITH_API_KEY, LANGSMITH_PROJECT, LANGSMITH_ENDPOINT, LANGSMITH_TRACING
 from utils.logger import logger
 
 class LangSmithService:
-    """LangSmith监控服务类"""
+    """LangSmith监控服务类。
+
+    配置**惰性读取**（#22 / ADR-0016）：不再在 import 期读 env——否则 `memory_agent`
+    一 import `vector_store_service`（它挂了本服务的 trace 装饰器）就会连带读
+    `legal_web/.env`。改为首次 `is_enabled` / `client` 访问时才读。
+    """
     
     _instance = None
     _client = None
     _initialized = False
+    _tracing = False
     
     def __new__(cls):
         if cls._instance is None:
@@ -18,25 +23,34 @@ class LangSmithService:
         return cls._instance
     
     def __init__(self):
-        if not self._initialized:
-            self._initialized = True
-            self._initialize_client()
-    
-    def _initialize_client(self):
+        # 不在这里初始化 client：配置读取延到首次使用（见类 docstring）。
+        pass
+
+    def _ensure_initialized(self):
+        if self._initialized:
+            return
+        self._initialized = True
+        from config.llm import langsmith_settings
+        settings = langsmith_settings()
+        self._tracing = settings["tracing"]
+        self._initialize_client(settings)
+
+    def _initialize_client(self, settings):
         """初始化LangSmith客户端"""
         try:
-            if not LANGSMITH_TRACING:
+            if not settings["tracing"]:
                 logger.info("LangSmith tracing is disabled")
                 return
             
-            if not LANGSMITH_API_KEY:
+            api_key = settings["api_key"]
+            if not api_key:
                 logger.warning("LANGSMITH_API_KEY not set, LangSmith tracing will be disabled")
                 return
             
             # 设置环境变量供langsmith库使用
-            os.environ["LANGCHAIN_API_KEY"] = LANGSMITH_API_KEY
-            os.environ["LANGCHAIN_PROJECT"] = LANGSMITH_PROJECT
-            os.environ["LANGCHAIN_ENDPOINT"] = LANGSMITH_ENDPOINT
+            os.environ["LANGCHAIN_API_KEY"] = api_key
+            os.environ["LANGCHAIN_PROJECT"] = settings["project"]
+            os.environ["LANGCHAIN_ENDPOINT"] = settings["endpoint"]
             os.environ["LANGCHAIN_TRACING"] = "true"
             
             # 延迟导入，避免在没有安装langsmith时出错
@@ -44,7 +58,7 @@ class LangSmithService:
             from langsmith import Client
             
             self._client = Client()
-            logger.info(f"LangSmith client initialized successfully for project: {LANGSMITH_PROJECT}")
+            logger.info(f"LangSmith client initialized successfully for project: {settings['project']}")
             
         except ImportError:
             logger.warning("langsmith package not installed, tracing disabled")
@@ -54,12 +68,14 @@ class LangSmithService:
     @property
     def client(self):
         """获取LangSmith客户端"""
+        self._ensure_initialized()
         return self._client
     
     @property
     def is_enabled(self):
         """检查LangSmith追踪是否启用"""
-        return LANGSMITH_TRACING and self._client is not None
+        self._ensure_initialized()
+        return self._tracing and self._client is not None
     
     def trace(self, name: str, metadata: Optional[Dict[str, Any]] = None):
         """

@@ -7,7 +7,8 @@ import time
 
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "ragcore"))
 
-from config.config import API_KEY, BASE_URL, MODEL, LEGAL_WEB_DIR
+from config.config import LEGAL_WEB_DIR
+from config.llm import require_llm
 from utils.logger import logger
 import openai
 
@@ -103,7 +104,9 @@ class RewriteOptimizer:
         self.early_stop = early_stop
         self.current_prompt = DEFAULT_MULTI_PROMPT
         self.best_prompt = DEFAULT_MULTI_PROMPT
-        self.client = openai.AsyncOpenAI(api_key=API_KEY, base_url=BASE_URL)
+        _llm = require_llm()
+        self.model = _llm.model
+        self.client = openai.AsyncOpenAI(api_key=_llm.api_key, base_url=_llm.base_url)
         self.state = self._load_state()
         self.log_data = []
         self.conversation_history = []
@@ -168,7 +171,7 @@ class RewriteOptimizer:
 
         try:
             response = await self.client.chat.completions.create(
-                model=MODEL,
+                model=self.model,
                 messages=messages,
                 temperature=0.3,
                 max_tokens=1500,

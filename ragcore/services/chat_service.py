@@ -1,16 +1,18 @@
 import openai
 import time
 import json
-from config.config import API_KEY, BASE_URL, MODEL
+from config.llm import require_llm
 from services.langsmith_service import langsmith_service
 from utils.logger import logger
 
 class ChatService:
     def __init__(self):
         try:
+            llm = require_llm()
+            self.model = llm.model
             self.client = openai.AsyncOpenAI(
-                api_key=API_KEY,
-                base_url=BASE_URL,
+                api_key=llm.api_key,
+                base_url=llm.base_url,
             )
             logger.info("OpenAI Async client initialized successfully")
         except Exception as e:
@@ -27,7 +29,7 @@ class ChatService:
                 metadata={
                     "service": "ChatService",
                     "message_count": len(messages),
-                    "model": MODEL
+                    "model": self.model
                 }
             ):
                 # 记录开始时间
@@ -35,7 +37,7 @@ class ChatService:
             
                 # 调用OpenAI API (流式)
                 response = await self.client.chat.completions.create(
-                    model=MODEL,
+                    model=self.model,
                     messages=messages,
                     stream=True,  # 流式响应
                 )

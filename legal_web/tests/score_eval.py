@@ -33,7 +33,7 @@ ROOT = os.path.dirname(os.path.dirname(HERE))
 sys.path.insert(0, os.path.join(ROOT, "ragcore"))
 sys.path.insert(0, HERE)
 
-from config.config import API_KEY, BASE_URL, MODEL
+from config.llm import require_llm
 from openai import OpenAI
 import run_eval
 from run_eval import load_questions, query
@@ -70,7 +70,8 @@ def load_ground_truth(path):
 # ---------------------------------------------------------------------------
 # 同步裁判客户端（单题一次调用）
 # ---------------------------------------------------------------------------
-client = OpenAI(api_key=API_KEY, base_url=BASE_URL, timeout=120, max_retries=2)
+_llm = require_llm()
+client = OpenAI(api_key=_llm.api_key, base_url=_llm.base_url, timeout=120, max_retries=2)
 
 JUDGE_SYSTEM = """你是政策法规 RAG 问答系统的评测裁判。根据【问题类型】【用户问题】【检索上下文】【系统回答】以及（事实型提供的）【标准答案】，对系统回答打分。
 仅输出一个 JSON 对象，键为 faithfulness, relevancy, context_precision, context_recall, correctness, rationale。各分项 0-5 整数（5 最好）。
@@ -89,7 +90,7 @@ def judge(qtype, q, rag_ans, rag_ctx, reference):
     user += f"标准答案：\n{reference if reference else '（无）'}\n"
     try:
         resp = client.chat.completions.create(
-            model=MODEL,
+            model=_llm.model,
             messages=[
                 {"role": "system", "content": JUDGE_SYSTEM},
                 {"role": "user", "content": user},
@@ -278,7 +279,7 @@ def write_results(rows, summary, smoke, tag=""):
     out = f"{base}_{tag}.md" if tag else f"{base}.md"
     with open(os.path.join(HERE, out), "w", encoding="utf-8") as f:
         f.write("# RAG 自动化评测结果（LLM-as-judge）\n\n")
-        f.write("> 裁判模型：" + MODEL + "（DeepSeek）。维度与 Ragas 对齐：忠实度 / 相关性 / 上下文精确率 / 上下文召回 / 正确性（事实型）。\n")
+        f.write("> 裁判模型：" + _llm.model + "（DeepSeek）。维度与 Ragas 对齐：忠实度 / 相关性 / 上下文精确率 / 上下文召回 / 正确性（事实型）。\n")
         f.write("> 另含确定性指标：来源召回（事实型法条是否被检索到）、拒答率（无答案型是否恰当拒答）。\n")
         f.write("> 本报告同时给出 **RAG 回答** 与 **LLM-only 回答**（纯大模型、不检索知识库）的逐题对比，用于评估检索增强带来的事实性提升。\n\n")
         f.write("## 汇总\n\n")

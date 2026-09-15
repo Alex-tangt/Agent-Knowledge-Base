@@ -7,6 +7,10 @@ import os
 # 导入垫片：可复用核心 ragcore/ 加入 sys.path
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "ragcore"))
 
+from config.llm import langsmith_settings, load_llm_env
+
+load_llm_env()
+
 def test_imports():
     """测试所有必要的导入"""
     print("测试模块导入...")
@@ -20,7 +24,8 @@ def test_imports():
         return False
     
     try:
-        from config.config import LANGSMITH_API_KEY, LANGSMITH_PROJECT, LANGSMITH_TRACING
+        _ls = langsmith_settings()
+        LANGSMITH_PROJECT, LANGSMITH_TRACING = _ls["project"], _ls["tracing"]
         print("✓ LangSmith 配置导入成功")
         print(f"  项目: {LANGSMITH_PROJECT}")
         print(f"  追踪开关: {LANGSMITH_TRACING}")
@@ -50,7 +55,10 @@ def test_config_values():
     """测试配置值"""
     print("\n测试配置值...")
     
-    from config.config import LANGSMITH_API_KEY, LANGSMITH_PROJECT, LANGSMITH_TRACING
+    _ls = langsmith_settings()
+    LANGSMITH_API_KEY, LANGSMITH_PROJECT, LANGSMITH_TRACING = (
+        _ls["api_key"], _ls["project"], _ls["tracing"]
+    )
     
     if LANGSMITH_API_KEY:
         print(f"✓ LANGSMITH_API_KEY 已设置 (长度: {len(LANGSMITH_API_KEY)})")
