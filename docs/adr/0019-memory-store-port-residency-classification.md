@@ -62,3 +62,22 @@ ADR-0013 D3（进程内串行化）、ADR-0011（代 + 指针）、ADR-0006（Ma
   实现 + 字段 + provenance。
 - 索引 payload 新增两个字段 → **需要全量重建**才能让存量索引带上它们（`memory_reindex`）；
   旧索引检索仍工作（检索侧对缺失字段兜底默认）。
+
+## 修订（2026-09-15）：检索归 store，策略层退化为薄封装（#31）
+
+D1 只定了「存储 + 过滤」，未定**检索算法归谁**。补：
+
+- **D4 检索由 store 提供**（含其**原生融合与打分**）：端口暴露 **hybrid 检索**（`prefetch` / fusion 参数）；**策略层不再自己融合**，退化为薄封装（注入强制过滤 → 调 store → 返回）。→ **杜绝「双重融合」**（store 已融合，我们再融一次会把关键词信号算两次、排序失真）。
+- **D5 各平面用各自 store 的原生检索**（用户 2026-09-15 拍板）：本地 = Qdrant 原生（dense + sparse + RRF/DBSF）；云 = 云原生（BM25 / hybrid + Analyzer）。
+- **D6 分数语义 / 阈值 / 评测按平面各自定义**：不同引擎分数量纲不同，**不跨后端共用阈值**；现有基线（nDCG@10=0.9658 / recall@1=0.8593）是**手写融合**时代数字 → 换原生后**必须重设**（→ `#30`）。
+- **实现前提（已实测；证据 `experiments/qdrant-local-mode-capabilities/`）**：
+  - Qdrant **local mode** 支持 sparse + `prefetch` + `FusionQuery(RRF/DBSF)`；
+  - **BM25 在 local mode 需要 `fastembed`**（客户端编码；「内建 BM25 免 fastembed」**仅 server ≥1.15.3**）——本仓取 **fastembed 路线**；
+  - 本地 sparse + IDF 修复需 **`qdrant-client>=1.14.2`**（本机 1.18.0）；
+  - `fastembed` 作**可选 extra**（`memory-agent[bm25]`），不压重默认包体（#26）。
+- **schema 变更**：现有集合为**单一无名 dense** → 上 hybrid 需换结构并**重建**（memory 走代目录 + `CURRENT` 原子切换；`legal_web` 的 `documents` 需重灌）。
+- **退役**：Python 侧子串关键词通道（D1 的 `search_by_keywords`）随策略融合一起退役（基线已证其「关键词优先」比纯向量差 **0.64→0.25**）。
+
+Considered options（本次）：
+
+- **检索归属**：各平面用各自 store 原生（采用）｜策略层保留手写融合兜底（弃：两套路径 + 双重融合风险）｜只在云用原生（弃：两平面行为不同，且本地手写融合已知有害）。

@@ -46,3 +46,16 @@ Considered options:
 - **未决**：VikingDB / Milvus OSS 自托管 RBAC 一手来源未取到（spike §6），不影响主结论（主结论只依赖 Zilliz 云实测）。
 
 Relates: #20（RFC，D1/D2/D3）、#25（spike 与证据 `experiments/cloud-vector-db-spike/`）、#23（端口需承载强制 tenant 过滤）、ADR-0015（双平面）。
+
+## 修订（2026-09-15）：D2 的「网关」落在哪（#31）
+
+D2 只说「网关唯一强制」，未定义网关是什么。补：
+
+- **D2.1 authn 在 HTTP / MCP 边界**：`tenant` / `role` 由 **daemon 的 `/mcp` 端点**解析（API key / token → 身份）→ 绑定为**会话上下文**。单租户阶段身份 = 进程配置，但**形状按多租户设计**。
+- **D2.2 authz 在工具层（daemon 内）**：每次工具调用据会话身份算 **effective filter**——白名单式构造，**只可收窄、不可放宽**（与 ADR-0019 D3 一致）。
+- **D2.3 审计 / 配额挂在同一层**（自建；云免费档没有）。
+- **D2.4 proxy 不是信任源**：stdio `proxy` 只做传输，**永不**作为身份 / 权限依据（多租户下客户端不可信）。
+
+Considered options（本次）：
+
+- **形态**：HTTP 边界 authn + 工具层 authz（采用）｜独立策略服务（当前阶段过重，留作企业档）｜proxy 携带身份 + daemon 信任（**否决**：多租户下等于无强制）｜store 适配器内（否决，store 侧不可靠）。
