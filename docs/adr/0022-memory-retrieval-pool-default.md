@@ -114,57 +114,76 @@ Considered options：
 Relates（#30 追加）：#21、#24、#29、ADR-0013（daemon 内存）、ADR-0021、ADR-0023、
 `experiments/fusion-selection/`。
 
-## #29 追加（2026-09-16）：记忆默认开 rerank，模型换 jina int8 ONNX
+## #29 追加（2026-09-16）：记忆 rerank **不设默认**，方案保留（jina int8，memory-only）
 
-Status: **proposed**（待 owner 接受/修改）。
+Status: **accepted**（owner 拍板：不设默认、推迟实现、保留方案）。
 
 ### 背景
 
-本 ADR 的 D6 把「是否默认开 rerank」留给 #29，并判定它是**纯延迟/内存权衡**（融合与 rerank
-解耦）。#29 横评 5 个候选 cross-encoder，证据 `experiments/rerank-model-survey/`（脚本 + 数据 +
-结论同处）：
+本 ADR 的 D6 把「是否默认开 rerank」留给 #29。#29 横评 5 个候选 cross-encoder（证据
+`experiments/rerank-model-survey/`）：
 
-- **许可干净（MIT/Apache）的候选全部过不了质量闸门**（ADR-0021 主指标 recall@1/MRR）：
-  `bge-base`(MIT) recall@1 −16.7pp、`gte-multilingual`(Apache) −8.3pp、`mxbai`(Apache，且仅英文) −8.3pp。
-- **唯一「质量守住 + 显著提速」= `jinaai/jina-reranker-v2-base-multilingual` int8 ONNX**
-  （**CC-BY-NC-4.0，禁商用**）：12 题子集 recall@1/MRR 与 m3 **逐位持平**（0.9375 / 1.0000），
-  nDCG@10 略高（0.9837 vs 0.9795）；重排延迟 **2366ms vs 11313ms（4.8x）**。
-- 代价（51 题真实链路，m3）：质量增量 recall@1 0.7074→0.8815（+0.1741）、nDCG@10 0.8817→0.9709、
-  MRR 0.8731→0.9889；~11.3s/题（pool 14）、实测内存增量 **0.62GB**（jina int8 0.58GB）。
-- **legal 锚点**：jina 与 m3 top-8 重合仅 0.677 / Kendall tau 0.739 → 换模型**会改写 legal 排序**。
+- **许可干净（MIT/Apache）候选全部过不了质量闸门**：`bge-base`(MIT) recall@1 −16.7pp、
+  `gte-multilingual`(Apache) −8.3pp、`mxbai`(Apache，仅英文) −8.3pp。
+- **唯一「质量守住 + 显著提速」= `jina-reranker-v2-base-multilingual` int8 ONNX**
+  （CC-BY-NC-4.0）：12 题子集 recall@1/MRR 与 m3 逐位持平（0.9375 / 1.0000）、nDCG@10 略高
+  （0.9837 vs 0.9795）；重排延迟 **2366ms vs 11313ms（4.8x）**。
+
+**但「值不值」按消费者口径复核后结论反转**（本次补充分析，数据源 `experiments/fusion-selection/`
+逐题 rankings + `experiments/rerank-model-survey/cache/anchor_retrieval_eval_m3.json`）。
+`memory_search` 默认 **k=5**，agent 读的是返回的那几条 → 真实消费者口径是 **recall@5**，不是 recall@1：
+
+| 口径 | rerank 关（β=0.05, pool 14） | rerank 开（m3, pool 14） | Δ |
+|---|---|---|---|
+| recall@1 | 0.7074 | 0.8815 | +17.4pp |
+| MRR | 0.8731 | 0.9889 | +11.6pp |
+| **recall@5（实际返回）** | **0.9185** | **0.9685** | **+5.0pp（≈2/45 题）** |
+| recall@10 | 0.9741 | 0.9796 | +0.6pp |
+
+- rerank 是**排序**不是**召回**：尾部已饱和（两边 ~97–98%），候选池本就几乎含 gold。头条 +17.4pp
+  是「只看 rank-1」的产物；消费者口径只有 **+5.0pp**。
+- **免费杠杆已占位**：`recall@10（不重排）=0.9741 > recall@5（重排）=0.9685`——「多返回几条、不加重排」
+  在「gold 在读到的集合里」上就赢了（成本仅 LLM 上下文）。
+- **+5pp 显著性未验**：ADR-0021 的噪声带未定，2/45 题可能落在噪声内。
+
+成本：内存 +0.58GB（jina int8，可接受）；延迟 jina ~2.4s/题（每次 `memory_search` 都付）；
+程序适配大头 = **`optimum[onnxruntime]` 会把 `transformers` 由 5.x 降到 4.57.x（整仓）**；
+许可 CC-BY-NC-4.0（不可逆）。
 
 ### 决策
 
-- **D7 记忆默认链路 = 开 rerank**：`MEMORY_RERANK` 默认 **0 → 1**。
-- **D8 记忆默认 reranker = jina-reranker-v2-base-multilingual int8 ONNX**
-  （sbert `backend="onnx"`、`onnx/model_int8.onnx`，CPUExecutionProvider）；`MEMORY_RERANK_MODEL`
-  可回退到 m3。
-- **D9 作用域 = 仅 memory**：共享 `RerankerService` 的默认模型**不变**（legal_web 继续 m3，
-  回归锚点检索行为不动）；jina 只在 `memory_agent.memory.retrieval.default_reranker_factory` 注入。
-- **D10 许可约束显式化**：jina int8 为 **CC-BY-NC-4.0（禁商用）**。owner **显式接受**「本记忆
-  能力限非商用 demo/研究」；这与 #20 企业云（多租户**商用**）方向冲突，**该冲突为已知且被接受**——
-  将来商用化时本决策必须回退（D8 换回 m3 或许可干净候选）。
-- **D11 依赖代价**：ONNX 路线需 `optimum[onnxruntime]`（#29 实测会把 `transformers` 由 5.x
-  降到 4.57.x，实验后已还原）——作默认须固化该版本约束，**影响整仓依赖**。
+- **D7 不设默认**：`MEMORY_RERANK` 保持默认 **0**（不启用 rerank）。消费者口径增量仅 +5.0pp 且
+  未验显著，不足以换 NC 许可 + 整仓依赖降级 + ~2.4s/题。
+- **D8 方案保留（owner 认可）**：若将来启用，采用 **jina-reranker-v2-base-multilingual int8 ONNX**、
+  **仅 memory 作用域**（legal 继续 m3，回归锚点不动）、**接受 CC-BY-NC-4.0**（定位 = 个人知识库、
+  非商业用途）。
+- **D9 推迟实现**：本决策**不落代码**；实现票 `#35` 标记 **deferred**（移出 `ready-for-agent`），
+  触发条件满足时再启动。
+- **D10 留缺口（seam）**：不关闭该选项——复用既有接缝 `MEMORY_RERANK` / `MEMORY_RERANK_MODEL` /
+  `default_reranker_factory`（无需改结构即可挂新模型）；将来给 `RerankerService` 加 ONNX 参数即可。
+- **D11 触发条件（何时重看）**：(a) 实证 agent 依赖 rank-1（消费者口径回到 recall@1）；
+  (b) 语料放大到 first-stage 明显退化；(c) 出现许可干净且过闸门的候选；(d) ONNX 依赖代价消除。
+- **D12 约束登记**：将来实现前须复验 `optimum`/`transformers` 版本影响与 jina 许可。
 
 ### 理由
 
-- owner 拍板：以「默认质量 + 延迟」为先，接受 NC 许可与依赖代价。**#29 README 的商用安全推荐
-  = 保留 m3，被 owner 显式覆盖**（决策链留痕）。
+- 按消费者口径（k=5）衡量，重排的可见收益被**免费杠杆**（返回更多条）与噪声带吃掉；而代价
+  （NC 许可不可逆 + 整仓依赖降级）高，故**不启用**。
+- owner 认可 jina int8 方案本身（延迟效益高、个人非商用），故**保留而非废弃**。
 
 Considered options：
-- **A 保持关（#29 README 推荐）**——零许可/依赖风险；owner 否。
-- **B 默认开 m3**——质量达标但 CPU ~11.3s/题，交互不可用；否。
-- **C 默认开 + jina int8（采用）**——质量持平、4.8x；代价 NC 许可 + 依赖降级。
-- **D 全局换 jina**——会改 legal 排名（重合 0.677）；owner 否（D9）。
+- **A 不设默认 + 保留方案（采用）**——零成本、零风险；保留未来路径。
+- **B 默认开 + jina int8（上一轮倾向，撤销）**——消费者口径收益不足，成本高。
+- **C 默认开 m3**——CPU ~11.3s/题，交互不可用；否。
+- **D 全局换 jina**——会改 legal 排名（重合 0.677）；否。
 
 ### Consequences
 
-- memory 链路默认多一份 ~0.58GB 常驻（jina int8）+ ONNX 运行时；#19 内存预算需复核。
-- **#18 的 `ensure_hf_offline` 缓存清单须加上 jina 权重**（`reranker_service.py` 现仅查
-  `LOCAL_RERANKER_MODEL`=m3），否则弱网冷启动又会外呼。
-- `MEMORY_RERANK=0` 仍可一键回退到「默认融合（rerank 关）」路径。
-- 商用化前必须回退 D8（见 D10）。
+- 代码不变：默认链路 = 加法融合（recall@1 0.7074 / nDCG@10 0.8817），`MEMORY_RERANK` 默认仍 0。
+- 优化优先级提高：**先动 k（返回条数）与 first-stage（BGE-M3 原生 sparse/colbert，见 ADR-0019 方向）**，
+  再考虑第二模型（`#21` backlog）。
+- `#35` 转 deferred；触发条件见 D11。
+- 若将来启用：memory daemon 多 ~0.58GB；`ensure_hf_offline` 缓存清单须加 jina 权重；legal 不受影响。
 
-Relates（#29 追加）：#29（证据已合并 master）、#21、#24、#30、ADR-0020、ADR-0021、
-`experiments/rerank-model-survey/`。
+Relates（#29 追加）：#29（证据已合并 master）、#35（deferred）、#21、#24、#30、ADR-0020、
+ADR-0021、`experiments/rerank-model-survey/`。
