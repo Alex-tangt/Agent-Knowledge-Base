@@ -31,10 +31,14 @@ def reindex(cursor: dict | None = None, batch: int = 16) -> dict:
 
 
 def get_index() -> MemoryIndex:
-    """取索引单例（跟随指针指向的当前代）；未构建时抛出可执行的提示。"""
+    """取索引单例（跟随指针指向的当前代）；未构建时抛出可执行的提示。
+
+    单租户阶段把**进程配置身份**的 `tenant` 在 store 构造期绑定（ADR-0019 D3）：
+    未配置租户时 `tenant=None`，行为与之前一致（不过滤）。
+    """
     global _index
     if _index is None:
-        index = MemoryIndex()
+        index = MemoryIndex(store_factory=_store_factory())
         if not index.is_built:
             raise RuntimeError(
                 "记忆索引尚未构建：请先运行 "
@@ -42,6 +46,17 @@ def get_index() -> MemoryIndex:
             )
         _index = index
     return _index
+
+
+def _store_factory():
+    """按进程配置身份绑定租户的 store 工厂（多租户阶段由网关按身份注入过滤）。"""
+    from memory_agent.memory.store import open_store
+    from memory_agent.gateway.identity import default_identity
+
+    tenant = default_identity().tenant
+    if tenant is None:
+        return open_store
+    return lambda db_path: open_store(db_path, tenant=tenant)
 
 
 def reset_index() -> None:

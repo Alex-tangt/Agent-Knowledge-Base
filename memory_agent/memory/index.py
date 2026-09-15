@@ -233,23 +233,28 @@ class MemoryIndex:
     # ------------------------------------------------------------------ read
 
     @locked(INDEX_LOCK)
-    def search(self, query: str, k: int = 5, writable_only: bool = False) -> list[dict]:
+    def search(self, query: str, k: int = 5, writable_only: bool = False,
+               payload_filter: dict | None = None) -> list[dict]:
         """条目级语义检索。score 为余弦相似度（越大越相关）。
 
-        writable_only 的过滤在向量库侧执行（否则 top-k 之后再筛会欠填）。
+        过滤在向量库侧执行（否则 top-k 之后再筛会欠填）。`payload_filter` 由网关
+        按身份 entitlement 构造（**只可收窄**，见 `memory_agent.gateway.authz`）；
+        `writable_only` 与它合并。
         检索前核对自洽性：manifest 条数 ≠ 集合点数 → 显式报错，不静默返回空。
-        每条命中带 `classification` / `residency`（payload 镜像）与 `provenance`
-        （来源平面 / 租户，issue #23）。
+        每条命中带 `classification` / `residency` / `tenant`（payload 镜像）与
+        `provenance`（来源平面 / 租户，issue #23）。
         """
         if not query or not query.strip():
             raise ValueError("query 不能为空")
         store = self.store
         self._ensure_consistent()
-        payload_filter = {"writable": True} if writable_only else None
+        merged = dict(payload_filter or {})
+        if writable_only:
+            merged["writable"] = True
 
         hits: list[dict] = []
         for score, text, meta in self.retriever.retrieve(
-                query, k=k, payload_filter=payload_filter):
+                query, k=k, payload_filter=merged or None):
             hits.append({
                 "id": meta.get("entry_id"),
                 "title": meta.get("title"),
@@ -260,6 +265,7 @@ class MemoryIndex:
                 "status": meta.get("status"),
                 "classification": meta.get("classification") or DEFAULT_CLASSIFICATION,
                 "residency": meta.get("residency") or DEFAULT_RESIDENCY,
+                "tenant": meta.get("tenant"),
                 "provenance": _provenance(store),
                 "score": float(score),
                 "snippet": " ".join(text.split())[:240],

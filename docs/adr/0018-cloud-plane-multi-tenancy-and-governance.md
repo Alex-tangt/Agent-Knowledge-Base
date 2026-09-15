@@ -59,3 +59,34 @@ D2 只说「网关唯一强制」，未定义网关是什么。补：
 Considered options（本次）：
 
 - **形态**：HTTP 边界 authn + 工具层 authz（采用）｜独立策略服务（当前阶段过重，留作企业档）｜proxy 携带身份 + daemon 信任（**否决**：多租户下等于无强制）｜store 适配器内（否决，store 侧不可靠）。
+
+## 修订（2026-09-15）：D2 网关的落地（#32）
+
+D2.1–D2.4 定了形状，本项记**实现**（`memory_agent/gateway/`）。落地后新增：
+
+- **D2.5 身份形状 = `Identity{principal, tenant, role, allowed_classifications, allowed_residencies}`。**
+  - 单租户阶段：身份 = 进程配置（`MEMORY_AUTH_PRINCIPAL/TENANT/ROLE/CLASSIFICATIONS/RESIDENCIES`）。
+  - 多租户形状：`MEMORY_AUTH_TOKENS`（`<token> -> 身份` JSON）→ daemon 在 `/mcp` 边界校验
+    `Authorization: Bearer <token>`；配置了 token 默认进入 `require_token`（无 / 无效即拒绝）。
+  - **身份绝不来自可伪造 header**（`X-Tenant` 之类）；token 只做等值查找，绝不回显 / 落日志。
+- **D2.6 authz = 白名单构造 effective filter，只可收窄、越权显式拒绝。**
+  - `effective_filter = 调用方请求 ∩ entitlement`；受管控维度 = `tenant`（隔离边界）+ `classification` /
+    `residency`（ABAC）。调用方请求越权值 → `AuthorizationError`（**不静默放宽**）；省略则无条件注入。
+- **D2.7 ABAC 用允许集表达；多值维度下沉为端口 `MatchAny`。**
+  - `classification` / `residency` entitlement 是允许集（如 `{private, internal}`）；全集的维度不产生
+    子句。多值经 `VectorStore` 端口的 `payload_filter` 序列形态下沉为 Qdrant `MatchAny`
+    （就地 amend ADR-0019 D3；关键词通道后置过滤同义）。
+- **D2.8 审计 = middleware 记录 `tools/call` + 身份（JSONL，gitignored）。** 配额留 `set_quota_hook`。
+- **工具层覆盖**：`memory_search`（注入 + 越权拒绝）、`memory_get`（可见性预检）、
+  `memory_add/supersede/archive/reindex`（写角色门槛 + 目标条目可见性预检 + 去重检索收窄）。
+- **落地位置**：`memory_agent/gateway/{identity,authz,middleware,context,audit}.py`；
+  中间件注册在 `mcp_server.MCPServer(middleware=[...])`。证据 `memory_agent/eval/gateway_authz_32.py`
+  + `..._results.md`（13/13），负向回归是核心。
+
+Considered options（本次）：
+
+- **ABAC 粒度**：允许集 + 多值 `MatchAny`（采用）｜单值 pin（够用但无法表达「up to internal」）｜
+  entitlement 外置策略服务（留企业档）。
+- **身份注入点**：`ServerMiddleware` 在 `/mcp` 边界解析 + `ContextVar` 绑定请求上下文（采用）｜
+  工具签名携带身份（**否决**：把信任塞进不可信调用方）｜SDK OAuth `AuthSettings`（形状吻合但当前
+  单租户阶段过重，留企业档接入）。

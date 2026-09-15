@@ -32,6 +32,12 @@ memory_agent/
 ├── memory/locks.py        # 进程内 INDEX/WRITE 锁（单 daemon 并发安全）        (#19)
 ├── memory/authoring.py    # 渲染 frontmatter + 镜像 kb.py check 的校验        (#11)
 ├── memory/writer.py       # 写入网关：搜索→去重→校验→落盘→commit→增量刷新    (#11,#12,#13)
+├── gateway/               # 检索网关：/mcp 边界 authn + 工具层 authz 强制注入 (#32)
+│   ├── identity.py        #   身份形状 + token/进程配置解析（绝不回显凭证）
+│   ├── authz.py           #   effective filter（白名单，只可收窄；tenant + ABAC）
+│   ├── middleware.py      #   /mcp 边界中间件：解析身份 → 请求上下文 → 审计
+│   ├── context.py         #   请求期身份 ContextVar（工具层读取）
+│   └── audit.py           #   调用审计（JSONL；配额留钩子）
 ├── build_index.py         # CLI：从 Markdown 全量重建（新代 + 切指针）        (#10,#13)
 ├── eval/                  # 运行时证据：baseline_A.md（锚点）、issue19_acceptance.md（#19）、write_path_sandbox.py + _results.md（#16）、readonly_corpus_17.py（#17 三仓库只读）、dogfood_17.md、retrieval_eval.py + metrics.py + retrieval_eval_set.json + retrieval_baseline.md（#24 确定性检索评测）、mcp_install_smoke_26.py + _results.md（#26 安装 + MCP 集成冒烟）
 ├── pyproject.toml         # 本包（可安装，依赖 ragcore）                       (#26)

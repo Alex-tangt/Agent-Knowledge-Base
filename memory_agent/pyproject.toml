@@ -22,6 +22,7 @@ memory-agent-build-index = "memory_agent.build_index:main"
 packages = [
     "memory_agent",
     "memory_agent.corpus",
+    "memory_agent.gateway",
     "memory_agent.memory",
 ]
 
