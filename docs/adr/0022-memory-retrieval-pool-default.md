@@ -113,3 +113,58 @@ Considered options：
 
 Relates（#30 追加）：#21、#24、#29、ADR-0013（daemon 内存）、ADR-0021、ADR-0023、
 `experiments/fusion-selection/`。
+
+## #29 追加（2026-09-16）：记忆默认开 rerank，模型换 jina int8 ONNX
+
+Status: **proposed**（待 owner 接受/修改）。
+
+### 背景
+
+本 ADR 的 D6 把「是否默认开 rerank」留给 #29，并判定它是**纯延迟/内存权衡**（融合与 rerank
+解耦）。#29 横评 5 个候选 cross-encoder，证据 `experiments/rerank-model-survey/`（脚本 + 数据 +
+结论同处）：
+
+- **许可干净（MIT/Apache）的候选全部过不了质量闸门**（ADR-0021 主指标 recall@1/MRR）：
+  `bge-base`(MIT) recall@1 −16.7pp、`gte-multilingual`(Apache) −8.3pp、`mxbai`(Apache，且仅英文) −8.3pp。
+- **唯一「质量守住 + 显著提速」= `jinaai/jina-reranker-v2-base-multilingual` int8 ONNX**
+  （**CC-BY-NC-4.0，禁商用**）：12 题子集 recall@1/MRR 与 m3 **逐位持平**（0.9375 / 1.0000），
+  nDCG@10 略高（0.9837 vs 0.9795）；重排延迟 **2366ms vs 11313ms（4.8x）**。
+- 代价（51 题真实链路，m3）：质量增量 recall@1 0.7074→0.8815（+0.1741）、nDCG@10 0.8817→0.9709、
+  MRR 0.8731→0.9889；~11.3s/题（pool 14）、实测内存增量 **0.62GB**（jina int8 0.58GB）。
+- **legal 锚点**：jina 与 m3 top-8 重合仅 0.677 / Kendall tau 0.739 → 换模型**会改写 legal 排序**。
+
+### 决策
+
+- **D7 记忆默认链路 = 开 rerank**：`MEMORY_RERANK` 默认 **0 → 1**。
+- **D8 记忆默认 reranker = jina-reranker-v2-base-multilingual int8 ONNX**
+  （sbert `backend="onnx"`、`onnx/model_int8.onnx`，CPUExecutionProvider）；`MEMORY_RERANK_MODEL`
+  可回退到 m3。
+- **D9 作用域 = 仅 memory**：共享 `RerankerService` 的默认模型**不变**（legal_web 继续 m3，
+  回归锚点检索行为不动）；jina 只在 `memory_agent.memory.retrieval.default_reranker_factory` 注入。
+- **D10 许可约束显式化**：jina int8 为 **CC-BY-NC-4.0（禁商用）**。owner **显式接受**「本记忆
+  能力限非商用 demo/研究」；这与 #20 企业云（多租户**商用**）方向冲突，**该冲突为已知且被接受**——
+  将来商用化时本决策必须回退（D8 换回 m3 或许可干净候选）。
+- **D11 依赖代价**：ONNX 路线需 `optimum[onnxruntime]`（#29 实测会把 `transformers` 由 5.x
+  降到 4.57.x，实验后已还原）——作默认须固化该版本约束，**影响整仓依赖**。
+
+### 理由
+
+- owner 拍板：以「默认质量 + 延迟」为先，接受 NC 许可与依赖代价。**#29 README 的商用安全推荐
+  = 保留 m3，被 owner 显式覆盖**（决策链留痕）。
+
+Considered options：
+- **A 保持关（#29 README 推荐）**——零许可/依赖风险；owner 否。
+- **B 默认开 m3**——质量达标但 CPU ~11.3s/题，交互不可用；否。
+- **C 默认开 + jina int8（采用）**——质量持平、4.8x；代价 NC 许可 + 依赖降级。
+- **D 全局换 jina**——会改 legal 排名（重合 0.677）；owner 否（D9）。
+
+### Consequences
+
+- memory 链路默认多一份 ~0.58GB 常驻（jina int8）+ ONNX 运行时；#19 内存预算需复核。
+- **#18 的 `ensure_hf_offline` 缓存清单须加上 jina 权重**（`reranker_service.py` 现仅查
+  `LOCAL_RERANKER_MODEL`=m3），否则弱网冷启动又会外呼。
+- `MEMORY_RERANK=0` 仍可一键回退到「默认融合（rerank 关）」路径。
+- 商用化前必须回退 D8（见 D10）。
+
+Relates（#29 追加）：#29（证据已合并 master）、#21、#24、#30、ADR-0020、ADR-0021、
+`experiments/rerank-model-survey/`。
