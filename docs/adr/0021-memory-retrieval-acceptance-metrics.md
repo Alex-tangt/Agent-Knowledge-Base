@@ -1,6 +1,6 @@
 # 0021 记忆检索优化的验收指标：以 recall@1/MRR 为主，nDCG@10 为辅助头条
 
-Status: proposed
+Status: accepted
 
 ## 背景
 

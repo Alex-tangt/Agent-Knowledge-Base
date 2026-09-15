@@ -1,6 +1,6 @@
 # 0022 记忆检索候选池默认 20 → 14
 
-Status: proposed
+Status: accepted
 
 ## 背景
 
