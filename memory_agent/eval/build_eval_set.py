@@ -25,7 +25,6 @@ if REPO_ROOT not in sys.path:
 from memory_agent import _bootstrap  # noqa: E402
 
 _bootstrap.configure_stderr_logging()
-_bootstrap.ensure_ragcore_on_path()
 
 from memory_agent.corpus.loader import load_corpus  # noqa: E402
 from memory_agent.memory.index import MemoryIndex  # noqa: E402
@@ -118,7 +117,7 @@ def main(argv: list[str] | None = None) -> int:
     if args.dry_run:
         return 0
 
-    from config.llm import require_llm
+    from ragcore.config.llm import require_llm
     from openai import OpenAI
     llm = require_llm()
     model = args.model or llm.model

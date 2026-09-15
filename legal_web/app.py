@@ -1,22 +1,18 @@
 import os
-import sys
 import asyncio
-
-# 导入垫片：把可复用核心 ragcore/ 加入 sys.path（保留 services/config/... 原包名）
-sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "ragcore"))
 
 # 适配层自己的 .env（LLM 凭证 + 可选路径 override）；显式锚定、进程环境优先。
 # core 层不再自动加载它（#22）。
-from config.llm import load_llm_env, require_llm
+from ragcore.config.llm import load_llm_env, require_llm
 load_llm_env()
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-from config.config import CORS_ORIGINS, API_PREFIX
+from ragcore.config.config import CORS_ORIGINS, API_PREFIX
 from api.routes import router
-from utils.logger import logger
-from services.langsmith_service import langsmith_service
+from ragcore.utils.logger import logger
+from ragcore.services.langsmith_service import langsmith_service
 from contextlib import asynccontextmanager
 
 

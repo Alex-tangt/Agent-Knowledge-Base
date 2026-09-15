@@ -1,7 +1,7 @@
 import json
 import os
-from config.config import LEGAL_WEB_DIR
-from utils.logger import logger
+from ragcore.config.config import LEGAL_WEB_DIR
+from ragcore.utils.logger import logger
 
 KB_REGISTRY_FILE = os.path.join(LEGAL_WEB_DIR, "kb_registry.json")
 

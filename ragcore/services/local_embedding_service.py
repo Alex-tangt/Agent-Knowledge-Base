@@ -1,5 +1,5 @@
 from sentence_transformers import SentenceTransformer
-from utils.logger import logger
+from ragcore.utils.logger import logger
 
 
 class LocalEmbeddingService:

@@ -5,9 +5,9 @@ KB 元数据中可通过 `split_strategy` / `retrieval_strategy` 字段指定策
 - default：通用策略（递归切分 + 纯向量检索）
 未指定时使用 default，保证通用工具开箱即用。
 """
-from strategies.base import SplitStrategy, RetrievalStrategy
-from strategies.legal import LegalSplitStrategy, LegalRetrievalStrategy
-from strategies.default import DefaultSplitStrategy, DefaultRetrievalStrategy
+from ragcore.strategies.base import SplitStrategy, RetrievalStrategy
+from ragcore.strategies.legal import LegalSplitStrategy, LegalRetrievalStrategy
+from ragcore.strategies.default import DefaultSplitStrategy, DefaultRetrievalStrategy
 
 SPLIT_STRATEGIES = {
     "legal": LegalSplitStrategy,
@@ -26,14 +26,14 @@ DEFAULT_RETRIEVAL = "default"
 def _kb_config(kb_name):
     if not kb_name:
         try:
-            from services.kb_registry import kb_registry
+            from ragcore.services.kb_registry import kb_registry
             kb_name = kb_registry.default_name()
         except Exception:
             pass
     if not kb_name:
         return {}
     try:
-        from services.kb_registry import kb_registry
+        from ragcore.services.kb_registry import kb_registry
         return kb_registry.get(kb_name) or {}
     except Exception:
         return {}

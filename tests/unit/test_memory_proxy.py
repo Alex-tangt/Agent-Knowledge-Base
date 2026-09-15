@@ -4,12 +4,8 @@
 """
 import http.server
 import os
-import sys
 import threading
 import time
-
-ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
-sys.path.insert(0, os.path.join(ROOT, "ragcore"))
 
 from memory_agent import proxy  # noqa: E402
 

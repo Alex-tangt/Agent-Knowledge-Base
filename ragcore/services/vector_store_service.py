@@ -13,15 +13,15 @@ from qdrant_client.models import (
     PointStruct,
     VectorParams,
 )
-from config.config import (
+from ragcore.config.config import (
     USE_LOCAL_EMBEDDINGS,
     LOCAL_EMBEDDING_MODEL,
     VECTOR_DB_PATH,
     QDRANT_COLLECTION_NAME,
 )
-from services.langsmith_service import langsmith_service
-from utils.logger import logger
-from utils.model_status import EMBEDDING_DIMENSION, STATUS
+from ragcore.services.langsmith_service import langsmith_service
+from ragcore.utils.logger import logger
+from ragcore.utils.model_status import EMBEDDING_DIMENSION, STATUS
 
 # local mode 独占锁：被别的进程挡住时短暂重试（锁只在别的进程的调用期存在）
 _LOCK_RETRY_ATTEMPTS = 6
@@ -55,11 +55,11 @@ class VectorStoreService:
             STATUS["embedding"] = "loading"
             logger.info("Loading embedding model...")
             if USE_LOCAL_EMBEDDINGS:
-                from services.local_embedding_service import LocalEmbeddingService
+                from ragcore.services.local_embedding_service import LocalEmbeddingService
                 self._embeddings = LocalEmbeddingService(LOCAL_EMBEDDING_MODEL)
             else:
                 from langchain_openai import OpenAIEmbeddings
-                from config.llm import require_llm
+                from ragcore.config.llm import require_llm
                 llm = require_llm()
                 self._embeddings = OpenAIEmbeddings(
                     api_key=llm.api_key,

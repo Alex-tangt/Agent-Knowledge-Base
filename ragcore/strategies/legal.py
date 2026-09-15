@@ -5,8 +5,8 @@
 """
 import re
 from langchain_core.documents import Document
-from config.config import ARTICLE_MAX_CHARS
-from strategies.base import SplitStrategy, RetrievalStrategy
+from ragcore.config.config import ARTICLE_MAX_CHARS
+from ragcore.strategies.base import SplitStrategy, RetrievalStrategy
 
 SPLIT_ART_RE = re.compile(r"第[一二三四五六七八九十百千零0-9]+条")
 

@@ -42,7 +42,7 @@
 ## 目录结构
 
 ```
-├── ragcore/             # 可复用核心（零 FastAPI 依赖）
+├── ragcore/             # 可复用核心（零 FastAPI 依赖）；真包，含 pyproject.toml
 │   ├── services/        # rag/chat/vector_store/document/reranker/embedding/kb_registry
 │   ├── strategies/      # 切分+检索策略抽象（legal/default）
 │   ├── agents/          # LangGraph 路由 + 会话记忆
@@ -53,7 +53,7 @@
 │   ├── tests/           # 评测子系统：questions/ground_truth/run_eval/score_eval + 结果
 │   ├── ingest.py · fetch_laws.py            # 知识库构建 / 法条抓取
 │   └── requirements.txt · .env · vector_db/ · uploads/
-├── memory_agent/        # 记忆能力包（MCP + skill），票据 #10+ 填充
+├── memory_agent/        # 记忆能力包（MCP + skill）；可安装，含 pyproject.toml
 ├── tests/unit/          # ragcore 核心单测（pytest）
 ├── experiments/         # 实验留痕：脚本+数据+结论同处一目录
 ├── docs/adr/            # 架构决策记录（目标形状/基线/评估/开发纪律/记忆架构）
@@ -74,8 +74,9 @@
 # 1. 激活虚拟环境（Windows）
 venv\Scripts\activate
 
-# 2. 安装依赖
+# 2. 安装依赖 + 两个本地包（ragcore / memory_agent 为真包，ADR-0024）
 pip install -r legal_web/requirements.txt
+pip install -e ragcore -e memory_agent
 
 # 3. 配置 .env
 cp legal_web/.env.example legal_web/.env   # 填入 API_KEY / BASE_URL / Model

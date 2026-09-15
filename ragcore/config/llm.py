@@ -19,7 +19,7 @@ from dataclasses import dataclass
 
 from dotenv import load_dotenv
 
-from config.config import LEGAL_WEB_DIR
+from ragcore.config.config import LEGAL_WEB_DIR
 
 ENV_FILE = os.path.join(LEGAL_WEB_DIR, ".env")
 

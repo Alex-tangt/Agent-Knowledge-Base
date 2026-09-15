@@ -4,7 +4,7 @@
 """
 import pytest
 
-from strategies.default import DefaultRetrievalStrategy, extract_keywords
+from ragcore.strategies.default import DefaultRetrievalStrategy, extract_keywords
 
 
 # --- extract_keywords ---

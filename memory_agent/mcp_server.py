@@ -15,15 +15,9 @@ from __future__ import annotations
 import argparse
 import atexit
 import os
-import sys
 import threading
 
-_HERE = os.path.dirname(os.path.abspath(__file__))
-_ROOT = os.path.dirname(_HERE)
-sys.path[:] = [p for p in sys.path if os.path.abspath(p or os.getcwd()) != _HERE]
-sys.path.insert(0, _ROOT)
-
-from memory_agent.runtime import get_index, get_writer, reindex  # noqa: E402  (导入即配 stderr 日志 + ragcore 路径)
+from memory_agent.runtime import get_index, get_writer, reindex  # noqa: E402  (导入即配 stderr 日志)
 from memory_agent.memory.errors import IndexConsistencyError  # noqa: E402
 from memory_agent.memory.writer import MemoryWriteError  # noqa: E402
 from memory_agent.settings import (  # noqa: E402
@@ -41,7 +35,7 @@ from mcp.server import MCPServer  # noqa: E402
 from mcp.server.mcpserver.exceptions import ToolError  # noqa: E402
 from mcp.server.transport_security import TransportSecuritySettings  # noqa: E402
 from starlette.responses import JSONResponse  # noqa: E402
-from utils.logger import logger  # noqa: E402
+from ragcore.utils.logger import logger  # noqa: E402
 
 DEFAULT_HOST = MCP_HTTP_HOST
 DEFAULT_PORT = MCP_HTTP_PORT

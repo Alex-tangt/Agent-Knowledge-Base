@@ -1,8 +1,8 @@
 from langchain_core.documents import Document
-from config.config import ARTICLE_MAX_CHARS
-from services.langsmith_service import langsmith_service
-from utils.logger import logger
-from strategies import get_split_strategy
+from ragcore.config.config import ARTICLE_MAX_CHARS
+from ragcore.services.langsmith_service import langsmith_service
+from ragcore.utils.logger import logger
+from ragcore.strategies import get_split_strategy
 import os
 
 

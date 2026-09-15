@@ -4,18 +4,18 @@ import asyncio
 import json
 from pathlib import Path
 
-ragcore_dir = Path(__file__).resolve().parent.parent.parent / "ragcore"
-sys.path.insert(0, str(ragcore_dir))
-os.chdir(str(Path(__file__).resolve().parent.parent.parent / "legal_web"))
+repo_root = Path(__file__).resolve().parent.parent.parent
+sys.path.insert(0, str(repo_root))
+os.chdir(str(repo_root / "legal_web"))
 
-from services.rag_service import (
+from ragcore.services.rag_service import (
     RAGService,
     NO_EVIDENCE_MESSAGE,
     _extract_key_anchors,
     _parse_article,
     _num_to_cn,
 )
-from config.config import (
+from ragcore.config.config import (
     RELEVANCE_THRESHOLD,
     ADAPTIVE_FACTOR,
     ADAPTIVE_MAX,

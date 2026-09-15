@@ -5,14 +5,9 @@
 只有「空 filter 删光所有点」真正生效。legal_web 的 `DELETE /api/documents/clear`
 与 `MemoryIndex.rebuild` 都依赖这条路径。
 """
-import os
-import sys
 
-ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
-sys.path.insert(0, os.path.join(ROOT, "ragcore"))
-
-from services.vector_store_service import VectorStoreService  # noqa: E402
-from utils.model_status import EMBEDDING_DIMENSION  # noqa: E402
+from ragcore.services.vector_store_service import VectorStoreService  # noqa: E402
+from ragcore.utils.model_status import EMBEDDING_DIMENSION  # noqa: E402
 
 
 class StubEmbeddings:

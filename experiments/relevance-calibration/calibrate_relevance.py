@@ -5,11 +5,11 @@
 """
 import os
 import sys
-sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "ragcore"))
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
-from config.config import QDRANT_COLLECTION_NAME
-from services.vector_store_service import VectorStoreService
-from utils.logger import logger
+from ragcore.config.config import QDRANT_COLLECTION_NAME
+from ragcore.services.vector_store_service import VectorStoreService
+from ragcore.utils.logger import logger
 
 RELEVANT = [
     "个人所得税的专项附加扣除有哪些？",

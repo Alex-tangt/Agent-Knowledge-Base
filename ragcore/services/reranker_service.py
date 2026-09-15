@@ -1,6 +1,6 @@
 from sentence_transformers import CrossEncoder
-from config.config import LOCAL_RERANKER_MODEL, RERANK_MAX_SEQ_LENGTH
-from utils.logger import logger
+from ragcore.config.config import LOCAL_RERANKER_MODEL, RERANK_MAX_SEQ_LENGTH
+from ragcore.utils.logger import logger
 
 
 class RerankerService:

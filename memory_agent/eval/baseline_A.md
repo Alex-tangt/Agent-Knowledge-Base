@@ -62,3 +62,21 @@ Invoke-RestMethod "http://127.0.0.1:8000/api/documents/count?kb_name=documents"
 
 结论：甲⁺ 布局重排未改变 `ragcore` 行为，锚点（单测 + 导入冒烟 + 启动冒烟）保持可复现。
 
+## 重构后复跑记录（#26 ragcore 包化，2026-09-15）
+
+`ragcore` 改为真包、退役 sys.path 垫片（ADR-0024）后的锚点复跑：
+
+- [x] `python -m pytest tests/unit -q` → **227 passed in 62.27s**
+- [x] **导入冒烟（干净解释器、不靠 CWD）**：`import ragcore, memory_agent, memory_agent.mcp_server`
+      在仓库外的 CWD、`PYTHONPATH` 只指向已安装目录时成功。
+- [x] **启动冒烟（boot 闸门）**：`ready:true` 约 36s；`/` → 200、`/script.js` → 200、
+      `/api/kb/list` → 2 个 KB、`/api/documents/count?kb_name=documents` → `{"count":3799}`；
+      杀进程树后 8000 端口释放。
+- [x] **MCP 集成冒烟（#26 验收）**：`memory_agent/eval/mcp_install_smoke_26.py` → **9/9**，
+      证据见 `memory_agent/eval/mcp_install_smoke_26_results.md`。
+- [x] #22 独立性守卫复跑 `memory_agent/eval/config_independence_22.py` → `passed: true`。
+
+跑法（先 `pip install -e ragcore -e memory_agent`）：`tests/unit` 用
+`venv\Scripts\python.exe -m pytest tests/unit -q` 从仓库根运行；启动冒烟用
+`venv\Scripts\python.exe legal_web/app.py`。
+

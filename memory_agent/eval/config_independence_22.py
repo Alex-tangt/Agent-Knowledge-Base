@@ -5,8 +5,8 @@
 再把 LLM 凭证从子进程环境里剥掉（`legal_web/.env` 本来也不会被读）。
 
 两段证据：
-1. **导入冒烟**：`import memory_agent.runtime` + `import services.vector_store_service`
-   （曾经的传递性耦合来源）在不含 LLM 凭证的环境里成功；并断言 `config.llm`（llm 层）
+1. **导入冒烟**：`import memory_agent.runtime` + `import ragcore.services.vector_store_service`
+   （曾经的传递性耦合来源）在不含 LLM 凭证的环境里成功；并断言 `ragcore.config.llm`（llm 层）
    根本没被 import。
 2. **全量单测**：`pytest tests/unit -q` 在同一守卫下全绿——构建 / 检索 / 写入路径
    （以 fake store 驱动）都不触碰 `legal_web/.env`。
@@ -25,13 +25,12 @@ import tempfile
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 REPO_ROOT = os.path.dirname(os.path.dirname(HERE))
-RAGCORE = os.path.join(REPO_ROOT, "ragcore")
 
 SMOKE = r"""
 import json, os, sys
 from memory_agent import runtime          # 立 stderr 日志 + 装配索引
-import services.vector_store_service as vss  # 曾经的传递性耦合来源
-assert "config.llm" not in sys.modules, "memory_agent 不应 import llm 层 (config.llm)"
+import ragcore.services.vector_store_service as vss  # 曾经的传递性耦合来源
+assert "ragcore.config.llm" not in sys.modules, "memory_agent 不应 import llm 层 (ragcore.config.llm)"
 print("@@" + json.dumps({
     "imported_runtime": True,
     "imported_vector_store": True,
@@ -42,7 +41,7 @@ print("@@" + json.dumps({
 
 REQUIRE_LLM = r"""
 import sys
-from config.llm import require_llm
+from ragcore.config.llm import require_llm
 
 try:
     require_llm()
@@ -91,7 +90,7 @@ def _child_env(guard_dir: str, records_path: str, sentinel_env: str) -> dict:
                  "LANGSMITH_ENDPOINT", "LANGSMITH_TRACING"):
         env.pop(name, None)
     env["PYTHONPATH"] = os.pathsep.join(
-        p for p in (guard_dir, REPO_ROOT, RAGCORE, env.get("PYTHONPATH", "")) if p
+        p for p in (guard_dir, REPO_ROOT, env.get("PYTHONPATH", "")) if p
     )
     env["INDEPENDENCE_GUARD_RECORDS"] = records_path
     env["MEMORY_ENV_FILE"] = sentinel_env

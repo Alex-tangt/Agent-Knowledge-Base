@@ -8,7 +8,6 @@ from __future__ import annotations
 from memory_agent import _bootstrap
 
 _bootstrap.configure_stderr_logging()
-_bootstrap.ensure_ragcore_on_path()
 
 from memory_agent.memory.index import MemoryIndex  # noqa: E402
 from memory_agent.memory.reindex import Reindexer  # noqa: E402

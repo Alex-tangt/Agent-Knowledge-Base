@@ -2,7 +2,7 @@ import os
 import functools
 import time
 from typing import Optional, Dict, Any, Callable
-from utils.logger import logger
+from ragcore.utils.logger import logger
 
 class LangSmithService:
     """LangSmith监控服务类。
@@ -30,7 +30,7 @@ class LangSmithService:
         if self._initialized:
             return
         self._initialized = True
-        from config.llm import langsmith_settings
+        from ragcore.config.llm import langsmith_settings
         settings = langsmith_settings()
         self._tracing = settings["tracing"]
         self._initialize_client(settings)
