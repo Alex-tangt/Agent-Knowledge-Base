@@ -1,6 +1,6 @@
 # 0023 收窄 ADR-0017：保留硬闸门，只软化拒答措辞
 
-Status: proposed
+Status: accepted
 amends: ADR-0017（其「去硬闸门 / 全局软拒答」部分作废）
 
 ## 背景

@@ -1,6 +1,6 @@
 # 0024 ragcore 包化：真命名空间 + memory_agent 可安装
 
-Status: proposed
+Status: accepted
 
 ## 背景
 

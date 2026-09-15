@@ -1,6 +1,6 @@
 # 0017 通用 RAG 去强制拒答：无依据由 LLM 在对话中说明
 
-Status: accepted
+Status: accepted (amended by ADR-0023：保留硬闸门，仅软化措辞)
 
 ## 背景
 
