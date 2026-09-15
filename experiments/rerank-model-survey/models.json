@@ -1,0 +1,85 @@
+{
+  "note": "rerank 候选注册表（#29）。dtype 一律 fp32——多处 config 声明 fp16/bf16，CPU 上 ≈0.17x（绝不能吃默认 dtype）。onnx 变体单独成条。",
+  "models": [
+    {
+      "key": "bge-v2-m3",
+      "id": "BAAI/bge-reranker-v2-m3",
+      "license": "apache-2.0",
+      "params_m": 567.8,
+      "languages": "multilingual",
+      "token_ctx": 8194,
+      "trust_remote_code": false,
+      "torch_dtype": "float32",
+      "onnx": false,
+      "role": "baseline",
+      "note": "现状对照（生产 LOCAL_RERANKER_MODEL）"
+    },
+    {
+      "key": "bge-base",
+      "id": "BAAI/bge-reranker-base",
+      "license": "MIT",
+      "params_m": 278,
+      "languages": "zh+en",
+      "token_ctx": 514,
+      "trust_remote_code": false,
+      "torch_dtype": "float32",
+      "onnx": true,
+      "role": "candidate",
+      "note": "质量下限基准；token 上限 512（长法条块会被截断）"
+    },
+    {
+      "key": "gte-multilingual",
+      "id": "Alibaba-NLP/gte-multilingual-reranker-base",
+      "license": "apache-2.0",
+      "params_m": 306,
+      "languages": "70+ multilingual",
+      "token_ctx": 8192,
+      "trust_remote_code": true,
+      "torch_dtype": "float32",
+      "onnx": false,
+      "role": "candidate",
+      "note": "config 声明 fp16，注册表强制 fp32；自定义 modeling 需 trust_remote_code"
+    },
+    {
+      "key": "jina-v2-torch",
+      "id": "jinaai/jina-reranker-v2-base-multilingual",
+      "license": "CC-BY-NC-4.0",
+      "params_m": 278,
+      "languages": "multilingual (zh good)",
+      "token_ctx": 1026,
+      "trust_remote_code": true,
+      "torch_dtype": "float32",
+      "onnx": true,
+      "role": "candidate",
+      "note": "config 声明 bf16，强制 fp32；许可红线：仅非商用。自定义 modeling 缺 flash_attn 时回退 native attention"
+    },
+    {
+      "key": "jina-v2-onnx-int8",
+      "id": "jinaai/jina-reranker-v2-base-multilingual",
+      "license": "CC-BY-NC-4.0",
+      "params_m": 278,
+      "languages": "multilingual",
+      "token_ctx": 1026,
+      "trust_remote_code": true,
+      "torch_dtype": "float32",
+      "onnx": true,
+      "backend": "onnx",
+      "onnx_file": "onnx/model_int8.onnx",
+      "role": "candidate",
+      "note": "int8 ONNX（sbert backend=onnx, CPUExecutionProvider）；许可红线：仅非商用"
+    },
+    {
+      "key": "mxbai-v1",
+      "id": "mixedbread-ai/mxbai-rerank-base-v1",
+      "license": "apache-2.0",
+      "params_m": 184,
+      "languages": "English only",
+      "token_ctx": 512,
+      "trust_remote_code": false,
+      "torch_dtype": "float32",
+      "onnx": true,
+      "role": "speed-floor",
+      "note": "仅英文——中文语料质量预期崩，只作速度地板参照，不作推荐"
+    }
+  ]
+}
