@@ -1,0 +1,82 @@
+{
+  "uri": "https://in03-a78ddc7c1e91479.serverless.ali-cn-hangzhou.cloud.zilliz.com.cn",
+  "rbac": {
+    "list_users": "ERROR: _InactiveRpcError: <_InactiveRpcError of RPC that terminated with:\n\tstatus = StatusCode.PERMISSION_DENIED\n\tdetails = \"PrivilegeSelectOwnership: permission deny to <redacted> in the `<redacted>` database\"\n\tdebug_error_string = \"UNKNOWN:Error received from peer  {grpc_status:7, grpc_message:\"PrivilegeSelectOwnership: permission deny to <redacted> in the `<redacted>` database\"}\"\n>",
+    "list_roles": "ERROR: _InactiveRpcError: <_InactiveRpcError of RPC that terminated with:\n\tstatus = StatusCode.PERMISSION_DENIED\n\tdetails = \"PrivilegeSelectOwnership: permission deny to <redacted> in the `<redacted>` database\"\n\tdebug_error_string = \"UNKNOWN:Error received from peer  {grpc_status:7, grpc_message:\"PrivilegeSelectOwnership: permission deny to <redacted> in the `<redacted>` database\"}\"\n>"
+  },
+  "filter": {
+    "collection": "crash25_filter",
+    "create_ms": 3255,
+    "num_entities": 12,
+    "filter_tenant_a": {
+      "returned": 4,
+      "ms": 448,
+      "tenants": [
+        "tenant-a"
+      ],
+      "top": "tenant-a doc 2"
+    },
+    "no_filter": {
+      "returned": 10,
+      "tenants": [
+        "tenant-a",
+        "tenant-b",
+        "tenant-c"
+      ]
+    },
+    "filter_tenant_b": {
+      "tenants": [
+        "tenant-b"
+      ]
+    },
+    "filter_other": {
+      "tenants": [
+        "tenant-b",
+        "tenant-c"
+      ]
+    }
+  },
+  "partition": {
+    "collection": "crash25_partition",
+    "partitions": [
+      "_default",
+      "tenant-a",
+      "tenant-b",
+      "tenant-c"
+    ],
+    "stats": {
+      "_default": {
+        "row_count": 0
+      },
+      "tenant-a": {
+        "row_count": 4
+      },
+      "tenant-b": {
+        "row_count": 4
+      },
+      "tenant-c": {
+        "row_count": 4
+      }
+    },
+    "scoped_partition_a": [
+      "tenant-a"
+    ],
+    "all_partitions": [
+      "tenant-a",
+      "tenant-b",
+      "tenant-c"
+    ]
+  },
+  "partition_key": {
+    "collection": "crash25_pkey",
+    "num_partitions": 16,
+    "with_key_filter": [
+      "tenant-a"
+    ],
+    "without_key_filter": [
+      "tenant-a",
+      "tenant-b",
+      "tenant-c"
+    ]
+  }
+}
