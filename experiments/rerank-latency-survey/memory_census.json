@@ -1,0 +1,322 @@
+{
+  "rerank_model": "BAAI/bge-reranker-v2-m3",
+  "rerank_max_chars": 512,
+  "queries": 51,
+  "pairs": 1119,
+  "max_pair_tokens": 381,
+  "pairs_over_cap": {
+    "8192": 0,
+    "1024": 0,
+    "512": 0,
+    "256": 759
+  },
+  "binding_cap": null,
+  "per_query": [
+    {
+      "id": "q001",
+      "pool": 20,
+      "max_pair_tokens": 344,
+      "mean_pair_tokens": 243.2
+    },
+    {
+      "id": "q003",
+      "pool": 20,
+      "max_pair_tokens": 346,
+      "mean_pair_tokens": 310.2
+    },
+    {
+      "id": "q004",
+      "pool": 21,
+      "max_pair_tokens": 353,
+      "mean_pair_tokens": 314.0
+    },
+    {
+      "id": "q005",
+      "pool": 21,
+      "max_pair_tokens": 354,
+      "mean_pair_tokens": 298.9
+    },
+    {
+      "id": "q006",
+      "pool": 22,
+      "max_pair_tokens": 344,
+      "mean_pair_tokens": 294.4
+    },
+    {
+      "id": "q007",
+      "pool": 22,
+      "max_pair_tokens": 337,
+      "mean_pair_tokens": 271.8
+    },
+    {
+      "id": "q008",
+      "pool": 23,
+      "max_pair_tokens": 353,
+      "mean_pair_tokens": 306.9
+    },
+    {
+      "id": "q009",
+      "pool": 23,
+      "max_pair_tokens": 361,
+      "mean_pair_tokens": 298.6
+    },
+    {
+      "id": "q010",
+      "pool": 25,
+      "max_pair_tokens": 352,
+      "mean_pair_tokens": 267.6
+    },
+    {
+      "id": "q011",
+      "pool": 20,
+      "max_pair_tokens": 360,
+      "mean_pair_tokens": 238.3
+    },
+    {
+      "id": "q012",
+      "pool": 23,
+      "max_pair_tokens": 362,
+      "mean_pair_tokens": 264.5
+    },
+    {
+      "id": "q013",
+      "pool": 23,
+      "max_pair_tokens": 355,
+      "mean_pair_tokens": 282.7
+    },
+    {
+      "id": "q014",
+      "pool": 21,
+      "max_pair_tokens": 357,
+      "mean_pair_tokens": 300.5
+    },
+    {
+      "id": "q015",
+      "pool": 24,
+      "max_pair_tokens": 360,
+      "mean_pair_tokens": 308.2
+    },
+    {
+      "id": "q016",
+      "pool": 22,
+      "max_pair_tokens": 355,
+      "mean_pair_tokens": 296.0
+    },
+    {
+      "id": "q017",
+      "pool": 24,
+      "max_pair_tokens": 348,
+      "mean_pair_tokens": 299.6
+    },
+    {
+      "id": "q018",
+      "pool": 23,
+      "max_pair_tokens": 349,
+      "mean_pair_tokens": 288.9
+    },
+    {
+      "id": "q019",
+      "pool": 24,
+      "max_pair_tokens": 350,
+      "mean_pair_tokens": 243.7
+    },
+    {
+      "id": "q020",
+      "pool": 23,
+      "max_pair_tokens": 372,
+      "mean_pair_tokens": 264.4
+    },
+    {
+      "id": "q022",
+      "pool": 24,
+      "max_pair_tokens": 361,
+      "mean_pair_tokens": 313.6
+    },
+    {
+      "id": "q023",
+      "pool": 20,
+      "max_pair_tokens": 347,
+      "mean_pair_tokens": 302.9
+    },
+    {
+      "id": "q024",
+      "pool": 20,
+      "max_pair_tokens": 381,
+      "mean_pair_tokens": 333.8
+    },
+    {
+      "id": "q025",
+      "pool": 20,
+      "max_pair_tokens": 354,
+      "mean_pair_tokens": 309.9
+    },
+    {
+      "id": "q026",
+      "pool": 20,
+      "max_pair_tokens": 350,
+      "mean_pair_tokens": 312.1
+    },
+    {
+      "id": "q027",
+      "pool": 21,
+      "max_pair_tokens": 354,
+      "mean_pair_tokens": 301.4
+    },
+    {
+      "id": "q028",
+      "pool": 20,
+      "max_pair_tokens": 347,
+      "mean_pair_tokens": 304.6
+    },
+    {
+      "id": "q029",
+      "pool": 22,
+      "max_pair_tokens": 345,
+      "mean_pair_tokens": 283.0
+    },
+    {
+      "id": "q030",
+      "pool": 23,
+      "max_pair_tokens": 346,
+      "mean_pair_tokens": 260.2
+    },
+    {
+      "id": "q031",
+      "pool": 20,
+      "max_pair_tokens": 360,
+      "mean_pair_tokens": 302.1
+    },
+    {
+      "id": "q032",
+      "pool": 21,
+      "max_pair_tokens": 363,
+      "mean_pair_tokens": 268.8
+    },
+    {
+      "id": "q034",
+      "pool": 21,
+      "max_pair_tokens": 366,
+      "mean_pair_tokens": 311.1
+    },
+    {
+      "id": "q035",
+      "pool": 23,
+      "max_pair_tokens": 346,
+      "mean_pair_tokens": 260.3
+    },
+    {
+      "id": "q037",
+      "pool": 21,
+      "max_pair_tokens": 354,
+      "mean_pair_tokens": 292.7
+    },
+    {
+      "id": "q039",
+      "pool": 21,
+      "max_pair_tokens": 363,
+      "mean_pair_tokens": 292.9
+    },
+    {
+      "id": "q040",
+      "pool": 21,
+      "max_pair_tokens": 348,
+      "mean_pair_tokens": 309.5
+    },
+    {
+      "id": "q041",
+      "pool": 24,
+      "max_pair_tokens": 330,
+      "mean_pair_tokens": 227.4
+    },
+    {
+      "id": "q042",
+      "pool": 20,
+      "max_pair_tokens": 367,
+      "mean_pair_tokens": 252.3
+    },
+    {
+      "id": "q043",
+      "pool": 24,
+      "max_pair_tokens": 346,
+      "mean_pair_tokens": 260.6
+    },
+    {
+      "id": "q044",
+      "pool": 20,
+      "max_pair_tokens": 335,
+      "mean_pair_tokens": 240.7
+    },
+    {
+      "id": "q045",
+      "pool": 23,
+      "max_pair_tokens": 363,
+      "mean_pair_tokens": 238.3
+    },
+    {
+      "id": "q046",
+      "pool": 23,
+      "max_pair_tokens": 353,
+      "mean_pair_tokens": 242.6
+    },
+    {
+      "id": "q047",
+      "pool": 25,
+      "max_pair_tokens": 353,
+      "mean_pair_tokens": 273
+    },
+    {
+      "id": "q048",
+      "pool": 22,
+      "max_pair_tokens": 359,
+      "mean_pair_tokens": 258.6
+    },
+    {
+      "id": "q049",
+      "pool": 21,
+      "max_pair_tokens": 325,
+      "mean_pair_tokens": 220.7
+    },
+    {
+      "id": "q050",
+      "pool": 24,
+      "max_pair_tokens": 354,
+      "mean_pair_tokens": 275.3
+    },
+    {
+      "id": "na01",
+      "pool": 21,
+      "max_pair_tokens": 348,
+      "mean_pair_tokens": 295.0
+    },
+    {
+      "id": "na02",
+      "pool": 23,
+      "max_pair_tokens": 351,
+      "mean_pair_tokens": 256.6
+    },
+    {
+      "id": "na03",
+      "pool": 24,
+      "max_pair_tokens": 352,
+      "mean_pair_tokens": 241.2
+    },
+    {
+      "id": "na04",
+      "pool": 21,
+      "max_pair_tokens": 349,
+      "mean_pair_tokens": 271.1
+    },
+    {
+      "id": "na05",
+      "pool": 20,
+      "max_pair_tokens": 348,
+      "mean_pair_tokens": 261.7
+    },
+    {
+      "id": "na06",
+      "pool": 22,
+      "max_pair_tokens": 343,
+      "mean_pair_tokens": 225.7
+    }
+  ]
+}

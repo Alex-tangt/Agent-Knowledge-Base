@@ -1,0 +1,67 @@
+{
+  "queries": 20,
+  "pool_size": 20,
+  "relevance_threshold": 0.85,
+  "caps": [
+    8192,
+    1024,
+    512,
+    256
+  ],
+  "per_cap": {
+    "8192": {
+      "latency": {
+        "n": 20,
+        "mean": 11.554,
+        "p50": 11.61,
+        "p95": 18.764,
+        "max": 18.764
+      },
+      "refuse_count": 3,
+      "min_dist_mean": 0.2316,
+      "top_dist_mean": 0.2316
+    },
+    "1024": {
+      "latency": {
+        "n": 20,
+        "mean": 11.608,
+        "p50": 11.526,
+        "p95": 18.966,
+        "max": 18.966
+      },
+      "refuse_count": 3,
+      "min_dist_mean": 0.2316,
+      "top_dist_mean": 0.2316,
+      "topk_overlap_vs_8192": 1.0,
+      "kendall_tau_vs_8192": 1.0
+    },
+    "512": {
+      "latency": {
+        "n": 20,
+        "mean": 12.333,
+        "p50": 12.722,
+        "p95": 19.061,
+        "max": 19.061
+      },
+      "refuse_count": 3,
+      "min_dist_mean": 0.2316,
+      "top_dist_mean": 0.2316,
+      "topk_overlap_vs_8192": 1.0,
+      "kendall_tau_vs_8192": 1.0
+    },
+    "256": {
+      "latency": {
+        "n": 20,
+        "mean": 8.363,
+        "p50": 8.534,
+        "p95": 10.36,
+        "max": 10.36
+      },
+      "refuse_count": 3,
+      "min_dist_mean": 0.2535,
+      "top_dist_mean": 0.2535,
+      "topk_overlap_vs_8192": 0.9938,
+      "kendall_tau_vs_8192": 0.9929
+    }
+  }
+}

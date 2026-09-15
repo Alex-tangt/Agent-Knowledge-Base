@@ -66,6 +66,8 @@
 ## 未决 / 计划（→ 子票）
 
 - **票 A**：`RerankerService` 支持可配 `max_seq_length` + A/B `{8192,1024,512}`，记录延迟 + nDCG 守门 + legal 锚点判分分布。
+  → **已完成（2026-09-16，`maxlen_results.md` + ADR-0020）**：三档对 memory 是严格 no-op（pair ≤381 token）；
+  legal（块 ≤~820 token）1024/512 也不改排名、**无延迟收益**，256 才 ~1.4x。默认取 512 作兜底，延迟主杠杆改走候选池裁剪。
 - **票 B**：模型横评（质量-延迟帕累托），含峰值 RSS、许可证、`trust_remote_code` 面；顺序 `bge-base → gte-multilingual → jina(int8, 若接受 NC) → mxbai(地板)`。
 - 需本地测：池 vs 质量曲线；截断对分数标定（`RELEVANCE_THRESHOLD=0.85`）的影响；ONNX 在本机 CPU 的真实加速比。
 

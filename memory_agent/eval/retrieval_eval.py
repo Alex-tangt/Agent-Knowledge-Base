@@ -66,6 +66,14 @@ def check_relevant_ids(queries, known: set[str]) -> list[str]:
     return sorted(set(missing))
 
 
+def warmup(index: MemoryIndex) -> None:
+    """预热嵌入 + reranker（惰性加载），把模型加载成本排除在逐题计时之外。"""
+    try:
+        index.search("warmup", k=1)
+    except Exception as exc:  # 预热失败不阻断评测
+        print(f"warmup 跳过：{exc}", file=sys.stderr)
+
+
 def run(index: MemoryIndex, queries, top_k: int, trace_path: str | None = None):
     """逐条检索；给了 trace_path 就每条追加一行 JSONL（可中断 / 可 --resume）。"""
     done: dict[str, dict] = {}
@@ -88,19 +96,21 @@ def run(index: MemoryIndex, queries, top_k: int, trace_path: str | None = None):
                 continue
             started = time.time()
             hits = index.search(query["query"], k=top_k)
+            elapsed = time.time() - started
             record = {
                 "id": query["id"],
                 "query": query["query"],
                 "relevant": list(query.get("relevant") or []),
                 "ranked": [hit["id"] for hit in hits],
                 "ranked_scores": [hit["score"] for hit in hits],
+                "elapsed_s": round(elapsed, 3),
             }
             done[record["id"]] = record
             if trace_handle:
                 trace_handle.write(json.dumps(record, ensure_ascii=False) + "\n")
                 trace_handle.flush()
             print(f"[{i}/{len(queries)}] {query['id']} "
-                  f"{time.time() - started:.1f}s", file=sys.stderr)
+                  f"{elapsed:.1f}s", file=sys.stderr)
     finally:
         if trace_handle:
             trace_handle.close()
@@ -114,6 +124,31 @@ def run_hash(report: dict) -> str:
         sort_keys=True, ensure_ascii=False,
     )
     return hashlib.sha256(canonical.encode("utf-8")).hexdigest()[:16]
+
+
+def _percentile(values: list[float], pct: float) -> float:
+    ordered = sorted(values)
+    idx = min(int(len(ordered) * pct), len(ordered) - 1)
+    return ordered[idx]
+
+
+def latency_stats(records: list[dict]) -> dict | None:
+    """逐题检索耗时的 mean / p50 / p95 / max（秒）。
+
+    口径与 `experiments/rerank-latency/results.md` 一致（p95 = 排序后 95% 位置）。
+    不计入指标、不影响 `run_hash`——只作延迟证据。
+    """
+    times = [r["elapsed_s"] for r in records
+             if isinstance(r.get("elapsed_s"), (int, float))]
+    if not times:
+        return None
+    return {
+        "count": len(times),
+        "mean": round(sum(times) / len(times), 3),
+        "p50": round(_percentile(times, 0.50), 3),
+        "p95": round(_percentile(times, 0.95), 3),
+        "max": round(max(times), 3),
+    }
 
 
 def _fmt(value) -> str:
@@ -130,6 +165,10 @@ def print_summary(report: dict, meta: dict) -> None:
           f"misses={len(agg['misses'])}/{agg['queries_answerable']}")
     if "no_answer_top1_score" in agg:
         print(f"no-answer top1 score: {agg['no_answer_top1_score']}")
+    if meta.get("latency_s"):
+        lat = meta["latency_s"]
+        print(f"latency(s): mean={lat['mean']}  p50={lat['p50']}  "
+              f"p95={lat['p95']}  max={lat['max']}")
     print(f"run_hash={meta['run_hash']}  elapsed={meta['elapsed_s']}s")
 
 
@@ -160,6 +199,7 @@ def main(argv: list[str] | None = None) -> int:
             f"请先重建索引或修正评测集：{missing[:10]}"
         )
 
+    warmup(index)
     started = time.time()
     records = run(index, queries, top_k=top_k, trace_path=args.trace)
     report = evaluate(records, ks=tuple(args.k), ndcg_k=args.ndcg_k)
@@ -170,6 +210,7 @@ def main(argv: list[str] | None = None) -> int:
         "top_k": top_k,
         "indexed_entries": len(known),
         "elapsed_s": round(time.time() - started, 2),
+        "latency_s": latency_stats(records),
     }
     meta["run_hash"] = run_hash(report)
     full = {"meta": {**meta, "eval_set_name": eval_set.get("name"),
