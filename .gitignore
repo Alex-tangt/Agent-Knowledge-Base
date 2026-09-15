@@ -47,6 +47,13 @@ logs/
 .env.test.local
 .env.production.local
 
+# Secrets — never commit (keys / tokens / passwords / credentials)
+#
+*.secret
+secrets/
+*credential*
+*password*
+
 # Build artifacts
 #
 build/

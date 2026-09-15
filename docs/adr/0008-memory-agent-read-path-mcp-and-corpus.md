@@ -1,8 +1,13 @@
 # 0008 memory_agent 读路径：MCP 实现选型 + 语料范围 + 引擎接缝
 
-Status: accepted
+Status: accepted（**部分被取代**，见修订记录）
 
 issue #10（读路径最小闭环）落地时确定的四个接缝。本 ADR 只记录**难逆或踩过坑**的决策，不含实现细节。
+
+> **修订记录（决策链回指）**
+> - **ADR-0013** 取代本文中「传输 = stdio、引擎进程内、无长驻服务」的**进程拓扑**约定 → 改为「单常驻 HTTP daemon + 每会话瘦 stdio 代理」；stdio 降为单会话/手动模式。本文关于**接缝本身**的 D1（MCP 2.x）/ D3（独立 Qdrant 路径）/ D4（`memory_get` 读文件）/ D5（client 按操作开/关）**仍然有效**。
+> - **ADR-0014** 取代本文 **D2** 的只读语料范围 → 从「本仓库」扩为「若干带标签的项目仓库 Markdown 文档」。
+> - 另：PRD #7 中「HTTP 常驻服务 out of scope」与「不与 `legal_web` 并发」两条，已由 #19 / ADR-0013 收掉（daemon 单实例 + `legal_web` 可并存）。
 
 ## 决策
 
