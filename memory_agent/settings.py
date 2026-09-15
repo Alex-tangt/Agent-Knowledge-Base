@@ -135,7 +135,10 @@ COLLECTION_NAME = "memory_entries"
 DEFAULT_REINDEX_BATCH = int(os.environ.get("MEMORY_REINDEX_BATCH", "16"))
 
 # 检索策略（issue #24）：向量 + 关键词混合召回的候选池大小。
-RETRIEVAL_POOL = int(os.environ.get("MEMORY_RETRIEVAL_POOL", "20"))
+# 默认 14（#21）：实测 pool∈{12,14,16,20} 非单调——14 的 nDCG@10/recall@1/MRR 均高于 20，
+# 且 rerank 延迟 ~13.3s→9.0s（−32%）；12 会把 rank 13–20 的 gold 挤出候选。证据
+# experiments/rerank-latency-survey/{pool_validation,pool_latency_bench}.md。env 可回退。
+RETRIEVAL_POOL = int(os.environ.get("MEMORY_RETRIEVAL_POOL", "14"))
 
 # 是否在检索链路里启用交叉编码器重排（目标链路 = 向量 + 关键词 + rerank）。
 # 默认**关**：daemon 已有 BGE-M3（~3.9GB），再加 reranker 会重演 #19 的内存压力。
