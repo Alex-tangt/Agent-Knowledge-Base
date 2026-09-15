@@ -35,15 +35,18 @@ class MemoryRetriever:
     """
 
     def __init__(self, store, *, strategy=None, reranker=None,
-                 reranker_factory=None, pool_size=None):
+                 reranker_factory=None, pool_size=None, rerank_max_chars=None):
         self.store = store
         self.strategy = strategy or DefaultRetrievalStrategy()
         self._reranker = reranker
         self._reranker_factory = reranker_factory
+        from memory_agent.settings import RERANK_MAX_CHARS, RETRIEVAL_POOL
         if pool_size is None:
-            from memory_agent.settings import RETRIEVAL_POOL
             pool_size = RETRIEVAL_POOL
+        if rerank_max_chars is None:
+            rerank_max_chars = RERANK_MAX_CHARS
         self.pool_size = pool_size
+        self.rerank_max_chars = rerank_max_chars
 
     @property
     def reranker(self):
@@ -67,23 +70,30 @@ class MemoryRetriever:
             candidates = self._rerank(query, candidates, reranker)
         return candidates[:k]
 
-    @staticmethod
-    def _rerank(query, candidates, reranker):
-        """交叉编码器重排整个候选池，返回与入参同形的降序候选。"""
-        by_text: dict[str, tuple] = {}
+    def _rerank(self, query, candidates, reranker):
+        """交叉编码器重排整个候选池，返回同形降序候选。
+
+        送进 reranker 的正文按 `rerank_max_chars` 截断（BGE reranker 默认
+        max_seq_length=8192，整条 6000 字条目会慢一个数量级，见 settings）。
+        """
+        unique: dict[str, tuple] = {}
         for score, doc, meta in candidates:
-            by_text.setdefault(doc, (score, doc, meta))
-        ranked = reranker.rerank(query, list(by_text.keys()), top_k=len(by_text))
+            unique.setdefault(doc, (score, doc, meta))
+        by_truncated: dict[str, str] = {}
+        for doc in unique:
+            by_truncated.setdefault(doc[:self.rerank_max_chars], doc)
+
+        ranked = reranker.rerank(query, list(by_truncated.keys()), top_k=len(by_truncated))
         out = []
         covered: set[str] = set()
-        for score, doc in ranked:
-            entry = by_text.get(doc)
-            if entry is None or doc in covered:
+        for score, text in ranked:
+            doc = by_truncated.get(text)
+            if doc is None or doc in covered:
                 continue
             covered.add(doc)
+            entry = unique[doc]
             out.append((float(score), entry[1], entry[2]))
-        for score, doc, meta in candidates:  # 重排未覆盖的兜底（理论上不发生）
+        for doc, entry in unique.items():  # 重排未覆盖的兜底（理论上不发生）
             if doc not in covered:
-                covered.add(doc)
-                out.append((score, doc, meta))
+                out.append(entry)
         return out

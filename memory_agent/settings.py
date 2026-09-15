@@ -142,6 +142,10 @@ RETRIEVAL_POOL = int(os.environ.get("MEMORY_RETRIEVAL_POOL", "20"))
 # 评测 / 需要目标链路的场景显式打开。模型名可覆盖（复用 ragcore RerankerService）。
 RERANK_ENABLED = os.environ.get("MEMORY_RERANK", "0").strip().lower() in {"1", "true", "yes", "on"}
 RERANK_MODEL = os.environ.get("MEMORY_RERANK_MODEL", "BAAI/bge-reranker-v2-m3")
+# 送进 reranker 的正文截断长度（字符）。BGE reranker 默认 max_seq_length=8192，
+# 若喂整条 6000 字条目，单条查询要 ~3.5 分钟（实测 26 条 226s）；截到 512 字约 15s。
+# 记忆条目的相关性信号集中在标题 + 开头，截断几乎不损排序。
+RERANK_MAX_CHARS = int(os.environ.get("MEMORY_RERANK_MAX_CHARS", "512"))
 
 # 共享 daemon 的 HTTP 端点（issue #19）：单实例常驻，多个 opencode 会话经 proxy 转发。
 # 只绑本机回环；端口固定，proxy 用 /health 判断「是不是我们的 daemon 在跑」。
