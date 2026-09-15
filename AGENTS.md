@@ -51,15 +51,17 @@ pip install -r legal_web/requirements.txt
 - The memory index uses its **own** Qdrant path (`memory_agent/vector_db/<gen>/qdrant`, resolved via the `CURRENT` pointer), and the client is opened **per operation** (no long-held lock) — it can coexist with `legal_web`; see ADR-0008 D5. Full rebuilds build a new generation and atomically swap the pointer; an interrupted rebuild never leaves "empty index + stale manifest" (ADR-0011).
 - **Write-path sandbox suite (#16)**: `venv\Scripts\python.exe memory_agent/eval/write_path_sandbox.py` — clones the real KB (committed state) into a temp dir, builds the index with `MEMORY_INDEX_DIR` in temp and `MEMORY_READONLY_ROOTS=""`, then asserts only external behavior (MCP tool responses + file/git state): dedup/report-only, `allow_duplicate`, supersede, archive, frontmatter compliance, rollback. 25 checks; evidence + pass matrix in `memory_agent/eval/write_path_sandbox_results.md`. The real KB is read-only to it (`git status`/`rev-parse`) and stays byte-identical.
 - **只读语料 = 三个项目仓库的 Markdown 文档（只索引 `.md`，不索引代码；用户故事 #17 / ADR-0014）。** 仓库清单在 gitignored 的 `memory_agent/readonly_repos.json`（`[{label, path}]`，相对路径按仓库根解析；提交的 `readonly_repos.example.json` 是模板）。不同仓库同名文件用 `<label>/` 前缀消歧义（`source`，条目 id = `repo:<label>/<rel>`）。改配置**必须重启 daemon**（`READONLY_ROOTS` 在 import 时求值；否则写入触发的增量刷新会把"不在 daemon 语料里"的条目当孤儿删掉）。噪声排除见 `corpus/loader.py::EXCLUDE_DIR_NAMES`（`outputs`/`dataset`/`.scratch`/`.playwright-cli` 等）。
-- **env knobs** (`memory_agent/settings.py`, read at import): `AGENT_KB_DIR` (truth source), `MEMORY_INDEX_DIR` (index root), `MEMORY_READONLY_ROOTS` (`os.pathsep`-separated; **empty = no read-only corpus**, used by the sandbox), `MEMORY_READONLY_REPOS_CONFIG` (override the repo-list JSON path), `MEMORY_REINDEX_BATCH`, `MEMORY_DEDUP_THRESHOLD` (default **0.88**, calibrated in #16 → ADR-0009), `MEMORY_WARMUP`.
+- **env knobs** (`memory_agent/settings.py`, read at import): `MEMORY_ENV_FILE` (override the `.env` path; default `memory_agent/.env`, loaded with process-env priority), `AGENT_KB_DIR` (truth source), `MEMORY_INDEX_DIR` (index root), `MEMORY_READONLY_ROOTS` (`os.pathsep`-separated; **empty = no read-only corpus**, used by the sandbox), `MEMORY_READONLY_REPOS_CONFIG` (override the repo-list JSON path), `MEMORY_REINDEX_BATCH`, `MEMORY_DEDUP_THRESHOLD` (default **0.88**, calibrated in #16 → ADR-0009), `MEMORY_WARMUP`.
 
 ## Working directory
 Paths are anchored in code, not to CWD: `ROOT_DIR` / `RAGCORE_DIR` / `LEGAL_WEB_DIR` in `ragcore/config/config.py`, `FRONTEND_DIR` in `legal_web/app.py`. `legal_web/app.py` boots correctly from **any** CWD.
 
 ## Environment (`.env`)
-`legal_web/.env` is required and **gitignored**. `ragcore/config/config.py` loads it by explicit path (no CWD dependency) and raises `ValueError` at import if these are missing:
-- `API_KEY`, `BASE_URL`, `Model` (capital `M` — not `MODEL`).
-- LangSmith is optional: tracing activates when `LANGSMITH_API_KEY` is set and `LANGSMITH_TRACING=true` (default true). Without the key, trace calls pass through silently (`ragcore/services/langsmith_service.py`).
+配置按**用途分层**（#22 / ADR-0016）：
+- **core 层**（`ragcore/config/config.py`）：路径 / 模型名 / 检索阈值——**无密钥、import 不校验**；`memory_agent` 只走这层。
+- **llm 层**（`ragcore/config/llm.py`）：`legal_web/.env`（**gitignored**，适配层入口显式 `load_llm_env()` 加载，进程环境优先）+ `require_llm()` 校验 `API_KEY` / `BASE_URL` / `Model`（capital `M`，不是 `MODEL`）。`legal_web` 启动（lifespan 首步）缺凭证即失败；`require_llm()` 失败只报变量名、不回显值。
+- LangSmith 可选：`LANGSMITH_API_KEY` + `LANGSMITH_TRACING=true`（默认 true）才启用；`langsmith_service` **惰性读取**，缺 key 时 trace 静默直通。
+- `memory_agent` 用自己的 `MEMORY_*` + `memory_agent/.env`（`MEMORY_ENV_FILE` 可覆盖路径），**不读 `legal_web/.env`**；模板 `memory_agent/.env.example`（无密钥、可提交）。
 
 ## Dependencies
 - `legal_web/requirements.txt` — authoritative dependency set for this project.
@@ -139,7 +141,7 @@ The `warmup()` function (called from `app.py` lifespan) eagerly triggers BGE-M3 
 - **Versioning**: JS/CSS files use `?v=N` cache busting. Increment when changing any JS module.
 
 ## Tests
-- **单元测试**：`tests/unit/`（pytest）——`test_document_service.py`、`test_rag_service.py`、`test_session_memory.py`、`test_memory_corpus.py`、`test_memory_index.py`、`test_memory_index_qdrant.py`、`test_memory_reindex.py`、`test_memory_writer.py`、`test_memory_lazy_warmup.py`、`test_memory_concurrency.py`、`test_memory_proxy.py`、`test_mcp_server_cli.py`、`test_vector_store_clear.py`、`test_vector_store_filter.py`、`test_vector_store_locking.py`。运行：`venv\Scripts\python.exe -m pytest tests/unit -q`（163 passed）。
+- **单元测试**：`tests/unit/`（pytest）——`test_document_service.py`、`test_rag_service.py`、`test_session_memory.py`、`test_memory_corpus.py`、`test_memory_index.py`、`test_memory_index_qdrant.py`、`test_memory_reindex.py`、`test_memory_writer.py`、`test_memory_lazy_warmup.py`、`test_memory_concurrency.py`、`test_memory_proxy.py`、`test_mcp_server_cli.py`、`test_config_layering.py`、`test_vector_store_clear.py`、`test_vector_store_filter.py`、`test_vector_store_locking.py`。运行：`venv\Scripts\python.exe -m pytest tests/unit -q`（175 passed）。
 - **写路径 sandbox 套件（#16，真实 KB 版，需 BGE-M3）**：`venv\Scripts\python.exe memory_agent/eval/write_path_sandbox.py`——不在 `tests/unit` 内（运行时证据），证据见 `memory_agent/eval/write_path_sandbox_results.md`。
 - Smoke test: `venv\Scripts\python.exe legal_web/test_langsmith.py`.
 - **启动冒烟（boot 闸门）**：后台起 `legal_web/app.py`，独立探测 `/api/status` → `ready:true`、`/` 与 `/script.js` → 200、`/api/kb/list`、`/api/documents/count?kb_name=documents`，再杀进程树确认端口与 Qdrant 锁释放。命令与结果见 `memory_agent/eval/baseline_A.md`（比"单测 + 导入冒烟"更强的收工锚点）。
@@ -241,6 +243,10 @@ The `warmup()` function (called from `app.py` lifespan) eagerly triggers BGE-M3 
 - 收尾锚点：`pytest tests/unit -q` → **163 passed**；写路径 sandbox 25/25；只读语料接缝 15/15；dogfood 真写 + 跨会话 recall（证据见 `memory_agent/eval/`）。
 - 交付物：记忆能力包 = stdio 代理 + 常驻 daemon（单实例 BGE-M3）+ 8 个 MCP 工具 + skill。
 - **Post-MVP 规划（架构师负责）**：RFC **#20** 双平面（私有本地 + 多租户企业云 + 数据库式治理）；检索优化叙事 **#21**（对象=记忆检索，法律链路降为回归锚点）。P0 基座期票：**#22** config 分层、**#23** `VectorStore` 端口 + `classification/residency`、**#24** 检索评测基座、**#25** 云向量库 spike、**#26** 独立包化（blocked by #22/#23）。执行序 **P1 独立包 → P2 云基座 → P3 联邦治理**；通用 agent demo 后延。
+
+### P0 基座期
+
+- ✅ config 解耦（#22，2026-09-15）：`ragcore/config` 拆 core / llm 两层——core 无密钥、import 不校验；llm 层惰性 `require_llm()`。`memory_agent` 用 `MEMORY_*` + 独立 `memory_agent/.env`（进程环境优先），**不读 `legal_web/.env`**；`langsmith_service` 改惰性读取；`legal_web` 启动（lifespan 首步）缺凭证显式失败。无 `legal_web/.env` 时单测 **175 passed**（改动前 8 collection error）、`dotenv` 守卫记录 0 次 legal_web 读取、`config.llm` 未被 import。决策见 `docs/adr/0016`，证据 `memory_agent/eval/config_independence_22_results.md`。后续：**#23** → **#26**（#24 / #25 可并行）。
 
 ## 后续优化待办（Backlog / 简历谈资池）
 

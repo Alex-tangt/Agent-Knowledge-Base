@@ -30,4 +30,4 @@ issue #10（读路径最小闭环）落地时确定的四个接缝。本 ADR 只
 
 - 新增依赖 `mcp>=2.2,<3`（`memory_agent/requirements.txt`）；引擎依赖仍复用 `legal_web/requirements.txt`。
 - 因 D5，`memory_agent` 与 `legal_web` **可以并存**运行（锁不再长期占用）；两者同时重活时仍可能短暂撞锁，靠退避重试兜住。引擎模型仍是每进程一份内存（2.2GB×2），这是内存代价，不是正确性问题。
-- 已知债务：`memory_agent` import `ragcore` 会连带触发 `ragcore/config/config.py`，后者要求 `legal_web/.env` 里的 LLM 三项存在——**读路径并不需要 LLM**。独立发布前需解开该耦合（另行开票）。
+- ~~已知债务：`memory_agent` import `ragcore` 会连带触发 `ragcore/config/config.py`，后者要求 `legal_web/.env` 里的 LLM 三项存在——**读路径并不需要 LLM**。独立发布前需解开该耦合（另行开票）。~~ **已解除**：core/llm 分层（#22 / ADR-0016），memory_agent 不再读 `legal_web/.env`。
