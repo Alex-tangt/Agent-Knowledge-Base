@@ -25,6 +25,7 @@ memory_agent/
 ├── corpus/loader.py       # KB 条目 + 多仓库只读文档 的发现、标签消歧与噪声排除 (#10,#17)
 ├── memory/entries.py      # frontmatter 解析 -> Entry；稳定点 id（uuid5）    (#10,#13)
 ├── memory/index.py        # 当前代视图：检索 + 增量 refresh（hash 跳过/孤儿清理）(#10,#13)
+├── memory/retrieval.py    # 检索接缝：策略召回（向量+关键词，走 ragcore）+ 可选 rerank   (#24)
 ├── memory/layout.py       # 代目录 + CURRENT 指针 + 原子切换                 (#13)
 ├── memory/reindex.py      # 分块全量重建（新代建好再切指针 + 自洽核对）       (#13)
 ├── memory/errors.py       # IndexNotBuiltError / IndexConsistencyError       (#13)
@@ -32,7 +33,7 @@ memory_agent/
 ├── memory/authoring.py    # 渲染 frontmatter + 镜像 kb.py check 的校验        (#11)
 ├── memory/writer.py       # 写入网关：搜索→去重→校验→落盘→commit→增量刷新    (#11,#12,#13)
 ├── build_index.py         # CLI：从 Markdown 全量重建（新代 + 切指针）        (#10,#13)
-├── eval/                  # 运行时证据：baseline_A.md（锚点）、issue19_acceptance.md（#19）、write_path_sandbox.py + _results.md（#16）、readonly_corpus_17.py（#17 三仓库只读）、dogfood_17.md
+├── eval/                  # 运行时证据：baseline_A.md（锚点）、issue19_acceptance.md（#19）、write_path_sandbox.py + _results.md（#16）、readonly_corpus_17.py（#17 三仓库只读）、dogfood_17.md、retrieval_eval.py + metrics.py + retrieval_eval_set.json + retrieval_baseline.md（#24 确定性检索评测）
 └── (skill)                # 见 #14：指导 agent 何时 search/read/add 及破坏性确认规则
 ```
 
@@ -78,8 +79,16 @@ venv\Scripts\python.exe memory_agent/mcp_server.py --transport http
 venv\Scripts\python.exe memory_agent/eval/write_path_sandbox.py
 ```
 
+记忆检索确定性评测（#24，需 BGE-M3 [+ reranker]，不调 LLM）：`recall@k / nDCG@10 / MRR`，
+目标链路 = 向量 + 关键词 + rerank。详见 `memory_agent/eval/README.md` 与基线
+`memory_agent/eval/retrieval_baseline.md`。
+
+```powershell
+venv\Scripts\python.exe memory_agent/eval/retrieval_eval.py --mode hybrid-rerank
+```
+
 工具：
-- `memory_search(query, k=5, writable_only=False)` → 条目级命中（`id/title/source/writable/type/tags/status/score/snippet`）；`score` 为余弦相似度（越大越相关）。
+- `memory_search(query, k=5, writable_only=False)` → 条目级命中（`id/title/source/writable/type/tags/status/score/snippet`）；`score` 越大越相关（向量 + 关键词混合召回：关键词命中批次 >1，其余为余弦相似度）。
 - `memory_get(entry_id)` → 该条目的**真实 Markdown** 内容 + 元数据。
 - `memory_add(title, body, domain, type, tags, slug, sources, status, allow_duplicate)` → 唯一写入口；写前去重，命中近似条目则**不写**并返回候选（`allow_duplicate=true` 是误报出口）；写入 = frontmatter 过校验 + 一个**只含本条目文件**的 git commit + 增量刷新索引。
 - `memory_supersede(old_id, ..., confirm=False)` / `memory_archive(entry_id, reason, confirm=False)` → 破坏性；默认只预览，`confirm=true` 才落盘（见 `docs/adr/0010`）。

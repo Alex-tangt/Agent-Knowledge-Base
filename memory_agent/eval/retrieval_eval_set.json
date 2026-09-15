@@ -4,7 +4,7 @@
   "index_gen": "gen-2",
   "seed": 24,
   "generator": "memory_agent/eval/build_eval_set.py",
-  "annotation": "query 由 LLM 依据来源条目的标题+节选生成（temperature=0.7），相关条目 = 来源条目（条目级二值）；经 agent 复核，易错子集待人工抽检。no_answer 查询与语料无关，仅用于报告 top-1 分数分布。",
+  "annotation": "query 由 LLM 依据来源条目的标题+节选生成（temperature=0.7）；相关条目为**条目级二值**：初始 = 来源条目，后经 agent 复核对 8 条难例补入可回答该 query 的共相关条目（跨仓库同文 / 同主题，见各条 label_review），q042 判定为真 miss。人工抽检见 memory_agent/eval/README.md。no_answer 查询与语料无关，仅用于报告top-1 分数分布（不做阈值校准，见 ADR-0017）。",
   "queries": [
     {
       "id": "q001",
@@ -82,10 +82,14 @@
       "id": "q010",
       "query": "知识图谱三元组抽取的复现项目目前进展如何，有哪些关键决策记录？",
       "relevant": [
-        "projects/kg-triplet-sft/overview"
+        "projects/kg-triplet-sft/overview",
+        "repo:kg-triplet-sft/CONTEXT.md",
+        "repo:kg-triplet-sft/README.md",
+        "repo:kg-triplet-sft/README.zh-CN.md"
       ],
       "source_entry": "projects/kg-triplet-sft/overview",
-      "kind": "answerable"
+      "kind": "answerable",
+      "label_review": "agent 复核补入共相关：CONTEXT/README 均含项目进展与决策记录"
     },
     {
       "id": "q011",
@@ -136,10 +140,13 @@
       "id": "q016",
       "query": "有没有能让编码助手通过 MCP 和技能包读写长期记忆、做语义检索的开源方案？",
       "relevant": [
-        "projects/agent-knowledge-base/overview"
+        "projects/agent-knowledge-base/overview",
+        "repo:agent-knowledge-base/memory_agent/README.md",
+        "repo:agent-knowledge-base/README.md"
       ],
       "source_entry": "projects/agent-knowledge-base/overview",
-      "kind": "answerable"
+      "kind": "answerable",
+      "label_review": "agent 复核补入共相关：memory_agent/README 直接描述 MCP+skill 记忆包；根 README 为同一产品说明"
     },
     {
       "id": "q017",
@@ -172,10 +179,14 @@
       "id": "q020",
       "query": "用于知识图谱三元组抽取的SFT数据集有多大，训练集、验证集和测试集怎么划分？",
       "relevant": [
-        "projects/kg-triplet-sft/data"
+        "projects/kg-triplet-sft/data",
+        "repo:kg-triplet-sft/README.md",
+        "repo:kg-triplet-sft/README.zh-CN.md",
+        "repo:kg-triplet-sft/CONTEXT.md"
       ],
       "source_entry": "projects/kg-triplet-sft/data",
-      "kind": "answerable"
+      "kind": "answerable",
+      "label_review": "agent 复核补入共相关：三处均含 3349 段 / 2575-75-700 划分"
     },
     {
       "id": "q022",
@@ -253,28 +264,34 @@
       "id": "q030",
       "query": "怎么用 gh 命令创建、查看和关闭 GitHub issue？",
       "relevant": [
-        "repo:agent-infra/docs/agents/issue-tracker.md"
+        "repo:agent-infra/docs/agents/issue-tracker.md",
+        "repo:agent-knowledge-base/docs/agents/issue-tracker.md"
       ],
       "source_entry": "repo:agent-infra/docs/agents/issue-tracker.md",
-      "kind": "answerable"
+      "kind": "answerable",
+      "label_review": "agent 复核补入共相关：跨仓库同文（Issue tracker: GitHub）"
     },
     {
       "id": "q031",
       "query": "opencode 多开几个会话内存就爆了，memory_agent 有什么办法让它们共用一个 BGE-M3 实例？",
       "relevant": [
-        "repo:agent-knowledge-base/docs/adr/0013-memory-agent-shared-single-instance-http-daemon.md"
+        "repo:agent-knowledge-base/docs/adr/0013-memory-agent-shared-single-instance-http-daemon.md",
+        "decisions/memory-package-shared-single-instance-topology"
       ],
       "source_entry": "repo:agent-knowledge-base/docs/adr/0013-memory-agent-shared-single-instance-http-daemon.md",
-      "kind": "answerable"
+      "kind": "answerable",
+      "label_review": "agent 复核补入共相关：可写 KB 里同主题决策条目（与 ADR-0013 同源）"
     },
     {
       "id": "q032",
       "query": "CPU 上跑重排序模型时，候选池大小、截断长度和 batch size 分别对推理延迟有什么影响？",
       "relevant": [
-        "repo:agent-knowledge-base/experiments/rerank-latency/results.md"
+        "repo:agent-knowledge-base/experiments/rerank-latency/results.md",
+        "repo:agent-knowledge-base/experiments/rerank-latency/README.md"
       ],
       "source_entry": "repo:agent-knowledge-base/experiments/rerank-latency/results.md",
-      "kind": "answerable"
+      "kind": "answerable",
+      "label_review": "agent 复核补入共相关：同一实验的 README（results.md 是其数据页）"
     },
     {
       "id": "q034",
@@ -289,10 +306,13 @@
       "id": "q035",
       "query": "issue 跟踪器里的分诊标签和技能提到的角色怎么对应？",
       "relevant": [
-        "repo:agent-knowledge-base/docs/agents/triage-labels.md"
+        "repo:agent-knowledge-base/docs/agents/triage-labels.md",
+        "repo:kg-triplet-sft/docs/agents/triage-labels.md",
+        "repo:agent-infra/docs/agents/triage-labels.md"
       ],
       "source_entry": "repo:agent-knowledge-base/docs/agents/triage-labels.md",
-      "kind": "answerable"
+      "kind": "answerable",
+      "label_review": "agent 复核补入共相关：跨仓库同文（Triage Labels）"
     },
     {
       "id": "q037",
@@ -325,10 +345,12 @@
       "id": "q041",
       "query": "有没有用 Qwen3 做知识图谱三元组抽取的 LoRA 微调开源方案？",
       "relevant": [
-        "repo:kg-triplet-sft/README.md"
+        "repo:kg-triplet-sft/README.md",
+        "repo:kg-triplet-sft/README.zh-CN.md"
       ],
       "source_entry": "repo:kg-triplet-sft/README.md",
-      "kind": "answerable"
+      "kind": "answerable",
+      "label_review": "agent 复核补入共相关：source README.md 的中文同文"
     },
     {
       "id": "q042",
