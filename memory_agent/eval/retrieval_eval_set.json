@@ -4,7 +4,7 @@
   "index_gen": "gen-2",
   "seed": 24,
   "generator": "memory_agent/eval/build_eval_set.py",
-  "annotation": "query 由 LLM 依据来源条目的标题+节选生成（temperature=0.7）；相关条目为**条目级二值**：初始 = 来源条目，后经 agent 复核对 8 条难例补入可回答该 query 的共相关条目（跨仓库同文 / 同主题，见各条 label_review），q042 判定为真 miss。人工抽检见 memory_agent/eval/README.md。no_answer 查询与语料无关，仅用于报告top-1 分数分布（不做阈值校准，见 ADR-0017）。",
+  "annotation": "query 由 LLM 依据来源条目的标题+节选生成（temperature=0.7）；相关条目为**条目级二值**：初始 = 来源条目，后经 agent 复核对 8 条难例补入可回答该 query 的共相关条目（跨仓库同文 / 同主题，见各条 label_review），q042 判定为真 miss。人工抽检：2026-09-15 用户确认。no_answer 查询与语料无关，仅用于报告 top-1 分数分布（不做阈值校准，见 ADR-0017）。",
   "queries": [
     {
       "id": "q001",

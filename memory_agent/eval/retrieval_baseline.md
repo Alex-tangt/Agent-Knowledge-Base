@@ -52,7 +52,7 @@ venv\Scripts\python.exe memory_agent/eval/retrieval_eval.py --mode hybrid-rerank
 
 baseline 里来源条目非 top-1 的 8 条（q010/016/020/030/031/032/035/041）逐条核对内容后补入
 共相关条目（跨仓库同文 / 同主题），见评测集各条 `label_review`；q042 判定为真 miss。
-**人工抽检待用户确认**（见 `README.md`）。
+**人工抽检：2026-09-15 用户确认**（见 `README.md`）。
 
 ## 局限
 
