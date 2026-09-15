@@ -66,23 +66,51 @@ def check_relevant_ids(queries, known: set[str]) -> list[str]:
     return sorted(set(missing))
 
 
-def run(index: MemoryIndex, queries, top_k: int):
-    records = []
-    for query in queries:
-        hits = index.search(query["query"], k=top_k)
-        records.append({
-            "id": query["id"],
-            "query": query["query"],
-            "relevant": list(query.get("relevant") or []),
-            "ranked": [hit["id"] for hit in hits],
-            "ranked_scores": [hit["score"] for hit in hits],
-        })
-    return records
+def run(index: MemoryIndex, queries, top_k: int, trace_path: str | None = None):
+    """逐条检索；给了 trace_path 就每条追加一行 JSONL（可中断 / 可 --resume）。"""
+    done: dict[str, dict] = {}
+    if trace_path and os.path.isfile(trace_path):
+        with open(trace_path, "r", encoding="utf-8") as handle:
+            for line in handle:
+                line = line.strip()
+                if not line:
+                    continue
+                record = json.loads(line)
+                done[record["id"]] = record
+        print(f"resume: 已有 {len(done)} 条 trace", file=sys.stderr)
+
+    trace_handle = open(trace_path, "a", encoding="utf-8") if trace_path else None
+    try:
+        for i, query in enumerate(queries, start=1):
+            if query["id"] in done:
+                # trace 只复用排名；标签始终以当前评测集为准（便于改标注后重算）
+                done[query["id"]]["relevant"] = list(query.get("relevant") or [])
+                continue
+            started = time.time()
+            hits = index.search(query["query"], k=top_k)
+            record = {
+                "id": query["id"],
+                "query": query["query"],
+                "relevant": list(query.get("relevant") or []),
+                "ranked": [hit["id"] for hit in hits],
+                "ranked_scores": [hit["score"] for hit in hits],
+            }
+            done[record["id"]] = record
+            if trace_handle:
+                trace_handle.write(json.dumps(record, ensure_ascii=False) + "\n")
+                trace_handle.flush()
+            print(f"[{i}/{len(queries)}] {query['id']} "
+                  f"{time.time() - started:.1f}s", file=sys.stderr)
+    finally:
+        if trace_handle:
+            trace_handle.close()
+    return [done[q["id"]] for q in queries if q["id"] in done]
 
 
 def run_hash(report: dict) -> str:
     canonical = json.dumps(
-        {"aggregate": report["aggregate"], "per_query": report["per_query"]},
+        {"aggregate": report["aggregate"], "per_query": report["per_query"],
+         "no_answer": report["no_answer"]},
         sort_keys=True, ensure_ascii=False,
     )
     return hashlib.sha256(canonical.encode("utf-8")).hexdigest()[:16]
@@ -112,10 +140,15 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--k", type=int, nargs="+", default=[1, 3, 5, 10])
     parser.add_argument("--ndcg-k", type=int, default=10)
     parser.add_argument("--out", default=None, help="把完整报告写到此 JSON")
+    parser.add_argument("--limit", type=int, default=None, help="只跑前 N 条（冒烟用）")
+    parser.add_argument("--trace", default=None,
+                        help="逐条追加 JSONL；中断后原样重拉可续跑")
     args = parser.parse_args(argv)
 
     eval_set = load_eval_set(args.eval_set)
     queries = eval_set["queries"]
+    if args.limit is not None:
+        queries = queries[:args.limit]
     top_k = max(max(args.k), args.ndcg_k)
 
     index = MemoryIndex(retriever_factory=build_retriever_factory(args.mode))
@@ -128,7 +161,7 @@ def main(argv: list[str] | None = None) -> int:
         )
 
     started = time.time()
-    records = run(index, queries, top_k=top_k)
+    records = run(index, queries, top_k=top_k, trace_path=args.trace)
     report = evaluate(records, ks=tuple(args.k), ndcg_k=args.ndcg_k)
     meta = {
         "mode": args.mode,
@@ -141,7 +174,8 @@ def main(argv: list[str] | None = None) -> int:
     meta["run_hash"] = run_hash(report)
     full = {"meta": {**meta, "eval_set_name": eval_set.get("name"),
                      "eval_set_version": eval_set.get("version")},
-            "aggregate": report["aggregate"], "per_query": report["per_query"]}
+            "aggregate": report["aggregate"], "per_query": report["per_query"],
+            "no_answer": report["no_answer"]}
 
     if args.out:
         with open(args.out, "w", encoding="utf-8") as handle:

@@ -97,11 +97,18 @@ def evaluate(records, *, ks=(1, 3, 5, 10), ndcg_k: int = 10) -> dict:
         "misses": [p["id"] for p in per_query if p["first_hit_rank"] is None],
     }
 
+    no_answer_detail = [
+        {
+            "id": r["id"],
+            "query": r["query"],
+            "ranked": list(r.get("ranked") or []),
+            "ranked_scores": list(r.get("ranked_scores") or []),
+        }
+        for r in no_answer
+    ]
+
     if no_answer:
-        top1 = [
-            (r.get("ranked_scores") or [None])[0]
-            for r in no_answer
-        ]
+        top1 = [(r.get("ranked_scores") or [None])[0] for r in no_answer]
         numeric = [s for s in top1 if isinstance(s, (int, float))]
         aggregate["no_answer_top1_score"] = {
             "count": len(no_answer),
@@ -109,4 +116,4 @@ def evaluate(records, *, ks=(1, 3, 5, 10), ndcg_k: int = 10) -> dict:
             "max": round(max(numeric), 6) if numeric else None,
         }
 
-    return {"aggregate": aggregate, "per_query": per_query}
+    return {"aggregate": aggregate, "per_query": per_query, "no_answer": no_answer_detail}
