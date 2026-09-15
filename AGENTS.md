@@ -261,7 +261,7 @@ The `warmup()` function (called from `app.py` lifespan) eagerly triggers BGE-M3 
 非本周范围，延后。独立叙事 **#21** 收拢以下检索优化（原 #15 BEIR 亦并入）。每条都是可讲的优化故事：
 
 1. **查询改写质量**：改写为关键词组合可能导致语义检索效果下降（尤其多约束复合句丢约束）。问题节点：查询改写（`rag_service._rewrite_query`）、问题分解（eval_service 多路）。关联：`experiments/query-rewrite-optimizer/` 结论（二元意图判断与关键词改写结构性冲突）。
-2. **延迟优化：pool 边界**：`ADAPTIVE_POOL=20` 与候选池实际 ~32（vector+keyword+anchor 合并）的边界是否合理；pre-rerank 候选截断 knob（实测 rerank 线性于池大小，~230ms/对）。关联：`experiments/rerank-latency/`、`experiments/e2e-latency/`。
+2. **延迟优化：pool 边界**：`ADAPTIVE_POOL=20` 与候选池实际 ~32（vector+keyword+anchor 合并）的边界是否合理；pre-rerank 候选截断 knob（实测 rerank 线性于池大小，~230ms/对）。关联：`experiments/rerank-latency/`、`experiments/e2e-latency/`。**#28 已试「送排 token 上限」杠杆：1024/512 对 legal 不改排名也无收益（块 ≤~820 token），仅 256 有 ~1.4x；默认取 512 作兜底，降延迟仍走裁池**（ADR-0020、`experiments/rerank-latency-survey/maxlen_results.md`）。
 3. **混合检索融合机制**：vector + keyword + anchor 三类信号的融合/加权是否最优（anchor 命中过多可能淹没向量信号）。问题节点：`ragcore/strategies/legal.py` 的 `_add` 合并逻辑。
 
 ## Gotchas

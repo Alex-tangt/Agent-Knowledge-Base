@@ -1,6 +1,6 @@
 # 0020 reranker 序列长度上限：默认 512 且只作用于重排输入
 
-Status: proposed
+Status: accepted
 
 ## 背景
 
