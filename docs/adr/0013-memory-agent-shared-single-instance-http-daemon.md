@@ -55,3 +55,14 @@ opencode 会话 A/B/C …（每会话一个 proxy.py，stdio）
 ## 证据
 
 `memory_agent/eval/issue19_acceptance.md`（+ 脚本 `issue19_acceptance.py`）：单份模型、3 并发检索、2 并发写入无 `.git/index.lock`、daemon-down 清晰报错、`legal_web` 启动冒烟。
+
+## 修订（2026-09-15）：模型的「共享服务」范围——含 reranker 吗？
+
+- **现状**：daemon 只持有 BGE-M3（embedding）；reranker **不在** daemon 里，`index.py` 仅在 `MEMORY_RERANK=1` 时挂懒加载工厂，默认关。`legal_web` 自包含（自己载两者）。
+- **决策**：**暂不为 reranker 单起 daemon**。理由：当前只有**一个**常驻消费者（memory daemon）；单消费者下「进程内懒加载」与「独立服务」的**内存等价**（都 2.2GB），却少一个服务与 SPOF；且 `legal_web` 作为回归锚点应保持自包含。
+- **代价对照**：默认开 rerank = **+~2.2GB 常驻** + **~9.0s/查询**（pool=14 实测）；而默认链路的主要缺陷是**融合**（recall@1 0.25 < 纯向量 0.64），修融合**免费** → 先修融合。
+- **触发条件（二者同时满足才重新考虑共享模型服务）**：
+  1. 融合修复后**仍确需 rerank**，且**默认开启**（≈"每次检索都用 reranker"）；
+  2. 出现 **≥2 个常驻消费者**都要它。
+- **届时形态**：把 **embed + rerank 合并进同一个 daemon 的两个端点**（延续本 ADR「共享单实例」思路），**不再起第三个进程**。
+- **正交说明**：reranker 横评（#29）需要**换模型**，必须在进程内直接加载——共享 daemon 帮不上横评，两者不冲突。

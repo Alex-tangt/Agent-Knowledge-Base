@@ -183,6 +183,7 @@ The `warmup()` function (called from `app.py` lifespan) eagerly triggers BGE-M3 
 - 硬决策在对话里拍板后，**由 AI 当场起草 ADR（`status: proposed`）**，用户只做"接受 / 改"，不用动笔。
 - 研究 / 实验产出进 `experiments/`（一页结论），结论再进 ADR。
 - **ADR 粒度 = 一个决策簇（≈ 一个票据 / 一个阶段），内含 D1/D2/D3**，不是"一条决策一 ADR"（先例：ADR-0008/0009/0011）。修订既有决策时新 ADR 标 `amends` / `supersedes`。
+- **同类相聚（2026-09-15）**：**同类决策优先并入同簇 ADR（就地 amend 一节），不新开零散 ADR**。只有跨簇/新阶段才新开。
 
 ### 地图同步
 结构一变就更新本文件与 `CONTEXT.md`。AGENTS.md 必须始终描述真实目录树，不允许文档脱离实际。
