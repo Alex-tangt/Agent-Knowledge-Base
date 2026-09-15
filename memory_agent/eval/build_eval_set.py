@@ -118,10 +118,11 @@ def main(argv: list[str] | None = None) -> int:
     if args.dry_run:
         return 0
 
-    from config.config import API_KEY, BASE_URL, MODEL
+    from config.llm import require_llm
     from openai import OpenAI
-    model = args.model or MODEL
-    client = OpenAI(api_key=API_KEY, base_url=BASE_URL)
+    llm = require_llm()
+    model = args.model or llm.model
+    client = OpenAI(api_key=llm.api_key, base_url=llm.base_url)
 
     queries = []
     for i, entry in enumerate(picked, start=1):
