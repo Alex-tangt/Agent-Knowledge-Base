@@ -9,6 +9,7 @@ from qdrant_client.models import (
     FieldCondition,
     Filter,
     FilterSelector,
+    MatchAny,
     MatchValue,
     PointStruct,
     VectorParams,
@@ -31,6 +32,13 @@ _LOCK_RETRY_DELAY = 0.05
 # 的——同一进程里并发构造第二个 client 也会直接 RuntimeError（实测 4 线程 3 个立刻失败），
 # 退避重试兜不住。单实例 daemon 并发服务多会话时必须把这把锁串起来。
 _SESSION_LOCK = threading.RLock()
+
+
+def _field_condition(key, value):
+    """payload 过滤子句：标量 → 精确匹配；序列 → 任一匹配（多值 ABAC）。"""
+    if isinstance(value, (list, tuple, set, frozenset)):
+        return FieldCondition(key=key, match=MatchAny(any=list(value)))
+    return FieldCondition(key=key, match=MatchValue(value=value))
 
 
 class VectorStoreService:
@@ -167,16 +175,18 @@ class VectorStoreService:
 
     @langsmith_service.trace(name="vector_store_search", metadata={"service": "VectorStoreService"})
     def search_documents(self, query, k=3, payload_filter=None):
-        """向量检索。payload_filter 为 {字段: 值} 的精确匹配约束，在 Qdrant 侧过滤
-        （而非取回后再筛），以避免过滤后欠填。"""
+        """向量检索。payload_filter 在 Qdrant 侧过滤（而非取回后再筛），避免欠填。
+
+        值是标量 → 精确匹配（`MatchValue`）；值是 list/tuple/set → 任一匹配
+        （`MatchAny`，供网关多值 ABAC，如 `classification ∈ {private, internal}`）。
+        """
         try:
             query_vec = self.embeddings.embed_query(query)
             query_filter = None
             if payload_filter:
-                query_filter = Filter(must=[
-                    FieldCondition(key=key, match=MatchValue(value=value))
-                    for key, value in payload_filter.items()
-                ])
+                query_filter = Filter(
+                    must=[_field_condition(key, value) for key, value in payload_filter.items()]
+                )
             with self._session() as client:
                 results = client.query_points(
                     collection_name=self.collection_name,

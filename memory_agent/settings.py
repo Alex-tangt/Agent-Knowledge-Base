@@ -167,6 +167,22 @@ def daemon_pid_path(port: int) -> str:
 MAX_ENTRY_CHARS = 6000
 MAX_CORPUS_FILE_BYTES = 1_000_000
 
+# ---- 网关：authn / authz（#32 / ADR-0018 D2）----
+# 单租户阶段：身份 = 进程配置。形状按多租户设计——`MEMORY_AUTH_TOKENS` 给出
+# `<token> -> <身份>` 的 JSON 映射后，daemon 在 `/mcp` 边界校验 Bearer token，
+# 未带 / 无效即拒绝（可显式 `MEMORY_AUTH_REQUIRE_TOKEN=0` 关掉强制）。
+# 身份绝不来自可伪造的 header 字段（proxy 只传输、不是信任源，D2.4）。
+AUTH_PRINCIPAL = os.environ.get("MEMORY_AUTH_PRINCIPAL", "local")
+AUTH_TENANT = os.environ.get("MEMORY_AUTH_TENANT") or None
+AUTH_ROLE = os.environ.get("MEMORY_AUTH_ROLE", "owner")
+# 逗号分隔的允许集；缺省 = 全集（本地单租户默认不限制）。
+AUTH_CLASSIFICATIONS = os.environ.get("MEMORY_AUTH_CLASSIFICATIONS", "")
+AUTH_RESIDENCIES = os.environ.get("MEMORY_AUTH_RESIDENCIES", "")
+AUTH_TOKENS = os.environ.get("MEMORY_AUTH_TOKENS", "")
+AUTH_REQUIRE_TOKEN = os.environ.get("MEMORY_AUTH_REQUIRE_TOKEN", "")
+# 审计 JSONL（gitignored）：记录 tools/call + 身份，绝不写凭证。
+AUDIT_LOG = os.environ.get("MEMORY_AUDIT_LOG") or os.path.join(INDEX_DIR, "audit.log")
+
 # 写入门禁：写前检索命中的余弦相似度 >= 此值即判为近似重复（只报告、不写）。
 # 0.88 由 #16 在真实 KB 上校准（详见 docs/adr/0009 的「校准」小节与
 # experiments/dedup-threshold-calibration/）：实测不同条目最近邻 ≤0.792、

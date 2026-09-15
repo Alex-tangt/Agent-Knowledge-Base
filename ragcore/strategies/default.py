@@ -34,6 +34,18 @@ _STOPWORDS = frozenset({
 })
 
 
+def _matches_filter(meta: dict, payload_filter: dict) -> bool:
+    """关键词通道的后置过滤：标量精确匹配，序列为「任一匹配」（与 Qdrant `MatchAny` 同义）。"""
+    for key, value in payload_filter.items():
+        actual = meta.get(key)
+        if isinstance(value, (list, tuple, set, frozenset)):
+            if actual not in value:
+                return False
+        elif actual != value:
+            return False
+    return True
+
+
 def extract_keywords(query: str, *, max_keywords: int = 12, min_len: int = 2) -> list[str]:
     """从查询里抽取用于**子串匹配**的关键词（确定性、无分词依赖）。
 
@@ -125,9 +137,7 @@ class DefaultRetrievalStrategy(RetrievalStrategy):
         extras: list[tuple[str, str, dict]] = []
         for match in searcher(keywords):
             meta = match.get("metadata") or {}
-            if payload_filter and any(
-                meta.get(key) != value for key, value in payload_filter.items()
-            ):
+            if payload_filter and not _matches_filter(meta, payload_filter):
                 continue
             key = self._identity(match["document"], meta)
             matched = max(1, int(match.get("matched", 1)))

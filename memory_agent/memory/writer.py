@@ -58,8 +58,13 @@ class MemoryWriter:
         allow_duplicate: bool = False,
         dedup_threshold: float = DEDUP_THRESHOLD,
         today: str | None = None,
+        payload_filter: dict | None = None,
     ) -> dict:
-        """写入一条新记忆。返回 {"status": "written"|"duplicate", ...}。"""
+        """写入一条新记忆。返回 {"status": "written"|"duplicate", ...}。
+
+        `payload_filter` 用于把写前去重检索限制在调用方授权范围内（网关注入，
+        只可收窄）——否则去重候选会泄漏不可见条目的存在与标题。
+        """
         self._require_git_repo()
         today = today or authoring.today_str()
         prepared = self._prepare_new_entry(
@@ -85,7 +90,8 @@ class MemoryWriter:
             }
 
         if not allow_duplicate:
-            duplicates = self._find_duplicates(title, body, dedup_threshold)
+            duplicates = self._find_duplicates(
+                title, body, dedup_threshold, payload_filter)
             if duplicates:
                 return {
                     "status": "duplicate",
@@ -372,8 +378,10 @@ class MemoryWriter:
             self._vocab_loaded = True
         return self._tag_vocab
 
-    def _find_duplicates(self, title: str, body: str, threshold: float) -> list[dict]:
-        hits = self._index.search(f"{title}\n\n{body}", k=5, writable_only=True)
+    def _find_duplicates(self, title: str, body: str, threshold: float,
+                         payload_filter: dict | None = None) -> list[dict]:
+        kwargs = {"payload_filter": payload_filter} if payload_filter else {}
+        hits = self._index.search(f"{title}\n\n{body}", k=5, writable_only=True, **kwargs)
         keys = ("id", "title", "source", "status", "score")
         return [
             {key: hit[key] for key in keys}

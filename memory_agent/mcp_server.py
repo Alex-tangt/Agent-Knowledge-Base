@@ -18,9 +18,21 @@ import os
 import threading
 
 from memory_agent.runtime import get_index, get_writer, reindex  # noqa: E402  (导入即配 stderr 日志)
+from memory_agent.gateway import (  # noqa: E402
+    AuditLog,
+    AuthorizationError,
+    GatewayAuthnMiddleware,
+    Identity,
+    can_read,
+    can_write,
+    current_identity,
+    effective_filter,
+    load_auth_config,
+)
 from memory_agent.memory.errors import IndexConsistencyError  # noqa: E402
 from memory_agent.memory.writer import MemoryWriteError  # noqa: E402
 from memory_agent.settings import (  # noqa: E402
+    AUDIT_LOG,
     MCP_HTTP_HOST,
     MCP_HTTP_PATH,
     MCP_HTTP_PORT,
@@ -41,9 +53,12 @@ DEFAULT_HOST = MCP_HTTP_HOST
 DEFAULT_PORT = MCP_HTTP_PORT
 DEFAULT_PATH = MCP_HTTP_PATH
 
+audit_log = AuditLog(path=AUDIT_LOG)
+
 mcp = MCPServer(
     "memory-agent",
     version="0.1.0",
+    middleware=[GatewayAuthnMiddleware(load_auth_config(), audit=audit_log)],
     instructions=(
         "Agent 长期记忆：memory_search 语义检索条目，memory_get 读回真实 Markdown，"
         "memory_add 写入新条目（先去重，命中近似则不写并返回候选）；"
@@ -62,27 +77,61 @@ async def _health(_request):
     return JSONResponse({"status": "ok", "service": "memory-agent"})
 
 
+def _require_writer() -> Identity:
+    """写 / 维护类工具的角色门槛。"""
+    identity = current_identity()
+    if not can_write(identity):
+        raise ToolError(
+            f"角色 {identity.role!r} 无写入权限（需要 owner / admin / writer）"
+        )
+    return identity
+
+
+def _require_visible(identity: Identity, entry_id: str) -> None:
+    """生命周期工具的越权预检：目标条目必须在身份授权范围内。"""
+    try:
+        entry = get_index().get(entry_id)
+    except (KeyError, FileNotFoundError):
+        return  # 未知 / 孤儿条目交给后续写入网关报错
+    if not can_read(identity, entry):
+        raise ToolError(f"条目 {entry_id} 不在当前身份的授权范围内")
+
+
 @mcp.tool()
-def memory_search(query: str, k: int = 5, writable_only: bool = False) -> list[dict]:
+def memory_search(query: str, k: int = 5, writable_only: bool = False,
+                  payload_filter: dict | None = None) -> list[dict]:
     """语义检索长期记忆条目（可写 KB 记忆 + 只读项目语料）。
 
     返回条目级命中：id / title / source / writable / type / tags / status / score / snippet。
     score 越大越相关：检索链路是向量 + 关键词混合召回（关键词命中批次分数 >1，
     其余为余弦相似度 ∈[-1,1]）。用 memory_get(id) 读回完整 Markdown。
     writable=false 的是只读参考语料，不可写入。
+
+    `payload_filter`（可选）只用于**进一步收窄**——网关会按当前身份无条件注入
+    tenant / classification / residency 约束；试图放宽（越权）会被拒绝。
     """
-    return get_index().search(query, k=k, writable_only=writable_only)
+    identity = current_identity()
+    try:
+        scoped = effective_filter(identity, payload_filter)
+    except AuthorizationError as exc:
+        raise ToolError(str(exc))
+    return get_index().search(query, k=k, writable_only=writable_only,
+                              payload_filter=scoped)
 
 
 @mcp.tool()
 def memory_get(entry_id: str) -> dict:
     """按 memory_search 返回的 id，读回该条目的真实 Markdown 内容与元数据。"""
+    identity = current_identity()
     try:
-        return get_index().get(entry_id)
+        entry = get_index().get(entry_id)
     except KeyError:
         raise ToolError(f"未知条目 id：{entry_id}（先用 memory_search 取 id）")
     except FileNotFoundError as exc:
         raise ToolError(f"条目文件已不存在（索引孤儿，需重建）：{exc}")
+    if not can_read(identity, entry):
+        raise ToolError(f"条目 {entry_id} 不在当前身份的授权范围内")
+    return entry
 
 
 @mcp.tool()
@@ -108,12 +157,16 @@ def memory_add(
     - tags: 取 tags.md 的受控标签
     - slug: 英文 slug；省略时从 title 派生（纯中文标题请显式给）
     """
+    identity = _require_writer()
     try:
         return get_writer().add(
             title=title, body=body, domain=domain, type=type, tags=tags,
             slug=slug, sources=sources, status=status,
             allow_duplicate=allow_duplicate,
+            payload_filter=effective_filter(identity),
         )
+    except AuthorizationError as exc:
+        raise ToolError(str(exc))
     except MemoryWriteError as exc:
         raise ToolError(str(exc))
 
@@ -137,6 +190,8 @@ def memory_supersede(
     落盘 = 新条目（frontmatter 带 supersedes=<old_id>）+ 旧条目改
     status: superseded / superseded_by=<new_id>，两个文件在同一个 commit 里。
     """
+    identity = _require_writer()
+    _require_visible(identity, old_id)
     try:
         return get_writer().supersede(
             old_id=old_id, title=title, body=body, domain=domain, type=type,
@@ -154,6 +209,8 @@ def memory_archive(entry_id: str, reason: str, confirm: bool = False) -> dict:
     confirm=False（默认）不落盘，只返回 `{status:"confirmation_required", preview}`；
     得到用户明确同意后，再以 confirm=True 重试。
     """
+    identity = _require_writer()
+    _require_visible(identity, entry_id)
     try:
         return get_writer().archive(entry_id=entry_id, reason=reason, confirm=confirm)
     except MemoryWriteError as exc:
@@ -169,6 +226,7 @@ def memory_reindex(cursor: dict | None = None, batch: int = 16) -> dict:
     直到 `done=true`（此时指针已切换，新索引生效）。
     中断安全：完成前指针不动，旧索引继续服务；核对 manifest 条数 == 点数，不等则报错。
     """
+    _require_writer()
     try:
         return reindex(cursor=cursor, batch=batch)
     except IndexConsistencyError as exc:

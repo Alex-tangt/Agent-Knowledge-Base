@@ -82,6 +82,7 @@ class Entry:
     updated: str | None = None
     classification: str = DEFAULT_CLASSIFICATION
     residency: str = DEFAULT_RESIDENCY
+    tenant: str | None = None
 
     @property
     def content_hash(self) -> str:
@@ -113,6 +114,7 @@ class Entry:
             "updated": self.updated,
             "classification": self.classification,
             "residency": self.residency,
+            "tenant": self.tenant,
             "hash": self.content_hash,
         }
 
@@ -160,4 +162,5 @@ class Entry:
             residency=_as_choice(
                 meta.get("residency"), RESIDENCY_VALUES, DEFAULT_RESIDENCY
             ),
+            tenant=_as_str(meta.get("tenant")),
         )
