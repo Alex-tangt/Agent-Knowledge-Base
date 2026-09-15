@@ -34,7 +34,7 @@
 
 **只做描述性观察**（报告 top-1 分数分布），**不做阈值校准**——生成层决定去强制拒答、
 由 LLM 在对话里说明「知识库中无相关内容」，见 `docs/adr/0017`。各模式 score 空间不同
-（vector=余弦、hybrid 关键词批次 >1、rerank=交叉编码器 logit），**只在同模式内可比**。
+（vector=余弦、hybrid=余弦+有界词面分（#30）、rerank=交叉编码器 logit），**只在同模式内可比**。
 
 ### 跑
 
@@ -50,5 +50,9 @@ venv\Scripts\python.exe memory_agent/eval/retrieval_eval.py --mode hybrid
 # 长跑可断点续跑：--trace <jsonl>，重拉即从已完成的 query 续
 # 冒烟：--limit N
 ```
+
+> `--mode hybrid` 用 `DefaultRetrievalStrategy` 的**当前默认融合**。默认融合于 **#30** 由
+> 「关键词优先」改为**加法关键词增强**（`docs/adr/0022` D4）：recall@1 0.25 → **0.7074**。
+> 融合对照 / 池曲线 / rerank 交互见 `experiments/fusion-selection/`。
 
 `--out` 里的 `meta.run_hash` 是逐题结果的 sha256 截断；**两次运行同 hash = 确定性成立**。

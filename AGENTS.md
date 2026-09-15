@@ -277,7 +277,8 @@ The `warmup()` function (called from `app.py` lifespan) eagerly triggers BGE-M3 
 - **P0 基座期 ✅ 完成**（#22 / #23 / #24 / #25）。
 - **P1 ✅ 完成**：**#26 独立包化**（ragcore 真包 + `memory_agent` 可安装；`docs/adr/0024`；合并 `df85e4d`）。验收：**227 passed** + **启动冒烟**（ready ~44s、`/` 与 `/script.js` 200、kb/list 2、documents/count 3799）+ **MCP 安装冒烟 9/9**（`memory_agent/eval/mcp_install_smoke_26_results.md`）+ 任意 CWD import。**前置**：`pip install -e ragcore -e memory_agent`（本次补齐了 venv 里缺失的 editable 安装）。
 - **并行**：**#29 rerank 横评**（回答"rerank 值不值得默认开"；worktree `wk-29`）。
-- **排队**：**#30 默认融合对照**（**#26 已合 → 解锁**；含**重设 pool 曲线**，因 `ADR-0022` 的池默认 14 是旧融合上的 provisional 结论）→ **#27 软拒答**（收窄为"保留硬闸门 + 只软化措辞"，`docs/adr/0023`）。
+- ✅ 默认检索融合对照与选型（#30，2026-09-15）：默认（rerank 关）融合由「关键词优先」改为**加法关键词增强** `score = 余弦 + 0.05 × (命中词数/关键词数)`——记忆检索 recall@1 **0.2500 → 0.7074**（纯向量 0.6407）、nDCG@10 0.5739→**0.8817**、MRR 0.4936→**0.8731**；β 平台 **[0.05,0.08]**。**RRF / 等权归一化在本语料反而 < 纯向量**（关键词路低精度：CJK 二元组一题命中 ~55 噪声条）。rerank 增量 **+0.1741 recall@1 / +0.0892 nDCG@10**，且**旧/新融合在 rerank 下逐位相同**（候选并集相同、交叉编码器与融合顺序无关）→ 修融合只影响**默认（rerank 关）**体验；rerank 是否默认开是延迟/内存权衡（供 #29）。池默认 **14 确认**（`ADR-0022` provisional 解除）。决策就地 amend `docs/adr/0022`（D4–D6）；证据 `experiments/fusion-selection/`；单测 **231 passed**。
+- **排队**：**#27 软拒答**（收窄为"保留硬闸门 + 只软化措辞"，`docs/adr/0023`）。
 - **#15 BEIR 已关闭**（被 #24 的三档消融取代，对外可比性需要时再开）。
 - **P2 前置 ✅ 已决**（#31）：**就地 amend** `docs/adr/0018`（D2.1–D2.4：authn 在 `/mcp` 边界 → 会话上下文 → 工具层 authz；proxy 非信任源）+ `docs/adr/0019`（D4–D6：检索归 store、各平面用各自原生、分数/阈值/评测按平面；本地走 Qdrant 原生 sparse+RRF + fastembed）。证据 `experiments/qdrant-local-mode-capabilities/`。**P2 拆票待 P1（#26）后**，以两 ADR 为准。
 - env knob 变更：`MEMORY_RETRIEVAL_POOL` 默认 **20 → 14**（`docs/adr/0022`：质量 + 延迟双优）。
@@ -288,7 +289,7 @@ The `warmup()` function (called from `app.py` lifespan) eagerly triggers BGE-M3 
 
 1. **查询改写质量**：改写为关键词组合可能导致语义检索效果下降（尤其多约束复合句丢约束）。问题节点：查询改写（`rag_service._rewrite_query`）、问题分解（eval_service 多路）。关联：`experiments/query-rewrite-optimizer/` 结论（二元意图判断与关键词改写结构性冲突）。
 2. **延迟优化：pool 边界**：`ADAPTIVE_POOL=20` 与候选池实际 ~32（vector+keyword+anchor 合并）的边界是否合理；pre-rerank 候选截断 knob（实测 rerank 线性于池大小，~230ms/对）。关联：`experiments/rerank-latency/`、`experiments/e2e-latency/`。**#28 已试「送排 token 上限」杠杆：1024/512 对 legal 不改排名也无收益（块 ≤~820 token），仅 256 有 ~1.4x；默认取 512 作兜底，降延迟仍走裁池**（ADR-0020、`experiments/rerank-latency-survey/maxlen_results.md`）。
-3. **混合检索融合机制**：vector + keyword + anchor 三类信号的融合/加权是否最优（anchor 命中过多可能淹没向量信号）。问题节点：`ragcore/strategies/legal.py` 的 `_add` 合并逻辑。
+3. **混合检索融合机制**：vector + keyword + anchor 三类信号的融合/加权是否最优（anchor 命中过多可能淹没向量信号）。问题节点：`ragcore/strategies/legal.py` 的 `_add` 合并逻辑。**#30 已修默认（memory）融合**——关键词优先 → 有界加法增强（`docs/adr/0022` D4），legal 的 anchor 加权融合仍待评估。
 
 ## Gotchas
 - **Always activate venv first** (`venv\Scripts\activate` on Windows). Running without it may miss installed dependencies.
