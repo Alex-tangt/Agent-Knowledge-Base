@@ -45,7 +45,8 @@ def upsert_entries(store, entries: list[Entry], max_chars: int = MAX_ENTRY_CHARS
 class MemoryIndex:
     def __init__(self, store=None, manifest_path: str | None = None,
                  db_path: str | None = None, layout: IndexLayout | None = None,
-                 entry_loader=None, retriever=None, reranker=None):
+                 entry_loader=None, retriever=None, reranker=None,
+                 retriever_factory=None):
         self._store = store
         self._layout = layout or IndexLayout()
         self._entry_loader = entry_loader
@@ -60,6 +61,7 @@ class MemoryIndex:
         self._store_lock = threading.Lock()
         self._retriever = retriever
         self._explicit_retriever = retriever is not None
+        self._retriever_factory = retriever_factory
         self._injected_reranker = reranker
         self._sync()
 
@@ -118,6 +120,9 @@ class MemoryIndex:
     def retriever(self):
         """记忆检索接缝（策略召回 + 可选重排），跟随当前代的 store。"""
         if self._retriever is None:
+            if self._retriever_factory is not None:
+                self._retriever = self._retriever_factory(self.store)
+                return self._retriever
             from memory_agent.memory.retrieval import MemoryRetriever, default_reranker_factory
             from memory_agent.settings import RERANK_ENABLED
             factory = default_reranker_factory if (
@@ -261,6 +266,11 @@ class MemoryIndex:
         with open(path, "r", encoding="utf-8") as handle:
             content = handle.read()
         return {"id": entry_id, "content": content, **meta}
+
+    def known_ids(self) -> list[str]:
+        """manifest 里的全部条目 id（评测集核对用，不读文件）。"""
+        self._sync()
+        return list(self._entries)
 
     @locked(INDEX_LOCK)
     def stats(self) -> dict:

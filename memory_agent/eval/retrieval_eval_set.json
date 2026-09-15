@@ -1,0 +1,451 @@
+{
+  "name": "memory-retrieval-eval",
+  "version": 1,
+  "index_gen": "gen-2",
+  "seed": 24,
+  "generator": "memory_agent/eval/build_eval_set.py",
+  "annotation": "query 由 LLM 依据来源条目的标题+节选生成（temperature=0.7），相关条目 = 来源条目（条目级二值）；经 agent 复核，易错子集待人工抽检。no_answer 查询与语料无关，仅用于报告 top-1 分数分布。",
+  "queries": [
+    {
+      "id": "q001",
+      "query": "在 Kaggle 上用 LLaMA-Factory 训练，模型初始化到一半就退出，返回码是 0 也没有任何报错，是什么原因？",
+      "relevant": [
+        "topics/training-error-catalog"
+      ],
+      "source_entry": "topics/training-error-catalog",
+      "kind": "answerable"
+    },
+    {
+      "id": "q003",
+      "query": "用 Python 写 stdio 的 MCP server，握手老是失败，是不是日志输出把协议通道弄坏了？",
+      "relevant": [
+        "topics/mcp-stdio-server-authoring"
+      ],
+      "source_entry": "topics/mcp-stdio-server-authoring",
+      "kind": "answerable"
+    },
+    {
+      "id": "q004",
+      "query": "Agent-infra 项目最近的架构方向有什么变化，assembler 为什么会从 TS 服务改成 pi 配置？",
+      "relevant": [
+        "projects/agent-infra/overview"
+      ],
+      "source_entry": "projects/agent-infra/overview",
+      "kind": "answerable"
+    },
+    {
+      "id": "q005",
+      "query": "agent-infra 这个 agent 工厂为什么选择基于 dsh 做插件套件，而不是 fork 或生成代码？",
+      "relevant": [
+        "projects/agent-infra/vision"
+      ],
+      "source_entry": "projects/agent-infra/vision",
+      "kind": "answerable"
+    },
+    {
+      "id": "q006",
+      "query": "opencode 的 API key 用环境变量比直接写在配置里更安全吗",
+      "relevant": [
+        "topics/opencode-secrets-handling"
+      ],
+      "source_entry": "topics/opencode-secrets-handling",
+      "kind": "answerable"
+    },
+    {
+      "id": "q007",
+      "query": "opencode 在 Windows 上总是网络超时，怎么让它走本地代理？",
+      "relevant": [
+        "topics/opencode-proxy-and-network"
+      ],
+      "source_entry": "topics/opencode-proxy-and-network",
+      "kind": "answerable"
+    },
+    {
+      "id": "q008",
+      "query": "Qdrant 本地模式为什么删除集合后重建还会带出旧数据，而且同一个目录不能被其他客户端打开？",
+      "relevant": [
+        "topics/qdrant-local-mode-semantics"
+      ],
+      "source_entry": "topics/qdrant-local-mode-semantics",
+      "kind": "answerable"
+    },
+    {
+      "id": "q009",
+      "query": "为什么在知识库条目还很少的时候就提前启用 embeddings 来做 agent 记忆包的语义检索？",
+      "relevant": [
+        "decisions/KB-0003-open-l3-embeddings-for-memory-package"
+      ],
+      "source_entry": "decisions/KB-0003-open-l3-embeddings-for-memory-package",
+      "kind": "answerable"
+    },
+    {
+      "id": "q010",
+      "query": "知识图谱三元组抽取的复现项目目前进展如何，有哪些关键决策记录？",
+      "relevant": [
+        "projects/kg-triplet-sft/overview"
+      ],
+      "source_entry": "projects/kg-triplet-sft/overview",
+      "kind": "answerable"
+    },
+    {
+      "id": "q011",
+      "query": "LLaMA-Factory 0.9.5 在 Kaggle T4 上微调，transformers、accelerate、peft 该用哪些版本才不会冲突？",
+      "relevant": [
+        "topics/training-version-matrix"
+      ],
+      "source_entry": "topics/training-version-matrix",
+      "kind": "answerable"
+    },
+    {
+      "id": "q012",
+      "query": "小模型微调租云GPU，Kaggle免费额度和国内按小时计费的4090哪个更划算、接入成本更低",
+      "relevant": [
+        "topics/cloud-gpu-platforms"
+      ],
+      "source_entry": "topics/cloud-gpu-platforms",
+      "kind": "answerable"
+    },
+    {
+      "id": "q013",
+      "query": "把训练流程从一个框架迁移到另一个框架之前，应该先核对哪些容易踩坑的细节？",
+      "relevant": [
+        "topics/agent-engineering-playbook"
+      ],
+      "source_entry": "topics/agent-engineering-playbook",
+      "kind": "answerable"
+    },
+    {
+      "id": "q014",
+      "query": "多个 opencode 会话并行时每个都加载一份 BGE-M3 导致内存爆满，怎么只保留一个模型进程并让其他会话复用？",
+      "relevant": [
+        "decisions/memory-package-shared-single-instance-topology"
+      ],
+      "source_entry": "decisions/memory-package-shared-single-instance-topology",
+      "kind": "answerable"
+    },
+    {
+      "id": "q015",
+      "query": "全局 agent 知识库是怎么设计的，为什么和 Obsidian 分开，RAG 是第二阶段才做吗？",
+      "relevant": [
+        "decisions/KB-0001-knowledge-base-architecture"
+      ],
+      "source_entry": "decisions/KB-0001-knowledge-base-architecture",
+      "kind": "answerable"
+    },
+    {
+      "id": "q016",
+      "query": "有没有能让编码助手通过 MCP 和技能包读写长期记忆、做语义检索的开源方案？",
+      "relevant": [
+        "projects/agent-knowledge-base/overview"
+      ],
+      "source_entry": "projects/agent-knowledge-base/overview",
+      "kind": "answerable"
+    },
+    {
+      "id": "q017",
+      "query": "这个项目里哪些结论不能声称已经复现或端到端有效？",
+      "relevant": [
+        "projects/kg-triplet-sft/boundaries"
+      ],
+      "source_entry": "projects/kg-triplet-sft/boundaries",
+      "kind": "answerable"
+    },
+    {
+      "id": "q018",
+      "query": "Hugging Face 登录后 token 存哪里，脚本怎么自动读取？",
+      "relevant": [
+        "topics/huggingface-token-and-publishing"
+      ],
+      "source_entry": "topics/huggingface-token-and-publishing",
+      "kind": "answerable"
+    },
+    {
+      "id": "q019",
+      "query": "What are the six elements of decision quality and why does the weakest one limit overall quality?",
+      "relevant": [
+        "topics/decision-quality-and-ach"
+      ],
+      "source_entry": "topics/decision-quality-and-ach",
+      "kind": "answerable"
+    },
+    {
+      "id": "q020",
+      "query": "用于知识图谱三元组抽取的SFT数据集有多大，训练集、验证集和测试集怎么划分？",
+      "relevant": [
+        "projects/kg-triplet-sft/data"
+      ],
+      "source_entry": "projects/kg-triplet-sft/data",
+      "kind": "answerable"
+    },
+    {
+      "id": "q022",
+      "query": "业界有没有工具能根据一份结构化配置直接生成可运行的 agent 示例代码，生成后配置就弃用，而不是留在平台里长期解释执行？",
+      "relevant": [
+        "repo:agent-infra/docs/research/02-recipe-to-demo-generation.md"
+      ],
+      "source_entry": "repo:agent-infra/docs/research/02-recipe-to-demo-generation.md",
+      "kind": "answerable"
+    },
+    {
+      "id": "q023",
+      "query": "组装器用 TS、组件库用 Python，这种混合技术栈怎么防止互相污染？",
+      "relevant": [
+        "repo:agent-infra/docs/adr/0003-hybrid-stack-ts-assembler-python-library.md"
+      ],
+      "source_entry": "repo:agent-infra/docs/adr/0003-hybrid-stack-ts-assembler-python-library.md",
+      "kind": "answerable"
+    },
+    {
+      "id": "q024",
+      "query": "想自研 agent 组件库、用可序列化配方加确定性接线引擎拼装组件，现成的 LangChain、LlamaIndex、CrewAI 这些框架的组件抽象能不能直接拿来复用？",
+      "relevant": [
+        "repo:agent-infra/docs/research/01-frameworks-component-abstraction.md"
+      ],
+      "source_entry": "repo:agent-infra/docs/research/01-frameworks-component-abstraction.md",
+      "kind": "answerable"
+    },
+    {
+      "id": "q025",
+      "query": "组装器从函数式调 LLM 改成 coding agent 装进项目，这个架构决策和落地细节是什么？",
+      "relevant": [
+        "repo:agent-infra/docs/handoffs/2026-08-09-assembler-coding-agent-subject.md"
+      ],
+      "source_entry": "repo:agent-infra/docs/handoffs/2026-08-09-assembler-coding-agent-subject.md",
+      "kind": "answerable"
+    },
+    {
+      "id": "q026",
+      "query": "组装器为什么不再自己实现会话层，改成纯 pi 的 skill 和 extension 配置？",
+      "relevant": [
+        "repo:agent-infra/docs/adr/0007-assembler-as-pure-pi-config.md"
+      ],
+      "source_entry": "repo:agent-infra/docs/adr/0007-assembler-as-pure-pi-config.md",
+      "kind": "answerable"
+    },
+    {
+      "id": "q027",
+      "query": "把知识以 skill 形式注入 agent，pi-coding-agent 和 OpenAI Agents SDK 哪个更合适？",
+      "relevant": [
+        "repo:agent-infra/docs/research/04-assembler-skill-capabilities.md"
+      ],
+      "source_entry": "repo:agent-infra/docs/research/04-assembler-skill-capabilities.md",
+      "kind": "answerable"
+    },
+    {
+      "id": "q028",
+      "query": "有没有可复用的 agent 组件库能快速组装出 AI Agent 演示项目？",
+      "relevant": [
+        "repo:agent-infra/CONTEXT.md"
+      ],
+      "source_entry": "repo:agent-infra/CONTEXT.md",
+      "kind": "answerable"
+    },
+    {
+      "id": "q029",
+      "query": "Agent 设计知识怎么整理成 skill 包？文件放在哪个目录、命名有什么约定？",
+      "relevant": [
+        "repo:agent-infra/docs/agent-design-skills.md"
+      ],
+      "source_entry": "repo:agent-infra/docs/agent-design-skills.md",
+      "kind": "answerable"
+    },
+    {
+      "id": "q030",
+      "query": "怎么用 gh 命令创建、查看和关闭 GitHub issue？",
+      "relevant": [
+        "repo:agent-infra/docs/agents/issue-tracker.md"
+      ],
+      "source_entry": "repo:agent-infra/docs/agents/issue-tracker.md",
+      "kind": "answerable"
+    },
+    {
+      "id": "q031",
+      "query": "opencode 多开几个会话内存就爆了，memory_agent 有什么办法让它们共用一个 BGE-M3 实例？",
+      "relevant": [
+        "repo:agent-knowledge-base/docs/adr/0013-memory-agent-shared-single-instance-http-daemon.md"
+      ],
+      "source_entry": "repo:agent-knowledge-base/docs/adr/0013-memory-agent-shared-single-instance-http-daemon.md",
+      "kind": "answerable"
+    },
+    {
+      "id": "q032",
+      "query": "CPU 上跑重排序模型时，候选池大小、截断长度和 batch size 分别对推理延迟有什么影响？",
+      "relevant": [
+        "repo:agent-knowledge-base/experiments/rerank-latency/results.md"
+      ],
+      "source_entry": "repo:agent-knowledge-base/experiments/rerank-latency/results.md",
+      "kind": "answerable"
+    },
+    {
+      "id": "q034",
+      "query": "政策法规问答评测集包含哪些题型，目前有多少道题，覆盖了哪些主要法律？",
+      "relevant": [
+        "repo:agent-knowledge-base/legal_web/tests/questions.md"
+      ],
+      "source_entry": "repo:agent-knowledge-base/legal_web/tests/questions.md",
+      "kind": "answerable"
+    },
+    {
+      "id": "q035",
+      "query": "issue 跟踪器里的分诊标签和技能提到的角色怎么对应？",
+      "relevant": [
+        "repo:agent-knowledge-base/docs/agents/triage-labels.md"
+      ],
+      "source_entry": "repo:agent-knowledge-base/docs/agents/triage-labels.md",
+      "kind": "answerable"
+    },
+    {
+      "id": "q037",
+      "query": "我这个小 RAG 项目到底该做成通用框架还是聚焦垂直场景，当时是怎么权衡定位的？",
+      "relevant": [
+        "repo:agent-knowledge-base/docs/adr/0001-personal-rag-tool-target.md"
+      ],
+      "source_entry": "repo:agent-knowledge-base/docs/adr/0001-personal-rag-tool-target.md",
+      "kind": "answerable"
+    },
+    {
+      "id": "q039",
+      "query": "RAG 问答系统处理法律咨询时有哪些典型的拒答或忠实度不足案例？",
+      "relevant": [
+        "repo:agent-knowledge-base/legal_web/tests/failure_analysis.md"
+      ],
+      "source_entry": "repo:agent-knowledge-base/legal_web/tests/failure_analysis.md",
+      "kind": "answerable"
+    },
+    {
+      "id": "q040",
+      "query": "如何对AI辅助的查询改写实验做人工复盘，找出实验设计和记录中的问题？",
+      "relevant": [
+        "repo:agent-knowledge-base/docs/human-review.md"
+      ],
+      "source_entry": "repo:agent-knowledge-base/docs/human-review.md",
+      "kind": "answerable"
+    },
+    {
+      "id": "q041",
+      "query": "有没有用 Qwen3 做知识图谱三元组抽取的 LoRA 微调开源方案？",
+      "relevant": [
+        "repo:kg-triplet-sft/README.md"
+      ],
+      "source_entry": "repo:kg-triplet-sft/README.md",
+      "kind": "answerable"
+    },
+    {
+      "id": "q042",
+      "query": "GraphRAG 消费者侧的可达性评估结果如何，条件与无条件 recall 分别是多少？",
+      "relevant": [
+        "repo:kg-triplet-sft/docs/adr/0008-consumer-axes-and-nothink-cost.md"
+      ],
+      "source_entry": "repo:kg-triplet-sft/docs/adr/0008-consumer-axes-and-nothink-cost.md",
+      "kind": "answerable"
+    },
+    {
+      "id": "q043",
+      "query": "第一轮训练为什么不再沿用 mohar07 复现方案里的训练配置和精度约束？",
+      "relevant": [
+        "repo:kg-triplet-sft/docs/adr/0005-training-pipeline-decoupled.md"
+      ],
+      "source_entry": "repo:kg-triplet-sft/docs/adr/0005-training-pipeline-decoupled.md",
+      "kind": "answerable"
+    },
+    {
+      "id": "q044",
+      "query": "在 Kaggle 的 T4 上怎么用 LLaMA-Factory 微调 Qwen3-0.6B，让它输出 GraphRAG 风格的实体关系抽取 JSON？",
+      "relevant": [
+        "repo:kg-triplet-sft/finetune/README_tracer.md"
+      ],
+      "source_entry": "repo:kg-triplet-sft/finetune/README_tracer.md",
+      "kind": "answerable"
+    },
+    {
+      "id": "q045",
+      "query": "知识图谱三元组抽取的预测结果怎么和标准答案比对打分？",
+      "relevant": [
+        "repo:kg-triplet-sft/eval/harness/README.md"
+      ],
+      "source_entry": "repo:kg-triplet-sft/eval/harness/README.md",
+      "kind": "answerable"
+    },
+    {
+      "id": "q046",
+      "query": "不同参数量的 Qwen 模型在同一个 arXiv 段落上做实体关系抽取的效果对比如何？",
+      "relevant": [
+        "repo:kg-triplet-sft/docs/example-graph.md"
+      ],
+      "source_entry": "repo:kg-triplet-sft/docs/example-graph.md",
+      "kind": "answerable"
+    },
+    {
+      "id": "q047",
+      "query": "容量线推理的外部接口怎么调用？调用方需要提供哪些输入，运行后会返回什么结果？",
+      "relevant": [
+        "repo:kg-triplet-sft/finetune/kaggle/kernel_capinfer/README.md"
+      ],
+      "source_entry": "repo:kg-triplet-sft/finetune/kaggle/kernel_capinfer/README.md",
+      "kind": "answerable"
+    },
+    {
+      "id": "q048",
+      "query": "微调出来的学生模型在部署时，它的提示词要和教师模型的提示词统一成一个吗？",
+      "relevant": [
+        "repo:kg-triplet-sft/docs/adr/0004-deployment-interface-and-student-prompt.md"
+      ],
+      "source_entry": "repo:kg-triplet-sft/docs/adr/0004-deployment-interface-and-student-prompt.md",
+      "kind": "answerable"
+    },
+    {
+      "id": "q049",
+      "query": "怎么用 LoRA 微调 Qwen3 从开放文本里抽取实体和关系，并输出 GraphRAG 格式的知识图谱？",
+      "relevant": [
+        "repo:kg-triplet-sft/README.zh-CN.md"
+      ],
+      "source_entry": "repo:kg-triplet-sft/README.zh-CN.md",
+      "kind": "answerable"
+    },
+    {
+      "id": "q050",
+      "query": "为什么只在自建的测试集上做评估，而不拿原始的700条黄金测试集做跨数据集对比？",
+      "relevant": [
+        "repo:kg-triplet-sft/docs/adr/0002-own-test-eval.md"
+      ],
+      "source_entry": "repo:kg-triplet-sft/docs/adr/0002-own-test-eval.md",
+      "kind": "answerable"
+    },
+    {
+      "id": "na01",
+      "query": "明天北京会下雨吗",
+      "relevant": [],
+      "kind": "no_answer"
+    },
+    {
+      "id": "na02",
+      "query": "红烧肉的家常做法是什么",
+      "relevant": [],
+      "kind": "no_answer"
+    },
+    {
+      "id": "na03",
+      "query": "2026 年世界杯冠军是哪支球队",
+      "relevant": [],
+      "kind": "no_answer"
+    },
+    {
+      "id": "na04",
+      "query": "感冒了应该吃什么药",
+      "relevant": [],
+      "kind": "no_answer"
+    },
+    {
+      "id": "na05",
+      "query": "去日本旅游怎么办签证",
+      "relevant": [],
+      "kind": "no_answer"
+    },
+    {
+      "id": "na06",
+      "query": "怎么训练一只边牧接飞盘",
+      "relevant": [],
+      "kind": "no_answer"
+    }
+  ]
+}
