@@ -87,3 +87,16 @@ Considered options（本次）：
 
 - **检索归属**：各平面用各自 store 原生（采用）｜策略层保留手写融合兜底（弃：两套路径 + 双重融合风险）｜只在云用原生（弃：两平面行为不同，且本地手写融合已知有害）。
 - **本地平面形态**：嵌入（采用）｜本地 server（弃：多一个常驻服务、与 #26 的轻安装冲突；**多机/多进程共享需求出现再议**）｜嵌入 + `url` 双模共存（弃：**过度设计**，两套行为面 = 找罪受）。
+
+## 修订（2026-09-15）：D3 的 `payload_filter` 支持多值（#32）
+
+D3 只说「`payload_filter` 是 {字段: 值} 精确匹配、只可收窄」。网关的多值 ABAC
+（如 `classification ∈ {private, internal}`）需要一次表达多个允许值。就地 amend：
+
+- **`payload_filter` 的值可以是序列（list/tuple/set）**：语义 = **任一匹配**，在本地实现里下沉为
+  Qdrant `MatchAny`（`ragcore/services/vector_store_service.py::_field_condition`）；关键词通道的
+  后置过滤（`ragcore/strategies/default.py::_matches_filter`）同义。标量值仍是精确匹配（`MatchValue`），
+  **向后兼容**。
+- 归属不变：网关按身份 entitlement **白名单构造**过滤；多值只是「范围内可选」的表达，仍是收窄。
+- 条目 payload 新增可选 `tenant` 镜像（缺省 `None`），供绑定租户的 store 过滤与 `memory_get`
+  可见性预检使用（frontmatter 是真相源，缺省即单租户未绑定）。

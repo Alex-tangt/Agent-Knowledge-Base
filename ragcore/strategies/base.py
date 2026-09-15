@@ -26,7 +26,8 @@ class RetrievalStrategy(ABC):
                  payload_filter: dict | None = None) -> dict:
         """在指定向量库上执行领域相关的混合检索，返回候选集。
 
-        payload_filter 为 {字段: 值} 的精确匹配约束（如 memory_agent 的
-        `{"writable": true}`），有则下沉到向量通道；关键词通道按元数据后筛。
+        payload_filter 为 {字段: 值} 约束（如 memory_agent 的 `{"writable": true}`）：
+        标量 = 精确匹配，序列 = 任一匹配（多值 ABAC）。有则下沉到向量通道；
+        关键词通道按元数据后筛（同一语义）。
         """
         raise NotImplementedError

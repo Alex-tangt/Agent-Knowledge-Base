@@ -47,6 +47,18 @@ def test_payload_filter_is_applied_on_the_server_side(tmp_path):
     assert all(m["writable"] is True for m in filtered["metadatas"][0])
 
 
+def test_payload_filter_multi_value_uses_match_any(tmp_path):
+    """#32 / ADR-0019 D3 修订：序列值 = 任一匹配（多值 ABAC），在 Qdrant 侧过滤。"""
+    store = VectorStoreService(collection_name="t_matchany", db_path=str(tmp_path / "qdrant"),
+                               embeddings=StubEmbeddings())
+    store.add_documents(["R1", "R2"], metadata_list=[{"cls": "private"}, {"cls": "internal"}])
+    store.add_documents(["W1"], metadata_list=[{"cls": "public"}])
+
+    result = store.search_documents("q", k=5, payload_filter={"cls": ["private", "internal"]})
+
+    assert {m["cls"] for m in result["metadatas"][0]} == {"private", "internal"}
+
+
 def test_search_without_filter_keeps_previous_behavior(tmp_path):
     store = VectorStoreService(collection_name="t_nofilter", db_path=str(tmp_path / "qdrant"),
                                embeddings=StubEmbeddings())
