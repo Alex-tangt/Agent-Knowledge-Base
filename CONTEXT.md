@@ -77,6 +77,18 @@ _Avoid_: 让索引代码直接构造具体向量库客户端
 供过滤用的镜像。
 _Avoid_: 把索引里的值当真相、强制要求全局 KB 填写
 
+**检索网关（Retrieval Gateway）**：
+在 `/mcp` 边界解析身份、在工具层按身份 entitlement **白名单构造** effective filter（**只可收窄**）
+的强制层；`tenant`（隔离边界）与 `classification` / `residency`（ABAC）都在此落地。与
+「写入网关（Write Gateway）」不同——后者管写入去重与生命周期，前者管读权限与隔离。
+_Avoid_: 把 proxy 当信任源、由调用方自选 tenant
+
+**身份 / 授权（Identity / Authorization）**：
+身份 = `{principal, tenant, role, ABAC 允许集}`。单租户阶段 = 进程配置；多租户形状 =
+daemon 在 `/mcp` 边界校验的 Bearer token → 身份映射。授权 = 调用方请求 ∩ entitlement，
+越权**显式拒绝**。凭证绝不回显 / 落日志。
+_Avoid_: 用可伪造 header 当身份、把 UNAUTHORIZED 静默降级为默认身份
+
 **来源标注（Provenance）**：
 检索命中自带 `{plane, tenant}`，指明结果来自哪个存储平面 / 租户；联邦召回时逐条区分来源。
 _Avoid_: 只给聚合结果、丢失来源
