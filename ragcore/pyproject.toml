@@ -1,0 +1,36 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ragcore"
+version = "0.1.0"
+description = "可复用 RAG 核心：混合检索 + 重排 + LLM 生成（零 FastAPI 依赖）"
+requires-python = ">=3.10"
+dependencies = [
+    "python-dotenv",
+    "openai",
+    "pydantic",
+    "langchain-core",
+    "langchain-community",
+    "langchain-openai",
+    "langchain-text-splitters",
+    "langgraph",
+    "langsmith",
+    "qdrant-client",
+    "sentence-transformers",
+]
+
+[tool.setuptools]
+packages = [
+    "ragcore",
+    "ragcore.agents",
+    "ragcore.config",
+    "ragcore.models",
+    "ragcore.services",
+    "ragcore.strategies",
+    "ragcore.utils",
+]
+
+[tool.setuptools.package-dir]
+ragcore = "."
