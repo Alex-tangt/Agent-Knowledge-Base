@@ -5,7 +5,7 @@
     "index_gen": "gen-2",
     "top_k": 10,
     "indexed_entries": 134,
-    "elapsed_s": 0.0,
+    "elapsed_s": 879.69,
     "run_hash": "d9d2311f2342a7b8",
     "eval_set_name": "memory-retrieval-eval",
     "eval_set_version": 1
