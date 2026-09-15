@@ -269,7 +269,13 @@ The `warmup()` function (called from `app.py` lifespan) eagerly triggers BGE-M3 
 - ✅ 云向量库多租户/权限 spike（#25，2026-09-15，**已合 master**）：一手对标 Zilliz / Qdrant / Pinecone / Weaviate + **真实云端 smoke**。结论：云托管免费档**无**服务端强制的行级隔离、**无**可用 RBAC / 审计（Zilliz 实测 + 官方文档 + CLI help 三证；四家云均无行级），唯一能把权限下到 tenant 的是 Weaviate Cloud。证据 `experiments/cloud-vector-db-spike/`。据此拍板：**D1=B** 共享集合 + `tenant` 字段 + 网关强制过滤（预留分层）、**D2** 网关唯一强制（store RBAC 仅加分项）、**D3** 分层租户（组织 = 隔离/计费边界，团队 = 组内视图）、**D4** 维持 Zilliz + Weaviate 作升级备选。决策见 `docs/adr/0018`（accepted）。
 - ✅ 记忆检索评测基座（#24，2026-09-15，**已合 master**）：确定性评测集（51 条 = 45 有答案 + 6 无答案，条目级二值）+ harness（`--mode vector|hybrid|hybrid-rerank`、`--trace` 断点续跑、`run_hash` 验确定性），**不调 LLM**；第一步把记忆检索接 `ragcore` 策略接缝（hybrid + rerank）。基线 **hybrid-rerank nDCG@10=0.9658 / MRR=0.9778 / recall@1=0.8593 / 0 miss**（`memory_agent/eval/retrieval_baseline.md`）。关键发现：ragcore legal 式「关键词优先」融合**对记忆检索有害**（纯 hybrid recall@1 0.64→0.25，rerank 能救回但融合本身是 #21 优化点）；rerank 默认 `max_seq_length=8192` 拖慢两个数量级 → 新增 `MEMORY_RERANK_MAX_CHARS=512`。人工抽检 2026-09-15 用户确认。单测 **210 passed**。→ **解锁 #23**。
 - ✅ 记忆存储端口 + 驻留/密级（#23，2026-09-15）：抽 `VectorStore` 端口（`add/search/delete/count/clear/warmup`，`search` 带 `tenant`+`payload_filter`）——`memory_agent/memory/ports.py`；本地 Qdrant 薄适配器 + 工厂 `memory_agent/memory/store.py`（`MemoryIndex`/`Reindexer` 只经工厂拿存储，不再 import Qdrant 细节）。条目 payload 镜像 `classification`（缺省 private）/ `residency`（缺省 local）可选 frontmatter 字段；检索命中带 `classification`/`residency`/`provenance={plane,tenant}`，绑定租户只可收窄不可放宽（ADR-0018 D2）。单测 **218 passed**。决策见 `docs/adr/0019`。→ **解锁 #26**。
-- P1/P0 后续：ADR-0018 已接受（accepted）；执行序 **#24 ✅ → #23 ✅ → #26**（云切片 P2 依赖 ADR-0018）。
+- **P0 基座期 ✅ 完成**（#22 / #23 / #24 / #25）。
+- **P1 进行中**：**#26 独立包化**（ragcore 包化，`docs/adr/0024`；worktree `wk-26`）。
+- **并行**：**#29 rerank 横评**（回答"rerank 值不值得默认开"；worktree `wk-29`）。
+- **排队**：**#30 默认融合对照**（`blocked by #26`，最该修的本地病）→ **#27 软拒答**（收窄为"保留硬闸门 + 只软化措辞"，`docs/adr/0023`）。
+- **#15 BEIR 已关闭**（被 #24 的三档消融取代，对外可比性需要时再开）。
+- **P2 前置**：**#31 设计**（授权 / tenancy 边界定位 + 端口是否暴露原生检索能力）→ 产出**就地 amend** `docs/adr/0018` / `docs/adr/0019`（同类相聚）；**P2 拆票等 #31**。
+- env knob 变更：`MEMORY_RETRIEVAL_POOL` 默认 **20 → 14**（`docs/adr/0022`：质量 + 延迟双优）。
 
 ## 后续优化待办（Backlog / 简历谈资池）
 
