@@ -274,7 +274,7 @@ The `warmup()` function (called from `app.py` lifespan) eagerly triggers BGE-M3 
 - **并行**：**#29 rerank 横评**（回答"rerank 值不值得默认开"；worktree `wk-29`）。
 - **排队**：**#30 默认融合对照**（`blocked by #26`，最该修的本地病）→ **#27 软拒答**（收窄为"保留硬闸门 + 只软化措辞"，`docs/adr/0023`）。
 - **#15 BEIR 已关闭**（被 #24 的三档消融取代，对外可比性需要时再开）。
-- **P2 前置**：**#31 设计**（授权 / tenancy 边界定位 + 端口是否暴露原生检索能力）→ 产出**就地 amend** `docs/adr/0018` / `docs/adr/0019`（同类相聚）；**P2 拆票等 #31**。
+- **P2 前置 ✅ 已决**（#31）：**就地 amend** `docs/adr/0018`（D2.1–D2.4：authn 在 `/mcp` 边界 → 会话上下文 → 工具层 authz；proxy 非信任源）+ `docs/adr/0019`（D4–D6：检索归 store、各平面用各自原生、分数/阈值/评测按平面；本地走 Qdrant 原生 sparse+RRF + fastembed）。证据 `experiments/qdrant-local-mode-capabilities/`。**P2 拆票待 P1（#26）后**，以两 ADR 为准。
 - env knob 变更：`MEMORY_RETRIEVAL_POOL` 默认 **20 → 14**（`docs/adr/0022`：质量 + 延迟双优）。
 
 ## 后续优化待办（Backlog / 简历谈资池）
