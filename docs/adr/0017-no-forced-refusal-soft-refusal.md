@@ -1,6 +1,6 @@
 # 0017 通用 RAG 去强制拒答：无依据由 LLM 在对话中说明
 
-Status: proposed
+Status: accepted
 
 ## 背景
 

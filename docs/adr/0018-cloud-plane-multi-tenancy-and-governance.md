@@ -1,6 +1,6 @@
 # 0018 云平面多租户与权限治理（隔离 / 强制点 / 粒度 / 选型）
 
-Status: proposed
+Status: accepted
 
 ## 背景
 

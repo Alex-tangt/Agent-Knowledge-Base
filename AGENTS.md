@@ -247,8 +247,8 @@ The `warmup()` function (called from `app.py` lifespan) eagerly triggers BGE-M3 
 ### P0 基座期
 
 - ✅ config 解耦（#22，2026-09-15）：`ragcore/config` 拆 core / llm 两层——core 无密钥、import 不校验；llm 层惰性 `require_llm()`。`memory_agent` 用 `MEMORY_*` + 独立 `memory_agent/.env`（进程环境优先），**不读 `legal_web/.env`**；`langsmith_service` 改惰性读取；`legal_web` 启动（lifespan 首步）缺凭证显式失败。无 `legal_web/.env` 时单测 **175 passed**（改动前 8 collection error）、`dotenv` 守卫记录 0 次 legal_web 读取、`config.llm` 未被 import。决策见 `docs/adr/0016`，证据 `memory_agent/eval/config_independence_22_results.md`。后续：**#23** → **#26**（#24 / #25 可并行）。
-- ✅ 云向量库多租户/权限 spike（#25，2026-09-15，**已合 master**）：一手对标 Zilliz / Qdrant / Pinecone / Weaviate + **真实云端 smoke**。结论：云托管免费档**无**服务端强制的行级隔离、**无**可用 RBAC / 审计（Zilliz 实测 + 官方文档 + CLI help 三证；四家云均无行级），唯一能把权限下到 tenant 的是 Weaviate Cloud。证据 `experiments/cloud-vector-db-spike/`。据此拍板：**D1=B** 共享集合 + `tenant` 字段 + 网关强制过滤（预留分层）、**D2** 网关唯一强制（store RBAC 仅加分项）、**D3** 分层租户（组织 = 隔离/计费边界，团队 = 组内视图）、**D4** 维持 Zilliz + Weaviate 作升级备选。决策见 `docs/adr/0018`（proposed）。
-- P1 设计期：ADR-0018 已起草（待接受）；云切片（P2）依赖 ADR-0018，执行序 **#23** → **#26**。
+- ✅ 云向量库多租户/权限 spike（#25，2026-09-15，**已合 master**）：一手对标 Zilliz / Qdrant / Pinecone / Weaviate + **真实云端 smoke**。结论：云托管免费档**无**服务端强制的行级隔离、**无**可用 RBAC / 审计（Zilliz 实测 + 官方文档 + CLI help 三证；四家云均无行级），唯一能把权限下到 tenant 的是 Weaviate Cloud。证据 `experiments/cloud-vector-db-spike/`。据此拍板：**D1=B** 共享集合 + `tenant` 字段 + 网关强制过滤（预留分层）、**D2** 网关唯一强制（store RBAC 仅加分项）、**D3** 分层租户（组织 = 隔离/计费边界，团队 = 组内视图）、**D4** 维持 Zilliz + Weaviate 作升级备选。决策见 `docs/adr/0018`（accepted）。
+- P1 设计期：ADR-0018 已接受（accepted）；云切片（P2）依赖 ADR-0018，执行序 **#23** → **#26**。
 
 ## 后续优化待办（Backlog / 简历谈资池）
 
