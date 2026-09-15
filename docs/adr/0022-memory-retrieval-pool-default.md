@@ -1,6 +1,6 @@
 # 0022 记忆检索候选池默认 20 → 14
 
-Status: accepted
+Status: accepted (provisional：池默认 14 需在融合换成 store 原生后重测 → #30)
 
 ## 背景
 

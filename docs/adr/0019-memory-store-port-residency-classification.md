@@ -1,6 +1,6 @@
 # 0019 记忆存储端口与条目驻留/密级（`VectorStore` + `classification`/`residency`）
 
-Status: proposed
+Status: accepted
 
 issue #23。抽 `MemoryIndex` 对存储的依赖为稳定端口，并给条目加**驻留 / 密级**维度，
 为 ADR-0018 的云平面（#26 独立包化、P2 多租户）预备接缝。落地见
