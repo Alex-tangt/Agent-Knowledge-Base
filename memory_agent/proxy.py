@@ -23,8 +23,6 @@ import urllib.request
 
 _HERE = os.path.dirname(os.path.abspath(__file__))
 _ROOT = os.path.dirname(_HERE)
-sys.path[:] = [p for p in sys.path if os.path.abspath(p or os.getcwd()) != _HERE]
-sys.path.insert(0, _ROOT)
 
 from memory_agent.settings import (  # noqa: E402
     DAEMON_LOG,

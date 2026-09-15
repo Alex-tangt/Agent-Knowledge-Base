@@ -5,20 +5,22 @@ FastAPI + vanilla-JS RAG 应用，已重构为三模块单仓：`ragcore/`（可
 ## 目录布局
 
 ```
-ragcore/            # 可复用核心（零 FastAPI 依赖）
-  services/  strategies/  models/  config/  utils/  agents/
+ragcore/            # 可复用核心（零 FastAPI 依赖）；真包
+  __init__.py  pyproject.toml
+  services/  strategies/  models/  config/  utils/  agents/   # 各含 __init__.py
 legal_web/          # 适配层实例 / 回归锚点
   app.py  api/  frontend/  data/raw/  tests/
   ingest.py  fetch_laws.py  test_langsmith.py  kb_registry.json
   requirements.txt  .env  vector_db/  uploads/
-memory_agent/       # 记忆能力包（MCP + skill）
+memory_agent/       # 记忆能力包（MCP + skill）；可安装
+  __init__.py  pyproject.toml
   mcp_server.py  proxy.py  runtime.py  _bootstrap.py  settings.py  build_index.py
   corpus/  memory/  skill/  eval/  requirements.txt  vector_db/  README.md
 tests/unit/         # ragcore 核心 + memory_agent 单测（pytest）
 experiments/  docs/
 ```
 
-`ragcore` 与 `legal_web` / `memory_agent` 之间用 **sys.path 垫片**连接：入口（`legal_web/app.py`、`legal_web/ingest.py`、`memory_agent/*.py`、`tests/unit/conftest.py`、实验脚本）把 `ragcore/` 加入 `sys.path`，包名保持 `services/`、`config/`、`utils/`、`strategies/`、`agents/` 不变。`agents/`（router_graph + session_memory）属核心——`rag_service` 直接 import 它们。`memory_agent` 自身用 `memory_agent.` 前缀绝对导入（其模块名**不得**叫 `config`，会遮蔽 ragcore 的 `config` 包，见 ADR-0008）。
+**`ragcore` 是真包（ADR-0024）**：`services/`、`config/`、`utils/`、`strategies/`、`agents/`、`models/` 一律以 `ragcore.<subpackage>.*` 导入（如 `from ragcore.services.reranker_service import RerankerService`）；**不再有 sys.path 垫片，也不再有裸 `services/`/`config/` 顶层名**。`ragcore` 与 `memory_agent` 各自有 `pyproject.toml`，用 `pip install -e ragcore -e memory_agent` 安装到 venv（见下）。`agents/`（router_graph + session_memory）属核心——`rag_service` 直接 import 它们。`memory_agent` 用 `memory_agent.` 前缀绝对导入。
 
 ## Virtual environment (REQUIRED)
 The project uses a venv at the repo root (`venv/`). Always activate it first:
@@ -27,11 +29,13 @@ The project uses a venv at the repo root (`venv/`). Always activate it first:
 venv\Scripts\activate       # Windows
 # source venv/bin/activate  # macOS/Linux
 pip install -r legal_web/requirements.txt
+pip install -e ragcore -e memory_agent   # install the two packages (ADR-0024)
 ```
 `venv/` is gitignored. If it doesn't exist, create it: `python -m venv venv`.
+`ragcore` / `memory_agent` are local editable packages — after editing their source no reinstall is needed; after renaming/moving modules, re-run the editable install.
 
 ## Run / develop
-- Activate venv (see above), then: `venv\Scripts\python.exe legal_web/app.py` (uses uvicorn on `0.0.0.0:8000`). Open `http://localhost:8000`.
+- Activate venv (see above; `pip install -e ragcore -e memory_agent` done), then: `venv\Scripts\python.exe legal_web/app.py` (uses uvicorn on `0.0.0.0:8000`). Open `http://localhost:8000`.
   - Startup takes ~1s to serve the frontend page.
   - Models (BGE-M3 embedding + bge-reranker-v2-m3) load in background (~30-40s); the frontend shows a loading screen with step-by-step progress.
 - Build or rebuild the knowledge base: `venv\Scripts\python.exe legal_web/ingest.py` ingests `legal_web/data/raw/*` into Qdrant local mode (`legal_web/vector_db`). Documents can also be added at runtime via the upload endpoint.
@@ -39,6 +43,7 @@ pip install -r legal_web/requirements.txt
 - There is **no lint, typecheck, or CI config** in this repo. Don't invent those commands.
 
 ### memory_agent (记忆能力包)
+- **可安装（#26 / ADR-0024）**：`pip install -e ragcore -e memory_agent`（Venv 段已含）。等价的模块/脚本入口：`python -m memory_agent.mcp_server`、`python -m memory_agent.build_index`，以及 console scripts `memory-agent` / `memory-agent-proxy` / `memory-agent-build-index`。脚本入口（`memory_agent/*.py`）安装后从任意 CWD 均可运行。
 - Build the derived memory index (loads BGE-M3; ~6 min per 60 entries on CPU): `venv\Scripts\python.exe memory_agent/build_index.py` → builds a new generation `memory_agent/vector_db/gen-N/` and atomically switches the `CURRENT` pointer (issue #13; gitignored).
 - **拓扑（#19 / ADR-0013）：一个常驻 daemon + 每会话一个 stdio 代理。** 所有会话共享 daemon 里那一份 BGE-M3（~3.9GB 只付一次），代理每会话仅几十 MB。
   - 启动 daemon：`venv\Scripts\python.exe memory_agent/mcp_server.py --transport http`（默认 `127.0.0.1:8765`，默认 eager 预热；`--no-warmup` 可关）。`GET /health` 是就绪探测。
@@ -290,7 +295,7 @@ The `warmup()` function (called from `app.py` lifespan) eagerly triggers BGE-M3 
 - **Qdrant local mode 的锁按操作持有**（`VectorStoreService` 每次操作开/关一个 client，见 ADR-0008 D5）。`legal_web` 与 `memory_agent` 现在可以并存；只有两个进程的重活**恰好撞在同一瞬间**才会短暂争锁，靠内置退避重试兜住。若仍报 "already accessed"：确认没有残留进程，必要时删 `.lock`。**同进程内也不能并发开 client**（单 daemon 服务 N 会话时）——`VectorStoreService._session` 用模块级 `RLock` 串行化，见 ADR-0013 D3。
 - **stdio MCP: stdout is the protocol channel.** `ragcore/utils/logger.py` configures logging to `sys.stdout`; `memory_agent` must grab the root logger to stderr *before* importing `ragcore` (`_bootstrap.configure_stderr_logging`). Any stray stdout write corrupts the JSON-RPC stream. `proxy.py` 同理：它不 import ragcore，所有诊断写 stderr，stdout 只留给 stdio 协议。
 - **Qdrant local mode 清空集合不要丢集合**：实测 `delete_collection` / `recreate_collection` 只摘元数据，同名 `create_collection` 会让磁盘上的旧点**复活**（3 → 0 → 3，静默失效）。`VectorStoreService.clear_all_documents` 改用空 filter 的 `FilterSelector` 删光点；回归见 `tests/unit/test_vector_store_clear.py`。
-- **Don't name a `memory_agent` module `config.py`** — under `python memory_agent/x.py` it shadows ragcore's top-level `config` package (`ModuleNotFoundError: No module named 'config.config'`). It's `settings.py`; use `memory_agent.`-prefixed absolute imports.
+- **包命名空间（ADR-0024）**：`ragcore` 是真包——一律 `from ragcore.services.reranker_service import ...` 这样带 `ragcore.` 前缀导入；**不要再加 sys.path 垫片，也不要再用裸 `services/`、`config/` 顶层名**。`memory_agent` 依赖已安装的 `ragcore`（`pip install -e ragcore -e memory_agent`），并继续用 `memory_agent.` 前缀绝对导入。
 - **First run** after `pip install` downloads BGE-M3 (~2.2GB) and bge-reranker-v2-m3 (~2.2GB) from HuggingFace. Subsequent runs load from cache instantly.
 - **`RELEVANCE_THRESHOLD=0.85`** is a generous post-reranker value; the prompt handles most boundary cases. Use `experiments/relevance-calibration/calibrate_relevance.py` to recalibrate if needed.
 - **别把「一个语料的杠杆」外推到另一个语料**（2026-09-15 严重误判）：memory 的 rerank 截断收益（226s→15s，长条目）不能外推到 legal（块 ≤820 token，长度从来不是约束）。**先做分钟级 census（长度分布 / recall@k / 命中位置）再排多小时评测**。详见「开发工作流 · 廉价测量优先」。

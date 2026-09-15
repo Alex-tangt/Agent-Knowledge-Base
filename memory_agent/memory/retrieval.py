@@ -11,17 +11,12 @@
 """
 from __future__ import annotations
 
-from memory_agent import _bootstrap
-
-_bootstrap.ensure_ragcore_on_path()
-
-from strategies.default import DefaultRetrievalStrategy  # noqa: E402
+from ragcore.strategies.default import DefaultRetrievalStrategy
 
 
 def default_reranker_factory():
     """惰性构造 ragcore 的交叉编码器重排器（不到重排这一步不加载权重）。"""
-    _bootstrap.ensure_ragcore_on_path()
-    from services.reranker_service import RerankerService
+    from ragcore.services.reranker_service import RerankerService
     from memory_agent.settings import RERANK_MODEL
     return RerankerService(RERANK_MODEL)
 

@@ -8,7 +8,7 @@ import os
 
 import pytest
 
-from config import config, llm
+from ragcore.config import config, llm
 from memory_agent import settings
 
 

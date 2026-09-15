@@ -7,12 +7,10 @@ import os
 import sys
 
 _HERE = os.path.dirname(os.path.abspath(__file__))
-sys.path.insert(0, os.path.join(_HERE, "..", "ragcore"))
-sys.path.insert(0, _HERE)
 
-from services.document_service import DocumentService
-from services.vector_store_service import VectorStoreService
-from utils.logger import logger
+from ragcore.services.document_service import DocumentService
+from ragcore.services.vector_store_service import VectorStoreService
+from ragcore.utils.logger import logger
 
 RAW_DIR = os.path.join(_HERE, "data", "raw")
 

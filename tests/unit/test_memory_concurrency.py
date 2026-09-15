@@ -5,16 +5,11 @@
 （构造 -> 查询/写入 -> close）必须在进程内串行化。这里用真 Qdrant（临时目录）+ 假
 嵌入复现并守住该回归；不加载模型。
 """
-import os
-import sys
 import threading
 import uuid
 
-ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
-sys.path.insert(0, os.path.join(ROOT, "ragcore"))
-
-from services.vector_store_service import VectorStoreService  # noqa: E402
-from utils.model_status import EMBEDDING_DIMENSION  # noqa: E402
+from ragcore.services.vector_store_service import VectorStoreService
+from ragcore.utils.model_status import EMBEDDING_DIMENSION
 
 
 class StubEmbeddings:

@@ -3,17 +3,17 @@ import re
 import time
 import json
 import os
-from config.config import (
+from ragcore.config.config import (
     ADAPTIVE_POOL, ADAPTIVE_MAX, ADAPTIVE_FACTOR, RELEVANCE_THRESHOLD,
     USE_LOCAL_RERANKER, LOCAL_RERANKER_MODEL,
     QDRANT_COLLECTION_NAME,
 )
-from config.llm import require_llm
-from services.vector_store_service import VectorStoreService
-from services.langsmith_service import langsmith_service
-from strategies import get_retrieval_strategy
-from utils.logger import logger
-from utils.model_status import STATUS
+from ragcore.config.llm import require_llm
+from ragcore.services.vector_store_service import VectorStoreService
+from ragcore.services.langsmith_service import langsmith_service
+from ragcore.strategies import get_retrieval_strategy
+from ragcore.utils.logger import logger
+from ragcore.utils.model_status import STATUS
 
 NO_EVIDENCE_MESSAGE = "知识库中未找到直接依据，建议提供更具体的问题或补充相关资料。"
 
@@ -57,7 +57,7 @@ class RAGService:
         if self._reranker is None and USE_LOCAL_RERANKER:
             STATUS["reranker"] = "loading"
             logger.info("Loading reranker model...")
-            from services.reranker_service import RerankerService
+            from ragcore.services.reranker_service import RerankerService
             self._reranker = RerankerService(LOCAL_RERANKER_MODEL)
             STATUS["reranker"] = "ready"
             logger.info("Reranker model ready")
@@ -67,8 +67,8 @@ class RAGService:
         if kb_name and kb_name != "auto":
             return kb_name
         try:
-            from services.kb_registry import kb_registry
-            from agents.router_graph import get_router
+            from ragcore.services.kb_registry import kb_registry
+            from ragcore.agents.router_graph import get_router
             kb_list = kb_registry.list()
             if len(kb_list) <= 1:
                 return kb_list[0]["name"] if kb_list else self._default_kb
@@ -290,7 +290,7 @@ Answer:
             logger.info(f"Received RAG chat request: {user_message}")
 
             if session_id:
-                from agents.session_memory import session_memory
+                from ragcore.agents.session_memory import session_memory
                 session_memory.add(session_id, "user", user_message)
 
             with langsmith_service.trace_context(
@@ -419,7 +419,7 @@ Answer:
             async for chunk in self.rag_chat_stream(messages, kb_name=kb_name, session_id=session_id):
                 yield chunk
         else:
-            from services.chat_service import ChatService
+            from ragcore.services.chat_service import ChatService
             chat_service = ChatService()
             async for chunk in chat_service.chat_stream(messages):
                 yield chunk

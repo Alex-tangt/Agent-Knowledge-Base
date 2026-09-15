@@ -10,8 +10,8 @@
 import re
 
 from langchain_core.documents import Document
-from config.config import ARTICLE_MAX_CHARS
-from strategies.base import SplitStrategy, RetrievalStrategy
+from ragcore.config.config import ARTICLE_MAX_CHARS
+from ragcore.strategies.base import SplitStrategy, RetrievalStrategy
 
 _CJK_RUN_RE = re.compile(r"[\u4e00-\u9fff]+")
 _WORD_RE = re.compile(r"[A-Za-z0-9][A-Za-z0-9_.\-]*")

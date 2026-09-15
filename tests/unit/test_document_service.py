@@ -2,12 +2,12 @@ import re
 
 import pytest
 
-from strategies.legal import (
+from ragcore.strategies.legal import (
     _extract_title,
     LegalSplitStrategy,
     SPLIT_ART_RE as ART_RE,
 )
-from config.config import ARTICLE_MAX_CHARS
+from ragcore.config.config import ARTICLE_MAX_CHARS
 
 
 # --- _extract_title ---

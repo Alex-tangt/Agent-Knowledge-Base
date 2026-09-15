@@ -7,13 +7,7 @@ stdout 只输出统计 JSON（日志走 stderr），便于脚本消费。
 from __future__ import annotations
 
 import json
-import os
 import sys
-
-_HERE = os.path.dirname(os.path.abspath(__file__))
-_ROOT = os.path.dirname(_HERE)
-sys.path[:] = [p for p in sys.path if os.path.abspath(p or os.getcwd()) != _HERE]
-sys.path.insert(0, _ROOT)
 
 from memory_agent.memory.errors import IndexConsistencyError  # noqa: E402
 from memory_agent.runtime import build_index  # noqa: E402

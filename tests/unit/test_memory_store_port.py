@@ -4,10 +4,6 @@
 payload 镜像字段默认值 / 解析 / 检索命中带 provenance。用 Stub 嵌入，不加载 BGE-M3。
 """
 import os
-import sys
-
-ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
-sys.path.insert(0, os.path.join(ROOT, "ragcore"))
 
 from memory_agent.memory.entries import Entry, point_id_for  # noqa: E402
 from memory_agent.memory.index import MemoryIndex  # noqa: E402
@@ -18,7 +14,7 @@ from memory_agent.memory.ports import (  # noqa: E402
     VectorStore,
 )
 from memory_agent.memory.store import QdrantLocalStore, open_store  # noqa: E402
-from utils.model_status import EMBEDDING_DIMENSION  # noqa: E402
+from ragcore.utils.model_status import EMBEDDING_DIMENSION  # noqa: E402
 
 
 class StubEmbeddings:

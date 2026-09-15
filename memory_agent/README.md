@@ -2,7 +2,7 @@
 
 Agent-Knowledge-Base 的第一个能力：让 coding agent 通过 MCP 语义检索、读取、并**安全写入**长期记忆。
 
-- 产品形状与架构：`docs/adr/0005`（产品升级）、`docs/adr/0006`（Markdown 真相源 + 派生索引 + 写入网关）、`docs/adr/0007`（布局与更名）、`docs/adr/0008`（读路径接缝：MCP 选型 / 语料范围 / stdio 铁律）、`docs/adr/0009`（写路径：commit 归属范围 + 去重命中语义）、`docs/adr/0011`（索引一致性：代目录 + 指针切换）、`docs/adr/0013`（拓扑：共享单实例 daemon + 代理）、`docs/adr/0014`（只读语料：带标签的多仓库文档）。
+- 产品形状与架构：`docs/adr/0005`（产品升级）、`docs/adr/0006`（Markdown 真相源 + 派生索引 + 写入网关）、`docs/adr/0007`（布局与更名）、`docs/adr/0008`（读路径接缝：MCP 选型 / 语料范围 / stdio 铁律）、`docs/adr/0009`（写路径：commit 归属范围 + 去重命中语义）、`docs/adr/0011`（索引一致性：代目录 + 指针切换）、`docs/adr/0013`（拓扑：共享单实例 daemon + 代理）、`docs/adr/0014`（只读语料：带标签的多仓库文档）、`docs/adr/0024`（独立包化：`ragcore` 真包 + 本包可安装）。
 - 需求全貌（user stories / 决策 / 测试口径）：GitHub issue #7；实现票据 #10–#17。
 
 ## 约定（不变量）
@@ -19,8 +19,8 @@ memory_agent/
 ├── mcp_server.py          # MCP 服务：默认 stdio；--transport http 起共享 daemon （+ 可选 /health）(#10-#13,#19)
 ├── proxy.py               # 每会话瘦代理：幂等确保 daemon 在跑 + stdio<->HTTP 转发          (#19)
 ├── runtime.py             # 先立 stderr 日志，再装配索引 / 写入网关单例
-├── _bootstrap.py          # stdio 安全日志 + ragcore sys.path 垫片
-├── settings.py            # 真相源 / 索引根 / 只读仓库清单 / 指针名 / 集合名 / 去重阈值 / daemon 端点（勿命名 config.py，会遮蔽 ragcore 的 config 包）
+├── _bootstrap.py          # stdio 安全日志（import ragcore 前抢配 root logger 到 stderr）
+├── settings.py            # 真相源 / 索引根 / 只读仓库清单 / 指针名 / 集合名 / 去重阈值 / daemon 端点
 ├── readonly_repos.json    # 本地只读仓库清单（gitignored；模板见 .example.json）(#17)
 ├── corpus/loader.py       # KB 条目 + 多仓库只读文档 的发现、标签消歧与噪声排除 (#10,#17)
 ├── memory/entries.py      # frontmatter 解析 -> Entry；稳定点 id（uuid5）    (#10,#13)
@@ -33,7 +33,8 @@ memory_agent/
 ├── memory/authoring.py    # 渲染 frontmatter + 镜像 kb.py check 的校验        (#11)
 ├── memory/writer.py       # 写入网关：搜索→去重→校验→落盘→commit→增量刷新    (#11,#12,#13)
 ├── build_index.py         # CLI：从 Markdown 全量重建（新代 + 切指针）        (#10,#13)
-├── eval/                  # 运行时证据：baseline_A.md（锚点）、issue19_acceptance.md（#19）、write_path_sandbox.py + _results.md（#16）、readonly_corpus_17.py（#17 三仓库只读）、dogfood_17.md、retrieval_eval.py + metrics.py + retrieval_eval_set.json + retrieval_baseline.md（#24 确定性检索评测）
+├── eval/                  # 运行时证据：baseline_A.md（锚点）、issue19_acceptance.md（#19）、write_path_sandbox.py + _results.md（#16）、readonly_corpus_17.py（#17 三仓库只读）、dogfood_17.md、retrieval_eval.py + metrics.py + retrieval_eval_set.json + retrieval_baseline.md（#24 确定性检索评测）、mcp_install_smoke_26.py + _results.md（#26 安装 + MCP 集成冒烟）
+├── pyproject.toml         # 本包（可安装，依赖 ragcore）                       (#26)
 └── (skill)                # 见 #14：指导 agent 何时 search/read/add 及破坏性确认规则
 ```
 
@@ -43,6 +44,9 @@ memory_agent/
 ## 用法
 
 ```powershell
+# 0) 安装两个包（editable；#26 / ADR-0024）
+venv\Scripts\python.exe -m pip install -e ragcore -e memory_agent
+
 # 1) 建索引（会加载 BGE-M3，CPU 上 ~6 min/60 条）
 venv\Scripts\python.exe memory_agent/build_index.py
 
@@ -95,4 +99,4 @@ venv\Scripts\python.exe memory_agent/eval/retrieval_eval.py --mode hybrid-rerank
 - `memory_reindex(cursor=None, batch=16)` → 分块全量重建（`cursor=None` 开始，拿 `cursor` 续调到 `done=true`，此时指针已切）。
 - `memory_index_status()` → `{built,gen,entries,points,consistent,built_at,path}`。
 
-导入 `ragcore` 的方式与 `legal_web` 一致：启动时把 `ragcore/` 加入 `sys.path`，沿用 `services/`、`config/`、`strategies/` 原包名。
+导入 `ragcore` 的方式与 `legal_web` 一致：**`ragcore` 是真包**（ADR-0024），一律 `from ragcore.services... import ...`，不再有 sys.path 垫片或裸 `services/`、`config/` 顶层名。本包以 `memory_agent.` 前缀绝对导入，并依赖已安装的 `ragcore`。

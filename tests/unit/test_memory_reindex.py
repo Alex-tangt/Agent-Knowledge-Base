@@ -5,19 +5,15 @@
 """
 import json
 import os
-import sys
 
 import pytest
-
-ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
-sys.path.insert(0, os.path.join(ROOT, "ragcore"))
 
 from memory_agent.memory.entries import Entry  # noqa: E402
 from memory_agent.memory.errors import IndexConsistencyError  # noqa: E402
 from memory_agent.memory.layout import IndexLayout  # noqa: E402
 from memory_agent.memory.reindex import Reindexer  # noqa: E402
 from memory_agent.memory.store import QdrantLocalStore  # noqa: E402
-from utils.model_status import EMBEDDING_DIMENSION  # noqa: E402
+from ragcore.utils.model_status import EMBEDDING_DIMENSION  # noqa: E402
 
 
 class StubEmbeddings:

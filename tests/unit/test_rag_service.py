@@ -4,12 +4,12 @@ from unittest.mock import patch, MagicMock
 
 import pytest
 
-from strategies.legal import (
+from ragcore.strategies.legal import (
     _num_to_cn,
     _parse_article,
     _extract_key_anchors,
 )
-from services.rag_service import (
+from ragcore.services.rag_service import (
     NO_EVIDENCE_MESSAGE,
     RAGService,
 )
@@ -169,7 +169,7 @@ class TestRAGServiceMethods:
     # --- _select_adaptive ---
 
     def test_select_within_factor(self, rag):
-        import services.rag_service as rs
+        import ragcore.services.rag_service as rs
         original_factor = rs.ADAPTIVE_FACTOR
         original_max = rs.ADAPTIVE_MAX
         try:
@@ -188,7 +188,7 @@ class TestRAGServiceMethods:
             rs.ADAPTIVE_MAX = original_max
 
     def test_select_respects_adaptive_max(self, rag):
-        import services.rag_service as rs
+        import ragcore.services.rag_service as rs
         original_factor = rs.ADAPTIVE_FACTOR
         original_max = rs.ADAPTIVE_MAX
         try:
@@ -224,7 +224,7 @@ class TestRAGServiceMethods:
     # --- _has_evidence ---
 
     def test_has_evidence_true(self, rag):
-        from config import config
+        from ragcore.config import config
         original = config.RELEVANCE_THRESHOLD
         try:
             config.RELEVANCE_THRESHOLD = 0.85
@@ -234,7 +234,7 @@ class TestRAGServiceMethods:
             config.RELEVANCE_THRESHOLD = original
 
     def test_has_evidence_false_above_threshold(self, rag):
-        from config import config
+        from ragcore.config import config
         original = config.RELEVANCE_THRESHOLD
         try:
             config.RELEVANCE_THRESHOLD = 0.85
@@ -248,7 +248,7 @@ class TestRAGServiceMethods:
         assert rag._has_evidence(retrieved) is False
 
     def test_has_evidence_threshold_none(self, rag):
-        import services.rag_service as rs
+        import ragcore.services.rag_service as rs
         original = rs.RELEVANCE_THRESHOLD
         try:
             rs.RELEVANCE_THRESHOLD = None

@@ -30,10 +30,10 @@ import argparse
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(os.path.dirname(HERE))
-sys.path.insert(0, os.path.join(ROOT, "ragcore"))
+sys.path.insert(0, ROOT)
 sys.path.insert(0, HERE)
 
-from config.llm import require_llm
+from ragcore.config.llm import require_llm
 from openai import OpenAI
 import run_eval
 from run_eval import load_questions, query

@@ -2,10 +2,6 @@
 健康路由、DNS-rebinding 防护。不真正起服务。
 """
 import os
-import sys
-
-ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
-sys.path.insert(0, os.path.join(ROOT, "ragcore"))
 
 from memory_agent import mcp_server  # noqa: E402
 

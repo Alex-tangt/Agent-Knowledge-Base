@@ -4,10 +4,10 @@ import os
 import sys
 import time
 
-sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "ragcore"))
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
-from config.config import QDRANT_COLLECTION_NAME, ADAPTIVE_POOL, USE_LOCAL_RERANKER
-from utils.logger import logger
+from ragcore.config.config import QDRANT_COLLECTION_NAME, ADAPTIVE_POOL, USE_LOCAL_RERANKER
+from ragcore.utils.logger import logger
 
 
 class EvalService:
@@ -19,7 +19,7 @@ class EvalService:
     @property
     def rag(self):
         if self._rag is None:
-            from services.rag_service import RAGService
+            from ragcore.services.rag_service import RAGService
             self._rag = RAGService()
         return self._rag
 

@@ -1,9 +1,9 @@
 import openai
 import time
 import json
-from config.llm import require_llm
-from services.langsmith_service import langsmith_service
-from utils.logger import logger
+from ragcore.config.llm import require_llm
+from ragcore.services.langsmith_service import langsmith_service
+from ragcore.utils.logger import logger
 
 class ChatService:
     def __init__(self):

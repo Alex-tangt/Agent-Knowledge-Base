@@ -10,9 +10,9 @@ import os
 import time
 
 ROOT_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-sys.path.insert(0, os.path.join(ROOT_DIR, "ragcore"))
+sys.path.insert(0, ROOT_DIR)
 
-from services.rag_service import RAGService
+from ragcore.services.rag_service import RAGService
 
 HIGH_SCORE_QUERIES = [
     "用人单位自用工之日起超过一个月不满一年未与劳动者订立书面劳动合同的，应当如何补偿劳动者？",

@@ -1,9 +1,9 @@
 from fastapi import APIRouter, HTTPException, UploadFile, File, Depends
 from fastapi.responses import StreamingResponse
-from models.schemas import ChatRequest
-from config.config import UPLOAD_DIR
-from utils.logger import logger
-from utils.model_status import STATUS
+from ragcore.models.schemas import ChatRequest
+from ragcore.config.config import UPLOAD_DIR
+from ragcore.utils.logger import logger
+from ragcore.utils.model_status import STATUS
 import os
 import re
 import uuid
@@ -19,7 +19,7 @@ _document_service = None
 def _get_chat_service():
     global _chat_service
     if _chat_service is None:
-        from services.chat_service import ChatService
+        from ragcore.services.chat_service import ChatService
         _chat_service = ChatService()
     return _chat_service
 
@@ -27,7 +27,7 @@ def _get_chat_service():
 def _get_rag_service():
     global _rag_service
     if _rag_service is None:
-        from services.rag_service import RAGService
+        from ragcore.services.rag_service import RAGService
         _rag_service = RAGService()
     return _rag_service
 
@@ -35,7 +35,7 @@ def _get_rag_service():
 def _get_document_service():
     global _document_service
     if _document_service is None:
-        from services.document_service import DocumentService
+        from ragcore.services.document_service import DocumentService
         _document_service = DocumentService()
     return _document_service
 
@@ -156,14 +156,14 @@ async def model_status():
 
 @router.get("/kb/list")
 async def list_kb():
-    from services.kb_registry import kb_registry
+    from ragcore.services.kb_registry import kb_registry
     return kb_registry.list()
 
 
 @router.post("/kb/create")
 async def create_kb(name: str, label: str, description: str = "",
                     split_strategy: str = "default", retrieval_strategy: str = "default"):
-    from services.kb_registry import kb_registry
+    from ragcore.services.kb_registry import kb_registry
     try:
         kb = kb_registry.create(
             name, label, description,
@@ -179,7 +179,7 @@ async def create_kb(name: str, label: str, description: str = "",
 
 @router.delete("/kb/{name}")
 async def delete_kb(name: str):
-    from services.kb_registry import kb_registry
+    from ragcore.services.kb_registry import kb_registry
     try:
         kb_registry.delete(name)
         return {"status": "deleted"}

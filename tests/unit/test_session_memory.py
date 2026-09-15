@@ -2,7 +2,7 @@ import time
 
 import pytest
 
-from agents.session_memory import SessionMemory, MAX_PER_SESSION, SESSION_TTL
+from ragcore.agents.session_memory import SessionMemory, MAX_PER_SESSION, SESSION_TTL
 
 
 class TestSessionMemoryAdd:

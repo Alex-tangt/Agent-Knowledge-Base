@@ -5,11 +5,11 @@ import re
 import sys
 import time
 
-sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "ragcore"))
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
-from config.config import LEGAL_WEB_DIR
-from config.llm import require_llm
-from utils.logger import logger
+from ragcore.config.config import LEGAL_WEB_DIR
+from ragcore.config.llm import require_llm
+from ragcore.utils.logger import logger
 import openai
 
 KB_CONTEXT = (

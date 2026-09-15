@@ -2,8 +2,8 @@
 import json
 from langgraph.graph import StateGraph, END
 from typing import TypedDict, List, Optional
-from config.llm import require_llm
-from utils.logger import logger
+from ragcore.config.llm import require_llm
+from ragcore.utils.logger import logger
 import openai
 
 SYSTEM_PROMPT = """你是一个知识库路由专家。根据用户问题，判断应该使用哪个知识库来查找答案。

@@ -10,9 +10,9 @@ import os
 import re
 import sys
 
-sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "ragcore"))
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
-from utils.logger import logger
+from ragcore.utils.logger import logger
 
 
 def parse_questions(filepath):
@@ -41,7 +41,7 @@ async def main():
     logger.info(f"Parsed {len(questions)} questions from {questions_path}")
 
     from eval_service import EvalService
-    from services.rag_service import RAGService
+    from ragcore.services.rag_service import RAGService
 
     rag = RAGService()
     vs = rag.get_vector_store(args.kb)

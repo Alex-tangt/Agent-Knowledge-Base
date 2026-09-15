@@ -2,12 +2,8 @@
 """测试LangSmith集成功能"""
 
 import sys
-import os
 
-# 导入垫片：可复用核心 ragcore/ 加入 sys.path
-sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "ragcore"))
-
-from config.llm import langsmith_settings, load_llm_env
+from ragcore.config.llm import langsmith_settings, load_llm_env
 
 load_llm_env()
 
@@ -16,7 +12,7 @@ def test_imports():
     print("测试模块导入...")
     
     try:
-        from services.langsmith_service import langsmith_service
+        from ragcore.services.langsmith_service import langsmith_service
         print("✓ langsmith_service 导入成功")
         print(f"  LangSmith 启用状态: {langsmith_service.is_enabled}")
     except ImportError as e:
@@ -74,7 +70,7 @@ def test_langsmith_service():
     """测试LangSmith服务功能"""
     print("\n测试LangSmith服务功能...")
     
-    from services.langsmith_service import langsmith_service
+    from ragcore.services.langsmith_service import langsmith_service
     
     if langsmith_service.is_enabled:
         print("✓ LangSmith 追踪已启用")

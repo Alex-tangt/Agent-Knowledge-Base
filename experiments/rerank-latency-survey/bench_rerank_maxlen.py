@@ -28,9 +28,6 @@ import time
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 REPO_ROOT = os.path.dirname(os.path.dirname(HERE))
-RAGCORE = os.path.join(REPO_ROOT, "ragcore")
-if RAGCORE not in sys.path:
-    sys.path.insert(0, RAGCORE)
 if REPO_ROOT not in sys.path:
     sys.path.insert(0, REPO_ROOT)
 
@@ -162,10 +159,10 @@ def _sample(rows, n):
 
 
 def legal_anchor(n_queries: int = 20) -> dict:
-    from config.config import ADAPTIVE_POOL, ADAPTIVE_MAX, RELEVANCE_THRESHOLD
-    from services.vector_store_service import VectorStoreService
-    from services.reranker_service import RerankerService
-    from strategies.legal import LegalRetrievalStrategy
+    from ragcore.config.config import ADAPTIVE_POOL, ADAPTIVE_MAX, RELEVANCE_THRESHOLD
+    from ragcore.services.vector_store_service import VectorStoreService
+    from ragcore.services.reranker_service import RerankerService
+    from ragcore.strategies.legal import LegalRetrievalStrategy
 
     vs = VectorStoreService(collection_name="documents")
     strategy = LegalRetrievalStrategy()

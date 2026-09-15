@@ -10,9 +10,9 @@ from __future__ import annotations
 
 from typing import Any, Mapping, Sequence
 
-from memory_agent import _bootstrap
 from memory_agent.memory.ports import PLANE_LOCAL
 from memory_agent.settings import COLLECTION_NAME
+from ragcore.services.vector_store_service import VectorStoreService
 
 
 class QdrantLocalStore:
@@ -22,8 +22,6 @@ class QdrantLocalStore:
 
     def __init__(self, db_path: str, collection_name: str | None = None,
                  embeddings=None, tenant: str | None = None):
-        _bootstrap.ensure_ragcore_on_path()
-        from services.vector_store_service import VectorStoreService
         self._service = VectorStoreService(
             collection_name=collection_name or COLLECTION_NAME,
             db_path=db_path,

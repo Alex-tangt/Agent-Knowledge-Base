@@ -4,8 +4,8 @@
 """
 import pytest
 
-import services.reranker_service as reranker_module
-from config import config as core_config
+import ragcore.services.reranker_service as reranker_module
+from ragcore.config import config as core_config
 
 
 class FakeCrossEncoder:

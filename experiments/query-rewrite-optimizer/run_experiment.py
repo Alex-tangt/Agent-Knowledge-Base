@@ -8,9 +8,9 @@ import json
 import os
 import sys
 
-sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "ragcore"))
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
-from utils.logger import logger
+from ragcore.utils.logger import logger
 
 CANDIDATES_FILE = os.path.join(os.path.dirname(os.path.dirname(__file__)), "dev_set_candidates.json")
 

@@ -4,16 +4,11 @@
 opencode 常驻的 MCP 服务整天独占存储目录（重建索引 / CLI / 冒烟脚本全被挡）。
 本测试在同一进程内构造第二个 client：只要服务不再缓存 client，第二个必须能拿到锁。
 """
-import os
-import sys
 
 from qdrant_client import QdrantClient
 
-ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
-sys.path.insert(0, os.path.join(ROOT, "ragcore"))
-
-from services.vector_store_service import VectorStoreService  # noqa: E402
-from utils.model_status import EMBEDDING_DIMENSION  # noqa: E402
+from ragcore.services.vector_store_service import VectorStoreService  # noqa: E402
+from ragcore.utils.model_status import EMBEDDING_DIMENSION  # noqa: E402
 
 
 class StubEmbeddings:

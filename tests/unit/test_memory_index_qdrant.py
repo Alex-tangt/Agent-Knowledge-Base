@@ -3,15 +3,11 @@
 MCP 层已在 issue #10 用官方 client 实连验证；这里锁住引擎侧行为，不加载 BGE-M3。
 """
 import os
-import sys
-
-ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
-sys.path.insert(0, os.path.join(ROOT, "ragcore"))
 
 from memory_agent.memory.entries import Entry  # noqa: E402
 from memory_agent.memory.index import MemoryIndex  # noqa: E402
 from memory_agent.memory.store import QdrantLocalStore  # noqa: E402
-from utils.model_status import EMBEDDING_DIMENSION  # noqa: E402
+from ragcore.utils.model_status import EMBEDDING_DIMENSION  # noqa: E402
 
 
 class StubEmbeddings:

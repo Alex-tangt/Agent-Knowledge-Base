@@ -2,14 +2,9 @@
 
 真实 Qdrant + 桩嵌入，不加载 BGE-M3。
 """
-import sys
-import os
 
-ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
-sys.path.insert(0, os.path.join(ROOT, "ragcore"))
-
-from services.vector_store_service import VectorStoreService  # noqa: E402
-from utils.model_status import EMBEDDING_DIMENSION  # noqa: E402
+from ragcore.services.vector_store_service import VectorStoreService  # noqa: E402
+from ragcore.utils.model_status import EMBEDDING_DIMENSION  # noqa: E402
 
 _DIM = EMBEDDING_DIMENSION
 

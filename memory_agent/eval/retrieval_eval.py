@@ -27,7 +27,6 @@ if REPO_ROOT not in sys.path:
 from memory_agent import _bootstrap  # noqa: E402
 
 _bootstrap.configure_stderr_logging()
-_bootstrap.ensure_ragcore_on_path()
 
 from memory_agent.eval.metrics import evaluate  # noqa: E402
 from memory_agent.memory.index import MemoryIndex  # noqa: E402
@@ -39,7 +38,7 @@ DEFAULT_EVAL_SET = os.path.join(HERE, "retrieval_eval_set.json")
 
 def build_retriever_factory(mode: str):
     """按消融模式构造 retriever 工厂（注入 MemoryIndex，仍走 MemoryIndex.search）。"""
-    from strategies.default import DefaultRetrievalStrategy
+    from ragcore.strategies.default import DefaultRetrievalStrategy
 
     def factory(store):
         strategy = DefaultRetrievalStrategy(enable_keyword=(mode != "vector"))
