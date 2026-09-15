@@ -139,7 +139,7 @@ The `warmup()` function (called from `app.py` lifespan) eagerly triggers BGE-M3 
 - **Versioning**: JS/CSS files use `?v=N` cache busting. Increment when changing any JS module.
 
 ## Tests
-- **单元测试**：`tests/unit/`（pytest）——`test_document_service.py`、`test_rag_service.py`、`test_session_memory.py`、`test_memory_corpus.py`、`test_memory_index.py`、`test_memory_index_qdrant.py`、`test_memory_reindex.py`、`test_memory_writer.py`、`test_memory_lazy_warmup.py`、`test_memory_concurrency.py`、`test_memory_proxy.py`、`test_mcp_server_cli.py`。运行：`venv\Scripts\python.exe -m pytest tests/unit -q`（160 passed）。
+- **单元测试**：`tests/unit/`（pytest）——`test_document_service.py`、`test_rag_service.py`、`test_session_memory.py`、`test_memory_corpus.py`、`test_memory_index.py`、`test_memory_index_qdrant.py`、`test_memory_reindex.py`、`test_memory_writer.py`、`test_memory_lazy_warmup.py`、`test_memory_concurrency.py`、`test_memory_proxy.py`、`test_mcp_server_cli.py`、`test_vector_store_clear.py`、`test_vector_store_filter.py`、`test_vector_store_locking.py`。运行：`venv\Scripts\python.exe -m pytest tests/unit -q`（163 passed）。
 - **写路径 sandbox 套件（#16，真实 KB 版，需 BGE-M3）**：`venv\Scripts\python.exe memory_agent/eval/write_path_sandbox.py`——不在 `tests/unit` 内（运行时证据），证据见 `memory_agent/eval/write_path_sandbox_results.md`。
 - Smoke test: `venv\Scripts\python.exe legal_web/test_langsmith.py`.
 - **启动冒烟（boot 闸门）**：后台起 `legal_web/app.py`，独立探测 `/api/status` → `ready:true`、`/` 与 `/script.js` → 200、`/api/kb/list`、`/api/documents/count?kb_name=documents`，再杀进程树确认端口与 Qdrant 锁释放。命令与结果见 `memory_agent/eval/baseline_A.md`（比"单测 + 导入冒烟"更强的收工锚点）。
@@ -160,6 +160,23 @@ The `warmup()` function (called from `app.py` lifespan) eagerly triggers BGE-M3 
 
 ### 决策闸门
 大改动前用一句话向用户说明"是什么/为什么/风险"。硬决策（难逆转 / 反直觉 / 真权衡）必须经用户确认，并写进 `docs/adr/`。例行工作自主执行，不需要逐个请示。
+
+### 决策落点（对话 / ADR / issue 三方分工）
+
+同一件事分三处，不许混：
+
+| 用途 | 场地 |
+|---|---|
+| 收敛（辩论 / 权衡 / 拍板） | **与用户的对话**（或一个专门 RFC 文档） |
+| 决策落点（为什么） | **`docs/adr/`** |
+| 执行单元（做什么 / 验收 / 阻塞） | **issue**——验收标准 + blocked-by + 指向 ADR 的链接，**不承载辩论** |
+| 实现期问答 / 证据 | **issue comment**——阻塞、实测数字、跨会话交接 |
+
+规则：
+- **不在 issue 里辩论方向。** issue 只做索引：状态、验收、blocked-by、ADR 链接。
+- 硬决策在对话里拍板后，**由 AI 当场起草 ADR（`status: proposed`）**，用户只做"接受 / 改"，不用动笔。
+- 研究 / 实验产出进 `experiments/`（一页结论），结论再进 ADR。
+- **ADR 粒度 = 一个决策簇（≈ 一个票据 / 一个阶段），内含 D1/D2/D3**，不是"一条决策一 ADR"（先例：ADR-0008/0009/0011）。修订既有决策时新 ADR 标 `amends` / `supersedes`。
 
 ### 地图同步
 结构一变就更新本文件与 `CONTEXT.md`。AGENTS.md 必须始终描述真实目录树，不允许文档脱离实际。
@@ -216,11 +233,18 @@ The `warmup()` function (called from `app.py` lifespan) eagerly triggers BGE-M3 
 - ✅ 共享单实例（#19 根治，2026-09-14）：拓扑改为「一个常驻 HTTP daemon（持有唯一一份 BGE-M3）+ 每会话一个 stdio 代理」——N 会话从 `N × 3.9GB` 降为 `1 × 3.9GB + N × 几十MB`。`mcp_server.py --transport http` + `/health` + DNS-rebinding 防护；`proxy.py` 幂等拉起（启动权文件锁，避免冷启动竞态）+ 透明转发；进程内串行化 store/索引/写入。决策见 `docs/adr/0013`；验收（真实模型）见 `memory_agent/eval/issue19_acceptance.md`（最终 `154 passed`）。opencode 接入从「跑 `mcp_server.py`」改为「跑 `proxy.py`」（`~/.config/opencode/opencode.json`，重启生效）。
 - ✅ 写路径 sandbox 套件（#16，2026-09-14）：真实 KB 克隆 + 隔离索引，25/25 通过且两次运行一致、真实 KB 前后逐字不变；顺带校准 `DEDUP_THRESHOLD` 0.92→0.88（`experiments/dedup-threshold-calibration/`，回写 ADR-0009）。证据见 `memory_agent/eval/write_path_sandbox_results.md`。
 - ✅ #17 dogfood（2026-09-14）：经 MCP 真写一条决策 + 双通道盲测 recall（独立进程 + 独立子代理，同 score），证据见 `memory_agent/eval/dogfood_17.md`；关闭 **#17**。检索质量（#15）归独立叙事 **#21**，不占 MVP 收尾。
-- ✅ 三仓库只读语料（#7 收尾，2026-09-15）：用户故事 #17 落地——只读语料从"本仓库"扩到 **三个项目仓库的 Markdown 文档**（只索引 `.md`，不索引代码）。仓库清单 gitignored（`readonly_repos.json` + `.example`），`<label>/` 前缀消歧义，噪声目录排除。索引 `gen-2`：**134 条 = 26 可写 KB + 108 只读文档**（agent-knowledge-base / kg-triplet-sft / agent-infra）。MCP 接缝验收 **15/15**（`readonly_corpus_17.py` + `_results.md`）。顺带修掉 MCP 工具错误消息被吞的缺陷（`ValueError` → `ToolError`）。决策见 `docs/adr/0014`。**#7 全部用户故事落地，epic 可关闭。**
+- ✅ 三仓库只读语料（#7 收尾，2026-09-15）：用户故事 #17 落地——只读语料从"本仓库"扩到 **三个项目仓库的 Markdown 文档**（只索引 `.md`，不索引代码）。仓库清单 gitignored（`readonly_repos.json` + `.example`），`<label>/` 前缀消歧义，噪声目录排除。索引 `gen-2`：**134 条 = 26 可写 KB + 108 只读文档**（agent-knowledge-base / kg-triplet-sft / agent-infra）。MCP 接缝验收 **15/15**（`readonly_corpus_17.py` + `_results.md`）。顺带修掉 MCP 工具错误消息被吞的缺陷（`ValueError` → `ToolError`）。决策见 `docs/adr/0014`。**#7 全部用户故事落地，epic 已关闭。**
+
+### MVP 收官（2026-09-15）
+
+- ✅ **MVP 完成**：epic #7 已关闭；#8–#14、#16–#19 全部 closed。`#15`（BEIR nDCG@10）移出 MVP，并入独立叙事 **#21**（RAG 检索优化）。
+- 收尾锚点：`pytest tests/unit -q` → **163 passed**；写路径 sandbox 25/25；只读语料接缝 15/15；dogfood 真写 + 跨会话 recall（证据见 `memory_agent/eval/`）。
+- 交付物：记忆能力包 = stdio 代理 + 常驻 daemon（单实例 BGE-M3）+ 8 个 MCP 工具 + skill。
+- **Post-MVP 规划（架构师负责）**：RFC **#20** 双平面（私有本地 + 多租户企业云 + 数据库式治理）；检索优化叙事 **#21**（对象=记忆检索，法律链路降为回归锚点）。P0 基座期票：**#22** config 分层、**#23** `VectorStore` 端口 + `classification/residency`、**#24** 检索评测基座、**#25** 云向量库 spike、**#26** 独立包化（blocked by #22/#23）。执行序 **P1 独立包 → P2 云基座 → P3 联邦治理**；通用 agent demo 后延。
 
 ## 后续优化待办（Backlog / 简历谈资池）
 
-非本周范围，延后。每条都是可讲的优化故事：
+非本周范围，延后。独立叙事 **#21** 收拢以下检索优化（原 #15 BEIR 亦并入）。每条都是可讲的优化故事：
 
 1. **查询改写质量**：改写为关键词组合可能导致语义检索效果下降（尤其多约束复合句丢约束）。问题节点：查询改写（`rag_service._rewrite_query`）、问题分解（eval_service 多路）。关联：`experiments/query-rewrite-optimizer/` 结论（二元意图判断与关键词改写结构性冲突）。
 2. **延迟优化：pool 边界**：`ADAPTIVE_POOL=20` 与候选池实际 ~32（vector+keyword+anchor 合并）的边界是否合理；pre-rerank 候选截断 knob（实测 rerank 线性于池大小，~230ms/对）。关联：`experiments/rerank-latency/`、`experiments/e2e-latency/`。
