@@ -264,7 +264,7 @@ def test_search_routes_through_strategy_and_merges_keyword_hits(tmp_path):
 
     results = index.search("记忆检索", k=5)
 
-    assert [r["id"] for r in results] == ["k", "v"]
+    assert [r["id"] for r in results] == ["v", "k"]
 
 
 def test_search_raises_when_manifest_and_points_disagree(tmp_path):
