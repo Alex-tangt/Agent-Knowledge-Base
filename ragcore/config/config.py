@@ -30,6 +30,26 @@ LOCAL_EMBEDDING_MODEL = "BAAI/bge-m3"
 USE_LOCAL_RERANKER = True
 LOCAL_RERANKER_MODEL = "BAAI/bge-reranker-v2-m3"
 
+# reranker 送排的 token 上限（CrossEncoder max_length，issue #28）。
+# bge-reranker-v2-m3 的 tokenizer 默认上限 8192；不设上限即按模型默认（旧行为）。
+# sbert 按 batch 内最长对动态 padding，故上限只在「query+doc 真的超过」时截断——
+# 短文本（memory 侧另有 MEMORY_RERANK_MAX_CHARS 字符截断）几乎是 no-op。
+# env `RERANK_MAX_SEQ_LENGTH`：空串 / none / off / 0 = 不设上限（一键回退旧行为）。
+DEFAULT_RERANK_MAX_SEQ_LENGTH = 512  # 由 #28 A/B 选定，见 experiments/rerank-latency-survey/maxlen_results.md
+
+
+def _rerank_max_seq_length(default: int | None) -> int | None:
+    raw = os.environ.get("RERANK_MAX_SEQ_LENGTH")
+    if raw is None:
+        return default
+    raw = raw.strip().lower()
+    if raw in {"", "none", "off", "0"}:
+        return None
+    return int(raw)
+
+
+RERANK_MAX_SEQ_LENGTH = _rerank_max_seq_length(DEFAULT_RERANK_MAX_SEQ_LENGTH)
+
 QDRANT_COLLECTION_NAME = "documents"
 
 API_PREFIX = "/api"
