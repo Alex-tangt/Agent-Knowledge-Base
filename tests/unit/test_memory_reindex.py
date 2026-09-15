@@ -16,7 +16,7 @@ from memory_agent.memory.entries import Entry  # noqa: E402
 from memory_agent.memory.errors import IndexConsistencyError  # noqa: E402
 from memory_agent.memory.layout import IndexLayout  # noqa: E402
 from memory_agent.memory.reindex import Reindexer  # noqa: E402
-from services.vector_store_service import VectorStoreService  # noqa: E402
+from memory_agent.memory.store import QdrantLocalStore  # noqa: E402
 from utils.model_status import EMBEDDING_DIMENSION  # noqa: E402
 
 
@@ -39,10 +39,10 @@ def _entry(tmp_path, name, content, writable=True, entry_id=None):
 
 def _store_factory(lying_count=None):
     def build(db_path):
-        store = VectorStoreService(collection_name="mem", db_path=db_path,
-                                   embeddings=StubEmbeddings())
+        store = QdrantLocalStore(db_path=db_path, collection_name="mem",
+                                 embeddings=StubEmbeddings())
         if lying_count is not None:
-            store.get_document_count = lambda: lying_count
+            store.count = lambda: lying_count
         return store
     return build
 

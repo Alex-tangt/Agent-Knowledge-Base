@@ -10,7 +10,7 @@ from memory_agent.memory.index import MemoryIndex
 
 
 class FakeStore:
-    """只实现 MemoryIndex 用到的那部分 VectorStoreService 契约。"""
+    """只实现 MemoryIndex 用到的那部分 `VectorStore` 端口契约。"""
 
     def __init__(self, hits=None, keyword_hits=None):
         self.cleared = 0
@@ -21,13 +21,13 @@ class FakeStore:
         self._keyword_hits = keyword_hits or []
         self.last_filter = "unset"
 
-    def clear_all_documents(self):
+    def clear(self):
         self.cleared += 1
         self.texts = []
         self.metas = []
         self._ids = []
 
-    def add_documents(self, documents, metadata_list=None, ids=None):
+    def add(self, documents, metadata_list=None, ids=None):
         docs = list(documents)
         metas = list(metadata_list or [])
         ids = list(ids) if ids is not None else [None] * len(docs)
@@ -42,10 +42,10 @@ class FakeStore:
                 self._ids.append(point_id)
         return ids
 
-    def get_document_count(self):
+    def count(self):
         return len(self.metas)
 
-    def delete_documents(self, ids):
+    def delete(self, ids):
         wanted = set(str(i) for i in ids)
         kept_texts, kept_metas, kept_ids = [], [], []
         for doc, meta, point_id in zip(self.texts, self.metas, self._ids):

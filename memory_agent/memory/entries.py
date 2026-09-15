@@ -12,6 +12,13 @@ from dataclasses import dataclass, field
 
 import yaml
 
+from memory_agent.memory.ports import (
+    CLASSIFICATION_VALUES,
+    DEFAULT_CLASSIFICATION,
+    DEFAULT_RESIDENCY,
+    RESIDENCY_VALUES,
+)
+
 _FRONTMATTER_RE = re.compile(r"\A---[ \t]*\r?\n(.*?)\r?\n---[ \t]*(?:\r?\n|$)", re.DOTALL)
 _HEADING_RE = re.compile(r"^#\s+(.+?)\s*$", re.MULTILINE)
 
@@ -55,6 +62,12 @@ def _as_tags(value) -> list[str]:
     return [str(value)]
 
 
+def _as_choice(value, allowed: tuple[str, ...], default: str) -> str:
+    """可选枚举字段：缺失 / 非法值一律回落到默认（#23 C′：frontmatter 不强校验）。"""
+    candidate = _as_str(value)
+    return candidate if candidate in allowed else default
+
+
 @dataclass
 class Entry:
     id: str
@@ -67,6 +80,8 @@ class Entry:
     tags: list[str] = field(default_factory=list)
     status: str | None = None
     updated: str | None = None
+    classification: str = DEFAULT_CLASSIFICATION
+    residency: str = DEFAULT_RESIDENCY
 
     @property
     def content_hash(self) -> str:
@@ -96,6 +111,8 @@ class Entry:
             "tags": self.tags,
             "status": self.status,
             "updated": self.updated,
+            "classification": self.classification,
+            "residency": self.residency,
             "hash": self.content_hash,
         }
 
@@ -137,4 +154,10 @@ class Entry:
             tags=_as_tags(meta.get("tags")),
             status=_as_str(meta.get("status")),
             updated=_as_str(meta.get("updated")),
+            classification=_as_choice(
+                meta.get("classification"), CLASSIFICATION_VALUES, DEFAULT_CLASSIFICATION
+            ),
+            residency=_as_choice(
+                meta.get("residency"), RESIDENCY_VALUES, DEFAULT_RESIDENCY
+            ),
         )

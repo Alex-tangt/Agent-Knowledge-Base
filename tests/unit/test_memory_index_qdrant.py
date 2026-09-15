@@ -10,7 +10,7 @@ sys.path.insert(0, os.path.join(ROOT, "ragcore"))
 
 from memory_agent.memory.entries import Entry  # noqa: E402
 from memory_agent.memory.index import MemoryIndex  # noqa: E402
-from services.vector_store_service import VectorStoreService  # noqa: E402
+from memory_agent.memory.store import QdrantLocalStore  # noqa: E402
 from utils.model_status import EMBEDDING_DIMENSION  # noqa: E402
 
 
@@ -31,8 +31,8 @@ def _entry(tmp_path, name, content, writable, entry_id):
 
 
 def test_rebuild_search_filter_and_get_on_real_qdrant(tmp_path):
-    store = VectorStoreService(collection_name="mem", db_path=str(tmp_path / "qdrant"),
-                               embeddings=StubEmbeddings())
+    store = QdrantLocalStore(db_path=str(tmp_path / "qdrant"), collection_name="mem",
+                             embeddings=StubEmbeddings())
     index = MemoryIndex(store=store, manifest_path=str(tmp_path / "manifest.json"))
     entries = [
         _entry(tmp_path, "kb/a.md", '---\nid: a\ntitle: "A"\n---\n\n# A\n\nkb body\n',
@@ -57,8 +57,8 @@ def test_rebuild_search_filter_and_get_on_real_qdrant(tmp_path):
 
 
 def test_incremental_refresh_skips_unchanged_and_drops_orphans(tmp_path):
-    store = VectorStoreService(collection_name="mem", db_path=str(tmp_path / "qdrant"),
-                               embeddings=StubEmbeddings())
+    store = QdrantLocalStore(db_path=str(tmp_path / "qdrant"), collection_name="mem",
+                             embeddings=StubEmbeddings())
     index = MemoryIndex(store=store, manifest_path=str(tmp_path / "manifest.json"))
     a = _entry(tmp_path, "kb/a.md", '---\nid: a\ntitle: "A"\n---\n\n# A\n\nbody a\n',
                writable=True, entry_id="a")

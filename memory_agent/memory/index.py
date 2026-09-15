@@ -14,18 +14,27 @@ import tempfile
 import threading
 from datetime import datetime, timezone
 
-from memory_agent import _bootstrap
 from memory_agent.memory.entries import Entry, point_id_for
 from memory_agent.memory.errors import IndexConsistencyError, IndexNotBuiltError
 from memory_agent.memory.layout import IndexLayout
 from memory_agent.memory.locks import INDEX_LOCK, locked
-from memory_agent.settings import COLLECTION_NAME, MAX_ENTRY_CHARS
+from memory_agent.memory.ports import DEFAULT_CLASSIFICATION, DEFAULT_RESIDENCY
+from memory_agent.memory.store import open_store
+from memory_agent.settings import MAX_ENTRY_CHARS
 
 MANIFEST_VERSION = 1
 
 
 def _now() -> str:
     return datetime.now(timezone.utc).isoformat()
+
+
+def _provenance(store) -> dict:
+    """命中的来源标注：存储平面 + 网关绑定的租户（#23 / ADR-0018）。
+
+    单 store 时对所有命中相同；联邦召回时由多 store 聚合各自标注。
+    """
+    return {"plane": getattr(store, "plane", None), "tenant": getattr(store, "tenant", None)}
 
 
 def upsert_entries(store, entries: list[Entry], max_chars: int = MAX_ENTRY_CHARS) -> int:
@@ -38,7 +47,7 @@ def upsert_entries(store, entries: list[Entry], max_chars: int = MAX_ENTRY_CHARS
         texts.append(payload.pop("text"))
         metas.append(payload)
         ids.append(point_id_for(entry.id))
-    store.add_documents(texts, metadata_list=metas, ids=ids)
+    store.add(texts, metadata_list=metas, ids=ids)
     return len(texts)
 
 
@@ -46,9 +55,10 @@ class MemoryIndex:
     def __init__(self, store=None, manifest_path: str | None = None,
                  db_path: str | None = None, layout: IndexLayout | None = None,
                  entry_loader=None, retriever=None, reranker=None,
-                 retriever_factory=None):
+                 retriever_factory=None, store_factory=None):
         self._store = store
         self._layout = layout or IndexLayout()
+        self._store_factory = store_factory or open_store
         self._entry_loader = entry_loader
         self._explicit = manifest_path is not None or db_path is not None
         self._explicit_manifest = manifest_path
@@ -101,6 +111,7 @@ class MemoryIndex:
 
     @property
     def store(self):
+        """当前代的存储（`VectorStore` 端口）；只经工厂构造，不 import 具体实现。"""
         self._sync()
         if self._store is None:
             with self._store_lock:
@@ -110,10 +121,7 @@ class MemoryIndex:
                             "记忆索引尚未构建：请先运行 "
                             "venv\\Scripts\\python.exe memory_agent/build_index.py"
                         )
-                    _bootstrap.ensure_ragcore_on_path()
-                    from services.vector_store_service import VectorStoreService
-                    self._store = VectorStoreService(
-                        collection_name=COLLECTION_NAME, db_path=self._db_path)
+                    self._store = self._store_factory(self._db_path)
         return self._store
 
     @property
@@ -155,7 +163,7 @@ class MemoryIndex:
                 "rebuild 需要显式 manifest_path；生产全量重建请用 Reindexer"
             )
         store = self.store
-        store.clear_all_documents()
+        store.clear()
         upsert_entries(store, entries)
 
         self._entries = {entry.id: entry.to_manifest() for entry in entries}
@@ -205,7 +213,7 @@ class MemoryIndex:
             for entry in to_embed:
                 manifest[entry.id] = entry.to_manifest()
         if removed:
-            self.store.delete_documents([point_id_for(i) for i in removed])
+            self.store.delete([point_id_for(i) for i in removed])
             for entry_id in removed:
                 manifest.pop(entry_id, None)
 
@@ -230,9 +238,12 @@ class MemoryIndex:
 
         writable_only 的过滤在向量库侧执行（否则 top-k 之后再筛会欠填）。
         检索前核对自洽性：manifest 条数 ≠ 集合点数 → 显式报错，不静默返回空。
+        每条命中带 `classification` / `residency`（payload 镜像）与 `provenance`
+        （来源平面 / 租户，issue #23）。
         """
         if not query or not query.strip():
             raise ValueError("query 不能为空")
+        store = self.store
         self._ensure_consistent()
         payload_filter = {"writable": True} if writable_only else None
 
@@ -247,6 +258,9 @@ class MemoryIndex:
                 "type": meta.get("type"),
                 "tags": meta.get("tags") or [],
                 "status": meta.get("status"),
+                "classification": meta.get("classification") or DEFAULT_CLASSIFICATION,
+                "residency": meta.get("residency") or DEFAULT_RESIDENCY,
+                "provenance": _provenance(store),
                 "score": float(score),
                 "snippet": " ".join(text.split())[:240],
             })
@@ -296,7 +310,7 @@ class MemoryIndex:
         if self._gen:
             info["path"] = self._layout.gen_dir(self._gen)
         if built:
-            points = self.store.get_document_count()
+            points = self.store.count()
             info["points"] = points
             info["consistent"] = points == len(self._entries)
         return info
@@ -307,7 +321,7 @@ class MemoryIndex:
         self._sync()
         if not self._entries:
             return
-        points = self.store.get_document_count()
+        points = self.store.count()
         if points != len(self._entries):
             raise IndexConsistencyError(
                 f"索引不自洽：manifest {len(self._entries)} 条 != 集合 {points} 点。"

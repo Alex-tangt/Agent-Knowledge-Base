@@ -19,14 +19,8 @@ from memory_agent.memory.errors import IndexConsistencyError
 from memory_agent.memory.index import _now, upsert_entries
 from memory_agent.memory.layout import IndexLayout
 from memory_agent.memory.locks import INDEX_LOCK, locked
-from memory_agent.settings import COLLECTION_NAME, DEFAULT_REINDEX_BATCH
-
-
-def _default_store_factory(db_path: str):
-    from memory_agent import _bootstrap
-    _bootstrap.ensure_ragcore_on_path()
-    from services.vector_store_service import VectorStoreService
-    return VectorStoreService(collection_name=COLLECTION_NAME, db_path=db_path)
+from memory_agent.memory.store import open_store
+from memory_agent.settings import DEFAULT_REINDEX_BATCH
 
 
 def _default_loader():
@@ -39,7 +33,7 @@ class Reindexer:
                  store_factory=None):
         self._layout = layout or IndexLayout()
         self._load = entry_loader or _default_loader
-        self._store_factory = store_factory or _default_store_factory
+        self._store_factory = store_factory or open_store
 
     def run_all(self, batch: int = DEFAULT_REINDEX_BATCH) -> dict:
         """把整轮重建跑完（CLI 用；服务端 MCP 用分块 cursor）。"""
@@ -118,7 +112,7 @@ class Reindexer:
             result["cursor"] = {"gen": gen, "offset": next_offset}
             return result
 
-        points = store.get_document_count()
+        points = store.count()
         counted = len(manifest["entries"])
         if points != counted:
             raise IndexConsistencyError(
