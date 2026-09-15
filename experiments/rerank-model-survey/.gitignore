@@ -1,0 +1,4 @@
+# 候选池缓存含跨仓库文档摘录（只读语料的 512 字截断），可用 memory-pools/legal-pools 重建。
+# 保留独立锚点（只含 id 排名，无正文）。
+cache/*
+!cache/anchor_retrieval_eval_m3.json

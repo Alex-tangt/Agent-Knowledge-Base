@@ -1,0 +1,148 @@
+{
+  "meta": {
+    "generated_at": "2026-09-15T23:13:20",
+    "corpus": "memory",
+    "indices": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+    ],
+    "rounds": 3,
+    "max_seq_length": 512,
+    "peak_rss_gb": 7.337,
+    "protocol": "same-field interleaved: round -> model -> query; only rerank call timed"
+  },
+  "models": {
+    "bge-v2-m3": {
+      "model": "BAAI/bge-reranker-v2-m3",
+      "key": "bge-v2-m3",
+      "license": "apache-2.0",
+      "role": "baseline",
+      "dtype": "torch.float32",
+      "max_seq_length": 512,
+      "load_s": 23.31,
+      "rss_delta_gb": 0.695,
+      "peak_rss_gb": 7.337,
+      "pairs_per_call": 15.88,
+      "latency_ms": {
+        "n": 24,
+        "mean": 11312.478,
+        "p50": 11116.072,
+        "p95": 12919.462,
+        "max": 12932.873,
+        "sd": 1163.49
+      },
+      "s_per_pair": 0.7126
+    },
+    "bge-base": {
+      "model": "BAAI/bge-reranker-base",
+      "key": "bge-base",
+      "license": "MIT",
+      "role": "candidate",
+      "dtype": "torch.float32",
+      "max_seq_length": 512,
+      "load_s": 3.52,
+      "rss_delta_gb": 0.271,
+      "peak_rss_gb": 7.337,
+      "pairs_per_call": 15.88,
+      "latency_ms": {
+        "n": 24,
+        "mean": 3286.591,
+        "p50": 3225.348,
+        "p95": 3946.257,
+        "max": 3998.017,
+        "sd": 371.212
+      },
+      "s_per_pair": 0.207
+    },
+    "gte-multilingual": {
+      "model": "Alibaba-NLP/gte-multilingual-reranker-base",
+      "key": "gte-multilingual",
+      "license": "apache-2.0",
+      "role": "candidate",
+      "dtype": "torch.float32",
+      "max_seq_length": 512,
+      "load_s": 4.04,
+      "rss_delta_gb": 1.528,
+      "peak_rss_gb": 7.337,
+      "pairs_per_call": 15.88,
+      "latency_ms": {
+        "n": 24,
+        "mean": 4364.859,
+        "p50": 4359.589,
+        "p95": 5230.508,
+        "max": 5330.518,
+        "sd": 484.926
+      },
+      "s_per_pair": 0.275
+    },
+    "jina-v2-torch": {
+      "model": "jinaai/jina-reranker-v2-base-multilingual",
+      "key": "jina-v2-torch",
+      "license": "CC-BY-NC-4.0",
+      "role": "candidate",
+      "dtype": "torch.float32",
+      "max_seq_length": 512,
+      "load_s": 4.07,
+      "rss_delta_gb": 1.378,
+      "peak_rss_gb": 7.337,
+      "pairs_per_call": 15.88,
+      "latency_ms": {
+        "n": 24,
+        "mean": 3558.584,
+        "p50": 3560.602,
+        "p95": 4248.171,
+        "max": 4350.945,
+        "sd": 412.792
+      },
+      "s_per_pair": 0.2242
+    },
+    "jina-v2-onnx-int8": {
+      "model": "jinaai/jina-reranker-v2-base-multilingual",
+      "key": "jina-v2-onnx-int8",
+      "license": "CC-BY-NC-4.0",
+      "role": "candidate",
+      "dtype": null,
+      "max_seq_length": 512,
+      "load_s": 4.68,
+      "rss_delta_gb": 0.58,
+      "peak_rss_gb": 7.337,
+      "pairs_per_call": 15.88,
+      "latency_ms": {
+        "n": 24,
+        "mean": 2366.102,
+        "p50": 2277.468,
+        "p95": 2847.261,
+        "max": 3025.49,
+        "sd": 302.141
+      },
+      "s_per_pair": 0.149
+    },
+    "mxbai-v1": {
+      "model": "mixedbread-ai/mxbai-rerank-base-v1",
+      "key": "mxbai-v1",
+      "license": "apache-2.0",
+      "role": "speed-floor",
+      "dtype": "torch.float32",
+      "max_seq_length": 512,
+      "load_s": 3.66,
+      "rss_delta_gb": 0.835,
+      "peak_rss_gb": 7.337,
+      "pairs_per_call": 15.88,
+      "latency_ms": {
+        "n": 24,
+        "mean": 6603.858,
+        "p50": 6508.601,
+        "p95": 7877.597,
+        "max": 8750.979,
+        "sd": 903.739
+      },
+      "s_per_pair": 0.416
+    }
+  }
+}

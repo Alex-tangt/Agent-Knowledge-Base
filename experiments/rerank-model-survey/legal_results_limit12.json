@@ -1,0 +1,169 @@
+{
+  "meta": {
+    "generated_at": "2026-09-15T23:26:00",
+    "pools_meta": {
+      "questions_file": "legal_web/tests/questions.md",
+      "sampled": 20,
+      "pool_size": 20,
+      "pairs": 452
+    },
+    "baseline": "bge-v2-m3",
+    "relevance_threshold": 0.85,
+    "rounds": 1,
+    "max_seq_length": 512,
+    "peak_rss_gb": 10.752,
+    "note": "legal 无金标：质量 = 相对 baseline 的 top-8 重合 / Kendall tau；refuse/min_dist 跨模型阈值不可比，仅描述"
+  },
+  "models": {
+    "bge-v2-m3": {
+      "model": "BAAI/bge-reranker-v2-m3",
+      "key": "bge-v2-m3",
+      "license": "apache-2.0",
+      "role": "baseline",
+      "dtype": "torch.float32",
+      "max_seq_length": 512,
+      "load_s": 25.18,
+      "rss_delta_gb": 0.692,
+      "peak_rss_gb": 10.752,
+      "pairs": 267,
+      "latency_ms": {
+        "n": 12,
+        "mean": 13192.779,
+        "p50": 9627.074,
+        "p95": 21729.713,
+        "max": 21729.713,
+        "sd": 5598.129
+      },
+      "pairs_per_s": 1.69,
+      "refuse_count": 0,
+      "min_dist_mean": 0.0132,
+      "topk_overlap_vs_baseline": 1.0,
+      "kendall_tau_vs_baseline": 1.0
+    },
+    "bge-base": {
+      "model": "BAAI/bge-reranker-base",
+      "key": "bge-base",
+      "license": "MIT",
+      "role": "candidate",
+      "dtype": "torch.float32",
+      "max_seq_length": 512,
+      "load_s": 3.9,
+      "rss_delta_gb": 0.277,
+      "peak_rss_gb": 10.752,
+      "pairs": 267,
+      "latency_ms": {
+        "n": 12,
+        "mean": 4137.913,
+        "p50": 3016.211,
+        "p95": 6792.3,
+        "max": 6792.3,
+        "sd": 1736.448
+      },
+      "pairs_per_s": 5.38,
+      "refuse_count": 0,
+      "min_dist_mean": 0.0021,
+      "topk_overlap_vs_baseline": 0.75,
+      "kendall_tau_vs_baseline": 0.5734
+    },
+    "gte-multilingual": {
+      "model": "Alibaba-NLP/gte-multilingual-reranker-base",
+      "key": "gte-multilingual",
+      "license": "apache-2.0",
+      "role": "candidate",
+      "dtype": "torch.float32",
+      "max_seq_length": 512,
+      "load_s": 4.18,
+      "rss_delta_gb": 1.521,
+      "peak_rss_gb": 10.752,
+      "pairs": 267,
+      "latency_ms": {
+        "n": 12,
+        "mean": 5523.741,
+        "p50": 4099.285,
+        "p95": 8818.966,
+        "max": 8818.966,
+        "sd": 2279.737
+      },
+      "pairs_per_s": 4.03,
+      "refuse_count": 0,
+      "min_dist_mean": 0.0955,
+      "topk_overlap_vs_baseline": 0.6562,
+      "kendall_tau_vs_baseline": 0.6278
+    },
+    "jina-v2-torch": {
+      "model": "jinaai/jina-reranker-v2-base-multilingual",
+      "key": "jina-v2-torch",
+      "license": "CC-BY-NC-4.0",
+      "role": "candidate",
+      "dtype": "torch.float32",
+      "max_seq_length": 512,
+      "load_s": 4.12,
+      "rss_delta_gb": 1.382,
+      "peak_rss_gb": 10.752,
+      "pairs": 267,
+      "latency_ms": {
+        "n": 12,
+        "mean": 4403.211,
+        "p50": 3243.369,
+        "p95": 7139.286,
+        "max": 7139.286,
+        "sd": 1913.696
+      },
+      "pairs_per_s": 5.05,
+      "refuse_count": 0,
+      "min_dist_mean": 0.1655,
+      "topk_overlap_vs_baseline": 0.6979,
+      "kendall_tau_vs_baseline": 0.7397
+    },
+    "jina-v2-onnx-int8": {
+      "model": "jinaai/jina-reranker-v2-base-multilingual",
+      "key": "jina-v2-onnx-int8",
+      "license": "CC-BY-NC-4.0",
+      "role": "candidate",
+      "dtype": null,
+      "max_seq_length": 512,
+      "load_s": 5.2,
+      "rss_delta_gb": 0.58,
+      "peak_rss_gb": 10.752,
+      "pairs": 267,
+      "latency_ms": {
+        "n": 12,
+        "mean": 3002.16,
+        "p50": 2057.46,
+        "p95": 5204.463,
+        "max": 5204.463,
+        "sd": 1466.206
+      },
+      "pairs_per_s": 7.41,
+      "refuse_count": 0,
+      "min_dist_mean": 0.1631,
+      "topk_overlap_vs_baseline": 0.6771,
+      "kendall_tau_vs_baseline": 0.7389
+    },
+    "mxbai-v1": {
+      "model": "mixedbread-ai/mxbai-rerank-base-v1",
+      "key": "mxbai-v1",
+      "license": "apache-2.0",
+      "role": "speed-floor",
+      "dtype": "torch.float32",
+      "max_seq_length": 512,
+      "load_s": 3.58,
+      "rss_delta_gb": 0.835,
+      "peak_rss_gb": 10.752,
+      "pairs": 267,
+      "latency_ms": {
+        "n": 12,
+        "mean": 8264.877,
+        "p50": 6972.72,
+        "p95": 12234.778,
+        "max": 12234.778,
+        "sd": 2525.563
+      },
+      "pairs_per_s": 2.69,
+      "refuse_count": 1,
+      "min_dist_mean": 0.2227,
+      "topk_overlap_vs_baseline": 0.6042,
+      "kendall_tau_vs_baseline": 0.4944
+    }
+  }
+}

@@ -1,0 +1,2332 @@
+{
+  "meta": {
+    "generated_at": "2026-09-15T22:54:39",
+    "pools_meta": {
+      "eval_set": "memory_agent\\eval\\retrieval_eval_set.json",
+      "eval_set_name": "memory-retrieval-eval",
+      "eval_set_version": 1,
+      "index_gen": "gen-2",
+      "pool_size": 14,
+      "rerank_max_chars": 512,
+      "queries": 51,
+      "pairs": 844
+    },
+    "modes": "memory hybrid-rerank (deterministic, no LLM)",
+    "rounds": 1,
+    "max_seq_length": 512,
+    "peak_rss_gb": 9.89,
+    "baseline_run_hash_reference": "d9d2311f2342a7b8 (pool=20, #24)"
+  },
+  "models": {
+    "bge-v2-m3": {
+      "model": "BAAI/bge-reranker-v2-m3",
+      "key": "bge-v2-m3",
+      "license": "apache-2.0",
+      "role": "baseline",
+      "dtype": "torch.float32",
+      "max_seq_length": 512,
+      "load_s": 21.49,
+      "rss_delta_gb": 0.62,
+      "peak_rss_gb": 9.89,
+      "pairs": 196,
+      "latency_ms": {
+        "n": 12,
+        "mean": 10376.5,
+        "p50": 9945.528,
+        "p95": 12574.334,
+        "max": 12574.334,
+        "sd": 1295.772
+      },
+      "pairs_per_s": 1.57,
+      "tokens": {
+        "pairs": 196,
+        "max": 361,
+        "mean": 283.1,
+        "over_cap": 0,
+        "cap": 512
+      },
+      "aggregate": {
+        "queries_total": 12,
+        "queries_answerable": 12,
+        "queries_no_answer": 0,
+        "recall": {
+          "1": 0.9375,
+          "3": 0.958333,
+          "5": 0.979167,
+          "10": 0.979167
+        },
+        "ndcg@10": 0.979475,
+        "mrr": 1.0,
+        "misses": []
+      },
+      "per_query": [
+        {
+          "id": "q001",
+          "query": "在 Kaggle 上用 LLaMA-Factory 训练，模型初始化到一半就退出，返回码是 0 也没有任何报错，是什么原因？",
+          "relevant": [
+            "topics/training-error-catalog"
+          ],
+          "ranked": [
+            "topics/training-error-catalog",
+            "topics/training-version-matrix",
+            "repo:kg-triplet-sft/docs/adr/0005-training-pipeline-decoupled.md",
+            "repo:kg-triplet-sft/docs/adr/0006-compute-platform-bf16-curve.md",
+            "repo:agent-knowledge-base/docs/exp2-review.md",
+            "repo:kg-triplet-sft/finetune/README_full.md",
+            "repo:kg-triplet-sft/docs/evidence/base-baseline.md",
+            "repo:kg-triplet-sft/finetune/README_tracer.md",
+            "repo:kg-triplet-sft/docs/inference-optimization-brief.md",
+            "repo:agent-knowledge-base/memory_agent/eval/baseline_A.md"
+          ],
+          "recall": {
+            "1": 1.0,
+            "3": 1.0,
+            "5": 1.0,
+            "10": 1.0
+          },
+          "ndcg@10": 1.0,
+          "mrr": 1.0,
+          "first_hit_rank": 1
+        },
+        {
+          "id": "q003",
+          "query": "用 Python 写 stdio 的 MCP server，握手老是失败，是不是日志输出把协议通道弄坏了？",
+          "relevant": [
+            "topics/mcp-stdio-server-authoring"
+          ],
+          "ranked": [
+            "topics/mcp-stdio-server-authoring",
+            "repo:agent-knowledge-base/docs/adr/0008-memory-agent-read-path-mcp-and-corpus.md",
+            "decisions/memory-package-shared-single-instance-topology",
+            "repo:agent-knowledge-base/memory_agent/eval/issue19_acceptance.md",
+            "repo:agent-knowledge-base/memory_agent/eval/dogfood_17.md",
+            "repo:agent-knowledge-base/docs/adr/0013-memory-agent-shared-single-instance-http-daemon.md",
+            "repo:agent-knowledge-base/memory_agent/eval/readonly_corpus_17_results.md",
+            "repo:agent-knowledge-base/docs/adr/0010-lifecycle-tools.md",
+            "repo:agent-knowledge-base/memory_agent/README.md",
+            "repo:agent-knowledge-base/docs/adr/0004-dev-discipline-ai-self-maintenance.md"
+          ],
+          "recall": {
+            "1": 1.0,
+            "3": 1.0,
+            "5": 1.0,
+            "10": 1.0
+          },
+          "ndcg@10": 1.0,
+          "mrr": 1.0,
+          "first_hit_rank": 1
+        },
+        {
+          "id": "q004",
+          "query": "Agent-infra 项目最近的架构方向有什么变化，assembler 为什么会从 TS 服务改成 pi 配置？",
+          "relevant": [
+            "projects/agent-infra/overview"
+          ],
+          "ranked": [
+            "projects/agent-infra/overview",
+            "repo:agent-infra/docs/handoffs/2026-08-09-assembler-coding-agent-subject.md",
+            "repo:agent-infra/docs/adr/0007-assembler-as-pure-pi-config.md",
+            "repo:agent-infra/docs/adr/0003-hybrid-stack-ts-assembler-python-library.md",
+            "repo:agent-infra/README.md",
+            "repo:agent-infra/docs/adr/0006-assembler-as-coding-agent-subject.md",
+            "projects/agent-infra/vision",
+            "repo:agent-infra/CONTEXT.md",
+            "repo:agent-infra/AGENTS.md",
+            "repo:agent-infra/docs/research/04-assembler-skill-capabilities.md"
+          ],
+          "recall": {
+            "1": 1.0,
+            "3": 1.0,
+            "5": 1.0,
+            "10": 1.0
+          },
+          "ndcg@10": 1.0,
+          "mrr": 1.0,
+          "first_hit_rank": 1
+        },
+        {
+          "id": "q005",
+          "query": "agent-infra 这个 agent 工厂为什么选择基于 dsh 做插件套件，而不是 fork 或生成代码？",
+          "relevant": [
+            "projects/agent-infra/vision"
+          ],
+          "ranked": [
+            "projects/agent-infra/vision",
+            "repo:agent-infra/README.md",
+            "repo:agent-infra/docs/adr/0002-agent-thin-container-pluggable-parts.md",
+            "repo:agent-infra/CONTEXT.md",
+            "repo:agent-infra/AGENTS.md",
+            "projects/agent-infra/overview",
+            "repo:agent-infra/docs/research/02-recipe-to-demo-generation.md",
+            "repo:agent-infra/docs/research/01-frameworks-component-abstraction.md",
+            "repo:agent-infra/skills/agent-design/SKILL.md",
+            "repo:agent-infra/docs/adr/0006-assembler-as-coding-agent-subject.md"
+          ],
+          "recall": {
+            "1": 1.0,
+            "3": 1.0,
+            "5": 1.0,
+            "10": 1.0
+          },
+          "ndcg@10": 1.0,
+          "mrr": 1.0,
+          "first_hit_rank": 1
+        },
+        {
+          "id": "q006",
+          "query": "opencode 的 API key 用环境变量比直接写在配置里更安全吗",
+          "relevant": [
+            "topics/opencode-secrets-handling"
+          ],
+          "ranked": [
+            "topics/opencode-secrets-handling",
+            "repo:agent-knowledge-base/memory_agent/eval/dogfood_17.md",
+            "decisions/memory-package-shared-single-instance-topology",
+            "decisions/kb-options-research-2026-09-12",
+            "repo:agent-knowledge-base/docs/adr/0012-memory-agent-skill.md",
+            "repo:agent-infra/docs/adr/0003-hybrid-stack-ts-assembler-python-library.md",
+            "repo:agent-infra/docs/research/02-recipe-to-demo-generation.md",
+            "repo:agent-knowledge-base/CONTEXT.md",
+            "topics/opencode-proxy-and-network",
+            "repo:agent-infra/docs/reviews/2026-08-08-ollama-demo-session-review.md"
+          ],
+          "recall": {
+            "1": 1.0,
+            "3": 1.0,
+            "5": 1.0,
+            "10": 1.0
+          },
+          "ndcg@10": 1.0,
+          "mrr": 1.0,
+          "first_hit_rank": 1
+        },
+        {
+          "id": "q007",
+          "query": "opencode 在 Windows 上总是网络超时，怎么让它走本地代理？",
+          "relevant": [
+            "topics/opencode-proxy-and-network"
+          ],
+          "ranked": [
+            "topics/opencode-proxy-and-network",
+            "decisions/memory-package-shared-single-instance-topology",
+            "repo:agent-knowledge-base/docs/adr/0013-memory-agent-shared-single-instance-http-daemon.md",
+            "repo:agent-knowledge-base/memory_agent/eval/dogfood_17.md",
+            "decisions/kb-options-research-2026-09-12",
+            "repo:agent-knowledge-base/memory_agent/eval/issue19_acceptance.md",
+            "repo:agent-knowledge-base/docs/adr/0012-memory-agent-skill.md",
+            "repo:agent-knowledge-base/docs/adr/0008-memory-agent-read-path-mcp-and-corpus.md",
+            "topics/opencode-secrets-handling",
+            "repo:agent-knowledge-base/docs/adr/0010-lifecycle-tools.md"
+          ],
+          "recall": {
+            "1": 1.0,
+            "3": 1.0,
+            "5": 1.0,
+            "10": 1.0
+          },
+          "ndcg@10": 1.0,
+          "mrr": 1.0,
+          "first_hit_rank": 1
+        },
+        {
+          "id": "q008",
+          "query": "Qdrant 本地模式为什么删除集合后重建还会带出旧数据，而且同一个目录不能被其他客户端打开？",
+          "relevant": [
+            "topics/qdrant-local-mode-semantics"
+          ],
+          "ranked": [
+            "topics/qdrant-local-mode-semantics",
+            "repo:agent-knowledge-base/docs/adr/0011-index-consistency-generations-and-refresh.md",
+            "repo:agent-knowledge-base/docs/adr/0007-repo-layout-and-rename.md",
+            "repo:agent-knowledge-base/docs/adr/0009-write-gateway-commit-scope-and-dedup.md",
+            "repo:agent-knowledge-base/docs/adr/0014-readonly-corpus-labeled-repos.md",
+            "repo:agent-knowledge-base/docs/adr/0002-version-baseline-reset.md",
+            "repo:agent-knowledge-base/docs/adr/0010-lifecycle-tools.md",
+            "repo:agent-knowledge-base/docs/adr/0006-memory-architecture-markdown-source-and-derived-index.md",
+            "repo:agent-infra/docs/reviews/2026-08-08-ollama-demo-session-review.md",
+            "repo:agent-knowledge-base/memory_agent/README.md"
+          ],
+          "recall": {
+            "1": 1.0,
+            "3": 1.0,
+            "5": 1.0,
+            "10": 1.0
+          },
+          "ndcg@10": 1.0,
+          "mrr": 1.0,
+          "first_hit_rank": 1
+        },
+        {
+          "id": "q009",
+          "query": "为什么在知识库条目还很少的时候就提前启用 embeddings 来做 agent 记忆包的语义检索？",
+          "relevant": [
+            "decisions/KB-0003-open-l3-embeddings-for-memory-package"
+          ],
+          "ranked": [
+            "decisions/KB-0003-open-l3-embeddings-for-memory-package",
+            "repo:agent-knowledge-base/README.md",
+            "repo:agent-knowledge-base/docs/adr/0005-agent-knowledge-base-product-shape.md",
+            "repo:agent-knowledge-base/memory_agent/README.md",
+            "repo:agent-knowledge-base/CONTEXT.md",
+            "decisions/KB-0001-knowledge-base-architecture",
+            "repo:agent-knowledge-base/memory_agent/skill/SKILL.md",
+            "repo:agent-knowledge-base/AGENTS.md",
+            "projects/agent-infra/vision",
+            "decisions/KB-0002-growth-control-and-retrieval-ladder"
+          ],
+          "recall": {
+            "1": 1.0,
+            "3": 1.0,
+            "5": 1.0,
+            "10": 1.0
+          },
+          "ndcg@10": 1.0,
+          "mrr": 1.0,
+          "first_hit_rank": 1
+        },
+        {
+          "id": "q010",
+          "query": "知识图谱三元组抽取的复现项目目前进展如何，有哪些关键决策记录？",
+          "relevant": [
+            "projects/kg-triplet-sft/overview",
+            "repo:kg-triplet-sft/CONTEXT.md",
+            "repo:kg-triplet-sft/README.md",
+            "repo:kg-triplet-sft/README.zh-CN.md"
+          ],
+          "ranked": [
+            "repo:kg-triplet-sft/CONTEXT.md",
+            "repo:kg-triplet-sft/AGENTS.md",
+            "projects/kg-triplet-sft/overview",
+            "repo:kg-triplet-sft/README.zh-CN.md",
+            "repo:kg-triplet-sft/docs/research/kg-ontology-patterns.md",
+            "repo:kg-triplet-sft/docs/diary/2026-09-11-consumer-pivot-graphrag-to-lightrag.md",
+            "repo:agent-knowledge-base/docs/NLP期末大作业_2026_基于大模型与RAG的领域AI助理.md",
+            "repo:agent-knowledge-base/README.md",
+            "repo:agent-knowledge-base/docs/adr/0011-index-consistency-generations-and-refresh.md",
+            "repo:agent-knowledge-base/docs/test_report.md"
+          ],
+          "recall": {
+            "1": 0.25,
+            "3": 0.5,
+            "5": 0.75,
+            "10": 0.75
+          },
+          "ndcg@10": 0.753698,
+          "mrr": 1.0,
+          "first_hit_rank": 1
+        },
+        {
+          "id": "q011",
+          "query": "LLaMA-Factory 0.9.5 在 Kaggle T4 上微调，transformers、accelerate、peft 该用哪些版本才不会冲突？",
+          "relevant": [
+            "topics/training-version-matrix"
+          ],
+          "ranked": [
+            "topics/training-version-matrix",
+            "topics/training-error-catalog",
+            "repo:kg-triplet-sft/docs/adr/0005-training-pipeline-decoupled.md",
+            "repo:kg-triplet-sft/docs/adr/0006-compute-platform-bf16-curve.md",
+            "repo:kg-triplet-sft/finetune/README_full.md",
+            "topics/cloud-gpu-platforms",
+            "repo:kg-triplet-sft/finetune/README_tracer.md",
+            "repo:kg-triplet-sft/docs/inference-optimization-brief.md",
+            "repo:agent-infra/docs/reviews/2026-08-08-ollama-demo-session-review.md",
+            "repo:agent-infra/docs/research/01-frameworks-component-abstraction.md"
+          ],
+          "recall": {
+            "1": 1.0,
+            "3": 1.0,
+            "5": 1.0,
+            "10": 1.0
+          },
+          "ndcg@10": 1.0,
+          "mrr": 1.0,
+          "first_hit_rank": 1
+        },
+        {
+          "id": "q012",
+          "query": "小模型微调租云GPU，Kaggle免费额度和国内按小时计费的4090哪个更划算、接入成本更低",
+          "relevant": [
+            "topics/cloud-gpu-platforms"
+          ],
+          "ranked": [
+            "topics/cloud-gpu-platforms",
+            "repo:kg-triplet-sft/docs/adr/0006-compute-platform-bf16-curve.md",
+            "projects/kg-triplet-sft/training",
+            "repo:kg-triplet-sft/docs/2026-09-07-capacity-line-repair.md",
+            "repo:agent-knowledge-base/experiments/rerank-latency/results.md",
+            "repo:kg-triplet-sft/docs/inference-optimization-brief.md",
+            "decisions/memory-package-shared-single-instance-topology",
+            "repo:agent-knowledge-base/memory_agent/eval/issue19_acceptance.md",
+            "repo:kg-triplet-sft/README.zh-CN.md",
+            "repo:agent-knowledge-base/docs/adr/0013-memory-agent-shared-single-instance-http-daemon.md"
+          ],
+          "recall": {
+            "1": 1.0,
+            "3": 1.0,
+            "5": 1.0,
+            "10": 1.0
+          },
+          "ndcg@10": 1.0,
+          "mrr": 1.0,
+          "first_hit_rank": 1
+        },
+        {
+          "id": "q013",
+          "query": "把训练流程从一个框架迁移到另一个框架之前，应该先核对哪些容易踩坑的细节？",
+          "relevant": [
+            "topics/agent-engineering-playbook"
+          ],
+          "ranked": [
+            "topics/agent-engineering-playbook",
+            "repo:agent-infra/docs/reviews/2026-08-08-ollama-demo-session-review.md",
+            "repo:agent-knowledge-base/docs/adr/0004-dev-discipline-ai-self-maintenance.md",
+            "repo:kg-triplet-sft/docs/diary/2026-09-11-consumer-pivot-graphrag-to-lightrag.md",
+            "repo:agent-knowledge-base/docs/adr/0012-memory-agent-skill.md",
+            "repo:agent-infra/docs/research/01-frameworks-component-abstraction.md",
+            "repo:kg-triplet-sft/docs/adr/0005-training-pipeline-decoupled.md",
+            "repo:agent-knowledge-base/docs/adr/0001-personal-rag-tool-target.md",
+            "repo:agent-knowledge-base/CONTEXT.md",
+            "repo:agent-knowledge-base/docs/report_draft.md"
+          ],
+          "recall": {
+            "1": 1.0,
+            "3": 1.0,
+            "5": 1.0,
+            "10": 1.0
+          },
+          "ndcg@10": 1.0,
+          "mrr": 1.0,
+          "first_hit_rank": 1
+        }
+      ],
+      "no_answer": [],
+      "run_hash": "4147ef6d5fb51842"
+    },
+    "bge-base": {
+      "model": "BAAI/bge-reranker-base",
+      "key": "bge-base",
+      "license": "MIT",
+      "role": "candidate",
+      "dtype": "torch.float32",
+      "max_seq_length": 512,
+      "load_s": 4.13,
+      "rss_delta_gb": 0.27,
+      "peak_rss_gb": 9.89,
+      "pairs": 196,
+      "latency_ms": {
+        "n": 12,
+        "mean": 3137.235,
+        "p50": 3090.66,
+        "p95": 3680.641,
+        "max": 3680.641,
+        "sd": 367.686
+      },
+      "pairs_per_s": 5.21,
+      "tokens": {
+        "pairs": 196,
+        "max": 361,
+        "mean": 283.2,
+        "over_cap": 0,
+        "cap": 512
+      },
+      "aggregate": {
+        "queries_total": 12,
+        "queries_answerable": 12,
+        "queries_no_answer": 0,
+        "recall": {
+          "1": 0.770833,
+          "3": 0.854167,
+          "5": 0.875,
+          "10": 0.979167
+        },
+        "ndcg@10": 0.877297,
+        "mrr": 0.875,
+        "misses": []
+      },
+      "per_query": [
+        {
+          "id": "q001",
+          "query": "在 Kaggle 上用 LLaMA-Factory 训练，模型初始化到一半就退出，返回码是 0 也没有任何报错，是什么原因？",
+          "relevant": [
+            "topics/training-error-catalog"
+          ],
+          "ranked": [
+            "topics/training-error-catalog",
+            "topics/training-version-matrix",
+            "repo:kg-triplet-sft/docs/adr/0005-training-pipeline-decoupled.md",
+            "repo:kg-triplet-sft/finetune/README_tracer.md",
+            "repo:kg-triplet-sft/docs/adr/0006-compute-platform-bf16-curve.md",
+            "repo:kg-triplet-sft/docs/evidence/base-baseline.md",
+            "repo:agent-knowledge-base/docs/exp2-review.md",
+            "repo:agent-knowledge-base/memory_agent/eval/baseline_A.md",
+            "repo:kg-triplet-sft/docs/inference-optimization-brief.md",
+            "repo:kg-triplet-sft/finetune/README_full.md"
+          ],
+          "recall": {
+            "1": 1.0,
+            "3": 1.0,
+            "5": 1.0,
+            "10": 1.0
+          },
+          "ndcg@10": 1.0,
+          "mrr": 1.0,
+          "first_hit_rank": 1
+        },
+        {
+          "id": "q003",
+          "query": "用 Python 写 stdio 的 MCP server，握手老是失败，是不是日志输出把协议通道弄坏了？",
+          "relevant": [
+            "topics/mcp-stdio-server-authoring"
+          ],
+          "ranked": [
+            "topics/mcp-stdio-server-authoring",
+            "repo:agent-knowledge-base/docs/adr/0008-memory-agent-read-path-mcp-and-corpus.md",
+            "repo:agent-knowledge-base/memory_agent/eval/dogfood_17.md",
+            "repo:agent-knowledge-base/memory_agent/eval/readonly_corpus_17_results.md",
+            "repo:agent-knowledge-base/memory_agent/eval/issue19_acceptance.md",
+            "decisions/memory-package-shared-single-instance-topology",
+            "repo:agent-knowledge-base/docs/adr/0013-memory-agent-shared-single-instance-http-daemon.md",
+            "repo:agent-knowledge-base/memory_agent/README.md",
+            "repo:agent-knowledge-base/docs/adr/0010-lifecycle-tools.md",
+            "repo:agent-infra/docs/adr/0006-assembler-as-coding-agent-subject.md"
+          ],
+          "recall": {
+            "1": 1.0,
+            "3": 1.0,
+            "5": 1.0,
+            "10": 1.0
+          },
+          "ndcg@10": 1.0,
+          "mrr": 1.0,
+          "first_hit_rank": 1
+        },
+        {
+          "id": "q004",
+          "query": "Agent-infra 项目最近的架构方向有什么变化，assembler 为什么会从 TS 服务改成 pi 配置？",
+          "relevant": [
+            "projects/agent-infra/overview"
+          ],
+          "ranked": [
+            "projects/agent-infra/overview",
+            "repo:agent-infra/docs/handoffs/2026-08-09-assembler-coding-agent-subject.md",
+            "repo:agent-infra/README.md",
+            "repo:agent-infra/docs/adr/0007-assembler-as-pure-pi-config.md",
+            "repo:agent-infra/CONTEXT.md",
+            "repo:agent-infra/docs/adr/0006-assembler-as-coding-agent-subject.md",
+            "repo:agent-infra/docs/adr/0003-hybrid-stack-ts-assembler-python-library.md",
+            "projects/agent-infra/vision",
+            "repo:agent-infra/docs/agent-design-skills.md",
+            "repo:agent-infra/AGENTS.md"
+          ],
+          "recall": {
+            "1": 1.0,
+            "3": 1.0,
+            "5": 1.0,
+            "10": 1.0
+          },
+          "ndcg@10": 1.0,
+          "mrr": 1.0,
+          "first_hit_rank": 1
+        },
+        {
+          "id": "q005",
+          "query": "agent-infra 这个 agent 工厂为什么选择基于 dsh 做插件套件，而不是 fork 或生成代码？",
+          "relevant": [
+            "projects/agent-infra/vision"
+          ],
+          "ranked": [
+            "projects/agent-infra/vision",
+            "repo:agent-infra/docs/adr/0002-agent-thin-container-pluggable-parts.md",
+            "repo:agent-infra/README.md",
+            "repo:agent-infra/CONTEXT.md",
+            "repo:agent-infra/AGENTS.md",
+            "repo:agent-infra/docs/research/01-frameworks-component-abstraction.md",
+            "repo:agent-infra/docs/research/02-recipe-to-demo-generation.md",
+            "projects/agent-infra/overview",
+            "repo:agent-infra/skills/agent-design/SKILL.md",
+            "repo:agent-infra/docs/adr/0006-assembler-as-coding-agent-subject.md"
+          ],
+          "recall": {
+            "1": 1.0,
+            "3": 1.0,
+            "5": 1.0,
+            "10": 1.0
+          },
+          "ndcg@10": 1.0,
+          "mrr": 1.0,
+          "first_hit_rank": 1
+        },
+        {
+          "id": "q006",
+          "query": "opencode 的 API key 用环境变量比直接写在配置里更安全吗",
+          "relevant": [
+            "topics/opencode-secrets-handling"
+          ],
+          "ranked": [
+            "topics/opencode-secrets-handling",
+            "repo:agent-knowledge-base/docs/adr/0012-memory-agent-skill.md",
+            "decisions/memory-package-shared-single-instance-topology",
+            "repo:agent-knowledge-base/memory_agent/eval/dogfood_17.md",
+            "repo:agent-infra/docs/adr/0006-assembler-as-coding-agent-subject.md",
+            "topics/opencode-proxy-and-network",
+            "decisions/kb-options-research-2026-09-12",
+            "repo:agent-infra/docs/research/02-recipe-to-demo-generation.md",
+            "repo:agent-infra/docs/adr/0003-hybrid-stack-ts-assembler-python-library.md",
+            "repo:agent-knowledge-base/CONTEXT.md"
+          ],
+          "recall": {
+            "1": 1.0,
+            "3": 1.0,
+            "5": 1.0,
+            "10": 1.0
+          },
+          "ndcg@10": 1.0,
+          "mrr": 1.0,
+          "first_hit_rank": 1
+        },
+        {
+          "id": "q007",
+          "query": "opencode 在 Windows 上总是网络超时，怎么让它走本地代理？",
+          "relevant": [
+            "topics/opencode-proxy-and-network"
+          ],
+          "ranked": [
+            "decisions/memory-package-shared-single-instance-topology",
+            "repo:agent-knowledge-base/docs/adr/0013-memory-agent-shared-single-instance-http-daemon.md",
+            "repo:agent-knowledge-base/memory_agent/eval/issue19_acceptance.md",
+            "repo:agent-knowledge-base/memory_agent/eval/dogfood_17.md",
+            "repo:agent-knowledge-base/docs/adr/0012-memory-agent-skill.md",
+            "topics/opencode-proxy-and-network",
+            "repo:agent-knowledge-base/docs/adr/0010-lifecycle-tools.md",
+            "repo:agent-knowledge-base/docs/adr/0008-memory-agent-read-path-mcp-and-corpus.md",
+            "decisions/kb-options-research-2026-09-12",
+            "topics/opencode-secrets-handling"
+          ],
+          "recall": {
+            "1": 0.0,
+            "3": 0.0,
+            "5": 0.0,
+            "10": 1.0
+          },
+          "ndcg@10": 0.356207,
+          "mrr": 0.166667,
+          "first_hit_rank": 6
+        },
+        {
+          "id": "q008",
+          "query": "Qdrant 本地模式为什么删除集合后重建还会带出旧数据，而且同一个目录不能被其他客户端打开？",
+          "relevant": [
+            "topics/qdrant-local-mode-semantics"
+          ],
+          "ranked": [
+            "topics/qdrant-local-mode-semantics",
+            "repo:agent-knowledge-base/docs/adr/0011-index-consistency-generations-and-refresh.md",
+            "repo:agent-knowledge-base/docs/adr/0007-repo-layout-and-rename.md",
+            "repo:agent-knowledge-base/docs/adr/0010-lifecycle-tools.md",
+            "repo:agent-knowledge-base/memory_agent/eval/write_path_sandbox_results.md",
+            "repo:agent-knowledge-base/docs/adr/0002-version-baseline-reset.md",
+            "repo:agent-knowledge-base/docs/adr/0009-write-gateway-commit-scope-and-dedup.md",
+            "repo:agent-knowledge-base/docs/adr/0006-memory-architecture-markdown-source-and-derived-index.md",
+            "repo:agent-knowledge-base/docs/adr/0014-readonly-corpus-labeled-repos.md",
+            "decisions/KB-0002-growth-control-and-retrieval-ladder"
+          ],
+          "recall": {
+            "1": 1.0,
+            "3": 1.0,
+            "5": 1.0,
+            "10": 1.0
+          },
+          "ndcg@10": 1.0,
+          "mrr": 1.0,
+          "first_hit_rank": 1
+        },
+        {
+          "id": "q009",
+          "query": "为什么在知识库条目还很少的时候就提前启用 embeddings 来做 agent 记忆包的语义检索？",
+          "relevant": [
+            "decisions/KB-0003-open-l3-embeddings-for-memory-package"
+          ],
+          "ranked": [
+            "repo:agent-knowledge-base/memory_agent/skill/SKILL.md",
+            "repo:agent-knowledge-base/memory_agent/README.md",
+            "decisions/KB-0003-open-l3-embeddings-for-memory-package",
+            "repo:agent-knowledge-base/docs/adr/0005-agent-knowledge-base-product-shape.md",
+            "repo:agent-knowledge-base/README.md",
+            "repo:agent-knowledge-base/CONTEXT.md",
+            "repo:agent-knowledge-base/AGENTS.md",
+            "projects/agent-infra/vision",
+            "repo:agent-infra/CONTEXT.md",
+            "decisions/KB-0001-knowledge-base-architecture"
+          ],
+          "recall": {
+            "1": 0.0,
+            "3": 1.0,
+            "5": 1.0,
+            "10": 1.0
+          },
+          "ndcg@10": 0.5,
+          "mrr": 0.333333,
+          "first_hit_rank": 3
+        },
+        {
+          "id": "q010",
+          "query": "知识图谱三元组抽取的复现项目目前进展如何，有哪些关键决策记录？",
+          "relevant": [
+            "projects/kg-triplet-sft/overview",
+            "repo:kg-triplet-sft/CONTEXT.md",
+            "repo:kg-triplet-sft/README.md",
+            "repo:kg-triplet-sft/README.zh-CN.md"
+          ],
+          "ranked": [
+            "repo:kg-triplet-sft/README.zh-CN.md",
+            "repo:agent-knowledge-base/docs/adr/0011-index-consistency-generations-and-refresh.md",
+            "repo:kg-triplet-sft/docs/research/kg-ontology-patterns.md",
+            "repo:kg-triplet-sft/CONTEXT.md",
+            "repo:kg-triplet-sft/AGENTS.md",
+            "repo:agent-knowledge-base/docs/adr/0010-lifecycle-tools.md",
+            "repo:agent-knowledge-base/README.md",
+            "repo:kg-triplet-sft/docs/diary/2026-09-11-consumer-pivot-graphrag-to-lightrag.md",
+            "repo:agent-knowledge-base/docs/adr/0009-write-gateway-commit-scope-and-dedup.md",
+            "projects/kg-triplet-sft/overview"
+          ],
+          "recall": {
+            "1": 0.25,
+            "3": 0.25,
+            "5": 0.5,
+            "10": 0.75
+          },
+          "ndcg@10": 0.671353,
+          "mrr": 1.0,
+          "first_hit_rank": 1
+        },
+        {
+          "id": "q011",
+          "query": "LLaMA-Factory 0.9.5 在 Kaggle T4 上微调，transformers、accelerate、peft 该用哪些版本才不会冲突？",
+          "relevant": [
+            "topics/training-version-matrix"
+          ],
+          "ranked": [
+            "topics/training-version-matrix",
+            "topics/training-error-catalog",
+            "topics/cloud-gpu-platforms",
+            "repo:kg-triplet-sft/finetune/README_tracer.md",
+            "repo:kg-triplet-sft/docs/adr/0005-training-pipeline-decoupled.md",
+            "repo:kg-triplet-sft/finetune/README_full.md",
+            "repo:agent-infra/docs/research/01-frameworks-component-abstraction.md",
+            "repo:kg-triplet-sft/docs/inference-optimization-brief.md",
+            "repo:agent-infra/docs/reviews/2026-08-08-ollama-demo-session-review.md",
+            "repo:kg-triplet-sft/docs/adr/0006-compute-platform-bf16-curve.md"
+          ],
+          "recall": {
+            "1": 1.0,
+            "3": 1.0,
+            "5": 1.0,
+            "10": 1.0
+          },
+          "ndcg@10": 1.0,
+          "mrr": 1.0,
+          "first_hit_rank": 1
+        },
+        {
+          "id": "q012",
+          "query": "小模型微调租云GPU，Kaggle免费额度和国内按小时计费的4090哪个更划算、接入成本更低",
+          "relevant": [
+            "topics/cloud-gpu-platforms"
+          ],
+          "ranked": [
+            "topics/cloud-gpu-platforms",
+            "repo:kg-triplet-sft/docs/adr/0006-compute-platform-bf16-curve.md",
+            "projects/kg-triplet-sft/training",
+            "repo:kg-triplet-sft/docs/inference-optimization-brief.md",
+            "repo:kg-triplet-sft/docs/2026-09-07-capacity-line-repair.md",
+            "repo:kg-triplet-sft/README.zh-CN.md",
+            "repo:agent-knowledge-base/experiments/rerank-latency/results.md",
+            "decisions/memory-package-shared-single-instance-topology",
+            "repo:kg-triplet-sft/docs/diary/2026-09-11-consumer-pivot-graphrag-to-lightrag.md",
+            "repo:agent-knowledge-base/docs/NLP期末大作业_2026_基于大模型与RAG的领域AI助理.md"
+          ],
+          "recall": {
+            "1": 1.0,
+            "3": 1.0,
+            "5": 1.0,
+            "10": 1.0
+          },
+          "ndcg@10": 1.0,
+          "mrr": 1.0,
+          "first_hit_rank": 1
+        },
+        {
+          "id": "q013",
+          "query": "把训练流程从一个框架迁移到另一个框架之前，应该先核对哪些容易踩坑的细节？",
+          "relevant": [
+            "topics/agent-engineering-playbook"
+          ],
+          "ranked": [
+            "topics/agent-engineering-playbook",
+            "repo:agent-knowledge-base/memory_agent/eval/baseline_A.md",
+            "repo:agent-knowledge-base/docs/adr/0012-memory-agent-skill.md",
+            "repo:agent-infra/docs/research/01-frameworks-component-abstraction.md",
+            "repo:agent-knowledge-base/CONTEXT.md",
+            "repo:agent-knowledge-base/docs/adr/0001-personal-rag-tool-target.md",
+            "repo:agent-knowledge-base/docs/adr/0004-dev-discipline-ai-self-maintenance.md",
+            "repo:agent-knowledge-base/docs/report_draft.md",
+            "repo:agent-knowledge-base/docs/adr/0010-lifecycle-tools.md",
+            "repo:kg-triplet-sft/docs/diary/2026-09-11-consumer-pivot-graphrag-to-lightrag.md"
+          ],
+          "recall": {
+            "1": 1.0,
+            "3": 1.0,
+            "5": 1.0,
+            "10": 1.0
+          },
+          "ndcg@10": 1.0,
+          "mrr": 1.0,
+          "first_hit_rank": 1
+        }
+      ],
+      "no_answer": [],
+      "run_hash": "dd6ff30519ffd9bc"
+    },
+    "gte-multilingual": {
+      "model": "Alibaba-NLP/gte-multilingual-reranker-base",
+      "key": "gte-multilingual",
+      "license": "apache-2.0",
+      "role": "candidate",
+      "dtype": "torch.float32",
+      "max_seq_length": 512,
+      "load_s": 4.02,
+      "rss_delta_gb": 1.527,
+      "peak_rss_gb": 9.89,
+      "pairs": 196,
+      "latency_ms": {
+        "n": 12,
+        "mean": 4659.068,
+        "p50": 4396.088,
+        "p95": 6423.61,
+        "max": 6423.61,
+        "sd": 884.85
+      },
+      "pairs_per_s": 3.51,
+      "tokens": {
+        "pairs": 196,
+        "max": 361,
+        "mean": 283.1,
+        "over_cap": 0,
+        "cap": 512
+      },
+      "aggregate": {
+        "queries_total": 12,
+        "queries_answerable": 12,
+        "queries_no_answer": 0,
+        "recall": {
+          "1": 0.854167,
+          "3": 0.9375,
+          "5": 0.9375,
+          "10": 0.979167
+        },
+        "ndcg@10": 0.929964,
+        "mrr": 0.944444,
+        "misses": []
+      },
+      "per_query": [
+        {
+          "id": "q001",
+          "query": "在 Kaggle 上用 LLaMA-Factory 训练，模型初始化到一半就退出，返回码是 0 也没有任何报错，是什么原因？",
+          "relevant": [
+            "topics/training-error-catalog"
+          ],
+          "ranked": [
+            "topics/training-error-catalog",
+            "repo:kg-triplet-sft/docs/adr/0005-training-pipeline-decoupled.md",
+            "topics/training-version-matrix",
+            "repo:kg-triplet-sft/docs/adr/0006-compute-platform-bf16-curve.md",
+            "repo:agent-knowledge-base/docs/exp2-review.md",
+            "repo:kg-triplet-sft/docs/evidence/base-baseline.md",
+            "repo:kg-triplet-sft/docs/inference-optimization-brief.md",
+            "repo:agent-knowledge-base/CONTEXT.md",
+            "repo:kg-triplet-sft/docs/diary/2026-09-11-consumer-pivot-graphrag-to-lightrag.md",
+            "repo:kg-triplet-sft/finetune/README_full.md"
+          ],
+          "recall": {
+            "1": 1.0,
+            "3": 1.0,
+            "5": 1.0,
+            "10": 1.0
+          },
+          "ndcg@10": 1.0,
+          "mrr": 1.0,
+          "first_hit_rank": 1
+        },
+        {
+          "id": "q003",
+          "query": "用 Python 写 stdio 的 MCP server，握手老是失败，是不是日志输出把协议通道弄坏了？",
+          "relevant": [
+            "topics/mcp-stdio-server-authoring"
+          ],
+          "ranked": [
+            "topics/mcp-stdio-server-authoring",
+            "repo:agent-knowledge-base/docs/adr/0008-memory-agent-read-path-mcp-and-corpus.md",
+            "repo:agent-knowledge-base/memory_agent/eval/issue19_acceptance.md",
+            "repo:agent-knowledge-base/docs/adr/0013-memory-agent-shared-single-instance-http-daemon.md",
+            "repo:agent-knowledge-base/memory_agent/eval/dogfood_17.md",
+            "repo:agent-knowledge-base/memory_agent/eval/readonly_corpus_17_results.md",
+            "decisions/memory-package-shared-single-instance-topology",
+            "repo:agent-knowledge-base/memory_agent/README.md",
+            "repo:agent-knowledge-base/docs/adr/0010-lifecycle-tools.md",
+            "repo:agent-infra/docs/adr/0006-assembler-as-coding-agent-subject.md"
+          ],
+          "recall": {
+            "1": 1.0,
+            "3": 1.0,
+            "5": 1.0,
+            "10": 1.0
+          },
+          "ndcg@10": 1.0,
+          "mrr": 1.0,
+          "first_hit_rank": 1
+        },
+        {
+          "id": "q004",
+          "query": "Agent-infra 项目最近的架构方向有什么变化，assembler 为什么会从 TS 服务改成 pi 配置？",
+          "relevant": [
+            "projects/agent-infra/overview"
+          ],
+          "ranked": [
+            "projects/agent-infra/overview",
+            "repo:agent-infra/docs/handoffs/2026-08-09-assembler-coding-agent-subject.md",
+            "repo:agent-infra/docs/adr/0007-assembler-as-pure-pi-config.md",
+            "repo:agent-infra/README.md",
+            "repo:agent-infra/docs/adr/0006-assembler-as-coding-agent-subject.md",
+            "repo:agent-infra/CONTEXT.md",
+            "projects/agent-infra/vision",
+            "repo:agent-infra/AGENTS.md",
+            "repo:agent-infra/docs/research/01-frameworks-component-abstraction.md",
+            "repo:agent-infra/docs/adr/0003-hybrid-stack-ts-assembler-python-library.md"
+          ],
+          "recall": {
+            "1": 1.0,
+            "3": 1.0,
+            "5": 1.0,
+            "10": 1.0
+          },
+          "ndcg@10": 1.0,
+          "mrr": 1.0,
+          "first_hit_rank": 1
+        },
+        {
+          "id": "q005",
+          "query": "agent-infra 这个 agent 工厂为什么选择基于 dsh 做插件套件，而不是 fork 或生成代码？",
+          "relevant": [
+            "projects/agent-infra/vision"
+          ],
+          "ranked": [
+            "projects/agent-infra/vision",
+            "projects/agent-infra/overview",
+            "repo:agent-infra/README.md",
+            "repo:agent-infra/AGENTS.md",
+            "repo:agent-infra/CONTEXT.md",
+            "repo:agent-infra/docs/adr/0002-agent-thin-container-pluggable-parts.md",
+            "repo:agent-infra/docs/research/02-recipe-to-demo-generation.md",
+            "repo:agent-infra/docs/research/01-frameworks-component-abstraction.md",
+            "repo:agent-infra/docs/agent-design-skills.md",
+            "repo:agent-infra/docs/adr/0006-assembler-as-coding-agent-subject.md"
+          ],
+          "recall": {
+            "1": 1.0,
+            "3": 1.0,
+            "5": 1.0,
+            "10": 1.0
+          },
+          "ndcg@10": 1.0,
+          "mrr": 1.0,
+          "first_hit_rank": 1
+        },
+        {
+          "id": "q006",
+          "query": "opencode 的 API key 用环境变量比直接写在配置里更安全吗",
+          "relevant": [
+            "topics/opencode-secrets-handling"
+          ],
+          "ranked": [
+            "topics/opencode-secrets-handling",
+            "decisions/kb-options-research-2026-09-12",
+            "topics/opencode-proxy-and-network",
+            "repo:agent-knowledge-base/docs/adr/0012-memory-agent-skill.md",
+            "decisions/memory-package-shared-single-instance-topology",
+            "repo:agent-knowledge-base/memory_agent/eval/dogfood_17.md",
+            "repo:agent-infra/docs/adr/0003-hybrid-stack-ts-assembler-python-library.md",
+            "repo:agent-infra/docs/research/02-recipe-to-demo-generation.md",
+            "repo:agent-infra/docs/adr/0006-assembler-as-coding-agent-subject.md",
+            "repo:agent-knowledge-base/docs/adr/0004-dev-discipline-ai-self-maintenance.md"
+          ],
+          "recall": {
+            "1": 1.0,
+            "3": 1.0,
+            "5": 1.0,
+            "10": 1.0
+          },
+          "ndcg@10": 1.0,
+          "mrr": 1.0,
+          "first_hit_rank": 1
+        },
+        {
+          "id": "q007",
+          "query": "opencode 在 Windows 上总是网络超时，怎么让它走本地代理？",
+          "relevant": [
+            "topics/opencode-proxy-and-network"
+          ],
+          "ranked": [
+            "topics/opencode-proxy-and-network",
+            "repo:agent-knowledge-base/docs/adr/0013-memory-agent-shared-single-instance-http-daemon.md",
+            "decisions/memory-package-shared-single-instance-topology",
+            "decisions/kb-options-research-2026-09-12",
+            "repo:agent-knowledge-base/memory_agent/eval/issue19_acceptance.md",
+            "repo:agent-knowledge-base/memory_agent/eval/dogfood_17.md",
+            "topics/opencode-secrets-handling",
+            "repo:agent-knowledge-base/docs/adr/0012-memory-agent-skill.md",
+            "repo:agent-knowledge-base/docs/adr/0008-memory-agent-read-path-mcp-and-corpus.md",
+            "repo:agent-knowledge-base/docs/adr/0010-lifecycle-tools.md"
+          ],
+          "recall": {
+            "1": 1.0,
+            "3": 1.0,
+            "5": 1.0,
+            "10": 1.0
+          },
+          "ndcg@10": 1.0,
+          "mrr": 1.0,
+          "first_hit_rank": 1
+        },
+        {
+          "id": "q008",
+          "query": "Qdrant 本地模式为什么删除集合后重建还会带出旧数据，而且同一个目录不能被其他客户端打开？",
+          "relevant": [
+            "topics/qdrant-local-mode-semantics"
+          ],
+          "ranked": [
+            "topics/qdrant-local-mode-semantics",
+            "repo:agent-knowledge-base/docs/adr/0011-index-consistency-generations-and-refresh.md",
+            "repo:agent-knowledge-base/docs/adr/0009-write-gateway-commit-scope-and-dedup.md",
+            "repo:agent-knowledge-base/docs/adr/0002-version-baseline-reset.md",
+            "repo:agent-knowledge-base/docs/adr/0014-readonly-corpus-labeled-repos.md",
+            "repo:agent-knowledge-base/docs/adr/0010-lifecycle-tools.md",
+            "repo:agent-knowledge-base/memory_agent/README.md",
+            "repo:kg-triplet-sft/docs/research/kg-ontology-patterns.md",
+            "repo:agent-knowledge-base/docs/adr/0007-repo-layout-and-rename.md",
+            "repo:agent-knowledge-base/docs/adr/0006-memory-architecture-markdown-source-and-derived-index.md"
+          ],
+          "recall": {
+            "1": 1.0,
+            "3": 1.0,
+            "5": 1.0,
+            "10": 1.0
+          },
+          "ndcg@10": 1.0,
+          "mrr": 1.0,
+          "first_hit_rank": 1
+        },
+        {
+          "id": "q009",
+          "query": "为什么在知识库条目还很少的时候就提前启用 embeddings 来做 agent 记忆包的语义检索？",
+          "relevant": [
+            "decisions/KB-0003-open-l3-embeddings-for-memory-package"
+          ],
+          "ranked": [
+            "repo:agent-knowledge-base/memory_agent/README.md",
+            "repo:agent-knowledge-base/README.md",
+            "decisions/KB-0003-open-l3-embeddings-for-memory-package",
+            "repo:agent-knowledge-base/docs/adr/0005-agent-knowledge-base-product-shape.md",
+            "repo:agent-knowledge-base/memory_agent/skill/SKILL.md",
+            "repo:agent-knowledge-base/CONTEXT.md",
+            "decisions/KB-0001-knowledge-base-architecture",
+            "projects/agent-infra/vision",
+            "repo:agent-knowledge-base/AGENTS.md",
+            "repo:agent-infra/CONTEXT.md"
+          ],
+          "recall": {
+            "1": 0.0,
+            "3": 1.0,
+            "5": 1.0,
+            "10": 1.0
+          },
+          "ndcg@10": 0.5,
+          "mrr": 0.333333,
+          "first_hit_rank": 3
+        },
+        {
+          "id": "q010",
+          "query": "知识图谱三元组抽取的复现项目目前进展如何，有哪些关键决策记录？",
+          "relevant": [
+            "projects/kg-triplet-sft/overview",
+            "repo:kg-triplet-sft/CONTEXT.md",
+            "repo:kg-triplet-sft/README.md",
+            "repo:kg-triplet-sft/README.zh-CN.md"
+          ],
+          "ranked": [
+            "repo:kg-triplet-sft/CONTEXT.md",
+            "repo:kg-triplet-sft/AGENTS.md",
+            "repo:kg-triplet-sft/docs/diary/2026-09-11-consumer-pivot-graphrag-to-lightrag.md",
+            "repo:agent-knowledge-base/README.md",
+            "repo:kg-triplet-sft/docs/research/kg-ontology-patterns.md",
+            "projects/kg-triplet-sft/overview",
+            "repo:kg-triplet-sft/README.zh-CN.md",
+            "repo:agent-knowledge-base/docs/adr/0011-index-consistency-generations-and-refresh.md",
+            "repo:agent-knowledge-base/memory_agent/eval/dogfood_17.md",
+            "repo:agent-knowledge-base/docs/adr/0010-lifecycle-tools.md"
+          ],
+          "recall": {
+            "1": 0.25,
+            "3": 0.25,
+            "5": 0.25,
+            "10": 0.75
+          },
+          "ndcg@10": 0.659563,
+          "mrr": 1.0,
+          "first_hit_rank": 1
+        },
+        {
+          "id": "q011",
+          "query": "LLaMA-Factory 0.9.5 在 Kaggle T4 上微调，transformers、accelerate、peft 该用哪些版本才不会冲突？",
+          "relevant": [
+            "topics/training-version-matrix"
+          ],
+          "ranked": [
+            "topics/training-version-matrix",
+            "repo:kg-triplet-sft/docs/adr/0005-training-pipeline-decoupled.md",
+            "topics/training-error-catalog",
+            "repo:kg-triplet-sft/docs/adr/0006-compute-platform-bf16-curve.md",
+            "repo:kg-triplet-sft/finetune/README_full.md",
+            "topics/cloud-gpu-platforms",
+            "repo:kg-triplet-sft/docs/inference-optimization-brief.md",
+            "repo:kg-triplet-sft/finetune/README_tracer.md",
+            "repo:agent-infra/docs/research/01-frameworks-component-abstraction.md",
+            "repo:agent-infra/docs/reviews/2026-08-08-ollama-demo-session-review.md"
+          ],
+          "recall": {
+            "1": 1.0,
+            "3": 1.0,
+            "5": 1.0,
+            "10": 1.0
+          },
+          "ndcg@10": 1.0,
+          "mrr": 1.0,
+          "first_hit_rank": 1
+        },
+        {
+          "id": "q012",
+          "query": "小模型微调租云GPU，Kaggle免费额度和国内按小时计费的4090哪个更划算、接入成本更低",
+          "relevant": [
+            "topics/cloud-gpu-platforms"
+          ],
+          "ranked": [
+            "topics/cloud-gpu-platforms",
+            "projects/kg-triplet-sft/training",
+            "repo:kg-triplet-sft/docs/adr/0006-compute-platform-bf16-curve.md",
+            "repo:kg-triplet-sft/docs/inference-optimization-brief.md",
+            "repo:agent-knowledge-base/experiments/rerank-latency/results.md",
+            "repo:kg-triplet-sft/docs/2026-09-07-capacity-line-repair.md",
+            "repo:kg-triplet-sft/README.zh-CN.md",
+            "repo:agent-knowledge-base/docs/NLP期末大作业_2026_基于大模型与RAG的领域AI助理.md",
+            "decisions/memory-package-shared-single-instance-topology",
+            "repo:kg-triplet-sft/docs/diary/2026-09-11-consumer-pivot-graphrag-to-lightrag.md"
+          ],
+          "recall": {
+            "1": 1.0,
+            "3": 1.0,
+            "5": 1.0,
+            "10": 1.0
+          },
+          "ndcg@10": 1.0,
+          "mrr": 1.0,
+          "first_hit_rank": 1
+        },
+        {
+          "id": "q013",
+          "query": "把训练流程从一个框架迁移到另一个框架之前，应该先核对哪些容易踩坑的细节？",
+          "relevant": [
+            "topics/agent-engineering-playbook"
+          ],
+          "ranked": [
+            "topics/agent-engineering-playbook",
+            "repo:kg-triplet-sft/docs/diary/2026-09-11-consumer-pivot-graphrag-to-lightrag.md",
+            "repo:agent-knowledge-base/docs/adr/0012-memory-agent-skill.md",
+            "repo:agent-knowledge-base/docs/adr/0004-dev-discipline-ai-self-maintenance.md",
+            "repo:kg-triplet-sft/AGENTS.md",
+            "repo:agent-infra/docs/reviews/2026-08-08-ollama-demo-session-review.md",
+            "repo:kg-triplet-sft/docs/adr/0005-training-pipeline-decoupled.md",
+            "repo:agent-knowledge-base/memory_agent/eval/baseline_A.md",
+            "repo:agent-knowledge-base/docs/adr/0001-personal-rag-tool-target.md",
+            "repo:agent-infra/docs/reviews/2026-08-09-adr0005-refactor-review.md"
+          ],
+          "recall": {
+            "1": 1.0,
+            "3": 1.0,
+            "5": 1.0,
+            "10": 1.0
+          },
+          "ndcg@10": 1.0,
+          "mrr": 1.0,
+          "first_hit_rank": 1
+        }
+      ],
+      "no_answer": [],
+      "run_hash": "05ac5488e47be793"
+    },
+    "jina-v2-torch": {
+      "model": "jinaai/jina-reranker-v2-base-multilingual",
+      "key": "jina-v2-torch",
+      "license": "CC-BY-NC-4.0",
+      "role": "candidate",
+      "dtype": "torch.float32",
+      "max_seq_length": 512,
+      "load_s": 4.21,
+      "rss_delta_gb": 1.379,
+      "peak_rss_gb": 9.89,
+      "pairs": 196,
+      "latency_ms": {
+        "n": 12,
+        "mean": 3810.501,
+        "p50": 3889.264,
+        "p95": 4423.426,
+        "max": 4423.426,
+        "sd": 425.268
+      },
+      "pairs_per_s": 4.29,
+      "tokens": {
+        "pairs": 196,
+        "max": 361,
+        "mean": 283.1,
+        "over_cap": 0,
+        "cap": 512
+      },
+      "aggregate": {
+        "queries_total": 12,
+        "queries_answerable": 12,
+        "queries_no_answer": 0,
+        "recall": {
+          "1": 0.9375,
+          "3": 0.958333,
+          "5": 0.958333,
+          "10": 0.979167
+        },
+        "ndcg@10": 0.981312,
+        "mrr": 1.0,
+        "misses": []
+      },
+      "per_query": [
+        {
+          "id": "q001",
+          "query": "在 Kaggle 上用 LLaMA-Factory 训练，模型初始化到一半就退出，返回码是 0 也没有任何报错，是什么原因？",
+          "relevant": [
+            "topics/training-error-catalog"
+          ],
+          "ranked": [
+            "topics/training-error-catalog",
+            "topics/training-version-matrix",
+            "repo:kg-triplet-sft/docs/adr/0005-training-pipeline-decoupled.md",
+            "repo:kg-triplet-sft/docs/adr/0006-compute-platform-bf16-curve.md",
+            "repo:kg-triplet-sft/docs/evidence/base-baseline.md",
+            "repo:kg-triplet-sft/finetune/README_tracer.md",
+            "repo:kg-triplet-sft/finetune/README_full.md",
+            "repo:kg-triplet-sft/docs/inference-optimization-brief.md",
+            "repo:agent-knowledge-base/CONTEXT.md",
+            "repo:agent-knowledge-base/docs/exp2-review.md"
+          ],
+          "recall": {
+            "1": 1.0,
+            "3": 1.0,
+            "5": 1.0,
+            "10": 1.0
+          },
+          "ndcg@10": 1.0,
+          "mrr": 1.0,
+          "first_hit_rank": 1
+        },
+        {
+          "id": "q003",
+          "query": "用 Python 写 stdio 的 MCP server，握手老是失败，是不是日志输出把协议通道弄坏了？",
+          "relevant": [
+            "topics/mcp-stdio-server-authoring"
+          ],
+          "ranked": [
+            "topics/mcp-stdio-server-authoring",
+            "repo:agent-knowledge-base/docs/adr/0008-memory-agent-read-path-mcp-and-corpus.md",
+            "repo:agent-knowledge-base/memory_agent/eval/dogfood_17.md",
+            "decisions/memory-package-shared-single-instance-topology",
+            "repo:agent-knowledge-base/memory_agent/eval/issue19_acceptance.md",
+            "repo:agent-knowledge-base/memory_agent/eval/readonly_corpus_17_results.md",
+            "repo:agent-knowledge-base/docs/adr/0013-memory-agent-shared-single-instance-http-daemon.md",
+            "repo:agent-knowledge-base/memory_agent/README.md",
+            "repo:agent-knowledge-base/docs/adr/0010-lifecycle-tools.md",
+            "repo:agent-infra/docs/adr/0006-assembler-as-coding-agent-subject.md"
+          ],
+          "recall": {
+            "1": 1.0,
+            "3": 1.0,
+            "5": 1.0,
+            "10": 1.0
+          },
+          "ndcg@10": 1.0,
+          "mrr": 1.0,
+          "first_hit_rank": 1
+        },
+        {
+          "id": "q004",
+          "query": "Agent-infra 项目最近的架构方向有什么变化，assembler 为什么会从 TS 服务改成 pi 配置？",
+          "relevant": [
+            "projects/agent-infra/overview"
+          ],
+          "ranked": [
+            "projects/agent-infra/overview",
+            "projects/agent-infra/vision",
+            "repo:agent-infra/docs/adr/0007-assembler-as-pure-pi-config.md",
+            "repo:agent-infra/docs/handoffs/2026-08-09-assembler-coding-agent-subject.md",
+            "repo:agent-infra/docs/adr/0003-hybrid-stack-ts-assembler-python-library.md",
+            "repo:agent-infra/AGENTS.md",
+            "repo:agent-infra/README.md",
+            "repo:agent-infra/docs/adr/0006-assembler-as-coding-agent-subject.md",
+            "repo:agent-infra/CONTEXT.md",
+            "repo:agent-infra/docs/agent-design-skills.md"
+          ],
+          "recall": {
+            "1": 1.0,
+            "3": 1.0,
+            "5": 1.0,
+            "10": 1.0
+          },
+          "ndcg@10": 1.0,
+          "mrr": 1.0,
+          "first_hit_rank": 1
+        },
+        {
+          "id": "q005",
+          "query": "agent-infra 这个 agent 工厂为什么选择基于 dsh 做插件套件，而不是 fork 或生成代码？",
+          "relevant": [
+            "projects/agent-infra/vision"
+          ],
+          "ranked": [
+            "projects/agent-infra/vision",
+            "projects/agent-infra/overview",
+            "repo:agent-infra/AGENTS.md",
+            "repo:agent-infra/docs/adr/0002-agent-thin-container-pluggable-parts.md",
+            "repo:agent-infra/README.md",
+            "repo:agent-infra/CONTEXT.md",
+            "repo:agent-infra/docs/research/02-recipe-to-demo-generation.md",
+            "repo:agent-infra/docs/adr/0003-hybrid-stack-ts-assembler-python-library.md",
+            "repo:agent-infra/docs/adr/0006-assembler-as-coding-agent-subject.md",
+            "repo:agent-infra/docs/research/01-frameworks-component-abstraction.md"
+          ],
+          "recall": {
+            "1": 1.0,
+            "3": 1.0,
+            "5": 1.0,
+            "10": 1.0
+          },
+          "ndcg@10": 1.0,
+          "mrr": 1.0,
+          "first_hit_rank": 1
+        },
+        {
+          "id": "q006",
+          "query": "opencode 的 API key 用环境变量比直接写在配置里更安全吗",
+          "relevant": [
+            "topics/opencode-secrets-handling"
+          ],
+          "ranked": [
+            "topics/opencode-secrets-handling",
+            "repo:agent-infra/docs/adr/0003-hybrid-stack-ts-assembler-python-library.md",
+            "repo:agent-knowledge-base/memory_agent/eval/dogfood_17.md",
+            "repo:agent-infra/docs/adr/0006-assembler-as-coding-agent-subject.md",
+            "decisions/kb-options-research-2026-09-12",
+            "repo:agent-knowledge-base/CONTEXT.md",
+            "topics/opencode-proxy-and-network",
+            "decisions/memory-package-shared-single-instance-topology",
+            "repo:agent-infra/README.md",
+            "repo:agent-knowledge-base/docs/adr/0012-memory-agent-skill.md"
+          ],
+          "recall": {
+            "1": 1.0,
+            "3": 1.0,
+            "5": 1.0,
+            "10": 1.0
+          },
+          "ndcg@10": 1.0,
+          "mrr": 1.0,
+          "first_hit_rank": 1
+        },
+        {
+          "id": "q007",
+          "query": "opencode 在 Windows 上总是网络超时，怎么让它走本地代理？",
+          "relevant": [
+            "topics/opencode-proxy-and-network"
+          ],
+          "ranked": [
+            "topics/opencode-proxy-and-network",
+            "decisions/memory-package-shared-single-instance-topology",
+            "repo:agent-knowledge-base/memory_agent/eval/dogfood_17.md",
+            "repo:agent-knowledge-base/docs/adr/0013-memory-agent-shared-single-instance-http-daemon.md",
+            "repo:agent-knowledge-base/memory_agent/eval/issue19_acceptance.md",
+            "decisions/kb-options-research-2026-09-12",
+            "topics/opencode-secrets-handling",
+            "repo:agent-knowledge-base/docs/adr/0010-lifecycle-tools.md",
+            "topics/huggingface-token-and-publishing",
+            "repo:agent-knowledge-base/experiments/rerank-latency/README.md"
+          ],
+          "recall": {
+            "1": 1.0,
+            "3": 1.0,
+            "5": 1.0,
+            "10": 1.0
+          },
+          "ndcg@10": 1.0,
+          "mrr": 1.0,
+          "first_hit_rank": 1
+        },
+        {
+          "id": "q008",
+          "query": "Qdrant 本地模式为什么删除集合后重建还会带出旧数据，而且同一个目录不能被其他客户端打开？",
+          "relevant": [
+            "topics/qdrant-local-mode-semantics"
+          ],
+          "ranked": [
+            "topics/qdrant-local-mode-semantics",
+            "repo:agent-knowledge-base/docs/adr/0011-index-consistency-generations-and-refresh.md",
+            "repo:agent-knowledge-base/docs/adr/0007-repo-layout-and-rename.md",
+            "repo:agent-infra/docs/reviews/2026-08-08-ollama-demo-session-review.md",
+            "repo:agent-knowledge-base/docs/adr/0006-memory-architecture-markdown-source-and-derived-index.md",
+            "decisions/KB-0002-growth-control-and-retrieval-ladder",
+            "repo:agent-knowledge-base/memory_agent/README.md",
+            "repo:agent-knowledge-base/docs/adr/0014-readonly-corpus-labeled-repos.md",
+            "repo:agent-knowledge-base/docs/adr/0002-version-baseline-reset.md",
+            "repo:agent-knowledge-base/memory_agent/eval/issue19_acceptance.md"
+          ],
+          "recall": {
+            "1": 1.0,
+            "3": 1.0,
+            "5": 1.0,
+            "10": 1.0
+          },
+          "ndcg@10": 1.0,
+          "mrr": 1.0,
+          "first_hit_rank": 1
+        },
+        {
+          "id": "q009",
+          "query": "为什么在知识库条目还很少的时候就提前启用 embeddings 来做 agent 记忆包的语义检索？",
+          "relevant": [
+            "decisions/KB-0003-open-l3-embeddings-for-memory-package"
+          ],
+          "ranked": [
+            "decisions/KB-0003-open-l3-embeddings-for-memory-package",
+            "repo:agent-knowledge-base/docs/adr/0005-agent-knowledge-base-product-shape.md",
+            "repo:agent-knowledge-base/memory_agent/README.md",
+            "repo:agent-knowledge-base/memory_agent/skill/SKILL.md",
+            "repo:agent-knowledge-base/CONTEXT.md",
+            "decisions/KB-0001-knowledge-base-architecture",
+            "repo:agent-knowledge-base/README.md",
+            "decisions/KB-0002-growth-control-and-retrieval-ladder",
+            "projects/agent-infra/vision",
+            "repo:agent-knowledge-base/AGENTS.md"
+          ],
+          "recall": {
+            "1": 1.0,
+            "3": 1.0,
+            "5": 1.0,
+            "10": 1.0
+          },
+          "ndcg@10": 1.0,
+          "mrr": 1.0,
+          "first_hit_rank": 1
+        },
+        {
+          "id": "q010",
+          "query": "知识图谱三元组抽取的复现项目目前进展如何，有哪些关键决策记录？",
+          "relevant": [
+            "projects/kg-triplet-sft/overview",
+            "repo:kg-triplet-sft/CONTEXT.md",
+            "repo:kg-triplet-sft/README.md",
+            "repo:kg-triplet-sft/README.zh-CN.md"
+          ],
+          "ranked": [
+            "repo:kg-triplet-sft/CONTEXT.md",
+            "projects/kg-triplet-sft/overview",
+            "repo:kg-triplet-sft/AGENTS.md",
+            "repo:agent-knowledge-base/docs/adr/0011-index-consistency-generations-and-refresh.md",
+            "repo:kg-triplet-sft/docs/diary/2026-09-11-consumer-pivot-graphrag-to-lightrag.md",
+            "repo:kg-triplet-sft/README.zh-CN.md",
+            "repo:kg-triplet-sft/docs/research/kg-ontology-patterns.md",
+            "repo:agent-knowledge-base/docs/adr/0009-write-gateway-commit-scope-and-dedup.md",
+            "repo:agent-knowledge-base/docs/adr/0010-lifecycle-tools.md",
+            "repo:agent-knowledge-base/memory_agent/eval/dogfood_17.md"
+          ],
+          "recall": {
+            "1": 0.25,
+            "3": 0.5,
+            "5": 0.5,
+            "10": 0.75
+          },
+          "ndcg@10": 0.775739,
+          "mrr": 1.0,
+          "first_hit_rank": 1
+        },
+        {
+          "id": "q011",
+          "query": "LLaMA-Factory 0.9.5 在 Kaggle T4 上微调，transformers、accelerate、peft 该用哪些版本才不会冲突？",
+          "relevant": [
+            "topics/training-version-matrix"
+          ],
+          "ranked": [
+            "topics/training-version-matrix",
+            "topics/training-error-catalog",
+            "repo:kg-triplet-sft/docs/adr/0005-training-pipeline-decoupled.md",
+            "topics/cloud-gpu-platforms",
+            "repo:kg-triplet-sft/finetune/README_tracer.md",
+            "repo:kg-triplet-sft/docs/adr/0006-compute-platform-bf16-curve.md",
+            "repo:kg-triplet-sft/docs/inference-optimization-brief.md",
+            "repo:kg-triplet-sft/finetune/README_full.md",
+            "repo:agent-infra/docs/research/01-frameworks-component-abstraction.md",
+            "repo:kg-triplet-sft/finetune/kaggle/README_inference.md"
+          ],
+          "recall": {
+            "1": 1.0,
+            "3": 1.0,
+            "5": 1.0,
+            "10": 1.0
+          },
+          "ndcg@10": 1.0,
+          "mrr": 1.0,
+          "first_hit_rank": 1
+        },
+        {
+          "id": "q012",
+          "query": "小模型微调租云GPU，Kaggle免费额度和国内按小时计费的4090哪个更划算、接入成本更低",
+          "relevant": [
+            "topics/cloud-gpu-platforms"
+          ],
+          "ranked": [
+            "topics/cloud-gpu-platforms",
+            "repo:kg-triplet-sft/docs/adr/0006-compute-platform-bf16-curve.md",
+            "repo:kg-triplet-sft/docs/inference-optimization-brief.md",
+            "projects/kg-triplet-sft/training",
+            "repo:agent-knowledge-base/experiments/rerank-latency/results.md",
+            "repo:kg-triplet-sft/docs/2026-09-07-capacity-line-repair.md",
+            "decisions/memory-package-shared-single-instance-topology",
+            "repo:kg-triplet-sft/README.zh-CN.md",
+            "repo:agent-knowledge-base/memory_agent/eval/issue19_acceptance.md",
+            "repo:agent-knowledge-base/docs/NLP期末大作业_2026_基于大模型与RAG的领域AI助理.md"
+          ],
+          "recall": {
+            "1": 1.0,
+            "3": 1.0,
+            "5": 1.0,
+            "10": 1.0
+          },
+          "ndcg@10": 1.0,
+          "mrr": 1.0,
+          "first_hit_rank": 1
+        },
+        {
+          "id": "q013",
+          "query": "把训练流程从一个框架迁移到另一个框架之前，应该先核对哪些容易踩坑的细节？",
+          "relevant": [
+            "topics/agent-engineering-playbook"
+          ],
+          "ranked": [
+            "topics/agent-engineering-playbook",
+            "repo:agent-knowledge-base/CONTEXT.md",
+            "repo:kg-triplet-sft/docs/adr/0005-training-pipeline-decoupled.md",
+            "repo:agent-knowledge-base/docs/adr/0001-personal-rag-tool-target.md",
+            "repo:agent-knowledge-base/docs/report_draft.md",
+            "repo:agent-knowledge-base/docs/adr/0004-dev-discipline-ai-self-maintenance.md",
+            "repo:agent-knowledge-base/docs/rag_testset_research.md",
+            "repo:agent-knowledge-base/docs/adr/0012-memory-agent-skill.md",
+            "repo:agent-infra/docs/research/01-frameworks-component-abstraction.md",
+            "repo:kg-triplet-sft/AGENTS.md"
+          ],
+          "recall": {
+            "1": 1.0,
+            "3": 1.0,
+            "5": 1.0,
+            "10": 1.0
+          },
+          "ndcg@10": 1.0,
+          "mrr": 1.0,
+          "first_hit_rank": 1
+        }
+      ],
+      "no_answer": [],
+      "run_hash": "17b20551bf9647f3"
+    },
+    "jina-v2-onnx-int8": {
+      "model": "jinaai/jina-reranker-v2-base-multilingual",
+      "key": "jina-v2-onnx-int8",
+      "license": "CC-BY-NC-4.0",
+      "role": "candidate",
+      "dtype": null,
+      "max_seq_length": 512,
+      "load_s": 5.21,
+      "rss_delta_gb": 0.584,
+      "peak_rss_gb": 9.89,
+      "pairs": 196,
+      "latency_ms": {
+        "n": 12,
+        "mean": 2298.562,
+        "p50": 2212.987,
+        "p95": 2807.845,
+        "max": 2807.845,
+        "sd": 330.915
+      },
+      "pairs_per_s": 7.11,
+      "tokens": {
+        "pairs": 196,
+        "max": 361,
+        "mean": 283.1,
+        "over_cap": 0,
+        "cap": 512
+      },
+      "aggregate": {
+        "queries_total": 12,
+        "queries_answerable": 12,
+        "queries_no_answer": 0,
+        "recall": {
+          "1": 0.9375,
+          "3": 0.958333,
+          "5": 0.979167,
+          "10": 0.979167
+        },
+        "ndcg@10": 0.983734,
+        "mrr": 1.0,
+        "misses": []
+      },
+      "per_query": [
+        {
+          "id": "q001",
+          "query": "在 Kaggle 上用 LLaMA-Factory 训练，模型初始化到一半就退出，返回码是 0 也没有任何报错，是什么原因？",
+          "relevant": [
+            "topics/training-error-catalog"
+          ],
+          "ranked": [
+            "topics/training-error-catalog",
+            "topics/training-version-matrix",
+            "repo:kg-triplet-sft/docs/adr/0005-training-pipeline-decoupled.md",
+            "repo:kg-triplet-sft/docs/adr/0006-compute-platform-bf16-curve.md",
+            "repo:kg-triplet-sft/docs/evidence/base-baseline.md",
+            "repo:kg-triplet-sft/finetune/README_tracer.md",
+            "repo:kg-triplet-sft/finetune/README_full.md",
+            "repo:kg-triplet-sft/docs/inference-optimization-brief.md",
+            "repo:agent-knowledge-base/CONTEXT.md",
+            "repo:agent-knowledge-base/docs/exp2-review.md"
+          ],
+          "recall": {
+            "1": 1.0,
+            "3": 1.0,
+            "5": 1.0,
+            "10": 1.0
+          },
+          "ndcg@10": 1.0,
+          "mrr": 1.0,
+          "first_hit_rank": 1
+        },
+        {
+          "id": "q003",
+          "query": "用 Python 写 stdio 的 MCP server，握手老是失败，是不是日志输出把协议通道弄坏了？",
+          "relevant": [
+            "topics/mcp-stdio-server-authoring"
+          ],
+          "ranked": [
+            "topics/mcp-stdio-server-authoring",
+            "repo:agent-knowledge-base/docs/adr/0008-memory-agent-read-path-mcp-and-corpus.md",
+            "decisions/memory-package-shared-single-instance-topology",
+            "repo:agent-knowledge-base/memory_agent/eval/dogfood_17.md",
+            "repo:agent-knowledge-base/memory_agent/eval/issue19_acceptance.md",
+            "repo:agent-knowledge-base/memory_agent/README.md",
+            "repo:agent-knowledge-base/memory_agent/eval/readonly_corpus_17_results.md",
+            "repo:agent-knowledge-base/docs/adr/0013-memory-agent-shared-single-instance-http-daemon.md",
+            "repo:agent-knowledge-base/docs/adr/0010-lifecycle-tools.md",
+            "repo:agent-infra/docs/adr/0006-assembler-as-coding-agent-subject.md"
+          ],
+          "recall": {
+            "1": 1.0,
+            "3": 1.0,
+            "5": 1.0,
+            "10": 1.0
+          },
+          "ndcg@10": 1.0,
+          "mrr": 1.0,
+          "first_hit_rank": 1
+        },
+        {
+          "id": "q004",
+          "query": "Agent-infra 项目最近的架构方向有什么变化，assembler 为什么会从 TS 服务改成 pi 配置？",
+          "relevant": [
+            "projects/agent-infra/overview"
+          ],
+          "ranked": [
+            "projects/agent-infra/overview",
+            "projects/agent-infra/vision",
+            "repo:agent-infra/docs/handoffs/2026-08-09-assembler-coding-agent-subject.md",
+            "repo:agent-infra/docs/adr/0007-assembler-as-pure-pi-config.md",
+            "repo:agent-infra/AGENTS.md",
+            "repo:agent-infra/README.md",
+            "repo:agent-infra/CONTEXT.md",
+            "repo:agent-infra/docs/adr/0003-hybrid-stack-ts-assembler-python-library.md",
+            "repo:agent-infra/docs/adr/0006-assembler-as-coding-agent-subject.md",
+            "repo:agent-infra/docs/agent-design-skills.md"
+          ],
+          "recall": {
+            "1": 1.0,
+            "3": 1.0,
+            "5": 1.0,
+            "10": 1.0
+          },
+          "ndcg@10": 1.0,
+          "mrr": 1.0,
+          "first_hit_rank": 1
+        },
+        {
+          "id": "q005",
+          "query": "agent-infra 这个 agent 工厂为什么选择基于 dsh 做插件套件，而不是 fork 或生成代码？",
+          "relevant": [
+            "projects/agent-infra/vision"
+          ],
+          "ranked": [
+            "projects/agent-infra/vision",
+            "projects/agent-infra/overview",
+            "repo:agent-infra/AGENTS.md",
+            "repo:agent-infra/README.md",
+            "repo:agent-infra/docs/adr/0002-agent-thin-container-pluggable-parts.md",
+            "repo:agent-infra/CONTEXT.md",
+            "repo:agent-infra/docs/research/02-recipe-to-demo-generation.md",
+            "repo:agent-infra/docs/adr/0006-assembler-as-coding-agent-subject.md",
+            "repo:agent-infra/docs/research/01-frameworks-component-abstraction.md",
+            "repo:agent-infra/docs/adr/0003-hybrid-stack-ts-assembler-python-library.md"
+          ],
+          "recall": {
+            "1": 1.0,
+            "3": 1.0,
+            "5": 1.0,
+            "10": 1.0
+          },
+          "ndcg@10": 1.0,
+          "mrr": 1.0,
+          "first_hit_rank": 1
+        },
+        {
+          "id": "q006",
+          "query": "opencode 的 API key 用环境变量比直接写在配置里更安全吗",
+          "relevant": [
+            "topics/opencode-secrets-handling"
+          ],
+          "ranked": [
+            "topics/opencode-secrets-handling",
+            "repo:agent-knowledge-base/memory_agent/eval/dogfood_17.md",
+            "decisions/memory-package-shared-single-instance-topology",
+            "decisions/kb-options-research-2026-09-12",
+            "topics/opencode-proxy-and-network",
+            "repo:agent-infra/docs/adr/0006-assembler-as-coding-agent-subject.md",
+            "repo:agent-knowledge-base/docs/adr/0012-memory-agent-skill.md",
+            "repo:agent-infra/docs/adr/0003-hybrid-stack-ts-assembler-python-library.md",
+            "repo:agent-infra/README.md",
+            "repo:agent-knowledge-base/CONTEXT.md"
+          ],
+          "recall": {
+            "1": 1.0,
+            "3": 1.0,
+            "5": 1.0,
+            "10": 1.0
+          },
+          "ndcg@10": 1.0,
+          "mrr": 1.0,
+          "first_hit_rank": 1
+        },
+        {
+          "id": "q007",
+          "query": "opencode 在 Windows 上总是网络超时，怎么让它走本地代理？",
+          "relevant": [
+            "topics/opencode-proxy-and-network"
+          ],
+          "ranked": [
+            "topics/opencode-proxy-and-network",
+            "decisions/memory-package-shared-single-instance-topology",
+            "repo:agent-knowledge-base/memory_agent/eval/dogfood_17.md",
+            "repo:agent-knowledge-base/docs/adr/0013-memory-agent-shared-single-instance-http-daemon.md",
+            "repo:agent-knowledge-base/memory_agent/eval/issue19_acceptance.md",
+            "topics/opencode-secrets-handling",
+            "decisions/kb-options-research-2026-09-12",
+            "repo:agent-knowledge-base/docs/adr/0010-lifecycle-tools.md",
+            "repo:agent-knowledge-base/docs/adr/0012-memory-agent-skill.md",
+            "topics/huggingface-token-and-publishing"
+          ],
+          "recall": {
+            "1": 1.0,
+            "3": 1.0,
+            "5": 1.0,
+            "10": 1.0
+          },
+          "ndcg@10": 1.0,
+          "mrr": 1.0,
+          "first_hit_rank": 1
+        },
+        {
+          "id": "q008",
+          "query": "Qdrant 本地模式为什么删除集合后重建还会带出旧数据，而且同一个目录不能被其他客户端打开？",
+          "relevant": [
+            "topics/qdrant-local-mode-semantics"
+          ],
+          "ranked": [
+            "topics/qdrant-local-mode-semantics",
+            "repo:agent-knowledge-base/docs/adr/0011-index-consistency-generations-and-refresh.md",
+            "repo:agent-knowledge-base/docs/adr/0007-repo-layout-and-rename.md",
+            "repo:agent-knowledge-base/docs/adr/0006-memory-architecture-markdown-source-and-derived-index.md",
+            "repo:agent-infra/docs/reviews/2026-08-08-ollama-demo-session-review.md",
+            "repo:agent-knowledge-base/memory_agent/README.md",
+            "repo:agent-knowledge-base/docs/adr/0014-readonly-corpus-labeled-repos.md",
+            "repo:agent-knowledge-base/memory_agent/eval/issue19_acceptance.md",
+            "repo:agent-knowledge-base/README.md",
+            "decisions/KB-0002-growth-control-and-retrieval-ladder"
+          ],
+          "recall": {
+            "1": 1.0,
+            "3": 1.0,
+            "5": 1.0,
+            "10": 1.0
+          },
+          "ndcg@10": 1.0,
+          "mrr": 1.0,
+          "first_hit_rank": 1
+        },
+        {
+          "id": "q009",
+          "query": "为什么在知识库条目还很少的时候就提前启用 embeddings 来做 agent 记忆包的语义检索？",
+          "relevant": [
+            "decisions/KB-0003-open-l3-embeddings-for-memory-package"
+          ],
+          "ranked": [
+            "decisions/KB-0003-open-l3-embeddings-for-memory-package",
+            "repo:agent-knowledge-base/docs/adr/0005-agent-knowledge-base-product-shape.md",
+            "repo:agent-knowledge-base/memory_agent/skill/SKILL.md",
+            "repo:agent-knowledge-base/memory_agent/README.md",
+            "repo:agent-knowledge-base/CONTEXT.md",
+            "repo:agent-knowledge-base/README.md",
+            "decisions/KB-0001-knowledge-base-architecture",
+            "decisions/KB-0002-growth-control-and-retrieval-ladder",
+            "projects/agent-infra/vision",
+            "repo:agent-knowledge-base/AGENTS.md"
+          ],
+          "recall": {
+            "1": 1.0,
+            "3": 1.0,
+            "5": 1.0,
+            "10": 1.0
+          },
+          "ndcg@10": 1.0,
+          "mrr": 1.0,
+          "first_hit_rank": 1
+        },
+        {
+          "id": "q010",
+          "query": "知识图谱三元组抽取的复现项目目前进展如何，有哪些关键决策记录？",
+          "relevant": [
+            "projects/kg-triplet-sft/overview",
+            "repo:kg-triplet-sft/CONTEXT.md",
+            "repo:kg-triplet-sft/README.md",
+            "repo:kg-triplet-sft/README.zh-CN.md"
+          ],
+          "ranked": [
+            "repo:kg-triplet-sft/CONTEXT.md",
+            "projects/kg-triplet-sft/overview",
+            "repo:kg-triplet-sft/AGENTS.md",
+            "repo:kg-triplet-sft/README.zh-CN.md",
+            "repo:kg-triplet-sft/docs/research/kg-ontology-patterns.md",
+            "repo:kg-triplet-sft/docs/diary/2026-09-11-consumer-pivot-graphrag-to-lightrag.md",
+            "repo:agent-knowledge-base/docs/adr/0011-index-consistency-generations-and-refresh.md",
+            "repo:agent-knowledge-base/docs/adr/0010-lifecycle-tools.md",
+            "repo:agent-knowledge-base/docs/adr/0009-write-gateway-commit-scope-and-dedup.md",
+            "repo:agent-knowledge-base/memory_agent/eval/dogfood_17.md"
+          ],
+          "recall": {
+            "1": 0.25,
+            "3": 0.5,
+            "5": 0.75,
+            "10": 0.75
+          },
+          "ndcg@10": 0.80481,
+          "mrr": 1.0,
+          "first_hit_rank": 1
+        },
+        {
+          "id": "q011",
+          "query": "LLaMA-Factory 0.9.5 在 Kaggle T4 上微调，transformers、accelerate、peft 该用哪些版本才不会冲突？",
+          "relevant": [
+            "topics/training-version-matrix"
+          ],
+          "ranked": [
+            "topics/training-version-matrix",
+            "topics/training-error-catalog",
+            "repo:kg-triplet-sft/docs/adr/0005-training-pipeline-decoupled.md",
+            "topics/cloud-gpu-platforms",
+            "repo:kg-triplet-sft/finetune/README_tracer.md",
+            "repo:kg-triplet-sft/docs/adr/0006-compute-platform-bf16-curve.md",
+            "repo:kg-triplet-sft/finetune/README_full.md",
+            "repo:kg-triplet-sft/docs/inference-optimization-brief.md",
+            "repo:agent-infra/docs/research/01-frameworks-component-abstraction.md",
+            "repo:kg-triplet-sft/finetune/kaggle/README_inference.md"
+          ],
+          "recall": {
+            "1": 1.0,
+            "3": 1.0,
+            "5": 1.0,
+            "10": 1.0
+          },
+          "ndcg@10": 1.0,
+          "mrr": 1.0,
+          "first_hit_rank": 1
+        },
+        {
+          "id": "q012",
+          "query": "小模型微调租云GPU，Kaggle免费额度和国内按小时计费的4090哪个更划算、接入成本更低",
+          "relevant": [
+            "topics/cloud-gpu-platforms"
+          ],
+          "ranked": [
+            "topics/cloud-gpu-platforms",
+            "repo:kg-triplet-sft/docs/adr/0006-compute-platform-bf16-curve.md",
+            "repo:kg-triplet-sft/docs/inference-optimization-brief.md",
+            "projects/kg-triplet-sft/training",
+            "repo:agent-knowledge-base/experiments/rerank-latency/results.md",
+            "repo:kg-triplet-sft/docs/2026-09-07-capacity-line-repair.md",
+            "repo:kg-triplet-sft/README.zh-CN.md",
+            "repo:agent-knowledge-base/docs/NLP期末大作业_2026_基于大模型与RAG的领域AI助理.md",
+            "decisions/memory-package-shared-single-instance-topology",
+            "repo:agent-knowledge-base/memory_agent/eval/issue19_acceptance.md"
+          ],
+          "recall": {
+            "1": 1.0,
+            "3": 1.0,
+            "5": 1.0,
+            "10": 1.0
+          },
+          "ndcg@10": 1.0,
+          "mrr": 1.0,
+          "first_hit_rank": 1
+        },
+        {
+          "id": "q013",
+          "query": "把训练流程从一个框架迁移到另一个框架之前，应该先核对哪些容易踩坑的细节？",
+          "relevant": [
+            "topics/agent-engineering-playbook"
+          ],
+          "ranked": [
+            "topics/agent-engineering-playbook",
+            "repo:agent-knowledge-base/CONTEXT.md",
+            "repo:agent-knowledge-base/docs/report_draft.md",
+            "repo:kg-triplet-sft/docs/adr/0005-training-pipeline-decoupled.md",
+            "repo:agent-knowledge-base/docs/adr/0001-personal-rag-tool-target.md",
+            "repo:agent-knowledge-base/docs/adr/0004-dev-discipline-ai-self-maintenance.md",
+            "repo:agent-knowledge-base/docs/rag_testset_research.md",
+            "repo:kg-triplet-sft/docs/diary/2026-09-11-consumer-pivot-graphrag-to-lightrag.md",
+            "repo:agent-knowledge-base/docs/adr/0012-memory-agent-skill.md",
+            "repo:agent-infra/docs/research/01-frameworks-component-abstraction.md"
+          ],
+          "recall": {
+            "1": 1.0,
+            "3": 1.0,
+            "5": 1.0,
+            "10": 1.0
+          },
+          "ndcg@10": 1.0,
+          "mrr": 1.0,
+          "first_hit_rank": 1
+        }
+      ],
+      "no_answer": [],
+      "run_hash": "bd542501d0c07700"
+    },
+    "mxbai-v1": {
+      "model": "mixedbread-ai/mxbai-rerank-base-v1",
+      "key": "mxbai-v1",
+      "license": "apache-2.0",
+      "role": "speed-floor",
+      "dtype": "torch.float32",
+      "max_seq_length": 512,
+      "load_s": 3.75,
+      "rss_delta_gb": 0.835,
+      "peak_rss_gb": 9.89,
+      "pairs": 196,
+      "latency_ms": {
+        "n": 12,
+        "mean": 6540.631,
+        "p50": 6598.334,
+        "p95": 7873.365,
+        "max": 7873.365,
+        "sd": 934.625
+      },
+      "pairs_per_s": 2.5,
+      "tokens": {
+        "pairs": 196,
+        "max": 454,
+        "mean": 321.9,
+        "over_cap": 0,
+        "cap": 512
+      },
+      "aggregate": {
+        "queries_total": 12,
+        "queries_answerable": 12,
+        "queries_no_answer": 0,
+        "recall": {
+          "1": 0.854167,
+          "3": 0.958333,
+          "5": 0.979167,
+          "10": 0.979167
+        },
+        "ndcg@10": 0.952978,
+        "mrr": 0.958333,
+        "misses": []
+      },
+      "per_query": [
+        {
+          "id": "q001",
+          "query": "在 Kaggle 上用 LLaMA-Factory 训练，模型初始化到一半就退出，返回码是 0 也没有任何报错，是什么原因？",
+          "relevant": [
+            "topics/training-error-catalog"
+          ],
+          "ranked": [
+            "topics/training-error-catalog",
+            "repo:kg-triplet-sft/docs/adr/0005-training-pipeline-decoupled.md",
+            "topics/training-version-matrix",
+            "repo:kg-triplet-sft/docs/adr/0006-compute-platform-bf16-curve.md",
+            "repo:kg-triplet-sft/finetune/README_tracer.md",
+            "repo:kg-triplet-sft/finetune/README_full.md",
+            "repo:kg-triplet-sft/docs/inference-optimization-brief.md",
+            "repo:kg-triplet-sft/docs/evidence/base-baseline.md",
+            "repo:agent-knowledge-base/docs/exp2-review.md",
+            "repo:kg-triplet-sft/AGENTS.md"
+          ],
+          "recall": {
+            "1": 1.0,
+            "3": 1.0,
+            "5": 1.0,
+            "10": 1.0
+          },
+          "ndcg@10": 1.0,
+          "mrr": 1.0,
+          "first_hit_rank": 1
+        },
+        {
+          "id": "q003",
+          "query": "用 Python 写 stdio 的 MCP server，握手老是失败，是不是日志输出把协议通道弄坏了？",
+          "relevant": [
+            "topics/mcp-stdio-server-authoring"
+          ],
+          "ranked": [
+            "topics/mcp-stdio-server-authoring",
+            "decisions/memory-package-shared-single-instance-topology",
+            "repo:agent-knowledge-base/docs/adr/0008-memory-agent-read-path-mcp-and-corpus.md",
+            "repo:agent-knowledge-base/memory_agent/eval/readonly_corpus_17_results.md",
+            "repo:agent-knowledge-base/docs/adr/0013-memory-agent-shared-single-instance-http-daemon.md",
+            "repo:agent-knowledge-base/memory_agent/eval/issue19_acceptance.md",
+            "repo:agent-knowledge-base/memory_agent/eval/dogfood_17.md",
+            "repo:agent-knowledge-base/memory_agent/README.md",
+            "repo:agent-knowledge-base/docs/adr/0010-lifecycle-tools.md",
+            "repo:agent-infra/docs/adr/0006-assembler-as-coding-agent-subject.md"
+          ],
+          "recall": {
+            "1": 1.0,
+            "3": 1.0,
+            "5": 1.0,
+            "10": 1.0
+          },
+          "ndcg@10": 1.0,
+          "mrr": 1.0,
+          "first_hit_rank": 1
+        },
+        {
+          "id": "q004",
+          "query": "Agent-infra 项目最近的架构方向有什么变化，assembler 为什么会从 TS 服务改成 pi 配置？",
+          "relevant": [
+            "projects/agent-infra/overview"
+          ],
+          "ranked": [
+            "projects/agent-infra/vision",
+            "projects/agent-infra/overview",
+            "repo:agent-infra/docs/handoffs/2026-08-09-assembler-coding-agent-subject.md",
+            "repo:agent-infra/AGENTS.md",
+            "repo:agent-infra/README.md",
+            "repo:agent-infra/CONTEXT.md",
+            "repo:agent-infra/docs/agent-design-skills.md",
+            "repo:agent-infra/docs/research/01-frameworks-component-abstraction.md",
+            "repo:agent-infra/docs/research/04-assembler-skill-capabilities.md",
+            "repo:agent-knowledge-base/docs/adr/0007-repo-layout-and-rename.md"
+          ],
+          "recall": {
+            "1": 0.0,
+            "3": 1.0,
+            "5": 1.0,
+            "10": 1.0
+          },
+          "ndcg@10": 0.63093,
+          "mrr": 0.5,
+          "first_hit_rank": 2
+        },
+        {
+          "id": "q005",
+          "query": "agent-infra 这个 agent 工厂为什么选择基于 dsh 做插件套件，而不是 fork 或生成代码？",
+          "relevant": [
+            "projects/agent-infra/vision"
+          ],
+          "ranked": [
+            "projects/agent-infra/vision",
+            "projects/agent-infra/overview",
+            "repo:agent-infra/AGENTS.md",
+            "repo:agent-infra/README.md",
+            "repo:agent-infra/CONTEXT.md",
+            "repo:agent-knowledge-base/docs/adr/0005-agent-knowledge-base-product-shape.md",
+            "repo:agent-infra/docs/adr/0002-agent-thin-container-pluggable-parts.md",
+            "repo:agent-infra/skills/agent-design/SKILL.md",
+            "repo:agent-infra/docs/research/01-frameworks-component-abstraction.md",
+            "repo:agent-infra/docs/agent-design-skills.md"
+          ],
+          "recall": {
+            "1": 1.0,
+            "3": 1.0,
+            "5": 1.0,
+            "10": 1.0
+          },
+          "ndcg@10": 1.0,
+          "mrr": 1.0,
+          "first_hit_rank": 1
+        },
+        {
+          "id": "q006",
+          "query": "opencode 的 API key 用环境变量比直接写在配置里更安全吗",
+          "relevant": [
+            "topics/opencode-secrets-handling"
+          ],
+          "ranked": [
+            "topics/opencode-secrets-handling",
+            "decisions/kb-options-research-2026-09-12",
+            "topics/opencode-proxy-and-network",
+            "repo:agent-knowledge-base/docs/adr/0012-memory-agent-skill.md",
+            "repo:agent-knowledge-base/memory_agent/eval/dogfood_17.md",
+            "decisions/memory-package-shared-single-instance-topology",
+            "repo:agent-infra/docs/research/02-recipe-to-demo-generation.md",
+            "repo:agent-knowledge-base/CONTEXT.md",
+            "repo:agent-infra/docs/adr/0006-assembler-as-coding-agent-subject.md",
+            "repo:agent-infra/README.md"
+          ],
+          "recall": {
+            "1": 1.0,
+            "3": 1.0,
+            "5": 1.0,
+            "10": 1.0
+          },
+          "ndcg@10": 1.0,
+          "mrr": 1.0,
+          "first_hit_rank": 1
+        },
+        {
+          "id": "q007",
+          "query": "opencode 在 Windows 上总是网络超时，怎么让它走本地代理？",
+          "relevant": [
+            "topics/opencode-proxy-and-network"
+          ],
+          "ranked": [
+            "topics/opencode-proxy-and-network",
+            "decisions/kb-options-research-2026-09-12",
+            "topics/opencode-secrets-handling",
+            "repo:agent-knowledge-base/docs/adr/0013-memory-agent-shared-single-instance-http-daemon.md",
+            "repo:agent-knowledge-base/docs/adr/0012-memory-agent-skill.md",
+            "repo:agent-knowledge-base/memory_agent/eval/issue19_acceptance.md",
+            "topics/huggingface-token-and-publishing",
+            "decisions/memory-package-shared-single-instance-topology",
+            "repo:agent-knowledge-base/docs/adr/0010-lifecycle-tools.md",
+            "repo:agent-knowledge-base/memory_agent/eval/dogfood_17.md"
+          ],
+          "recall": {
+            "1": 1.0,
+            "3": 1.0,
+            "5": 1.0,
+            "10": 1.0
+          },
+          "ndcg@10": 1.0,
+          "mrr": 1.0,
+          "first_hit_rank": 1
+        },
+        {
+          "id": "q008",
+          "query": "Qdrant 本地模式为什么删除集合后重建还会带出旧数据，而且同一个目录不能被其他客户端打开？",
+          "relevant": [
+            "topics/qdrant-local-mode-semantics"
+          ],
+          "ranked": [
+            "topics/qdrant-local-mode-semantics",
+            "repo:agent-knowledge-base/docs/adr/0011-index-consistency-generations-and-refresh.md",
+            "repo:agent-knowledge-base/docs/adr/0002-version-baseline-reset.md",
+            "decisions/KB-0002-growth-control-and-retrieval-ladder",
+            "repo:agent-knowledge-base/memory_agent/README.md",
+            "repo:agent-infra/docs/reviews/2026-08-08-ollama-demo-session-review.md",
+            "repo:agent-infra/docs/reviews/2026-08-09-adr0005-refactor-review.md",
+            "repo:agent-knowledge-base/docs/adr/0014-readonly-corpus-labeled-repos.md",
+            "repo:agent-knowledge-base/docs/adr/0007-repo-layout-and-rename.md",
+            "repo:agent-knowledge-base/memory_agent/eval/write_path_sandbox_results.md"
+          ],
+          "recall": {
+            "1": 1.0,
+            "3": 1.0,
+            "5": 1.0,
+            "10": 1.0
+          },
+          "ndcg@10": 1.0,
+          "mrr": 1.0,
+          "first_hit_rank": 1
+        },
+        {
+          "id": "q009",
+          "query": "为什么在知识库条目还很少的时候就提前启用 embeddings 来做 agent 记忆包的语义检索？",
+          "relevant": [
+            "decisions/KB-0003-open-l3-embeddings-for-memory-package"
+          ],
+          "ranked": [
+            "decisions/KB-0003-open-l3-embeddings-for-memory-package",
+            "repo:agent-knowledge-base/CONTEXT.md",
+            "decisions/KB-0001-knowledge-base-architecture",
+            "decisions/KB-0002-growth-control-and-retrieval-ladder",
+            "repo:agent-knowledge-base/memory_agent/README.md",
+            "repo:agent-knowledge-base/README.md",
+            "repo:agent-knowledge-base/docs/NLP期末大作业_2026_基于大模型与RAG的领域AI助理.md",
+            "repo:agent-knowledge-base/docs/adr/0005-agent-knowledge-base-product-shape.md",
+            "projects/agent-infra/vision",
+            "repo:agent-infra/docs/research/04-assembler-skill-capabilities.md"
+          ],
+          "recall": {
+            "1": 1.0,
+            "3": 1.0,
+            "5": 1.0,
+            "10": 1.0
+          },
+          "ndcg@10": 1.0,
+          "mrr": 1.0,
+          "first_hit_rank": 1
+        },
+        {
+          "id": "q010",
+          "query": "知识图谱三元组抽取的复现项目目前进展如何，有哪些关键决策记录？",
+          "relevant": [
+            "projects/kg-triplet-sft/overview",
+            "repo:kg-triplet-sft/CONTEXT.md",
+            "repo:kg-triplet-sft/README.md",
+            "repo:kg-triplet-sft/README.zh-CN.md"
+          ],
+          "ranked": [
+            "repo:kg-triplet-sft/CONTEXT.md",
+            "projects/kg-triplet-sft/overview",
+            "repo:kg-triplet-sft/AGENTS.md",
+            "repo:kg-triplet-sft/README.zh-CN.md",
+            "repo:kg-triplet-sft/docs/research/kg-ontology-patterns.md",
+            "repo:agent-knowledge-base/docs/test_report.md",
+            "repo:kg-triplet-sft/docs/evidence/README.md",
+            "repo:agent-knowledge-base/README.md",
+            "repo:agent-knowledge-base/docs/NLP期末大作业_2026_基于大模型与RAG的领域AI助理.md",
+            "repo:kg-triplet-sft/docs/diary/2026-09-11-consumer-pivot-graphrag-to-lightrag.md"
+          ],
+          "recall": {
+            "1": 0.25,
+            "3": 0.5,
+            "5": 0.75,
+            "10": 0.75
+          },
+          "ndcg@10": 0.80481,
+          "mrr": 1.0,
+          "first_hit_rank": 1
+        },
+        {
+          "id": "q011",
+          "query": "LLaMA-Factory 0.9.5 在 Kaggle T4 上微调，transformers、accelerate、peft 该用哪些版本才不会冲突？",
+          "relevant": [
+            "topics/training-version-matrix"
+          ],
+          "ranked": [
+            "topics/training-version-matrix",
+            "topics/training-error-catalog",
+            "repo:kg-triplet-sft/docs/adr/0005-training-pipeline-decoupled.md",
+            "repo:kg-triplet-sft/docs/adr/0006-compute-platform-bf16-curve.md",
+            "repo:agent-infra/docs/research/01-frameworks-component-abstraction.md",
+            "repo:agent-infra/docs/reviews/2026-08-08-ollama-demo-session-review.md",
+            "repo:kg-triplet-sft/finetune/kaggle/README_inference.md",
+            "repo:kg-triplet-sft/finetune/README_tracer.md",
+            "repo:kg-triplet-sft/finetune/README_full.md",
+            "repo:kg-triplet-sft/AGENTS.md"
+          ],
+          "recall": {
+            "1": 1.0,
+            "3": 1.0,
+            "5": 1.0,
+            "10": 1.0
+          },
+          "ndcg@10": 1.0,
+          "mrr": 1.0,
+          "first_hit_rank": 1
+        },
+        {
+          "id": "q012",
+          "query": "小模型微调租云GPU，Kaggle免费额度和国内按小时计费的4090哪个更划算、接入成本更低",
+          "relevant": [
+            "topics/cloud-gpu-platforms"
+          ],
+          "ranked": [
+            "topics/cloud-gpu-platforms",
+            "repo:agent-knowledge-base/experiments/rerank-latency/results.md",
+            "repo:kg-triplet-sft/docs/adr/0006-compute-platform-bf16-curve.md",
+            "repo:agent-knowledge-base/docs/NLP期末大作业_2026_基于大模型与RAG的领域AI助理.md",
+            "repo:kg-triplet-sft/docs/inference-optimization-brief.md",
+            "repo:kg-triplet-sft/docs/2026-09-07-capacity-line-repair.md",
+            "repo:kg-triplet-sft/README.zh-CN.md",
+            "projects/kg-triplet-sft/training",
+            "repo:agent-knowledge-base/memory_agent/eval/issue19_acceptance.md",
+            "repo:agent-knowledge-base/docs/optimizer_experiment_report.md"
+          ],
+          "recall": {
+            "1": 1.0,
+            "3": 1.0,
+            "5": 1.0,
+            "10": 1.0
+          },
+          "ndcg@10": 1.0,
+          "mrr": 1.0,
+          "first_hit_rank": 1
+        },
+        {
+          "id": "q013",
+          "query": "把训练流程从一个框架迁移到另一个框架之前，应该先核对哪些容易踩坑的细节？",
+          "relevant": [
+            "topics/agent-engineering-playbook"
+          ],
+          "ranked": [
+            "topics/agent-engineering-playbook",
+            "repo:agent-knowledge-base/docs/NLP期末大作业_2026_基于大模型与RAG的领域AI助理.md",
+            "repo:agent-infra/docs/research/04-assembler-skill-capabilities.md",
+            "repo:kg-triplet-sft/docs/adr/0005-training-pipeline-decoupled.md",
+            "repo:kg-triplet-sft/AGENTS.md",
+            "repo:agent-infra/docs/research/01-frameworks-component-abstraction.md",
+            "repo:agent-infra/docs/agent-design-skills.md",
+            "repo:agent-knowledge-base/docs/rag_testset_research.md",
+            "repo:kg-triplet-sft/README.zh-CN.md",
+            "repo:agent-infra/docs/reviews/2026-08-09-adr0005-refactor-review.md"
+          ],
+          "recall": {
+            "1": 1.0,
+            "3": 1.0,
+            "5": 1.0,
+            "10": 1.0
+          },
+          "ndcg@10": 1.0,
+          "mrr": 1.0,
+          "first_hit_rank": 1
+        }
+      ],
+      "no_answer": [],
+      "run_hash": "37a8907c83d1b378"
+    }
+  }
+}
