@@ -1,0 +1,258 @@
+{
+  "rerank": {
+    "baseline": {
+      "requests": [
+        {
+          "method": "GET",
+          "url": "https://huggingface.co/api/models/BAAI/bge-reranker-v2-m3",
+          "status": "HTTP/1.1 200 OK"
+        }
+      ],
+      "n_requests": 1,
+      "result": {
+        "status": "ok",
+        "target": "rerank",
+        "load_sec": 29.42
+      },
+      "returncode": 0,
+      "timed_out": false,
+      "elapsed_sec": 30.95
+    },
+    "unreachable": {
+      "requests": [
+        {
+          "method": "GET",
+          "url": "http://10.255.255.1/api/models/BAAI/bge-reranker-v2-m3",
+          "status": "HTTP/1.1 502 Bad Gateway"
+        }
+      ],
+      "n_requests": 1,
+      "result": {
+        "status": "fail",
+        "target": "rerank",
+        "load_sec": 34.07,
+        "error": "ValueError: Unrecognized processing class in BAAI/bge-reranker-v2-m3. Can't instantiate a processor, a tokenizer, an image processor, a video processor or a feature extractor for this model. Make sure the repository contains the files of at least one of those processing classes."
+      },
+      "returncode": 3,
+      "timed_out": false,
+      "elapsed_sec": 35.35
+    },
+    "unreachable+off": {
+      "requests": [],
+      "n_requests": 0,
+      "result": {
+        "status": "ok",
+        "target": "rerank",
+        "load_sec": 27.21
+      },
+      "returncode": 0,
+      "timed_out": false,
+      "elapsed_sec": 28.77
+    },
+    "offline": {
+      "requests": [],
+      "n_requests": 0,
+      "result": {
+        "status": "ok",
+        "target": "rerank",
+        "load_sec": 27.11
+      },
+      "returncode": 0,
+      "timed_out": false,
+      "elapsed_sec": 28.6
+    }
+  },
+  "embed": {
+    "baseline": {
+      "requests": [
+        {
+          "method": "GET",
+          "url": "https://huggingface.co/api/models/BAAI/bge-m3",
+          "status": "HTTP/1.1 200 OK"
+        },
+        {
+          "method": "GET",
+          "url": "https://huggingface.co/api/models/BAAI/bge-m3",
+          "status": "HTTP/1.1 200 OK"
+        },
+        {
+          "method": "GET",
+          "url": "https://huggingface.co/api/models/BAAI/bge-m3/commits/main",
+          "status": "HTTP/1.1 200 OK"
+        },
+        {
+          "method": "GET",
+          "url": "https://huggingface.co/api/models/BAAI/bge-m3/discussions?p=0",
+          "status": "HTTP/1.1 200 OK"
+        },
+        {
+          "method": "GET",
+          "url": "https://huggingface.co/api/models/BAAI/bge-m3/commits/refs%2Fpr%2F130",
+          "status": "HTTP/1.1 200 OK"
+        },
+        {
+          "method": "HEAD",
+          "url": "https://huggingface.co/BAAI/bge-m3/resolve/refs%2Fpr%2F130/model.safetensors.index.json",
+          "status": "HTTP/1.1 404 Not Found"
+        }
+      ],
+      "n_requests": 6,
+      "result": {
+        "status": "ok",
+        "target": "embed",
+        "load_sec": 29.02
+      },
+      "returncode": 0,
+      "timed_out": false,
+      "elapsed_sec": 32.54
+    },
+    "unreachable": {
+      "requests": [
+        {
+          "method": "GET",
+          "url": "http://10.255.255.1/api/models/BAAI/bge-m3",
+          "status": "HTTP/1.1 502 Bad Gateway"
+        },
+        {
+          "method": "GET",
+          "url": "http://10.255.255.1/api/models/BAAI/bge-m3",
+          "status": "HTTP/1.1 502 Bad Gateway"
+        }
+      ],
+      "n_requests": 2,
+      "result": {
+        "status": "fail",
+        "target": "embed",
+        "load_sec": 33.02,
+        "error": "ValueError: Unrecognized processing class in BAAI/bge-m3. Can't instantiate a processor, a tokenizer, an image processor, a video processor or a feature extractor for this model. Make sure the repository contains the files of at least one of those processing classes."
+      },
+      "returncode": 3,
+      "timed_out": false,
+      "elapsed_sec": 34.3
+    },
+    "unreachable+off": {
+      "requests": [],
+      "n_requests": 0,
+      "result": {
+        "status": "ok",
+        "target": "embed",
+        "load_sec": 27.75
+      },
+      "returncode": 0,
+      "timed_out": false,
+      "elapsed_sec": 29.27
+    },
+    "offline": {
+      "requests": [],
+      "n_requests": 0,
+      "result": {
+        "status": "ok",
+        "target": "embed",
+        "load_sec": 27.43
+      },
+      "returncode": 0,
+      "timed_out": false,
+      "elapsed_sec": 28.92
+    }
+  },
+  "svc_embed": {
+    "baseline": {
+      "requests": [],
+      "n_requests": 0,
+      "result": {
+        "status": "ok",
+        "target": "svc_embed",
+        "load_sec": 27.3
+      },
+      "returncode": 0,
+      "timed_out": false,
+      "elapsed_sec": 28.83
+    },
+    "unreachable": {
+      "requests": [],
+      "n_requests": 0,
+      "result": {
+        "status": "ok",
+        "target": "svc_embed",
+        "load_sec": 27.49
+      },
+      "returncode": 0,
+      "timed_out": false,
+      "elapsed_sec": 29.15
+    },
+    "unreachable+off": {
+      "requests": [],
+      "n_requests": 0,
+      "result": {
+        "status": "ok",
+        "target": "svc_embed",
+        "load_sec": 26.9
+      },
+      "returncode": 0,
+      "timed_out": false,
+      "elapsed_sec": 28.43
+    },
+    "offline": {
+      "requests": [],
+      "n_requests": 0,
+      "result": {
+        "status": "ok",
+        "target": "svc_embed",
+        "load_sec": 27.56
+      },
+      "returncode": 0,
+      "timed_out": false,
+      "elapsed_sec": 29.11
+    }
+  },
+  "svc_rerank": {
+    "baseline": {
+      "requests": [],
+      "n_requests": 0,
+      "result": {
+        "status": "ok",
+        "target": "svc_rerank",
+        "load_sec": 26.9
+      },
+      "returncode": 0,
+      "timed_out": false,
+      "elapsed_sec": 28.49
+    },
+    "unreachable": {
+      "requests": [],
+      "n_requests": 0,
+      "result": {
+        "status": "ok",
+        "target": "svc_rerank",
+        "load_sec": 26.72
+      },
+      "returncode": 0,
+      "timed_out": false,
+      "elapsed_sec": 28.17
+    },
+    "unreachable+off": {
+      "requests": [],
+      "n_requests": 0,
+      "result": {
+        "status": "ok",
+        "target": "svc_rerank",
+        "load_sec": 26.15
+      },
+      "returncode": 0,
+      "timed_out": false,
+      "elapsed_sec": 27.61
+    },
+    "offline": {
+      "requests": [],
+      "n_requests": 0,
+      "result": {
+        "status": "ok",
+        "target": "svc_rerank",
+        "load_sec": 26.15
+      },
+      "returncode": 0,
+      "timed_out": false,
+      "elapsed_sec": 27.64
+    }
+  }
+}

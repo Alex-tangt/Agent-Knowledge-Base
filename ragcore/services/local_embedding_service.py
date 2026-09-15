@@ -1,5 +1,11 @@
-from sentence_transformers import SentenceTransformer
-from ragcore.utils.logger import logger
+from ragcore.config.config import LOCAL_EMBEDDING_MODEL
+from ragcore.config.hf import ensure_hf_offline
+
+# 必须在 import sentence_transformers / HF 之前：模型已缓存则切离线，避免冷启动外呼（#18）。
+ensure_hf_offline([LOCAL_EMBEDDING_MODEL])
+
+from sentence_transformers import SentenceTransformer  # noqa: E402
+from ragcore.utils.logger import logger  # noqa: E402
 
 
 class LocalEmbeddingService:

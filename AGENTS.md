@@ -67,7 +67,7 @@ Paths are anchored in code, not to CWD: `ROOT_DIR` / `RAGCORE_DIR` / `LEGAL_WEB_
 
 ## Environment (`.env`)
 配置按**用途分层**（#22 / ADR-0016）：
-- **core 层**（`ragcore/config/config.py`）：路径 / 模型名 / 检索阈值——**无密钥、import 不校验**；`memory_agent` 只走这层。
+- **core 层**（`ragcore/config/config.py`，另有 `config/hf.py` 缓存感知离线开关 #18）：路径 / 模型名 / 检索阈值——**无密钥、import 不校验**；`memory_agent` 只走这层。
 - **llm 层**（`ragcore/config/llm.py`）：`legal_web/.env`（**gitignored**，适配层入口显式 `load_llm_env()` 加载，进程环境优先）+ `require_llm()` 校验 `API_KEY` / `BASE_URL` / `Model`（capital `M`，不是 `MODEL`）。`legal_web` 启动（lifespan 首步）缺凭证即失败；`require_llm()` 失败只报变量名、不回显值。
 - LangSmith 可选：`LANGSMITH_API_KEY` + `LANGSMITH_TRACING=true`（默认 true）才启用；`langsmith_service` **惰性读取**，缺 key 时 trace 静默直通。
 - `memory_agent` 用自己的 `MEMORY_*` + `memory_agent/.env`（`MEMORY_ENV_FILE` 可覆盖路径），**不读 `legal_web/.env`**；模板 `memory_agent/.env.example`（无密钥、可提交）。
@@ -150,7 +150,7 @@ The `warmup()` function (called from `app.py` lifespan) eagerly triggers BGE-M3 
 - **Versioning**: JS/CSS files use `?v=N` cache busting. Increment when changing any JS module.
 
 ## Tests
-- **单元测试**：`tests/unit/`（pytest）——`test_document_service.py`、`test_rag_service.py`、`test_session_memory.py`、`test_memory_corpus.py`、`test_memory_index.py`、`test_memory_index_qdrant.py`、`test_memory_reindex.py`、`test_memory_writer.py`、`test_memory_lazy_warmup.py`、`test_memory_concurrency.py`、`test_memory_proxy.py`、`test_mcp_server_cli.py`、`test_config_layering.py`、`test_vector_store_clear.py`、`test_vector_store_filter.py`、`test_vector_store_locking.py`、`test_retrieval_strategy.py`、`test_memory_retrieval.py`、`test_memory_store_port.py`、`test_eval_metrics.py`、`test_reranker_service.py`、`test_gateway_authz.py`。运行：`venv\Scripts\python.exe -m pytest tests/unit -q`（248 passed）。
+- **单元测试**：`tests/unit/`（pytest）——`test_document_service.py`、`test_rag_service.py`、`test_session_memory.py`、`test_memory_corpus.py`、`test_memory_index.py`、`test_memory_index_qdrant.py`、`test_memory_reindex.py`、`test_memory_writer.py`、`test_memory_lazy_warmup.py`、`test_memory_concurrency.py`、`test_memory_proxy.py`、`test_mcp_server_cli.py`、`test_config_layering.py`、`test_vector_store_clear.py`、`test_vector_store_filter.py`、`test_vector_store_locking.py`、`test_retrieval_strategy.py`、`test_memory_retrieval.py`、`test_memory_store_port.py`、`test_eval_metrics.py`、`test_reranker_service.py`、`test_gateway_authz.py`、`test_hf_offline.py`。运行：`venv\Scripts\python.exe -m pytest tests/unit -q`（261 passed）。
 - **写路径 sandbox 套件（#16，真实 KB 版，需 BGE-M3）**：`venv\Scripts\python.exe memory_agent/eval/write_path_sandbox.py`——不在 `tests/unit` 内（运行时证据），证据见 `memory_agent/eval/write_path_sandbox_results.md`。
 - **网关 authn/authz 套件（#32，无需模型）**：`venv\Scripts\python.exe memory_agent/eval/gateway_authz_32.py`——外部行为断言（身份绑定 / 越权拒绝 / tenant+ABAC 真实 Qdrant 过滤 / 审计不含凭证），证据见 `memory_agent/eval/gateway_authz_32_results.md`（13/13）。
 - **记忆检索评测基座（#24，需 BGE-M3 [+ reranker]）**：`venv\Scripts\python.exe memory_agent/eval/retrieval_eval.py --mode hybrid-rerank`——不在 `tests/unit` 内（运行时证据），基线见 `memory_agent/eval/retrieval_baseline.md`。逐题计时口径见 `experiments/rerank-latency-survey/maxlen_results.md`。
@@ -241,7 +241,7 @@ The `warmup()` function (called from `app.py` lifespan) eagerly triggers BGE-M3 
 
 - ✅ 0. 机制落地 + 清理（垃圾已删；`eval_service.py` 迁入 `experiments/query-rewrite-optimizer/`；诊断产物 `llm_refusal_trace.txt`/`diagnostic_output.txt` 留待根因调查）。
 - ✅ 1. 初始基线 commit（本地 + 远程，单根 `e723e5b`）。
-- ✅ 2. 延迟调查（rerank-latency + e2e-latency 两轮实验）：生产 rerank mean ≈15s（CPU 固有，接受为已知限制）；"分钟级"真凶 = 优化器实验的 eval_service（对子查询重排 + pool 100，已记录发现，实验封存不修）；pool 截断延后为 planned optimization；模型加载已加 `local_files_only=True`（不下载权重；仍有少量 HF 元数据请求，实测不阻塞，见 #18）。
+- ✅ 2. 延迟调查（rerank-latency + e2e-latency 两轮实验）：生产 rerank mean ≈15s（CPU 固有，接受为已知限制）；"分钟级"真凶 = 优化器实验的 eval_service（对子查询重排 + pool 100，已记录发现，实验封存不修）；pool 截断延后为 planned optimization；模型加载已加 `local_files_only=True`（不下载权重）。**#18 已修**：`local_files_only` 不挡 HF 元数据解析，弱网下冷启动会被拖到分钟级甚至加载失败 → 改为「缓存感知自动离线」（见下）。
 - ✅ 3. 拒答根因调查（≤1 天，时间盒）：结论=机制健康（基线误拒率 2.4%、无答案拒答率 91.7%），唯一误拒为 reranker 边界分(0.87>0.85)+anchor 污染，选 A 接受现状并记录（详见 `experiments/refusal-root-cause/`）。
 - ✅ 4. 评估×2 → 因选 A 无二次评估，`legal_web/tests/results_scored.md` 即唯一最终证据（拒答 21→12，context_precision 3.4→4.8，source_recall 1.0）。
 - ✅ 5. README 简历门面（评测证据 + 工程纪律 + 目录修正）+ 终版整理。
@@ -286,7 +286,7 @@ The `warmup()` function (called from `app.py` lifespan) eagerly triggers BGE-M3 
 - **P2 前置 ✅ 已决**（#31）：**就地 amend** `docs/adr/0018`（D2.1–D2.4：authn 在 `/mcp` 边界 → 会话上下文 → 工具层 authz；proxy 非信任源）+ `docs/adr/0019`（D4–D6：检索归 store、各平面用各自原生、分数/阈值/评测按平面；本地走 Qdrant 原生 sparse+RRF + fastembed）。证据 `experiments/qdrant-local-mode-capabilities/`。**P2 已拆票**（2026-09-15）：**#32 ✅ 网关** · **#33 云 store 适配器**（blocked by #30 → **已解锁**）· **#34 隔离绕过套件**（blocked by #32 → **已解锁**）；均以两 ADR 为准。
 - ✅ **网关 authn/authz（#32，feat/32-gateway-authz）**：`memory_agent/gateway/`——`/mcp` 边界 authn（进程配置 / Bearer token）→ 请求期身份上下文 → 工具层**强制过滤注入**（tenant + classification/residency，白名单构造、**只可收窄**、越权拒绝）；审计 JSONL；**proxy 非信任源**。就地 amend `docs/adr/0018`（D2.5–D2.8）/ `docs/adr/0019`（D3 多值 `payload_filter` → Qdrant `MatchAny`）。验收：**248 passed** + 套件 13/13（`memory_agent/eval/gateway_authz_32_results.md`）。→ 解锁 **#34 隔离绕过套件**。
 - env knob 变更：`MEMORY_RETRIEVAL_POOL` 默认 **20 → 14**（`docs/adr/0022`：质量 + 延迟双优）。
-- **合并后锚点（2026-09-15，#30 + #32）**：`pytest tests/unit -q` → **253 passed**；网关套件 **13/13**；启动冒烟 **须设 `HF_HUB_OFFLINE=1`**（否则弱网下 warmup 卡在 HF 元数据重试 → 闸门假失败；见 **#18** 已重开）。
+- **合并后锚点（2026-09-15，#30 + #32 + #18）**：`pytest tests/unit -q` → **261 passed**；网关套件 **13/13**；启动冒烟不再需要手动设 `HF_HUB_OFFLINE=1`（#18 已修：缓存命中自动离线）。
 
 ## 后续优化待办（Backlog / 简历谈资池）
 
@@ -303,7 +303,7 @@ The `warmup()` function (called from `app.py` lifespan) eagerly triggers BGE-M3 
 - **Qdrant local mode 清空集合不要丢集合**：实测 `delete_collection` / `recreate_collection` 只摘元数据，同名 `create_collection` 会让磁盘上的旧点**复活**（3 → 0 → 3，静默失效）。`VectorStoreService.clear_all_documents` 改用空 filter 的 `FilterSelector` 删光点；回归见 `tests/unit/test_vector_store_clear.py`。
 - **包命名空间（ADR-0024）**：`ragcore` 是真包——一律 `from ragcore.services.reranker_service import ...` 这样带 `ragcore.` 前缀导入；**不要再加 sys.path 垫片，也不要再用裸 `services/`、`config/` 顶层名**。`memory_agent` 依赖已安装的 `ragcore`（`pip install -e ragcore -e memory_agent`），并继续用 `memory_agent.` 前缀绝对导入。
 - **First run** after `pip install` downloads BGE-M3 (~2.2GB) and bge-reranker-v2-m3 (~2.2GB) from HuggingFace. Subsequent runs load from cache instantly.
-- **启动冒烟/离线启动须设 `HF_HUB_OFFLINE=1`**（可加 `TRANSFORMERS_OFFLINE=1`）：即便 `local_files_only=True`，仍会发 HF 元数据 `HEAD`；**网络不可达时退避重试会把 warmup 拖到分钟级**（实测 >120s 未 ready，端点却正常）。设离线后 ready ~30s。见 **#18**。
+- **HF 外呼（#18 已修）**：`local_files_only=True` 只挡文件下载、**不挡** HF 元数据/revision 解析（会发 `GET /api/models/<repo>` 等）；弱网/代理不稳时冷启动被拖到分钟级甚至 `ValueError` 失败。现在 `ragcore/config/hf.py::ensure_hf_offline()` 在 import HF **之前**按「模型是否已缓存」自动切离线（`HF_HUB_OFFLINE=1`+`TRANSFORMERS_OFFLINE=1`），两个模型服务各自调用；有模型缺失则保持联网并告警（首次下载仍可用）。显式设置 `HF_HUB_OFFLINE`（含 `0`）不覆盖。复现与数据见 `experiments/hf-offline-warmup/`；因此启动冒烟**无需**再手动设离线。
 - **`RELEVANCE_THRESHOLD=0.85`** is a generous post-reranker value; the prompt handles most boundary cases. Use `experiments/relevance-calibration/calibrate_relevance.py` to recalibrate if needed.
 - **别把「一个语料的杠杆」外推到另一个语料**（2026-09-15 严重误判）：memory 的 rerank 截断收益（226s→15s，长条目）不能外推到 legal（块 ≤820 token，长度从来不是约束）。**先做分钟级 census（长度分布 / recall@k / 命中位置）再排多小时评测**。详见「开发工作流 · 廉价测量优先」。
 - **Browser cache** — after frontend changes, increment the `?v=N` query string on JS/CSS links in `index.html` AND in all `import` statements across all JS files. Otherwise browsers serve stale cached versions.
