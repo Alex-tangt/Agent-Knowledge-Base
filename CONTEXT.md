@@ -66,6 +66,21 @@ _Avoid_: 记忆
 id = `repo:<label>/<rel>`，标签重复加 `-2` 后缀。
 _Avoid_: 裸相对路径（跨仓库会静默撞 id）
 
+**存储端口（VectorStore Port）**：
+记忆检索依赖的存储抽象（`add/search/delete/count/clear/warmup`）；`MemoryIndex` 只经端口 +
+工厂拿存储，不认识 Qdrant local mode 细节。本地 Qdrant 是当前唯一实现，云 store 适配同一端口。
+_Avoid_: 让索引代码直接构造具体向量库客户端
+
+**驻留 / 密级（Residency / Classification）**：
+条目 payload 的治理维度。`classification ∈ {private, internal, public}`（缺省 private）、
+`residency ∈ {local, cloud}`（缺省 local）。frontmatter 是真相源且**可选**，索引 payload 只是
+供过滤用的镜像。
+_Avoid_: 把索引里的值当真相、强制要求全局 KB 填写
+
+**来源标注（Provenance）**：
+检索命中自带 `{plane, tenant}`，指明结果来自哪个存储平面 / 租户；联邦召回时逐条区分来源。
+_Avoid_: 只给聚合结果、丢失来源
+
 **条目级索引（Entry-level Index）**：
 以"一个条目一个索引单元"为粒度的索引约定；增量重建以条目为单位。
 _Avoid_: 固定窗口切块
