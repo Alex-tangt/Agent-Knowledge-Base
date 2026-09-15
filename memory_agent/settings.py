@@ -4,12 +4,36 @@
 Markdown 文档（带标签消歧义，见 docs/adr/0014）。
 派生索引（Qdrant local mode）必须落在独立目录——local mode 独占锁，不能与
 legal_web/vector_db 共用。
+
+配置来源独立（#22 / ADR-0016）：本包用 `MEMORY_*` env 命名空间 + 自己的
+`memory_agent/.env`，**不读 `legal_web/.env`**。core/llm 分层（ragcore/config）与之无关。
 """
 import json
 import os
 
+from dotenv import load_dotenv
+
 MEMORY_AGENT_DIR = os.path.dirname(os.path.abspath(__file__))
 ROOT_DIR = os.path.dirname(MEMORY_AGENT_DIR)
+
+ENV_FILE = os.environ.get("MEMORY_ENV_FILE") or os.path.join(MEMORY_AGENT_DIR, ".env")
+
+
+def load_env_file(path: str | None = None) -> bool:
+    """加载 memory_agent 自己的 `.env`（#22）。
+
+    - 只认 `memory_agent/.env`（可用 `MEMORY_ENV_FILE` 覆盖，或显式 `path`）；
+      **绝不读 `legal_web/.env`**。
+    - `override=False`：已存在的**进程环境变量优先**。
+    - 文件不存在则无操作。返回是否真的读取了文件。
+    """
+    target = path or ENV_FILE
+    if not os.path.isfile(target):
+        return False
+    return load_dotenv(target, override=False)
+
+
+load_env_file()  # 必须在下面读取任何 os.environ 之前执行
 
 # 可写真相源：全局 KB（条目 + frontmatter）
 KB_DIR = os.environ.get("AGENT_KB_DIR") or r"C:\Users\Tan\.config\opencode\knowledge"
