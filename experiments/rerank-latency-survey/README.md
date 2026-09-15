@@ -18,7 +18,7 @@
 | rerank 占 e2e | **~83%**（total mean 18.6s；rerank mean **15.5s** / p95 **29.1s**） | `experiments/e2e-latency/results.md`（legal，20 题） |
 | rerank vs 池子 | pool 20 → **4.6s**；10 → 2.4s；8 → 2.0s；40 → 9.2s（近线性） | `experiments/rerank-latency/results.md`（真实法条 ≤800 字） |
 | batch | bs=32 → 4.6s vs bs=1 → **8.1s** | 同上 |
-| 序列长度 | 模型默认 `max_seq_length=8192`；memory 侧 `MEMORY_RERANK_MAX_CHARS=512` → **3.5 min/查询 → 15s/查询（≈20x）**；**legal 侧无上限** | `memory_agent/eval/retrieval_baseline.md`、`AGENTS.md` |
+| 序列长度 | 模型默认 `max_seq_length=8192`；memory 侧 `MEMORY_RERANK_MAX_CHARS=512` → **226s/查询 → 15s/查询（≈15x；实测 26 条候选 226s）**；legal 侧无上限 | `memory_agent/eval/retrieval_baseline.md`、`AGENTS.md` |
 | 质量基线（守门） | hybrid-rerank **nDCG@10=0.9658 / MRR=0.9778 / recall@1=0.8593 / 0 miss**；纯 fusion recall@1 仅 0.25 | `memory_agent/eval/retrieval_baseline.md` |
 
 ## 数据
@@ -57,8 +57,8 @@
 
 ## 结论
 
-1. **延迟三个杠杆 = ①送排长度上限 ②候选池 ③模型体量**；①②便宜且天花板有限，③才是"替代"。
-2. **最该先打的是 ①**：legal 侧当前**根本没设上限**，而 memory 侧已证明 20x 收益。
+1. **延迟三个杠杆 = ①送排长度上限 ②候选池 ③模型体量**。
+2. **⚠️ 误判记录（2026-09-15，严重）**：本页初稿把 ① 当主杠杆——从 memory 的 **≈15x**（226s→15s，长条目 6000 字）**外推到 legal**。**错了**：length census 证明 memory 候选对 **max 381 token**、legal 块 **≤~820 token**，上限 8192/1024/512 在两套语料上**全是 no-op**（`maxlen_results.md` / ADR-0020）。**杠杆是语料相关的；先做分钟级 census 再排大评测。** 真正的主杠杆是 **②候选池**（20→10 近线性减半）。
 3. **外部技巧库不能替代实测**：无 RRF/无数字；可搬的是「减池/过滤/上限」范式与评测口径。
 4. **换模型有候选，但有许可（jina NC）与 ONNX-in-CPU 不确定两个坑**；decoder 类不为延迟排期。
 5. **守门红线**：任何改动 nDCG@10 明显低于 **0.9658** 即不上线——延迟不能靠掉质量换。

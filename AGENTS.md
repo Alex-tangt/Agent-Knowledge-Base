@@ -190,6 +190,15 @@ The `warmup()` function (called from `app.py` lifespan) eagerly triggers BGE-M3 
 ### 实验留痕
 实验只进 `experiments/<name>/`。每个实验目录必须含 `README.md`（问题 → 假设 → 设置 → 数据 → 结论）。无结论的实验不算完成。
 
+### 廉价测量优先（先 census，后大评测）
+
+**先做分钟级可行性测量，再排多小时评测。** 2026-09-15 严重误判（误判 + 走弯路）先例：把 memory 的 rerank 截断收益（226s→15s，长条目 6000 字）**外推到 legal 语料**，认定「送排长度」是主杠杆，排了 token 上限 A/B（多趟 ≈880s/趟）——而一次 **token 长度 census**（几分钟）就能定死：memory 候选对 max **381** token、legal 块 ≤~**820** token → 上限 8192/1024/512 在两套语料上**全是 no-op**。证据 `experiments/rerank-latency-survey/maxlen_results.md`、ADR-0020。
+
+纪律：
+- **杠杆是语料相关的**——一个语料上的收益不外推到另一个语料。
+- 排评测前先问：**有没有几分钟就能量出分布/曲线的办法**（长度分布、recall@k、命中位置分布）？有就先做，再决定要不要排重评测。
+- **倍数回算过再写**（226/15≈15x，不是 20x）。
+
 ### 健康闸门（收工前必跑）
 1. `git status` 干净——无未提交工作（那批 CRLF-only 的 ` M` 假脏除外：`git diff --numstat` 应为空）。
 2. 本文件与实际目录树一致。
@@ -272,6 +281,7 @@ The `warmup()` function (called from `app.py` lifespan) eagerly triggers BGE-M3 
 - **Don't name a `memory_agent` module `config.py`** — under `python memory_agent/x.py` it shadows ragcore's top-level `config` package (`ModuleNotFoundError: No module named 'config.config'`). It's `settings.py`; use `memory_agent.`-prefixed absolute imports.
 - **First run** after `pip install` downloads BGE-M3 (~2.2GB) and bge-reranker-v2-m3 (~2.2GB) from HuggingFace. Subsequent runs load from cache instantly.
 - **`RELEVANCE_THRESHOLD=0.85`** is a generous post-reranker value; the prompt handles most boundary cases. Use `experiments/relevance-calibration/calibrate_relevance.py` to recalibrate if needed.
+- **别把「一个语料的杠杆」外推到另一个语料**（2026-09-15 严重误判）：memory 的 rerank 截断收益（226s→15s，长条目）不能外推到 legal（块 ≤820 token，长度从来不是约束）。**先做分钟级 census（长度分布 / recall@k / 命中位置）再排多小时评测**。详见「开发工作流 · 廉价测量优先」。
 - **Browser cache** — after frontend changes, increment the `?v=N` query string on JS/CSS links in `index.html` AND in all `import` statements across all JS files. Otherwise browsers serve stale cached versions.
 - **Article-aware splitting** requires ≥3 "第X条" markers to activate; documents with fewer markers fall back to recursive splitting.
 - `legal_web/fetch_laws.py` — law document scraper. One-off experiments live in `experiments/` (see its README).
