@@ -40,7 +40,7 @@
 
 **β 扫描（pool=14，retriever-only）**：平台 **β∈[0.05, 0.08] → recall@1=0.7074**；
 β=0.04→0.6796、β=0.09→0.6852、β≥0.10→0.6630。取平台（也是 nDCG/MRR 最优）的 **0.05**。
-完整 31 变体 × pool 8/10/12/14/16/20 见 `fusion_results.md`。
+完整 37 变体 × pool 8/10/12/14/16/20 见 `fusion_results.md`。
 
 **读数**：
 - `rrf` 单独列一档：关键词列表是**低精度**表（CJK 二元组使一题命中 ~55 条，多为噪声），
@@ -127,6 +127,6 @@ venv\Scripts\python.exe experiments/fusion-selection/bench_rerank_pool.py `
 |---|---|
 | `bench_fusion.py` | retriever-only 融合对照 + 池曲线（离线套用，含 baseline 复现校验） |
 | `bench_rerank_pool.py` | rerank 链池曲线（一次重排 + 缓存离析） |
-| `fusion_results.json` / `.md` | 31 变体 × pool 8–20 全量指标 |
+| `fusion_results.json` / `.md` | 37 变体 × pool 8–20 全量指标 |
 | `rerank_hybrid_pool14.json` | 生产 `retrieval_eval --mode hybrid-rerank`（pool14）逐题明细 |
 | `rerank_pool_curve.json` / `.md` | rerank 池曲线 + pairs/延迟 |
