@@ -131,7 +131,7 @@ venv\Scripts\python.exe memory_agent/eval/retrieval_eval.py --mode hybrid-rerank
 工具：
 - `memory_search(query, k=5, writable_only=False)` → 条目级命中（`id/title/source/writable/type/tags/status/owner/score/snippet`；`owner` = 域所有者，只读条目为来源 label，读侧可见 #45）；`score` 越大越相关（向量 + 关键词混合召回：关键词命中批次 >1，其余为余弦相似度）。
 - `memory_get(entry_id)` → 该条目的**真实 Markdown** 内容 + 元数据。
-- `memory_add(title, body, section, type, tags, slug, sources, status, allow_duplicate)` → 唯一写入口；`section`（`topics | decisions | projects/<slug>`）是全局知识库内的分区（旧名 `domain` 为弃用别名，#45）；写前去重，命中近似条目则**不写**并返回候选（`allow_duplicate=true` 是误报出口）；写入 = frontmatter 过校验 + 一个**只含本条目文件**的 git commit + 增量刷新索引。
+- `memory_add(title, body, section, type, tags, slug, sources, status, allow_duplicate)` → 唯一写入口；`section`（`topics | decisions | projects/<slug>`）是全局知识库内的分区（旧名 `domain` 为弃用别名，#45）；写前去重，命中近似条目则**不写**并返回候选（`allow_duplicate=true` 是误报出口）；写入 = frontmatter 过校验 + 一个**只含本条目文件**的 git commit（**不同步刷索引**，D13：索引由下一次 `memory_search` 的指纹检查追平）。
 - `memory_supersede(old_id, ..., confirm=False)` / `memory_archive(entry_id, reason, confirm=False)` → 破坏性；默认只预览，`confirm=true` 才落盘（见 `docs/adr/0010`）。
 - `memory_reindex(cursor=None, batch=16)` → 分块全量重建（`cursor=None` 开始，拿 `cursor` 续调到 `done=true`，此时指针已切）。
 - `memory_index_status()` → `{built,gen,entries,points,consistent,built_at,path}`。

@@ -264,7 +264,7 @@ The `warmup()` function (called from `app.py` lifespan) eagerly triggers BGE-M3 
 
 **两条轨道 + 一个冻结区**（这是**计划**，不是纪律）：
 
-- **主线 = 个人模式**（唯一开发重点）：✅ **#41 一步安装 + 第二消费者** · ✅ **#43 embedding 绑本机 BGE-M3** · **#44 #41 返工（第二消费者改为共享可读写全局 KB）** · **#45 命名 + 域可见（`section` / 命中 `owner`）** · **#42 agent loop**（依赖 #45）· 收尾。
+- **主线 = 个人模式**（唯一开发重点）：✅ **#41 一步安装 + 第二消费者** · ✅ **#43 embedding 绑本机 BGE-M3** · ✅ **#45 命名 + 域可见（`section` / 命中 `owner`）** · **#44 #41 返工（第二消费者改为共享可读写全局 KB）** · **#42 agent loop** · 收尾。
   **模型（`ADR-0025` D19）**：**读 = 整张基表**（本地统一向量索引 `memory_entries`）；**写 = 全局知识库**（唯一经工具可写域，**所有 agent 可读写**，经写入网关 + 单 daemon 串行化）；其它域由 agent 自己写文件、我们只读索引。**写侧无域寻址**。
   **检索沿用现状、主线不碰检索**（owner 决定 2026-09-16「B」）。
 - **并行轨 = 检索优化**（**执行 / 实验**会话，自负验收合并）：**#21**（伞）· **#35**（deferred）· **#40**（deferred）。
@@ -289,7 +289,7 @@ The `warmup()` function (called from `app.py` lifespan) eagerly triggers BGE-M3 
 - ✅ 甲⁺ 布局重排（#9 第一轮）：`backend/` 拆为 `ragcore/` + `legal_web/`，新建 `memory_agent/`；T1 锚点复现（71 passed + 导入冒烟 + 启动冒烟，见 `memory_agent/eval/baseline_A.md`）。
 - ✅ 更名（#9 第二轮，2026-09-14 完成）：GitHub 仓库已改为 `Alex-tangt/Agent-Knowledge-Base`，`origin` 是干净 URL（原嵌的明文 token 已移除）；本地目录已改名（会话内被 MCP 子进程 CWD 锁住，由用户在会话外完成）。在新路径复跑锚点验收：`pytest tests/unit -q` → 71 passed、legal_web 导入冒烟 → import-ok。venv 采用"移动后原样验证"策略，一律用 `venv\Scripts\python.exe -m ...`（`Scripts\*.exe` 内嵌旧绝对路径已失效，不使用）。详见 `docs/adr/0007`。
 - ✅ 读路径最小闭环（#10，2026-09-14）：`memory_agent` 条目级派生索引（复用 `ragcore` BGE-M3 + Qdrant，独立路径）+ stdio MCP `memory_search`/`memory_get`；60 条（20 可写 KB / 40 只读本仓库）。决策见 `docs/adr/0008`。
-- ✅ 写入网关（#11，2026-09-14）：MCP `memory_add`——写前检索去重（命中近似只报告、不写）、frontmatter 镜像 `kb.py check` 校验（另强制 domain↔type）、路径级单文件 git commit（只提交本条目，避开并发会话的脏改动）。决策见 `docs/adr/0009`；单测 `tests/unit/test_memory_writer.py`（106 passed 全绿）。
+- ✅ 写入网关（#11，2026-09-14）：MCP `memory_add`——写前检索去重（命中近似只报告、不写）、frontmatter 镜像 `kb.py check` 校验（另强制分区↔type；工具面参数为 **`section`**，frontmatter 内部字段仍名 `domain`，#45）、路径级单文件 git commit（只提交本条目，避开并发会话的脏改动）。决策见 `docs/adr/0009`；单测 `tests/unit/test_memory_writer.py`（106 passed 全绿）。
 - ✅ 生命周期工具（#12，2026-09-14）：MCP `memory_supersede`（新建 + 双向标注 `supersedes`/`superseded_by`，新旧同一次 commit）与 `memory_archive`（置 `status: archived` + `archive_reason`，永不删文件）；两者默认只返回 `confirmation_required` 预览，需 `confirm=true` 才落盘。决策见 `docs/adr/0010`；单测 `tests/unit/test_memory_writer.py`（117 passed 全绿）。
 - ✅ skill 骨架（#14，2026-09-14）：`memory_agent/skill/SKILL.md`（源，安装到全局 `~/.config/opencode/skills/memory-agent/`）——读/写/生命周期工具用法 + 破坏性确认规则（先预览、用户同意后才 `confirm=true`）。决策见 `docs/adr/0012`；行为验收在 #17 dogfood，不在本票。
 - ✅ 惰性预热（#19 第一步，2026-09-14）：MCP 服务**默认不再预热** BGE-M3（要低延迟可设 `MEMORY_WARMUP=1`）。实测启动私有内存 **3953MB → 54MB**。根因：每个 opencode 会话各拉起一份 MCP、各吃 ~3.9GB（BGE-M3 权重 2.17GB + torch 运行时 + 加载峰值），三条并行会话把系统 commit 打满 → `Out of memory` / 卡死 / `uv_spawn` 失败。#19 已关闭（共享单实例根治，见下）；「换小模型」为独立正交备选，另行评估。
