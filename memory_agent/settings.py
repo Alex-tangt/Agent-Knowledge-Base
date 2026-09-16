@@ -42,13 +42,21 @@ KB_DIR = os.environ.get("AGENT_KB_DIR") or r"C:\Users\Tan\.config\opencode\knowl
 # 标签用于消歧义——不同仓库里同名文件（README.md / CONTEXT.md）的相对路径会撞车，
 # 故 source = "<label>/<rel>"，只读条目 id = "repo:<label>/<rel>"（见 corpus/loader.py）。
 #
-# 配置优先级：
+# 配置优先级（**运行时重读**，#36 / ADR-0025 D8/D9——不再 import 时定死）：
 # 1. `MEMORY_READONLY_ROOTS` 显式设置（os.pathsep 分隔；**空串 = 无只读语料**）——
 #    sandbox/评测套件用它把索引限制在可写 KB 内（#16）。
-# 2. 否则读 gitignored 的 `readonly_repos.json`（`[{label, path}]`，相对路径按仓库根解析）。
+# 2. 否则读 gitignored 的 `readonly_repos.json`（`[{label, path, owner?}]`，相对路径按仓库根解析）。
 # 3. 都没有 → 默认仅本仓库（自足、可发布；目录名即标签）。
+#
+# 显式 overlay（收录清单）独立在 `overlay.json`（`MEMORY_OVERLAY_CONFIG` 可覆盖路径）：
+# `include` 追加路径模式（精确文件 / 窄 glob），`exclude` 收窄；运行时与注册表合并
+# （注册表默认 ∪ overlay，见 ADR-0025 D8）。
 DEFAULT_READONLY_CONFIG_FILE = os.path.join(MEMORY_AGENT_DIR, "readonly_repos.json")
+DEFAULT_OVERLAY_CONFIG_FILE = os.path.join(MEMORY_AGENT_DIR, "overlay.json")
 DEFAULT_READONLY_LABEL = os.path.basename(ROOT_DIR.rstrip("\\/")) or "repo"
+
+# 可写 KB 的域所有者（#36 / ADR-0025 D3）；缺省 None = 不声明所有权。
+KB_OWNER = os.environ.get("MEMORY_KB_OWNER") or None
 
 
 def _readonly_config_file() -> str:
@@ -56,25 +64,21 @@ def _readonly_config_file() -> str:
     return os.environ.get("MEMORY_READONLY_REPOS_CONFIG") or DEFAULT_READONLY_CONFIG_FILE
 
 
+def overlay_config_file() -> str:
+    """显式 overlay（收录清单）路径；调用时解析（`MEMORY_OVERLAY_CONFIG` 可覆盖）。"""
+    return os.environ.get("MEMORY_OVERLAY_CONFIG") or DEFAULT_OVERLAY_CONFIG_FILE
+
+
 def _label_from_path(path: str) -> str:
     return os.path.basename(os.path.abspath(path).rstrip("\\/")) or "repo"
 
 
-def _read_readonly_config() -> list[dict] | None:
-    """读只读仓库配置；文件不存在或非法时返回 None（回落到默认）。"""
-    config_file = _readonly_config_file()
-    if not os.path.isfile(config_file):
-        return None
+def _load_json(path: str):
     try:
-        with open(config_file, "r", encoding="utf-8") as handle:
-            data = json.load(handle)
+        with open(path, "r", encoding="utf-8") as handle:
+            return json.load(handle)
     except (OSError, json.JSONDecodeError):
         return None
-    if isinstance(data, dict):
-        data = data.get("roots")
-    if not isinstance(data, list):
-        return None
-    return [item for item in data if isinstance(item, dict)]
 
 
 def _uniquify(labels: list[str]) -> list[str]:
@@ -87,41 +91,80 @@ def _uniquify(labels: list[str]) -> list[str]:
     return out
 
 
-def _readonly_roots() -> list[tuple[str, str]]:
-    """返回 [(label, 绝对路径)]，已按路径去重、标签唯一化。"""
-    raw = os.environ.get("MEMORY_READONLY_ROOTS")
-    if raw is not None:
-        paths = [os.path.abspath(part) for part in raw.split(os.pathsep) if part.strip()]
-        items = [(_label_from_path(p), p) for p in paths]
-    else:
-        config = _read_readonly_config()
-        if config is None:
-            items = [(DEFAULT_READONLY_LABEL, ROOT_DIR)]
-        else:
-            items = []
-            for item in config:
-                path = str(item.get("path") or "").strip()
-                if not path:
-                    continue
-                if not os.path.isabs(path):
-                    path = os.path.normpath(os.path.join(ROOT_DIR, path))
-                label = str(item.get("label") or "").strip() or _label_from_path(path)
-                items.append((label, os.path.abspath(path)))
-
-    deduped: list[tuple[str, str]] = []
+def _dedupe_items(items: list[dict]) -> list[dict]:
+    """按路径去重 + 标签唯一化；返回 [{label, path, owner}]。"""
+    deduped: list[dict] = []
     seen_paths: set[str] = set()
-    for label, path in items:
-        key = os.path.normcase(os.path.normpath(path))
+    for item in items:
+        key = os.path.normcase(os.path.normpath(item["path"]))
         if key in seen_paths:
             continue
         seen_paths.add(key)
-        deduped.append((label, path))
+        deduped.append(item)
+    labels = _uniquify([item["label"] for item in deduped])
+    return [dict(item, label=label) for item, label in zip(deduped, labels)]
 
-    labels = _uniquify([label for label, _ in deduped])
-    return [(label, path) for label, (_, path) in zip(labels, deduped)]
+
+def _default_readonly_item() -> dict:
+    return {"label": DEFAULT_READONLY_LABEL, "path": ROOT_DIR, "owner": DEFAULT_READONLY_LABEL}
 
 
-READONLY_ROOTS = _readonly_roots()
+def _readonly_items() -> tuple[list[dict], bool]:
+    """运行时解析只读来源：`(items, complete)`，items = [{label, path(abs), owner}]。
+
+    `complete=False` 表示配置文件**存在但读不出/非法**——调用方据此保守处理「条目消失」
+    （见 corpus/loader 与 MemoryIndex.refresh 的孤儿安全策略），不把整批条目当孤儿删掉。
+    """
+    raw = os.environ.get("MEMORY_READONLY_ROOTS")
+    if raw is not None:
+        items = []
+        for part in raw.split(os.pathsep):
+            if not part.strip():
+                continue
+            path = os.path.abspath(part)
+            label = _label_from_path(path)
+            items.append({"label": label, "path": path, "owner": label})
+        return _dedupe_items(items), True
+
+    config_file = _readonly_config_file()
+    if not os.path.isfile(config_file):
+        return _dedupe_items([_default_readonly_item()]), True
+
+    data = _load_json(config_file)
+    if isinstance(data, dict):
+        data = data.get("roots")
+    if not isinstance(data, list):
+        return _dedupe_items([_default_readonly_item()]), False
+
+    items: list[dict] = []
+    for item in data:
+        if not isinstance(item, dict):
+            continue
+        path = str(item.get("path") or "").strip()
+        if not path:
+            continue
+        if not os.path.isabs(path):
+            path = os.path.normpath(os.path.join(ROOT_DIR, path))
+        path = os.path.abspath(path)
+        label = str(item.get("label") or "").strip() or _label_from_path(path)
+        owner = str(item.get("owner") or "").strip() or label
+        items.append({"label": label, "path": path, "owner": owner})
+    # 显式空清单 = 无只读来源（合法）；只有文件结构非法才算「不完整」。
+    return _dedupe_items(items), True
+
+
+def readonly_sources() -> tuple[list[dict], bool]:
+    """运行时读取只读来源（label/path/owner）+ 配置完整性标志（#36）。"""
+    return _readonly_items()
+
+
+def _readonly_roots() -> list[tuple[str, str]]:
+    """返回 [(label, 绝对路径)]（兼容旧形状；运行时一律用 `readonly_sources()`）。"""
+    items, _ = _readonly_items()
+    return [(item["label"], item["path"]) for item in items]
+
+
+READONLY_ROOTS = _readonly_roots()  # 兼容旧引用；selection 已改为运行时重读
 
 # 派生索引：代目录 + 指针（issue #13 / ADR-0011）。
 # 每代是独立目录 INDEX_DIR/<gen>/{qdrant/,manifest.json}；CURRENT 是指针文件，
@@ -178,6 +221,8 @@ AUTH_ROLE = os.environ.get("MEMORY_AUTH_ROLE", "owner")
 # 逗号分隔的允许集；缺省 = 全集（本地单租户默认不限制）。
 AUTH_CLASSIFICATIONS = os.environ.get("MEMORY_AUTH_CLASSIFICATIONS", "")
 AUTH_RESIDENCIES = os.environ.get("MEMORY_AUTH_RESIDENCIES", "")
+# 可写域所有权（#36 / ADR-0025 D3）：逗号分隔的 owner 集合；空 = 不限制（单租户默认）。
+AUTH_OWNERS = os.environ.get("MEMORY_AUTH_OWNERS", "")
 AUTH_TOKENS = os.environ.get("MEMORY_AUTH_TOKENS", "")
 AUTH_REQUIRE_TOKEN = os.environ.get("MEMORY_AUTH_REQUIRE_TOKEN", "")
 # 审计 JSONL（gitignored）：记录 tools/call + 身份，绝不写凭证。

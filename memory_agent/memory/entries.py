@@ -83,6 +83,13 @@ class Entry:
     classification: str = DEFAULT_CLASSIFICATION
     residency: str = DEFAULT_RESIDENCY
     tenant: str | None = None
+    # 域所有者（#36 / ADR-0025 D3）：只读条目继承来源 owner，可写条目取 frontmatter。
+    owner: str | None = None
+    # 来源根（绝对路径）：孤儿安全判断用（root 不可达时保守保留，ADR-0014）。
+    root: str | None = None
+    # 廉价指纹（#36 / D9）：mtime + size，查询时惰性比对，避免每次读取正文。
+    mtime_ns: int | None = None
+    size: int | None = None
 
     @property
     def content_hash(self) -> str:
@@ -115,6 +122,10 @@ class Entry:
             "classification": self.classification,
             "residency": self.residency,
             "tenant": self.tenant,
+            "owner": self.owner,
+            "root": self.root,
+            "mtime_ns": self.mtime_ns,
+            "size": self.size,
             "hash": self.content_hash,
         }
 
@@ -132,6 +143,8 @@ class Entry:
         source: str,
         writable: bool,
         entry_id: str | None = None,
+        owner: str | None = None,
+        root: str | None = None,
     ) -> "Entry":
         with open(path, "r", encoding="utf-8") as handle:
             content = handle.read()
@@ -144,6 +157,12 @@ class Entry:
         if not title:
             heading = _HEADING_RE.search(body)
             title = heading.group(1) if heading else os.path.splitext(os.path.basename(path))[0]
+
+        try:
+            stat = os.stat(path)
+            mtime_ns, size = stat.st_mtime_ns, stat.st_size
+        except OSError:
+            mtime_ns, size = None, None
 
         return cls(
             id=resolved_id,
@@ -163,4 +182,8 @@ class Entry:
                 meta.get("residency"), RESIDENCY_VALUES, DEFAULT_RESIDENCY
             ),
             tenant=_as_str(meta.get("tenant")),
+            owner=_as_str(meta.get("owner")) or owner,
+            root=os.path.abspath(root) if root else os.path.dirname(os.path.abspath(path)),
+            mtime_ns=mtime_ns,
+            size=size,
         )

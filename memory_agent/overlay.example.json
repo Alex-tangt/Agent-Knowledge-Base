@@ -1,0 +1,17 @@
+{
+  "include": [
+    {
+      "path": "docs/adr",
+      "label": "adr",
+      "owner": "me"
+    },
+    {
+      "glob": "C:/Users/me/notes/**/*.md",
+      "label": "notes",
+      "owner": "me"
+    }
+  ],
+  "exclude": [
+    "C:/Users/me/notes/drafts/**"
+  ]
+}
