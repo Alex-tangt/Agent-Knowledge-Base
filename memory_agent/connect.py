@@ -12,8 +12,9 @@
    缺则打印 patch，**不擅自改用户配置**。
 4. **确保 daemon 在跑**（复用 `proxy.ensure_daemon`）。
 
-只读边界（D17）：第二消费者 v1 只用读工具，安装器在 DeepTutor 侧用
-`enabled_tools` 白名单把写 / 维护工具挡掉——边界落在配置里，不靠对方自觉。
+共享边界（D19 **修订** D17）：全局知识库是**所有 agent 可读可写的共享域**，第二消费者
+**读写同一 KB**——安装器在 DeepTutor 侧用 `enabled_tools` 白名单同时放开读工具与内容写工具
+（add / supersede / archive）；索引维护（reindex）不进白名单，边界落在配置里、不靠对方自觉。
 
 用法：
 
@@ -36,13 +37,32 @@ from memory_agent.settings import MCP_HTTP_HOST, MCP_HTTP_PATH, MCP_HTTP_PORT
 #: 第二条消费者在 DeepTutor 侧的服务名（两个消费者共用一个 daemon，但各自登记名字）。
 SERVER_NAME = "memory-agent"
 
-#: 只读工具白名单（D17）：search / get / index_status / ingest_list。
-#: 写（add / supersede / archive）与全量重建（reindex）留在本产品的写入网关。
-READONLY_TOOLS = (
+#: 第二消费者可用工具白名单（#44 / ADR-0025 **D19 修订 D17**）。
+#: 全局知识库是**所有 agent 可读可写的共享域**：
+#: - 读 = 整张基表（search / get / index_status / ingest_list）；
+#: - 写 = 全局 KB 内容（add / supersede / archive），经本产品写入网关 + 单 daemon
+#:   进程内 `WRITE_LOCK` 串行化——多 agent 写同一 KB 安全（D19）。
+#: 写入的问责面 = agent 身份：daemon 审计对每个 `tools/call` 记身份（见 `gateway/middleware.py`）。
+SHARED_TOOLS = (
     "memory_search",
     "memory_get",
+    "memory_add",
+    "memory_supersede",
+    "memory_archive",
     "memory_index_status",
     "memory_ingest_list",
+)
+
+#: **不**纳入共享白名单的工具（维护 / 收录 DDL），附理由：
+#: - `memory_reindex`：换代重建**全消费者共用**的派生索引、切换指针（影响所有消费者），
+#:   不是内容写入；D19 共享的是「全局 KB 内容」，索引一致性是部署者的维护动作，
+#:   日常新鲜度已由 D13 惰性刷新覆盖。暴露它会让第二个 agent 扰动共享派生索引。
+#: - `memory_ingest_include` / `memory_ingest_exclude`：只读语料收录范围（本地部署者的
+#:   收录 DDL），不属于「写全局 KB 内容」；#44 只放开内容写，收录决策不在本票范围。
+RESTRICTED_TOOLS = (
+    "memory_reindex",
+    "memory_ingest_include",
+    "memory_ingest_exclude",
 )
 
 #: DeepTutor 部署级配置在 `<runtime-home>/data/user/settings/` 下。
@@ -125,13 +145,13 @@ def build_server_entry(url: str, *, tool_timeout: int = DEFAULT_TOOL_TIMEOUT) ->
     """DeepTutor `MCPServerConfig` 形状的一条 streamableHttp 服务定义。
 
     字段与 `deeptutor.services.mcp.config.MCPServerConfig` 对齐；`enabled_tools`
-    只给读工具（D17 只读边界）。
+    给共享工具（读 + 内容写，D19），**不含**索引维护 `RESTRICTED_TOOLS`。
     """
     return {
         "type": "streamableHttp",
         "url": url,
         "tool_timeout": tool_timeout,
-        "enabled_tools": list(READONLY_TOOLS),
+        "enabled_tools": list(SHARED_TOOLS),
         "enabled": True,
     }
 
@@ -326,7 +346,8 @@ def _print_plan(report: dict) -> None:
     print(f"   MCP 配置       : {report['mcp_config_path']} "
           f"[{'需写入' if report['mcp_changed'] else '已是最新'}]")
     print(f"   daemon URL     : {report['url']}")
-    print(f"   只读白名单     : {', '.join(READONLY_TOOLS)}")
+    print(f"   共享工具       : {', '.join(SHARED_TOOLS)}")
+    print(f"   不开放         : {', '.join(RESTRICTED_TOOLS)}（维护 / 收录 DDL）")
     if report["embedding"]:
         print(f"   embedding 端点 : {report['embeddings_url']}")
         print(f"   模型目录       : {report['model_catalog_path']} "

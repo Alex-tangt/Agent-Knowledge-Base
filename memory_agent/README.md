@@ -4,6 +4,7 @@ Agent-Knowledge-Base 的第一个能力：让 coding agent 通过 MCP 语义检�
 
 - 产品形状与架构：`docs/adr/0005`（产品升级）、`docs/adr/0006`（Markdown 真相源 + 派生索引 + 写入网关）、`docs/adr/0007`（布局与更名）、`docs/adr/0008`（读路径接缝：MCP 选型 / 语料范围 / stdio 铁律）、`docs/adr/0009`（写路径：commit 归属范围 + 去重命中语义）、`docs/adr/0011`（索引一致性：代目录 + 指针切换）、`docs/adr/0013`（拓扑：共享单实例 daemon + 代理）、`docs/adr/0014`（只读语料：带标签的多仓库文档）、`docs/adr/0024`（独立包化：`ragcore` 真包 + 本包可安装）。
 - 需求全貌（user stories / 决策 / 测试口径）：GitHub issue #7；实现票据 #10–#17。
+- 第二消费者（#41）与共享可读写（#44 / `docs/adr/0025` D19）：见下方「第二个消费者」。
 
 ## 约定（不变量）
 
@@ -18,7 +19,7 @@ Agent-Knowledge-Base 的第一个能力：让 coding agent 通过 MCP 语义检�
 memory_agent/
 ├── mcp_server.py          # MCP 服务：默认 stdio；--transport http 起共享 daemon（/health + OpenAI 兼容 /v1/embeddings）(#10-#13,#19,#43)
 ├── proxy.py               # 每会话瘦代理：幂等确保 daemon 在跑 + stdio<->HTTP 转发          (#19)
-├── connect.py             # 一步安装第二个消费者（DeepTutor）：部署级 mcp.json + 核验 + skill 落位 (#41)
+├── connect.py             # 一步安装第二个消费者（DeepTutor）：部署级 mcp.json + 核验 + skill 落位；共享可读写 (#41,#44)
 ├── runtime.py             # 先立 stderr 日志，再装配索引 / 写入网关单例
 ├── _bootstrap.py          # stdio 安全日志（import ragcore 前抢配 root logger 到 stderr）
 ├── settings.py            # 真相源 / 索引根 / 来源注册表 / overlay / 指针名 / 集合名 / 去重阈值 / daemon 端点
@@ -87,8 +88,11 @@ venv\Scripts\python.exe -m memory_agent.connect --deeptutor-home <DeepTutor 运�
 #      - 落位 skill 到 ~/.config/opencode/skills/memory-agent/。
 #      - 核验 opencode 注册（缺则打印 patch，**不擅自改用户配置**）。
 #      - 幂等确保共享 daemon 在跑；--dry-run 只预览；--no-daemon 跳过。
-#    只读边界（D17）：安装器在 DeepTutor 侧用 enabled_tools 只放
-#    search / get / index_status / ingest_list；写仍只走本产品的写入网关。
+#    共享边界（#44 / ADR-0025 D19 修订 D17）：全局知识库是**所有 agent 可读可写**
+#    的共享域——安装器在 DeepTutor 侧用 enabled_tools 放开 search / get / add /
+#    supersede / archive / index_status / ingest_list；写经本产品写入网关 + 单 daemon
+#    `WRITE_LOCK` 串行化，审计对每次 tools/call 记 agent 身份（可归属）。
+#    维护 / 收录 DDL（reindex、ingest_include/exclude）不进白名单。
 #    （console script：memory-agent-connect）
 
 # 5) daemon 的 OpenAI 兼容 embeddings 端点（#43）：与索引共用同一份 BGE-M3

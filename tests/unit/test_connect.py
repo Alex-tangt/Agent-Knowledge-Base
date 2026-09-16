@@ -39,15 +39,19 @@ def test_daemon_url_forces_leading_slash():
 
 # --------------------------------------------------------------------- 条目形状
 
-def test_build_server_entry_is_readonly_streamablehttp():
+def test_build_server_entry_is_shared_streamablehttp():
     entry = connect.build_server_entry("http://127.0.0.1:8765/mcp")
     assert entry["type"] == "streamableHttp"
     assert entry["url"] == "http://127.0.0.1:8765/mcp"
     assert entry["enabled"] is True
-    assert entry["enabled_tools"] == list(connect.READONLY_TOOLS)
-    # 只读边界（D17）：写 / 维护工具不得进入白名单。
-    for forbidden in ("memory_add", "memory_supersede", "memory_archive", "memory_reindex"):
+    assert entry["enabled_tools"] == list(connect.SHARED_TOOLS)
+    # 共享可写（#44 / ADR-0025 D19 修订 D17）：内容写工具进入白名单。
+    for allowed in ("memory_add", "memory_supersede", "memory_archive"):
+        assert allowed in entry["enabled_tools"]
+    # 维护 / 收录 DDL 仍不进白名单。
+    for forbidden in ("memory_reindex", "memory_ingest_include", "memory_ingest_exclude"):
         assert forbidden not in entry["enabled_tools"]
+    assert set(connect.SHARED_TOOLS).isdisjoint(connect.RESTRICTED_TOOLS)
 
 
 # --------------------------------------------------------------------- 幂等合并

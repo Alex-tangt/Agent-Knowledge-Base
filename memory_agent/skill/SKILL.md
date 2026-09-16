@@ -76,9 +76,12 @@ description: 通过 memory-agent MCP 工具读写 agent 长期记忆——检索
 ## 边界
 
 - `writable=false` 的只读语料不可写；写入一律走 add/supersede/archive。
-- **多消费者共享**（#41 / ADR-0025 D17）：第二个 agent 软件（如 DeepTutor）以 MCP
-  `streamableHttp` 连**同一个共享 daemon**（同一基表 + 派生索引），v1 **只读**
-  （`search` / `get` / `index_status` / `ingest_list`）；写仍只走本产品的写入网关。
+- **多消费者共享**（#41 / #44 / ADR-0025 **D19 修订 D17**）：第二个 agent 软件
+  （如 DeepTutor）以 MCP `streamableHttp` 连**同一个共享 daemon**（同一基表 + 派生索引），
+  并且**可读可写**——全局知识库是**所有 agent 可读可写的共享域**：读 = 整张基表，
+  写 = 全局 KB（`add` / `supersede` / `archive`，经本产品写入网关 + daemon `WRITE_LOCK`
+  串行化；写调用在 daemon 审计里带 agent 身份，可归属）。索引维护 / 收录 DDL
+  （`reindex`、`ingest_include` / `ingest_exclude`）不开放给第二消费者。
   接入命令：`python -m memory_agent.connect`（见 `memory_agent/README.md`）。
 - 与 `agent-kb` skill 的分工：`agent-kb` 讲 KB 的组织约定与 `kb.py` CLI；有 MCP 工具时
   **优先用本 skill 的工具**，CLI 只作兜底。
