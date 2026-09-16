@@ -1,9 +1,9 @@
 # #43 验收结果：共享 daemon 暴露 BGE-M3 embeddings 端点
 
-- 日期：2026-09-16 19:37:33
+- 日期：2026-09-16 19:43:34
 - 脚本：`memory_agent/eval/bge_m3_embeddings_43.py`
 - 结论：**PASS**（17/17）
-- 临时工作区：`C:\Users\Tan\AppData\Local\Temp\opencode\bge-m3-embeddings-43-1789558607`（临时 KB / 索引 / DeepTutor home + 独立端口；真 daemon 未动）
+- 临时工作区：`C:\Users\Tan\AppData\Local\Temp\opencode\bge-m3-embeddings-43-1789558983`（临时 KB / 索引 / DeepTutor home + 独立端口；真 daemon 未动）
 
 ## PASS 矩阵
 
@@ -25,14 +25,14 @@
 | 14 | 无 token 配置 → 零配置直连 | PASS | status=200 |
 | 15 | DeepTutor 解析为 local vllm + bge-m3（dim=1024） | PASS | binding=vllm mode=local dim=1024 |
 | 16 | DeepTutor 真的取到 2×1024 向量 | PASS | [1024, 1024] |
-| 17 | base_url 指向共享 daemon 的 /v1/embeddings | PASS | http://127.0.0.1:59643/v1/embeddings |
+| 17 | base_url 指向共享 daemon 的 /v1/embeddings | PASS | http://127.0.0.1:51710/v1/embeddings |
 
 ## 运行日志
 
 ```text
-# issue #43 验收 @ 2026-09-16 19:36:47
-    workdir = C:\Users\Tan\AppData\Local\Temp\opencode\bge-m3-embeddings-43-1789558607
-    临时 daemon = http://127.0.0.1:59643（独立端口，不动真 daemon）
+# issue #43 验收 @ 2026-09-16 19:43:03
+    workdir = C:\Users\Tan\AppData\Local\Temp\opencode\bge-m3-embeddings-43-1789558983
+    临时 daemon = http://127.0.0.1:51710（独立端口，不动真 daemon）
 
 [1] connect.py 写 DeepTutor 配置（embedding profile + 保留 LLM）
   [PASS] 一步安装（含 embedding profile）返回 0
@@ -41,7 +41,7 @@
   [PASS] 幂等（再次合并 changed=False 且不改字节）
 
 [2] 启动临时 daemon（venv 路径；验证 transformers 回归已修）
-    daemon pid=34652
+    daemon pid=28592
   [PASS] daemon 冷启动 + 首次 embeddings 请求成功 — status=200
 
 [3] /v1/embeddings 契约
@@ -60,7 +60,7 @@
 [5] 用 DeepTutor 自身 EmbeddingClient 端到端取向量
   [PASS] DeepTutor 解析为 local vllm + bge-m3（dim=1024） — binding=vllm mode=local dim=1024
   [PASS] DeepTutor 真的取到 2×1024 向量 — [1024, 1024]
-  [PASS] base_url 指向共享 daemon 的 /v1/embeddings — http://127.0.0.1:59643/v1/embeddings
+  [PASS] base_url 指向共享 daemon 的 /v1/embeddings — http://127.0.0.1:51710/v1/embeddings
 
 结论：PASS  (17/17)
 ```
