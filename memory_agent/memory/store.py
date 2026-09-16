@@ -34,13 +34,20 @@ class QdrantLocalStore:
     native_hybrid = False
 
     def __init__(self, db_path: str, collection_name: str | None = None,
-                 embeddings=None, tenant: str | None = None):
+                 embeddings=None, tenant: str | None = None,
+                 hybrid: bool = False,
+                 sparse_encoder: Callable[[str], tuple[list[int], list[float]]] | None = encode_sparse):
+        """`hybrid=True` 时本地集合也用具名 dense+sparse + 原生 fusion（机制与共享平面同源，
+        供"同一机制、两种部署"的双后端对照；生产本地平面默认仍 dense + 策略层关键词）。"""
         self._service = VectorStoreService(
             collection_name=collection_name or COLLECTION_NAME,
             db_path=db_path,
             embeddings=embeddings,
+            hybrid=hybrid,
+            sparse_encoder=sparse_encoder,
         )
         self.tenant = tenant
+        self.native_hybrid = bool(hybrid)
 
     # ----------------------------------------------------------------- writes
 
@@ -80,6 +87,18 @@ class QdrantLocalStore:
     def search_by_keywords(self, keywords: Sequence[str],
                            source_filter: str | None = None) -> list[dict]:
         return self._service.search_by_keywords(keywords, source_filter=source_filter)
+
+    def search_dense(self, query: str, k: int = 3,
+                     payload_filter: Mapping[str, Any] | None = None) -> dict:
+        """纯 dense（余弦）通道；供按阈值操作与双后端消融（#33）。"""
+        scoped = dict(payload_filter or {})
+        effective_tenant = self.tenant if self.tenant is not None else None
+        if effective_tenant is not None:
+            scoped["tenant"] = effective_tenant
+        return self._service.search_dense_documents(query, k=k, payload_filter=scoped or None)
+
+    def fetch(self, ids: Sequence[str]) -> list[dict]:
+        return self._service.retrieve_documents(ids)
 
 
 class QdrantNetworkStore:
@@ -193,5 +212,8 @@ def open_store(db_path: str | None = None, *, tenant: str | None = None,
             hybrid=resolved_hybrid,
             sparse_encoder=sparse_encoder,
         )
-    return QdrantLocalStore(db_path=db_path, collection_name=collection_name, tenant=tenant,
-                            embeddings=embeddings)
+    return QdrantLocalStore(
+        db_path=db_path, collection_name=collection_name, tenant=tenant,
+        embeddings=embeddings, hybrid=bool(hybrid),
+        sparse_encoder=sparse_encoder,
+    )

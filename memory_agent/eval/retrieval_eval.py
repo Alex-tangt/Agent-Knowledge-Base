@@ -31,6 +31,7 @@ _bootstrap.configure_stderr_logging()
 from memory_agent.eval.metrics import evaluate  # noqa: E402
 from memory_agent.memory.index import MemoryIndex  # noqa: E402
 from memory_agent.memory.retrieval import MemoryRetriever, default_reranker_factory  # noqa: E402
+from memory_agent.memory.store import open_store  # noqa: E402
 
 MODES = ("vector", "hybrid", "hybrid-rerank")
 DEFAULT_EVAL_SET = os.path.join(HERE, "retrieval_eval_set.json")
@@ -46,6 +47,29 @@ def build_retriever_factory(mode: str):
         return MemoryRetriever(store, strategy=strategy, reranker_factory=reranker_factory)
 
     return factory
+
+
+def build_index(args) -> tuple[MemoryIndex, str]:
+    """构造被测索引 + 后端标签（issue #33）。
+
+    - 缺省 = 生产指针索引（本地平面，`INDEX_DIR/CURRENT`）。
+    - `--store-url` = 网络化共享后端（Qdrant server / 云托管）；
+      `--store-dir` = 显式本地目录（**可 hybrid**，用于"同一机制、两种部署"对照）。
+      两者都配 `--manifest` 显式清单；`--rebuild` 才把语料 upsert 进去（会加载 BGE-M3）。
+    """
+    factory = build_retriever_factory(args.mode)
+    if not args.store_url and not args.store_dir:
+        return MemoryIndex(retriever_factory=factory), "local-pointer"
+    store = open_store(db_path=args.store_dir, url=args.store_url,
+                       collection_name=args.collection, hybrid=True)
+    backend = "shared-url" if args.store_url else "local-path"
+    index = MemoryIndex(store=store, manifest_path=args.manifest,
+                        retriever_factory=factory)
+    if args.rebuild:
+        from memory_agent.corpus.loader import load_corpus
+        stats = index.rebuild(load_corpus())
+        print(f"rebuild {backend}: {stats}", file=sys.stderr)
+    return index, backend
 
 
 def load_eval_set(path: str) -> dict:
@@ -156,7 +180,7 @@ def _fmt(value) -> str:
 
 def print_summary(report: dict, meta: dict) -> None:
     agg = report["aggregate"]
-    print(f"mode={meta['mode']} gen={meta['index_gen']} "
+    print(f"mode={meta['mode']} backend={meta.get('backend')} gen={meta['index_gen']} "
           f"queries={agg['queries_total']} "
           f"(answerable={agg['queries_answerable']}, no_answer={agg['queries_no_answer']})")
     print("recall " + "  ".join(f"@{k}={_fmt(v)}" for k, v in agg["recall"].items()))
@@ -181,6 +205,16 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--limit", type=int, default=None, help="只跑前 N 条（冒烟用）")
     parser.add_argument("--trace", default=None,
                         help="逐条追加 JSONL；中断后原样重拉可续跑")
+    # 后端选择（issue #33）：同一评测集可在本地与共享后端上跑。
+    parser.add_argument("--store-url", default=None,
+                        help="共享后端 URL（自建 Qdrant 服务 / 云托管）；配 --manifest")
+    parser.add_argument("--store-dir", default=None,
+                        help="显式本地 store 目录（可 hybrid）；配 --manifest")
+    parser.add_argument("--manifest", default=None,
+                        help="显式 manifest 路径（配 --store-url / --store-dir）")
+    parser.add_argument("--collection", default=None, help="覆盖集合名")
+    parser.add_argument("--rebuild", action="store_true",
+                        help="先把语料 upsert 进显式 store（加载 BGE-M3，耗时）")
     args = parser.parse_args(argv)
 
     eval_set = load_eval_set(args.eval_set)
@@ -189,7 +223,7 @@ def main(argv: list[str] | None = None) -> int:
         queries = queries[:args.limit]
     top_k = max(max(args.k), args.ndcg_k)
 
-    index = MemoryIndex(retriever_factory=build_retriever_factory(args.mode))
+    index, backend = build_index(args)
     known = set(index.known_ids())
     missing = check_relevant_ids(queries, known)
     if missing:
@@ -202,8 +236,15 @@ def main(argv: list[str] | None = None) -> int:
     started = time.time()
     records = run(index, queries, top_k=top_k, trace_path=args.trace)
     report = evaluate(records, ks=tuple(args.k), ndcg_k=args.ndcg_k)
+    try:
+        plane = index.store.plane
+    except Exception:  # noqa: BLE001 - 平面标签只作证据，不该挡住评测
+        plane = None
     meta = {
         "mode": args.mode,
+        "backend": backend,
+        "plane": plane,
+        "native_hybrid": bool(getattr(getattr(index, "_store", None), "native_hybrid", False)),
         "eval_set": os.path.relpath(os.path.abspath(args.eval_set), REPO_ROOT),
         "index_gen": index.gen,
         "top_k": top_k,
