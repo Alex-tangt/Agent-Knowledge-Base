@@ -1,4 +1,4 @@
-# Python
+﻿# Python
 #
 *.py[cod]
 *$py.class
@@ -72,6 +72,11 @@ memory_agent/vector_db/
 # Copy readonly_repos.example.json to readonly_repos.json and edit.
 #
 memory_agent/readonly_repos.json
+
+# Local ingestion overlay (include/exclude path patterns); machine-specific.
+# Copy overlay.example.json to overlay.json and edit.
+#
+memory_agent/overlay.json
 
 # Runtime uploads
 #

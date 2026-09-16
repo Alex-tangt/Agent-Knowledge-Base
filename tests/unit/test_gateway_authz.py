@@ -18,6 +18,7 @@ from memory_agent.gateway import (
     AuthenticationError,
     AuthorizationError,
     GatewayAuthnMiddleware,
+    can_own,
     can_read,
     can_write,
     effective_filter,
@@ -128,6 +129,26 @@ def test_can_write_roles():
     assert can_write(_owner(role="owner"))
     assert can_write(_owner(role="writer"))
     assert not can_write(_owner(role="reader"))
+
+
+def test_owned_domains_default_to_unrestricted():
+    assert _owner().owned_domains is None
+    assert make_identity(principal="p", owners="").owned_domains is None
+
+
+def test_owned_domains_parse_and_gate_ingestion():
+    identity = _owner(owners="me, team-x")
+    assert identity.owned_domains == frozenset({"me", "team-x"})
+    assert can_own(identity, "me")
+    assert can_own(identity, "team-x")
+    assert not can_own(identity, "other")
+    assert not can_own(identity, None)
+    assert can_own(_owner(), None)  # 未限制
+
+
+def test_audit_reports_owners_without_credentials():
+    event = _owner(owners="me").to_audit()
+    assert event["owners"] == ["me"]
 
 
 # ------------------------------------------------------------- audit / middleware

@@ -38,6 +38,16 @@ def can_write(identity: Identity) -> bool:
     return identity.role in _WRITE_ROLES
 
 
+def can_own(identity: Identity, owner: str | None) -> bool:
+    """当前身份是否拥有某个域（#36 / ADR-0025 D3/D15）。
+
+    `owned_domains is None` = 单租户未限制（本地默认）；否则 owner 必须落在授权集内。
+    """
+    if identity.owned_domains is None:
+        return True
+    return owner is not None and owner in identity.owned_domains
+
+
 def _require_str(field: str, value: Any) -> str:
     if not isinstance(value, str) or not value.strip():
         raise AuthorizationError(f"{field} 过滤值必须是非空字符串")
@@ -109,6 +119,7 @@ def can_read(identity: Identity, meta: Mapping[str, Any] | None) -> bool:
 
 __all__ = [
     "AuthorizationError",
+    "can_own",
     "can_read",
     "can_write",
     "effective_filter",

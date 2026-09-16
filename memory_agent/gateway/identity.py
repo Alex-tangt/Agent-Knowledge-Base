@@ -41,6 +41,8 @@ class Identity:
     role: str
     allowed_classifications: frozenset[str]
     allowed_residencies: frozenset[str]
+    # 可写域所有权（#36 / ADR-0025 D3/D15）：None = 不限制（单租户默认）。
+    owned_domains: frozenset[str] | None = None
 
     def to_audit(self) -> dict[str, Any]:
         """审计用视图：只含身份，不含任何凭证。"""
@@ -50,6 +52,7 @@ class Identity:
             "role": self.role,
             "classifications": sorted(self.allowed_classifications),
             "residencies": sorted(self.allowed_residencies),
+            "owners": sorted(self.owned_domains) if self.owned_domains is not None else None,
         }
 
 
@@ -87,6 +90,19 @@ def _parse_allowed(raw: Any, universe: Sequence[str], field_name: str) -> frozen
     return allowed
 
 
+def _parse_owners(raw: Any) -> frozenset[str] | None:
+    """可写域所有权：逗号串 / 列表；缺省 / 空 = None（不限制）。"""
+    if raw is None:
+        return None
+    if isinstance(raw, str):
+        values = [part.strip() for part in raw.split(",") if part.strip()]
+    elif isinstance(raw, (list, tuple, set, frozenset)):
+        values = [str(part).strip() for part in raw if str(part).strip()]
+    else:
+        raise AuthenticationError("authz 配置错误：owners 类型不支持")
+    return frozenset(values) if values else None
+
+
 def make_identity(
     *,
     principal: str,
@@ -94,6 +110,7 @@ def make_identity(
     role: str = "reader",
     classifications: Any = None,
     residencies: Any = None,
+    owners: Any = None,
 ) -> Identity:
     """构造并校验一个 `Identity`（供配置解析与测试使用）。"""
     principal = (principal or "").strip()
@@ -114,6 +131,7 @@ def make_identity(
             classifications, CLASSIFICATION_VALUES, "classification"
         ),
         allowed_residencies=_parse_allowed(residencies, RESIDENCY_VALUES, "residency"),
+        owned_domains=_parse_owners(owners),
     )
 
 
@@ -127,6 +145,7 @@ def default_identity() -> Identity:
         role=getattr(settings, "AUTH_ROLE", "owner"),
         classifications=getattr(settings, "AUTH_CLASSIFICATIONS", None),
         residencies=getattr(settings, "AUTH_RESIDENCIES", None),
+        owners=getattr(settings, "AUTH_OWNERS", None),
     )
 
 
@@ -153,6 +172,7 @@ def _parse_tokens(raw: str) -> dict[str, Identity]:
             role=spec.get("role") or "reader",
             classifications=spec.get("classifications"),
             residencies=spec.get("residencies"),
+            owners=spec.get("owners"),
         )
     return tokens
 

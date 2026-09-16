@@ -17,7 +17,12 @@ import atexit
 import os
 import threading
 
-from memory_agent.runtime import get_index, get_writer, reindex  # noqa: E402  (导入即配 stderr 日志)
+from memory_agent.runtime import (  # noqa: E402  (导入即配 stderr 日志)
+    get_admission,
+    get_index,
+    get_writer,
+    reindex,
+)
 from memory_agent.gateway import (  # noqa: E402
     AuditLog,
     AuthorizationError,
@@ -29,6 +34,7 @@ from memory_agent.gateway import (  # noqa: E402
     effective_filter,
     load_auth_config,
 )
+from memory_agent.memory.admission import AdmissionError  # noqa: E402
 from memory_agent.memory.errors import IndexConsistencyError  # noqa: E402
 from memory_agent.memory.writer import MemoryWriteError  # noqa: E402
 from memory_agent.settings import (  # noqa: E402
@@ -64,8 +70,11 @@ mcp = MCPServer(
         "memory_add 写入新条目（先去重，命中近似则不写并返回候选）；"
         "memory_supersede 替代旧条目（新旧双向标注），memory_archive 只标记退役、不删文件。"
         "supersede / archive 是破坏性变更，先看 preview，再以 confirm=true 重试。"
-        "写入会自动增量刷新索引；索引不自洽时用 memory_reindex 分块全量重建"
-        "（拿 cursor 续调到 done=true），memory_index_status 查当前代与自洽性。"
+        "收录（哪些只读文件进基表）走 memory_ingest_list / memory_ingest_include /"
+        "memory_ingest_exclude：改 overlay 免重启，移除默认只预览、confirm 才生效。"
+        "写入只落真相源，索引由下一次 memory_search 的指纹检查惰性追平（D13）；"
+        "索引不自洽时用 memory_reindex 分块全量重建（拿 cursor 续调到 done=true），"
+        "memory_index_status 查当前代与自洽性。"
         "只读语料（writable=false）不可写入；没有裸文件写工具。"
     ),
 )
@@ -214,6 +223,50 @@ def memory_archive(entry_id: str, reason: str, confirm: bool = False) -> dict:
     try:
         return get_writer().archive(entry_id=entry_id, reason=reason, confirm=confirm)
     except MemoryWriteError as exc:
+        raise ToolError(str(exc))
+
+
+@mcp.tool()
+def memory_ingest_list() -> dict:
+    """列出当前收录（基表 extent）：注册表默认来源 + 显式 overlay + 逐文件解析结果。
+
+    这是**只读**的收录全景：`sources` 里 `origin=default` 是来源注册表默认，
+    `origin=explicit` 是 overlay 显式收录；`overlay` 给出 include/exclude 清单；
+    `resolved` 是实际选中的只读文件（`origin` 逐条区分默认 / 显式）。
+    """
+    return get_admission().list()
+
+
+@mcp.tool()
+def memory_ingest_include(pattern: str, owner: str | None = None,
+                          label: str | None = None, confirm: bool = False) -> dict:
+    """把一条路径模式加进 overlay 收录清单（**DDL，不是写记忆**）。
+
+    - `pattern`：精确文件路径或窄 glob（收整棵子树请再配 `memory_ingest_exclude`）。
+    - `owner` / `label`：显式收录的域与来源标签；省略时 owner 默认按来源继承。
+    - confirm=false（默认）只返回匹配到的文件预览，不落盘；confirm=true 才写 overlay。
+    新增收录不改动已有条目；下次 `memory_search` 的惰性刷新会纳入新文件。
+    """
+    identity = _require_writer()
+    try:
+        return get_admission().include(
+            pattern=pattern, owner=owner, label=label, identity=identity, confirm=confirm,
+        )
+    except AdmissionError as exc:
+        raise ToolError(str(exc))
+
+
+@mcp.tool()
+def memory_ingest_exclude(pattern: str, confirm: bool = False) -> dict:
+    """把一条路径模式加进 overlay 的 exclude，从收录范围移除（收窄 DDL）。
+
+    移除会让命中的条目离开收录范围，下一次惰性刷新将删除其派生点（**真相源文件
+    不动**）——因此默认只返回预览，确认后以 confirm=true 重试；不会误删他人条目。
+    """
+    identity = _require_writer()
+    try:
+        return get_admission().exclude(pattern=pattern, identity=identity, confirm=confirm)
+    except AdmissionError as exc:
         raise ToolError(str(exc))
 
 

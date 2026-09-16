@@ -415,6 +415,7 @@ def test_mcp_surface_exposes_only_scoped_tools():
     assert set(tools) == {
         "memory_search", "memory_get", "memory_add", "memory_supersede", "memory_archive",
         "memory_reindex", "memory_index_status",
+        "memory_ingest_list", "memory_ingest_include", "memory_ingest_exclude",
     }
     assert set(tools["memory_reindex"].parameters["properties"]) == {"cursor", "batch"}
     assert set(tools["memory_add"].parameters["properties"]) == {
@@ -427,3 +428,19 @@ def test_mcp_surface_exposes_only_scoped_tools():
     assert set(tools["memory_archive"].parameters["properties"]) == {
         "entry_id", "reason", "confirm",
     }
+    assert set(tools["memory_ingest_list"].parameters["properties"]) == set()
+    assert set(tools["memory_ingest_include"].parameters["properties"]) == {
+        "pattern", "owner", "label", "confirm",
+    }
+    assert set(tools["memory_ingest_exclude"].parameters["properties"]) == {
+        "pattern", "confirm",
+    }
+
+
+def test_add_does_not_sync_refresh_the_index(tmp_path):
+    repo = _repo(tmp_path)
+    result = _add(MemoryWriter(FakeIndex(), kb_dir=str(repo)))
+
+    assert result["index"]["ok"] is True
+    assert result["index"]["refreshed"] is False
+    assert result["index"]["mode"] == "lazy"
