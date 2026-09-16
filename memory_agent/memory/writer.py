@@ -1,4 +1,4 @@
-"""写入网关（#11）+ 生命周期工具（#12）：memory_add / supersede / archive。
+﻿"""写入网关（#11）+ 生命周期工具（#12）：memory_add / supersede / archive。
 
 契约（PRD #7）：
 - 调用方给结构化字段，路径由本模块决定——**不提供裸文件写工具**。
@@ -8,9 +8,9 @@
 - supersede 新建条目并双向标注，旧条目置 `superseded`；archive 只置 `archived`，
   两者都不删文件。
 
-写入成功后**增量刷新派生索引**（#13）：只重嵌受影响条目、hash 未变跳过、删除/改名
-无残留；刷新失败不回滚已提交的文件（真相源已落盘，派生索引下次刷新即可追平），但会
-在返回值 `index` 字段里如实报告 `ok:false`。
+写入**不再同步刷新派生索引**（#36 / ADR-0025 D13，修订 ADR-0011 D3）：写入只落真相源，
+索引更新一律由下一次 `memory_search` 的指纹检查驱动（D9）。返回值 `index` 字段如实
+标注为惰性（`refreshed=false`），不再有「写后嵌入」这一步。
 """
 from __future__ import annotations
 
@@ -113,7 +113,7 @@ class MemoryWriter:
             "path": abs_path,
             "commit": commit,
             "warnings": prepared["warnings"],
-            "index": self._refresh_index(),
+            "index": self._index_status(),
         }
 
     # ------------------------------------------------------------- supersede
@@ -205,7 +205,7 @@ class MemoryWriter:
             "commit": commit,
             "preview": preview,
             "warnings": prepared["warnings"],
-            "index": self._refresh_index(),
+            "index": self._index_status(),
         }
 
     # --------------------------------------------------------------- archive
@@ -268,7 +268,7 @@ class MemoryWriter:
             "path": entry["abs_path"],
             "commit": commit,
             "preview": preview,
-            "index": self._refresh_index(),
+            "index": self._index_status(),
         }
 
     # ------------------------------------------------------------- internals
@@ -334,12 +334,11 @@ class MemoryWriter:
         """读回可写条目：校验它是 KB 内的可写文件，返回内容与元数据。"""
         try:
             meta = self._index.get(entry_id)
-        except KeyError as exc:
-            raise MemoryWriteError(
-                f"未知条目 id：{entry_id}（先用 memory_search 取 id）"
-            ) from exc
         except FileNotFoundError as exc:
             raise MemoryWriteError(f"条目文件已不存在（索引孤儿，需重建）：{exc}") from exc
+        except KeyError:
+            # D13：写入不再刷索引，刚 add 的条目可能尚未进 manifest → 直接按 id 定路径兜底。
+            meta = self._locate_writable_file(entry_id)
 
         if not meta.get("writable"):
             raise MemoryWriteError(f"{entry_id} 是只读参考语料，不可写入")
@@ -366,6 +365,20 @@ class MemoryWriter:
             "status": meta.get("status") or frontmatter.get("status"),
         }
 
+    def _locate_writable_file(self, entry_id: str) -> dict:
+        """索引未追平（D13 惰性）时的兜底：按 id 直接定位 KB 内文件。"""
+        if not entry_id or entry_id.startswith("repo:"):
+            raise MemoryWriteError(
+                f"未知条目 id：{entry_id}（先用 memory_search 取 id）"
+            )
+        kb_root = os.path.abspath(self._kb_dir)
+        abs_path = os.path.abspath(os.path.join(kb_root, f"{entry_id}.md"))
+        if not abs_path.startswith(kb_root + os.sep) or not os.path.isfile(abs_path):
+            raise MemoryWriteError(
+                f"未知条目 id：{entry_id}（先用 memory_search 取 id）"
+            )
+        return {"path": abs_path, "writable": True}
+
     def _require_git_repo(self) -> None:
         if not os.path.isdir(os.path.join(self._kb_dir, ".git")):
             raise MemoryWriteError(
@@ -389,15 +402,14 @@ class MemoryWriter:
             if hit["score"] >= threshold
         ]
 
-    def _refresh_index(self) -> dict:
-        """写入后增量刷新派生索引（#13）。索引刷新失败不使写入失败。"""
-        refresh = getattr(self._index, "refresh", None)
-        if refresh is None:
-            return {"ok": True, "skipped": True, "reason": "index 不支持 refresh"}
-        try:
-            return {"ok": True, **refresh()}
-        except Exception as exc:  # noqa: BLE001 - 派生索引失败不该吞掉已提交的写入
-            return {"ok": False, "error": str(exc)}
+    def _index_status(self) -> dict:
+        """写入后的索引状态（#36 / ADR-0025 D13）：不同步刷新，交给查询时惰性追平。"""
+        return {
+            "ok": True,
+            "refreshed": False,
+            "mode": "lazy",
+            "reason": "写入只落真相源；索引由下一次 memory_search 的指纹检查追平（D13）",
+        }
 
     def _write_all(self, writes: list[tuple[str, str]], rollback: dict) -> None:
         """写文件并过 KB 外部闸门；失败则回滚（restore 原文或删除新文件）。"""

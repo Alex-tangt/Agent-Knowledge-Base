@@ -37,6 +37,16 @@ def _provenance(store) -> dict:
     return {"plane": getattr(store, "plane", None), "tenant": getattr(store, "tenant", None)}
 
 
+def _fingerprint_of_entries(entries: list[Entry]) -> dict[str, list[int]]:
+    """从条目自身的 stat 派生指纹（测试注入 entry_loader 时用）。"""
+    out: dict[str, list[int]] = {}
+    for entry in entries:
+        if entry.mtime_ns is None or entry.size is None:
+            continue
+        out[os.path.normcase(entry.path)] = [entry.mtime_ns, entry.size]
+    return out
+
+
 def upsert_entries(store, entries: list[Entry], max_chars: int = MAX_ENTRY_CHARS) -> int:
     """把条目嵌入并 upsert 到 store（点 id 由 entry_id 决定，重复写入即覆盖）。"""
     if not entries:
@@ -55,11 +65,12 @@ class MemoryIndex:
     def __init__(self, store=None, manifest_path: str | None = None,
                  db_path: str | None = None, layout: IndexLayout | None = None,
                  entry_loader=None, retriever=None, reranker=None,
-                 retriever_factory=None, store_factory=None):
+                 retriever_factory=None, store_factory=None, fingerprint_provider=None):
         self._store = store
         self._layout = layout or IndexLayout()
         self._store_factory = store_factory or open_store
         self._entry_loader = entry_loader
+        self._fingerprint_provider = fingerprint_provider
         self._explicit = manifest_path is not None or db_path is not None
         self._explicit_manifest = manifest_path
         self._explicit_db = db_path
@@ -67,6 +78,7 @@ class MemoryIndex:
         self._manifest_path: str | None = None
         self._db_path: str | None = None
         self._entries: dict[str, dict] = {}
+        self._manifest_fingerprint: dict[str, list[int]] | None = None
         self._built_at: str | None = None
         self._store_lock = threading.Lock()
         self._retriever = retriever
@@ -87,6 +99,7 @@ class MemoryIndex:
                 self._manifest_path = self._explicit_manifest
                 self._db_path = self._explicit_db
                 self._entries = {}
+                self._manifest_fingerprint = None
                 self._built_at = None
                 if self._manifest_path:
                     self._load_manifest()
@@ -97,6 +110,7 @@ class MemoryIndex:
             return
         self._gen = gen
         self._entries = {}
+        self._manifest_fingerprint = None
         self._built_at = None
         self._store = None  # 新一代 = 新 Qdrant 目录，旧句柄作废
         if not self._explicit_retriever:
@@ -167,6 +181,7 @@ class MemoryIndex:
         upsert_entries(store, entries)
 
         self._entries = {entry.id: entry.to_manifest() for entry in entries}
+        self._manifest_fingerprint = _fingerprint_of_entries(entries)
         self._built_at = _now()
         self._save_manifest()
         return {
@@ -179,11 +194,17 @@ class MemoryIndex:
     # -------------------------------------------------------------- refresh
 
     @locked(INDEX_LOCK)
-    def refresh(self, entries: list[Entry] | None = None) -> dict:
+    def refresh(self, entries: list[Entry] | None = None, *,
+                complete: bool | None = None,
+                fingerprint: dict[str, list[int]] | None = None) -> dict:
         """按条目增量重建当前代：hash 未变跳过、变更重嵌、消失的条目清点。
 
         只对**受影响条目**做嵌入；条目删除 / 改名留下的孤儿点按稳定点 id 删除。
         未变条目的元数据沿用 manifest（hash 相同 = 内容相同）。
+
+        孤儿安全（#36 / ADR-0014）：`complete=False`（来源配置读不出 / 有来源根不可达）
+        时**不删**任何 manifest 条目，只报告 `deferred_removed`——避免把「暂时够不到」
+        的语料当孤儿误删。
         """
         self._sync()
         if self._manifest_path is None:
@@ -191,7 +212,21 @@ class MemoryIndex:
                 "索引尚未构建：请先运行 "
                 "venv\\Scripts\\python.exe memory_agent/build_index.py"
             )
-        corpus = entries if entries is not None else self._load_entries()
+        if entries is None:
+            # 显式路径（测试注入）不参与运行时语料扫描——指纹从装载到的条目派生。
+            if not self._explicit and (fingerprint is None or complete is None):
+                scan_fp, scan_complete = self._scan()
+                if fingerprint is None:
+                    fingerprint = scan_fp
+                if complete is None:
+                    complete = scan_complete
+            corpus = self._load_entries()
+        else:
+            corpus = entries
+        if fingerprint is None:
+            fingerprint = _fingerprint_of_entries(corpus)
+        if complete is None:
+            complete = True
         fresh = {entry.id: entry for entry in corpus}
 
         manifest = dict(self._entries)
@@ -206,7 +241,8 @@ class MemoryIndex:
                 updated += 1
                 to_embed.append(entry)
         skipped = len(fresh) - added - updated
-        removed = [entry_id for entry_id in manifest if entry_id not in fresh]
+        missing = [entry_id for entry_id in manifest if entry_id not in fresh]
+        removed = missing if complete else []
 
         if to_embed:
             upsert_entries(self.store, to_embed)
@@ -218,8 +254,11 @@ class MemoryIndex:
                 manifest.pop(entry_id, None)
 
         self._entries = manifest
-        if to_embed or removed:
-            self._built_at = _now()
+        changed = bool(to_embed or removed)
+        if changed or fingerprint != self._manifest_fingerprint:
+            self._manifest_fingerprint = fingerprint
+            if changed:
+                self._built_at = _now()
             self._save_manifest()
         return {
             "entries": len(manifest),
@@ -227,7 +266,9 @@ class MemoryIndex:
             "updated": updated,
             "skipped": skipped,
             "removed": len(removed),
+            "deferred_removed": len(missing) - len(removed),
             "embedded": len(to_embed),
+            "complete": complete,
         }
 
     # ------------------------------------------------------------------ read
@@ -246,6 +287,7 @@ class MemoryIndex:
         """
         if not query or not query.strip():
             raise ValueError("query 不能为空")
+        self._maybe_refresh()
         store = self.store
         self._ensure_consistent()
         merged = dict(payload_filter or {})
@@ -323,6 +365,26 @@ class MemoryIndex:
 
     # ------------------------------------------------------------- internals
 
+    def _scan(self) -> tuple[dict[str, list[int]], bool]:
+        """当前收录的廉价指纹（stat-only）；测试可注入 `fingerprint_provider`。"""
+        if self._fingerprint_provider is not None:
+            return self._fingerprint_provider()
+        from memory_agent.corpus.loader import scan_fingerprint
+        return scan_fingerprint()
+
+    def _maybe_refresh(self) -> None:
+        """查询时惰性刷新（#36 / ADR-0025 D9）：指纹不同才做增量重建。
+
+        只在**生产模式**（非显式路径）下触发；显式路径（测试注入 store + manifest）
+        不参与运行时语料扫描。
+        """
+        if self._explicit or self._manifest_path is None or not self._entries:
+            return
+        fingerprint, complete = self._scan()
+        if fingerprint == (self._manifest_fingerprint or {}):
+            return
+        self.refresh(complete=complete, fingerprint=fingerprint)
+
     def _ensure_consistent(self) -> None:
         self._sync()
         if not self._entries:
@@ -349,6 +411,7 @@ class MemoryIndex:
         except (OSError, json.JSONDecodeError):
             return
         self._entries = data.get("entries", {})
+        self._manifest_fingerprint = data.get("fingerprint")
         self._built_at = data.get("built_at")
 
     def _save_manifest(self) -> None:
@@ -357,6 +420,7 @@ class MemoryIndex:
         data = {
             "version": MANIFEST_VERSION,
             "built_at": self._built_at,
+            "fingerprint": self._manifest_fingerprint,
             "entries": self._entries,
         }
         directory = os.path.dirname(self._manifest_path)

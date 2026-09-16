@@ -1,0 +1,86 @@
+{
+  "passed": 15,
+  "total": 15,
+  "real_fingerprint": {
+    "files": 172,
+    "ms": 51.32,
+    "complete": true
+  },
+  "rows": [
+    {
+      "name": "0a memory_reindex/全量重建仍可用且自洽",
+      "ok": true,
+      "detail": "entries=1 gen=gen-1"
+    },
+    {
+      "name": "1a list 能区分默认（注册表）与显式（overlay）",
+      "ok": true,
+      "detail": "default=['corpus/a.md'] explicit=0"
+    },
+    {
+      "name": "1b 初始检索命中注册表默认文件",
+      "ok": true,
+      "detail": "sources=['corpus/a.md']"
+    },
+    {
+      "name": "2a 外部新增文件 → 下一次 search 可见（免重启）",
+      "ok": true,
+      "detail": "sources=['corpus/a.md', 'corpus/b.md']"
+    },
+    {
+      "name": "2b 外部修改文件 → 下一次 search 反映新内容（免重启）",
+      "ok": true,
+      "detail": "sources=['corpus/a.md', 'corpus/b.md']"
+    },
+    {
+      "name": "2c 外部删除文件 → 下一次 search 不再返回（免重启）",
+      "ok": true,
+      "detail": "sources=['corpus/a.md']"
+    },
+    {
+      "name": "3a overlay include 落盘（confirm 后）",
+      "ok": true,
+      "detail": "status=written"
+    },
+    {
+      "name": "3b overlay 新增免重启生效（search 可见 + list 标 explicit）",
+      "ok": true,
+      "detail": "explicit=['notes/c.md'] sources=['corpus/a.md', 'notes/c.md']"
+    },
+    {
+      "name": "3c 写后不再同步刷（D13：index.mode=lazy）",
+      "ok": true,
+      "detail": "index={'ok': True, 'refreshed': False, 'mode': 'lazy', 'reason': '写入只落真相源；索引由下一次 memory_search 的指纹检查追平（D13）'}"
+    },
+    {
+      "name": "3d 写入条目要等下一次 search 才进索引（D13 惰性追平）",
+      "ok": true,
+      "detail": "known=2"
+    },
+    {
+      "name": "3e 一次 search 后写入条目已追平",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "3f exclude 默认只预览、不落盘",
+      "ok": true,
+      "detail": "leaving=1"
+    },
+    {
+      "name": "3g exclude confirm 后免重启生效，且不误删他人条目",
+      "ok": true,
+      "detail": "sources=['corpus/a.md', 'topics/personal-anchor.md']"
+    },
+    {
+      "name": "4a 惰性刷新后索引自洽",
+      "ok": true,
+      "detail": "entries=2 points=2"
+    },
+    {
+      "name": "5. 真实语料指纹检查为毫秒级（~百文件量级）",
+      "ok": true,
+      "detail": "files=172 ms=51.32 complete=True"
+    }
+  ]
+}

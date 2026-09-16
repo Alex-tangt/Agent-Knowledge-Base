@@ -9,12 +9,14 @@ from memory_agent import _bootstrap
 
 _bootstrap.configure_stderr_logging()
 
+from memory_agent.memory.admission import AdmissionManager  # noqa: E402
 from memory_agent.memory.index import MemoryIndex  # noqa: E402
 from memory_agent.memory.reindex import Reindexer  # noqa: E402
 from memory_agent.memory.writer import MemoryWriter  # noqa: E402
 
 _index: MemoryIndex | None = None
 _writer: MemoryWriter | None = None
+_admission: AdmissionManager | None = None
 
 
 def build_index() -> dict:
@@ -77,3 +79,17 @@ def reset_writer() -> None:
     """测试用：丢弃写入网关单例。"""
     global _writer
     _writer = None
+
+
+def get_admission() -> AdmissionManager:
+    """取收录管理器单例（#36：include / exclude / list）。"""
+    global _admission
+    if _admission is None:
+        _admission = AdmissionManager()
+    return _admission
+
+
+def reset_admission() -> None:
+    """测试用：丢弃收录管理器单例。"""
+    global _admission
+    _admission = None

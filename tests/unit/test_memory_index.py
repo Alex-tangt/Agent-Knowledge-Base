@@ -7,6 +7,7 @@ import pytest
 from memory_agent.memory.entries import Entry
 from memory_agent.memory.errors import IndexConsistencyError
 from memory_agent.memory.index import MemoryIndex
+from memory_agent.memory.layout import IndexLayout
 
 
 class FakeStore:
@@ -224,7 +225,8 @@ def test_refresh_embeds_only_changed_and_new(tmp_path):
     stats = index.refresh(entries=[a2, b, c])
 
     assert stats == {"entries": 3, "added": 1, "updated": 1, "skipped": 1,
-                     "removed": 0, "embedded": 2}
+                     "removed": 0, "deferred_removed": 0, "embedded": 2,
+                     "complete": True}
     assert len(store.metas) == 3
 
 
@@ -285,3 +287,104 @@ def test_status_reports_consistency(tmp_path):
     assert index.status()["consistent"] is True
     store.metas.clear()
     assert index.status()["consistent"] is False
+
+
+# ------------------------------------------------ 查询时惰性刷新（#36 / D9/D13）
+
+def _fingerprint(entries):
+    return {os.path.normcase(e.path): [e.mtime_ns, e.size] for e in entries}
+
+
+def _live_index(tmp_path, store, entries, state, loader=None):
+    """生产模式索引（layout + 无显式路径）：指纹由 state 驱动，模拟外部语料变化。"""
+    layout = IndexLayout(root=str(tmp_path / "idx"))
+    os.makedirs(layout.gen_dir("gen-1"), exist_ok=True)
+    layout.write_pointer("gen-1")
+
+    def default_loader():
+        return list(state["entries"])
+
+    index = MemoryIndex(
+        layout=layout,
+        store_factory=lambda db_path: store,
+        entry_loader=loader or default_loader,
+        fingerprint_provider=lambda: (dict(state["fp"]), state["complete"]),
+    )
+    index.refresh(entries=list(entries))
+    return index
+
+
+def test_search_lazily_refreshes_after_external_file_change(tmp_path):
+    store = FakeStore()
+    a = _entry(tmp_path, "kb/a.md", "# A\n\nbody-a\n", entry_id="a")
+    b = _entry(tmp_path, "kb/b.md", "# B\n\nbody-b\n", entry_id="b")
+    state = {"entries": [a, b], "fp": _fingerprint([a, b]), "complete": True}
+    index = _live_index(tmp_path, store, [a, b], state)
+
+    a2 = _entry(tmp_path, "kb/a.md", "# A\n\nbody-a2\n", entry_id="a")
+    os.remove(b.path)
+    c = _entry(tmp_path, "kb/c.md", "# C\n\nbody-c\n", entry_id="c")
+    state["entries"] = [a2, c]
+    state["fp"] = _fingerprint([a2, c])
+
+    index.search("q", k=5)  # 查询触发惰性刷新，无需外部显式 refresh
+
+    assert index.get("a")["content"].endswith("body-a2\n")
+    with pytest.raises(KeyError):
+        index.get("b")
+    assert index.get("c")["id"] == "c"
+
+
+def test_lazy_refresh_defers_removal_when_selection_incomplete(tmp_path):
+    store = FakeStore()
+    a = _entry(tmp_path, "kb/a.md", "# A\n", entry_id="a")
+    b = _entry(tmp_path, "kb/b.md", "# B\n", entry_id="b")
+    state = {"entries": [a, b], "fp": _fingerprint([a, b]), "complete": True}
+    index = _live_index(tmp_path, store, [a, b], state)
+
+    state["entries"] = [a]
+    state["fp"] = _fingerprint([a])
+    state["complete"] = False
+
+    stats = index.refresh(complete=False)
+
+    assert stats["removed"] == 0
+    assert stats["deferred_removed"] == 1
+    assert len(store.metas) == 2  # 未删孤儿点
+    assert index.get("b")["id"] == "b"
+
+
+def test_lazy_refresh_is_noop_when_fingerprint_matches(tmp_path):
+    store = FakeStore()
+    a = _entry(tmp_path, "kb/a.md", "# A\n", entry_id="a")
+    calls = {"n": 0}
+    state = {"entries": [a], "fp": _fingerprint([a]), "complete": True}
+
+    def loader():
+        calls["n"] += 1
+        return list(state["entries"])
+
+    index = _live_index(tmp_path, store, [a], state, loader=loader)
+
+    index.search("q")
+
+    assert calls["n"] == 0  # 指纹未变 → 不读正文、不刷新
+
+
+def test_lazy_refresh_stores_fingerprint_so_incomplete_state_converges(tmp_path):
+    store = FakeStore()
+    a = _entry(tmp_path, "kb/a.md", "# A\n", entry_id="a")
+    b = _entry(tmp_path, "kb/b.md", "# B\n", entry_id="b")
+    state = {"entries": [a, b], "fp": _fingerprint([a, b]), "complete": True}
+    index = _live_index(tmp_path, store, [a, b], state)
+
+    state["entries"] = [a]
+    state["fp"] = _fingerprint([a])
+    state["complete"] = False
+    index.search("q")  # 第一次：刷新并把「不完整指纹」记进 manifest
+
+    calls = {"n": 0}
+    index._entry_loader = lambda: (calls.__setitem__("n", calls["n"] + 1) or list(state["entries"]))
+    index.search("q")  # 第二次：指纹已收敛，不再刷新
+
+    assert calls["n"] == 0

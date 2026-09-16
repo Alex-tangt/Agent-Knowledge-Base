@@ -2,6 +2,10 @@
 
 > 日期：2026-09-14 · 分支：`feat/16-write-path-sandbox`（基于 `master` `c7dfcc2`）
 > 套件：`memory_agent/eval/write_path_sandbox.py` · 结论：**25/25 通过，可重复，真实 KB 未被触碰**
+>
+> 2026-09-16 复跑（#36 `feat/36-personal-mode`）：**25/25 通过**。1d 断言随 D13 改为
+> 「写后不嵌入、`index.mode=lazy`」（原「写后自动增量刷新」）；索引构建子进程由脚本路径
+> 改为 `-m memory_agent.build_index`，保证 worktree 场景用同一棵源码树。
 
 ## 运行
 
@@ -31,8 +35,8 @@ venv\Scripts\python.exe memory_agent/eval/write_path_sandbox.py
 | 1a | `memory_add` 返回 written | PASS |
 | 1b | add 落盘且 frontmatter 合规（id/type/status） | PASS |
 | 1c | add 的 commit 只含本条目文件 | PASS `files=['topics/sandbox-write-anchor.md']` |
-| 1d | 写后自动增量刷新（index.ok 且实际嵌入） | PASS `added=1 embedded=1` |
-| 1e | 新条目立即可被 `memory_search` 检索到 | PASS |
+| 1d | 写后不再同步刷（#36/D13：`index.ok` + `mode=lazy`，不嵌入） | PASS `index={'ok': True, 'refreshed': False, 'mode': 'lazy', ...}` |
+| 1e | 新条目在下一次 `memory_search` 即被检索到（查询时惰性追平） | PASS |
 | 2a | 未知 tag 只警告但仍写入 | PASS |
 | 2b | 真实 `kb.py check` 通过（0 errors） | PASS |
 | 3a | 近似重复返回 duplicate 且未落盘/未提交 | PASS `reason=semantic` |

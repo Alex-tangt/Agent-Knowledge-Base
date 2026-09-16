@@ -147,8 +147,10 @@ def _build_index_via_cli(python: str, kb_dir: str, index_dir: str) -> dict:
     env["MEMORY_READONLY_ROOTS"] = ""
     # 一次装完，少构造一份 VectorStoreService（= 少加载一次 BGE-M3）。
     env["MEMORY_REINDEX_BATCH"] = "256"
+    # 用 `-m` 而非脚本路径：`-m` 把 CWD（本树）放进 sys.path[0]，保证子进程用的是
+    # **同一棵源码树**的 memory_agent（worktree 场景下脚本路径会落到 editable 的主树）。
     proc = subprocess.run(
-        [python, os.path.join(ROOT, "memory_agent", "build_index.py")],
+        [python, "-m", "memory_agent.build_index"],
         cwd=ROOT, env=env, capture_output=True, text=True, encoding="utf-8",
     )
     if proc.returncode != 0:
@@ -214,8 +216,9 @@ def run_checks(suite: Suite, mcp, kb_dir: str, index_dir: str,
         f"files={commit_files}",
     )
     suite.check(
-        "1d 写后自动增量刷新（index.ok 且实际嵌入）",
-        add["index"].get("ok") is True and add["index"].get("embedded", 0) >= 1,
+        "1d 写后不再同步刷（D13：index.mode=lazy，不嵌入）",
+        add["index"].get("ok") is True and add["index"].get("refreshed") is False
+        and add["index"].get("mode") == "lazy" and "embedded" not in add["index"],
         f"index={add['index']}",
     )
     hits = mcp.memory_search(ENTRY1_TITLE, k=5, writable_only=True)

@@ -12,6 +12,7 @@ daemon 侧校验过的 Bearer token，绝不来自可伪造的 header 字段。
 from memory_agent.gateway.audit import AuditLog
 from memory_agent.gateway.authz import (
     AuthorizationError,
+    can_own,
     can_read,
     can_write,
     effective_filter,
@@ -41,6 +42,7 @@ __all__ = [
     "GatewayAuthnMiddleware",
     "Identity",
     "bind_identity",
+    "can_own",
     "can_read",
     "can_write",
     "current_identity",
