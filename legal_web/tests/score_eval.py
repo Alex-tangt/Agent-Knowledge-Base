@@ -34,11 +34,16 @@ sys.path.insert(0, ROOT)
 sys.path.insert(0, HERE)
 
 from ragcore.config.llm import require_llm
+from ragcore.services.rag_service import NO_EVIDENCE_MARKER
 from openai import OpenAI
 import run_eval
 from run_eval import load_questions, query
 
-NO_EVIDENCE_HINTS = ("知识库中未找到可靠依据", "知识库中未找到直接依据")
+NO_EVIDENCE_HINTS = (
+    NO_EVIDENCE_MARKER,
+    "知识库中未找到可靠依据",
+    "知识库中未找到直接依据",
+)
 
 # ---------------------------------------------------------------------------
 # 解析标准答案 ground_truth.md
