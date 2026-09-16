@@ -1,0 +1,21 @@
+{
+  "url": "http://127.0.0.1:6333",
+  "api_key_set": false,
+  "entries": 8,
+  "checks": {
+    "port_contract": true,
+    "plane": true,
+    "count_matches": true,
+    "hybrid_returns": true,
+    "hybrid_top_is_probe": true,
+    "tenant_filter_excludes_other": true,
+    "bound_tenant_not_widenable": true,
+    "dense_cosine_self": 1.0,
+    "shared_add_written": true,
+    "shared_add_is_db_mode": true,
+    "no_pointer_written": true,
+    "shared_archive_confirm": true
+  },
+  "passed": true,
+  "failures": []
+}

@@ -1,0 +1,34 @@
+{
+  "url": "http://127.0.0.1:6333",
+  "collection": "memory_eval_33",
+  "mode": "hybrid",
+  "copied_points": 163,
+  "eval_set": "D:\\python_work\\work2026-4\\wk-33\\memory_agent\\eval\\retrieval_eval_set.json",
+  "rows": [
+    {
+      "backend": "local-path (hybrid)",
+      "queries": 51,
+      "recall@1": 0.522222,
+      "recall@5": 0.85,
+      "nDCG@10": 0.755689,
+      "MRR": 0.730247,
+      "misses": 1,
+      "run_hash": "f0e33e125b82ec71",
+      "mean_s": 0.582
+    },
+    {
+      "backend": "shared-url (hybrid)",
+      "queries": 51,
+      "recall@1": 0.522222,
+      "recall@5": 0.85,
+      "nDCG@10": 0.755689,
+      "MRR": 0.730247,
+      "misses": 1,
+      "run_hash": "83d8b2d70a9177b0",
+      "mean_s": 0.269
+    }
+  ],
+  "metrics_match": true,
+  "run_hash_local": "f0e33e125b82ec71",
+  "run_hash_shared": "83d8b2d70a9177b0"
+}

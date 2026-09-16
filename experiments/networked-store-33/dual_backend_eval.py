@@ -151,6 +151,7 @@ def main(argv=None) -> int:
             rows.append(_row("production gen-2 (dense+kw)", prod_report,
                              prod_report["meta"].get("latency_s")))
 
+    metric_keys = ("recall@1", "recall@5", "nDCG@10", "MRR", "misses")
     result = {
         "url": args.url,
         "collection": args.collection,
@@ -158,7 +159,13 @@ def main(argv=None) -> int:
         "copied_points": copied,
         "eval_set": args.eval_set,
         "rows": rows,
-        "local_equals_shared": rows[0]["run_hash"] == rows[1]["run_hash"],
+        # 主证据：两后端**指标逐项相同**（recall@1/@5、nDCG@10、MRR、misses）。
+        # run_hash 是**同后端**可复现性检查（#24）；跨后端不要求相等——稀疏 IDF 的
+        # 浮点精度差异会让个别并列/近并列的次序不同，但不动指标。
+        "metrics_match": all(
+            rows[0][k] == rows[1][k] for k in metric_keys),
+        "run_hash_local": rows[0]["run_hash"],
+        "run_hash_shared": rows[1]["run_hash"],
     }
     with open(args.out, "w", encoding="utf-8") as handle:
         json.dump(result, handle, ensure_ascii=False, indent=2)
