@@ -48,6 +48,16 @@ READONLY_TOOLS = (
 #: DeepTutor 部署级配置在 `<runtime-home>/data/user/settings/` 下。
 DEEPTUTOR_DATA_SUBDIR = os.path.join("data", "user", "settings")
 DEEPTUTOR_MCP_FILENAME = "mcp.json"
+DEEPTUTOR_MODEL_CATALOG_FILENAME = "model_catalog.json"
+
+#: DeepTutor 的 embedding profile（#43）：`binding=vllm` = OpenAI 兼容、local、
+#: 免 api_key，base_url 必须以 `/embeddings` 结尾。
+EMBEDDINGS_PATH = "/v1/embeddings"
+EMBEDDING_BINDING = "vllm"
+EMBEDDING_PROFILE_ID = "embedding-profile-bge-m3"
+EMBEDDING_MODEL_ID = "embedding-model-bge-m3"
+EMBEDDING_MODEL_NAME = "BAAI/bge-m3"
+EMBEDDING_DIMENSION = 1024
 
 #: opencode 全局配置 / skill 落点（与 opencode 自身的约定一致）。
 OPENCODE_CONFIG_SUBDIR = os.path.join(".config", "opencode")
@@ -77,6 +87,12 @@ def deeptutor_mcp_config_path(home: str) -> str:
                         DEEPTUTOR_MCP_FILENAME)
 
 
+def deeptutor_model_catalog_path(home: str) -> str:
+    """DeepTutor 模型目录路径（`<home>/data/user/settings/model_catalog.json`）。"""
+    return os.path.join(os.path.abspath(home), DEEPTUTOR_DATA_SUBDIR,
+                        DEEPTUTOR_MODEL_CATALOG_FILENAME)
+
+
 def _opencode_root(home: str | None = None) -> str:
     base = os.path.abspath(os.path.expanduser(home)) if home else os.path.expanduser("~")
     return os.path.join(base, OPENCODE_CONFIG_SUBDIR)
@@ -97,6 +113,12 @@ def daemon_url(host: str = MCP_HTTP_HOST, port: int = MCP_HTTP_PORT,
     if not path.startswith("/"):
         path = "/" + path
     return f"http://{host}:{port}{path}"
+
+
+def daemon_embeddings_url(host: str = MCP_HTTP_HOST,
+                          port: int = MCP_HTTP_PORT) -> str:
+    """共享 daemon 的 OpenAI 兼容 embeddings 端点（#43）。"""
+    return f"http://{host}:{port}{EMBEDDINGS_PATH}"
 
 
 def build_server_entry(url: str, *, tool_timeout: int = DEFAULT_TOOL_TIMEOUT) -> dict:
@@ -142,6 +164,72 @@ def merge_mcp_config(existing: object | None, name: str,
     servers[name] = merged
     config["servers"] = servers
     return config, changed
+
+
+def build_embedding_profile(url: str, *, dimension: int = EMBEDDING_DIMENSION,
+                            model_name: str = EMBEDDING_MODEL_NAME) -> dict:
+    """DeepTutor `model_catalog.json` 里的一条 embedding profile（#43）。
+
+    `binding="vllm"` = OpenAI 兼容 + local（免 api_key），`base_url` 指向共享 daemon
+    的 `/v1/embeddings`。字段与 DeepTutor 的 llm profile 形状对齐。
+    """
+    return {
+        "id": EMBEDDING_PROFILE_ID,
+        "name": "Local BGE-M3 (memory-agent daemon)",
+        "binding": EMBEDDING_BINDING,
+        "base_url": url,
+        "api_key": "",
+        "api_version": "",
+        "extra_headers": {},
+        "models": [{
+            "id": EMBEDDING_MODEL_ID,
+            "name": "bge-m3",
+            "model": model_name,
+            "dimension": dimension,
+        }],
+        "api_format": "auto",
+        "wire_api": "auto",
+    }
+
+
+def merge_embedding_catalog(existing: object | None, profile: dict, *,
+                            profile_id: str = EMBEDDING_PROFILE_ID,
+                            model_id: str = EMBEDDING_MODEL_ID) -> tuple[dict, bool]:
+    """把 embedding profile 合并进 DeepTutor 的 `model_catalog.json` 并设为 active。
+
+    保留其它服务（尤其 llm profile 与其 api_key）与未知键；已有同 id profile 时
+    **只覆盖我们写的键**。返回 `(新目录, changed)`（幂等）。
+    """
+    catalog = dict(existing) if isinstance(existing, dict) else {}
+    services = catalog.get("services")
+    services = dict(services) if isinstance(services, dict) else {}
+    embedding = services.get("embedding")
+    embedding = dict(embedding) if isinstance(embedding, dict) else {}
+
+    raw_profiles = embedding.get("profiles")
+    profiles = [p for p in raw_profiles if isinstance(p, dict)] \
+        if isinstance(raw_profiles, list) else []
+    previous = next((p for p in profiles if p.get("id") == profile_id), None)
+    merged = {**(previous or {}), **profile}
+
+    new_profiles: list[dict] = []
+    for item in profiles:
+        new_profiles.append(merged if item.get("id") == profile_id else item)
+    if previous is None:
+        new_profiles.append(merged)
+
+    changed = (
+        previous != merged
+        or embedding.get("active_profile_id") != profile_id
+        or embedding.get("active_model_id") != model_id
+        or new_profiles != profiles
+    )
+    embedding["profiles"] = new_profiles
+    embedding["active_profile_id"] = profile_id
+    embedding["active_model_id"] = model_id
+    services["embedding"] = embedding
+    catalog["services"] = services
+    return catalog, changed
 
 
 def atomic_write_json(path: str, data) -> None:
@@ -233,12 +321,18 @@ def install_skill(source_dir: str, dest_dir: str, *, dry_run: bool = False) -> s
 # --------------------------------------------------------------------- CLI
 
 def _print_plan(report: dict) -> None:
-    print("== #41 一步安装：第二消费者 (DeepTutor) → 共享 daemon ==")
+    print("== 一步安装：第二消费者 (DeepTutor) → 共享 daemon ==")
     print(f"   DeepTutor home : {report['deeptutor_home']}")
     print(f"   MCP 配置       : {report['mcp_config_path']} "
           f"[{'需写入' if report['mcp_changed'] else '已是最新'}]")
     print(f"   daemon URL     : {report['url']}")
     print(f"   只读白名单     : {', '.join(READONLY_TOOLS)}")
+    if report["embedding"]:
+        print(f"   embedding 端点 : {report['embeddings_url']}")
+        print(f"   模型目录       : {report['model_catalog_path']} "
+              f"[{'需写入' if report['catalog_changed'] else '已是最新'}]")
+    else:
+        print("   embedding 绑定 : 跳过（--no-embedding）")
     print(f"   opencode 注册  : {report['opencode']['detail']}")
     print(f"   skill 落位     : {report['skill_dir']} [{report['skill_action']}]")
     if not report["opencode"]["ok"]:
@@ -248,14 +342,21 @@ def _print_plan(report: dict) -> None:
 
 
 def run(*, deeptutor_home: str | None = None, url: str | None = None,
-        opencode_home: str | None = None, dry_run: bool = False,
-        ensure: bool = True, skill_source: str | None = None) -> int:
+        embeddings_url: str | None = None, opencode_home: str | None = None,
+        dry_run: bool = False, ensure: bool = True, embedding: bool = True,
+        skill_source: str | None = None) -> int:
     home = resolve_deeptutor_home(deeptutor_home)
     mcp_path = deeptutor_mcp_config_path(home)
     url = url or daemon_url()
+    embeddings_url = embeddings_url or daemon_embeddings_url()
 
     existing = read_json_object(mcp_path)
     config, changed = merge_mcp_config(existing, SERVER_NAME, build_server_entry(url))
+
+    model_catalog_path = deeptutor_model_catalog_path(home)
+    profile = build_embedding_profile(embeddings_url)
+    catalog, catalog_changed = merge_embedding_catalog(
+        read_json_object(model_catalog_path), profile)
 
     opencode_cfg = read_json_object(opencode_config_path(opencode_home))
     registration = opencode_registration(opencode_cfg)
@@ -268,6 +369,10 @@ def run(*, deeptutor_home: str | None = None, url: str | None = None,
         "mcp_config_path": mcp_path,
         "mcp_changed": changed,
         "url": url,
+        "embedding": embedding,
+        "embeddings_url": embeddings_url,
+        "model_catalog_path": model_catalog_path,
+        "catalog_changed": catalog_changed,
         "opencode": registration,
         "opencode_config_path": opencode_config_path(opencode_home),
         "skill_dir": skill_dir,
@@ -281,6 +386,12 @@ def run(*, deeptutor_home: str | None = None, url: str | None = None,
             print(f"\n[写入] {mcp_path}")
         else:
             print("\n[跳过] DeepTutor MCP 配置已是最新（幂等）")
+        if embedding:
+            if catalog_changed:
+                atomic_write_json(model_catalog_path, catalog)
+                print(f"[写入] {model_catalog_path}（embedding → BGE-M3）")
+            else:
+                print("[跳过] DeepTutor 模型目录已是最新（幂等）")
         action = install_skill(source_dir, skill_dir, dry_run=False)
         if action != "unchanged":
             print(f"[写入] skill → {skill_dir} ({action})")
@@ -299,7 +410,7 @@ def run(*, deeptutor_home: str | None = None, url: str | None = None,
                   file=sys.stderr)
             return 1
 
-    print("\n结论：PASS（DeepTutor 部署级 mcp.json 已登记到共享 daemon）")
+    print("\n结论：PASS（DeepTutor 已登记共享 daemon；embedding 绑定见上）")
     return 0
 
 
@@ -312,6 +423,8 @@ def _build_parser() -> argparse.ArgumentParser:
                         help="DeepTutor 运行时 home（缺省：$DEEPTUTOR_HOME，否则 CWD）")
     parser.add_argument("--url", default=None,
                         help="共享 daemon 的 MCP URL（缺省 http://127.0.0.1:8765/mcp）")
+    parser.add_argument("--embeddings-url", default=None,
+                        help="共享 daemon 的 embeddings URL（缺省 http://127.0.0.1:8765/v1/embeddings）")
     parser.add_argument("--opencode-home", default=None,
                         help="opencode 配置所在用户目录（缺省：当前用户 home；测试用）")
     parser.add_argument("--skill-source", default=None,
@@ -320,6 +433,8 @@ def _build_parser() -> argparse.ArgumentParser:
                         help="只预览将要写入的内容，不落盘、不起 daemon")
     parser.add_argument("--no-daemon", action="store_true",
                         help="只写配置 / 核验，不确保 daemon 在跑")
+    parser.add_argument("--no-embedding", action="store_true",
+                        help="不写 DeepTutor 的 embedding profile（只接 MCP）")
     return parser
 
 
@@ -328,9 +443,11 @@ def main(argv: list[str] | None = None) -> int:
     return run(
         deeptutor_home=args.deeptutor_home,
         url=args.url,
+        embeddings_url=args.embeddings_url,
         opencode_home=args.opencode_home,
         dry_run=args.dry_run,
         ensure=not args.no_daemon,
+        embedding=not args.no_embedding,
         skill_source=args.skill_source,
     )
 

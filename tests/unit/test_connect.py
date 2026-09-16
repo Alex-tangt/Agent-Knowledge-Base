@@ -171,3 +171,78 @@ def test_skill_status_and_install(tmp_path):
 def test_skill_missing_source(tmp_path):
     assert connect.install_skill(str(tmp_path / "nope"), str(tmp_path / "dest")) == \
         "missing-source"
+
+
+# ------------------------------------------------- embedding profile / catalog（#43）
+
+def test_daemon_embeddings_url():
+    assert connect.daemon_embeddings_url("127.0.0.1", 8765) == \
+        "http://127.0.0.1:8765/v1/embeddings"
+
+
+def test_deeptutor_model_catalog_path(tmp_path):
+    path = connect.deeptutor_model_catalog_path(str(tmp_path))
+    assert path == os.path.join(str(tmp_path), "data", "user", "settings",
+                                "model_catalog.json")
+
+
+def test_build_embedding_profile_is_local_openai_compatible():
+    profile = connect.build_embedding_profile("http://127.0.0.1:8765/v1/embeddings")
+    assert profile["id"] == connect.EMBEDDING_PROFILE_ID
+    assert profile["binding"] == "vllm"
+    assert profile["base_url"] == "http://127.0.0.1:8765/v1/embeddings"
+    assert profile["api_key"] == ""  # local：不带凭证
+    model = profile["models"][0]
+    assert model["id"] == connect.EMBEDDING_MODEL_ID
+    assert model["model"] == "BAAI/bge-m3"
+    assert model["dimension"] == 1024
+
+
+def test_merge_embedding_catalog_sets_active_and_preserves_llm():
+    llm = {"active_profile_id": "llm-profile-default", "profiles": [
+        {"id": "llm-profile-default", "binding": "deepseek",
+         "api_key": "sk-secret", "models": [{"id": "m"}]},
+    ]}
+    existing = {"version": 1, "services": {"llm": llm,
+                                           "embedding": {"active_profile_id": None,
+                                                         "profiles": []}},
+                "unknown_top_key": 7}
+    catalog, changed = connect.merge_embedding_catalog(
+        existing, connect.build_embedding_profile("http://127.0.0.1:8765/v1/embeddings"))
+
+    assert changed is True
+    assert catalog["unknown_top_key"] == 7
+    assert catalog["services"]["llm"]["profiles"][0]["api_key"] == "sk-secret"
+    embedding = catalog["services"]["embedding"]
+    assert embedding["active_profile_id"] == connect.EMBEDDING_PROFILE_ID
+    assert embedding["active_model_id"] == connect.EMBEDDING_MODEL_ID
+    assert embedding["profiles"][0]["binding"] == "vllm"
+
+
+def test_merge_embedding_catalog_is_idempotent():
+    profile = connect.build_embedding_profile("http://127.0.0.1:8765/v1/embeddings")
+    first, changed_first = connect.merge_embedding_catalog(None, profile)
+    assert changed_first is True
+
+    second, changed_second = connect.merge_embedding_catalog(first, profile)
+    assert changed_second is False
+    assert second == first
+
+
+def test_merge_embedding_catalog_keeps_other_profiles_and_extras():
+    profile = connect.build_embedding_profile("http://127.0.0.1:8765/v1/embeddings")
+    existing = {"services": {"embedding": {
+        "active_profile_id": connect.EMBEDDING_PROFILE_ID,
+        "active_model_id": connect.EMBEDDING_MODEL_ID,
+        "profiles": [
+            {"id": "other", "binding": "openai", "api_key": "sk-x"},
+            {**profile, "note": "user-added"},
+        ],
+    }}}
+    catalog, changed = connect.merge_embedding_catalog(existing, profile)
+
+    assert changed is False  # 已有同 id profile 且只多一个用户额外字段
+    profiles = catalog["services"]["embedding"]["profiles"]
+    assert profiles[0]["id"] == "other"
+    assert profiles[1]["note"] == "user-added"
+

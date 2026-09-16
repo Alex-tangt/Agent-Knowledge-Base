@@ -19,10 +19,16 @@ chromadb==1.5.7
 pypdf==6.10.2
 unstructured==0.22.21
 markdown==3.10.2
-
-# 本地嵌入模型
-sentence-transformers==5.4.1
-
+# 本地嵌入模型
+
+sentence-transformers==5.4.1
+
+# sentence-transformers 5.4.1 会无条件调 AutoProcessor.from_pretrained；
+# transformers 5.5.x 对 BAAI/bge-m3（无 processor 配置）抛
+# "Unrecognized processing class"，导致模型加载失败（#43 定位）。
+# 4.57.6 是与 ST 5.4.1 / FlagEmbedding 1.4.0 实测可用的组合。
+transformers==4.57.6
+
 # HTTP客户端
 requests==2.33.1
 httpx==0.28.1

@@ -26,6 +26,7 @@ from ragcore.config.config import (
     VECTOR_DB_PATH,
     QDRANT_COLLECTION_NAME,
 )
+from ragcore.services.embedding_provider import get_local_embedding_service
 from ragcore.services.langsmith_service import langsmith_service
 from ragcore.utils.logger import logger
 from ragcore.utils.model_status import EMBEDDING_DIMENSION, STATUS
@@ -95,8 +96,9 @@ class VectorStoreService:
             STATUS["embedding"] = "loading"
             logger.info("Loading embedding model...")
             if USE_LOCAL_EMBEDDINGS:
-                from ragcore.services.local_embedding_service import LocalEmbeddingService
-                self._embeddings = LocalEmbeddingService(LOCAL_EMBEDDING_MODEL)
+                # 进程级单例（issue #43）：避免每次换代重建 store 都重载一次权重，
+                # 也让 OpenAI 兼容 /v1/embeddings 端点与本 store 共用同一份 BGE-M3。
+                self._embeddings = get_local_embedding_service(LOCAL_EMBEDDING_MODEL)
             else:
                 from langchain_openai import OpenAIEmbeddings
                 from ragcore.config.llm import require_llm
