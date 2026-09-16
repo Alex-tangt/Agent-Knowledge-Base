@@ -1,0 +1,200 @@
+{
+  "default(dense+keyword)": {
+    "path": "experiments\\rerank-jina-35\\retriever_only.json",
+    "answerable": 45,
+    "curve": {
+      "1": {
+        "recall": 0.7074,
+        "hits": 0.8,
+        "precision": 0.8,
+        "marginal_recall": 0.7074
+      },
+      "2": {
+        "recall": 0.8444,
+        "hits": 0.9111,
+        "precision": 0.5,
+        "marginal_recall": 0.137
+      },
+      "3": {
+        "recall": 0.8685,
+        "hits": 0.9111,
+        "precision": 0.3556,
+        "marginal_recall": 0.0241
+      },
+      "4": {
+        "recall": 0.913,
+        "hits": 0.9556,
+        "precision": 0.2778,
+        "marginal_recall": 0.0444
+      },
+      "5": {
+        "recall": 0.9185,
+        "hits": 0.9556,
+        "precision": 0.2267,
+        "marginal_recall": 0.0056
+      },
+      "6": {
+        "recall": 0.9519,
+        "hits": 0.9778,
+        "precision": 0.2,
+        "marginal_recall": 0.0333
+      },
+      "7": {
+        "recall": 0.9519,
+        "hits": 0.9778,
+        "precision": 0.1714,
+        "marginal_recall": 0.0
+      },
+      "8": {
+        "recall": 0.9741,
+        "hits": 1.0,
+        "precision": 0.1528,
+        "marginal_recall": 0.0222
+      },
+      "9": {
+        "recall": 0.9741,
+        "hits": 1.0,
+        "precision": 0.1358,
+        "marginal_recall": 0.0
+      },
+      "10": {
+        "recall": 0.9741,
+        "hits": 1.0,
+        "precision": 0.1222,
+        "marginal_recall": 0.0
+      }
+    }
+  },
+  "rerank=onnx": {
+    "path": "experiments\\rerank-jina-35\\jina_onnx.json",
+    "answerable": 45,
+    "curve": {
+      "1": {
+        "recall": 0.8315,
+        "hits": 0.9111,
+        "precision": 0.9111,
+        "marginal_recall": 0.8315
+      },
+      "2": {
+        "recall": 0.9,
+        "hits": 0.9333,
+        "precision": 0.5222,
+        "marginal_recall": 0.0685
+      },
+      "3": {
+        "recall": 0.9333,
+        "hits": 0.9778,
+        "precision": 0.363,
+        "marginal_recall": 0.0333
+      },
+      "4": {
+        "recall": 0.9556,
+        "hits": 1.0,
+        "precision": 0.2889,
+        "marginal_recall": 0.0222
+      },
+      "5": {
+        "recall": 0.9685,
+        "hits": 1.0,
+        "precision": 0.24,
+        "marginal_recall": 0.013
+      },
+      "6": {
+        "recall": 0.9685,
+        "hits": 1.0,
+        "precision": 0.2,
+        "marginal_recall": 0.0
+      },
+      "7": {
+        "recall": 0.9741,
+        "hits": 1.0,
+        "precision": 0.1746,
+        "marginal_recall": 0.0056
+      },
+      "8": {
+        "recall": 0.9796,
+        "hits": 1.0,
+        "precision": 0.1556,
+        "marginal_recall": 0.0056
+      },
+      "9": {
+        "recall": 0.9796,
+        "hits": 1.0,
+        "precision": 0.1383,
+        "marginal_recall": 0.0
+      },
+      "10": {
+        "recall": 0.9796,
+        "hits": 1.0,
+        "precision": 0.1244,
+        "marginal_recall": 0.0
+      }
+    }
+  },
+  "rerank=torch": {
+    "path": "experiments\\rerank-jina-35\\m3_torch.json",
+    "answerable": 45,
+    "curve": {
+      "1": {
+        "recall": 0.8815,
+        "hits": 0.9778,
+        "precision": 0.9778,
+        "marginal_recall": 0.8815
+      },
+      "2": {
+        "recall": 0.9333,
+        "hits": 1.0,
+        "precision": 0.5444,
+        "marginal_recall": 0.0519
+      },
+      "3": {
+        "recall": 0.9444,
+        "hits": 1.0,
+        "precision": 0.3778,
+        "marginal_recall": 0.0111
+      },
+      "4": {
+        "recall": 0.9685,
+        "hits": 1.0,
+        "precision": 0.3,
+        "marginal_recall": 0.0241
+      },
+      "5": {
+        "recall": 0.9685,
+        "hits": 1.0,
+        "precision": 0.24,
+        "marginal_recall": 0.0
+      },
+      "6": {
+        "recall": 0.9741,
+        "hits": 1.0,
+        "precision": 0.2037,
+        "marginal_recall": 0.0056
+      },
+      "7": {
+        "recall": 0.9741,
+        "hits": 1.0,
+        "precision": 0.1746,
+        "marginal_recall": 0.0
+      },
+      "8": {
+        "recall": 0.9796,
+        "hits": 1.0,
+        "precision": 0.1556,
+        "marginal_recall": 0.0056
+      },
+      "9": {
+        "recall": 0.9796,
+        "hits": 1.0,
+        "precision": 0.1383,
+        "marginal_recall": 0.0
+      },
+      "10": {
+        "recall": 0.9796,
+        "hits": 1.0,
+        "precision": 0.1244,
+        "marginal_recall": 0.0
+      }
+    }
+  }
+}
