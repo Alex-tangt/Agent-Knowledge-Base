@@ -219,8 +219,10 @@ class _FakeIndex:
         self._hits = hits or []
         self._entries = entries or {}
 
-    def search(self, query, k=5, writable_only=False, payload_filter=None):
+    def search(self, query, k=5, writable_only=False, payload_filter=None,
+               exclude_retired=False):
         self.search_calls.append(payload_filter)
+        self.last_exclude_retired = exclude_retired
         return self._hits
 
     def get(self, entry_id):
@@ -248,6 +250,16 @@ def test_memory_search_default_identity_has_no_clause(monkeypatch):
     with use_identity(_owner()):
         mcp_server.memory_search("q")
     assert fake.search_calls[-1] is None
+
+
+def test_memory_search_passes_exclude_retired_through(monkeypatch):
+    """#42：读侧退役过滤是显式开关，且不干扰网关注入的授权过滤。"""
+    fake = _FakeIndex()
+    monkeypatch.setattr(mcp_server, "get_index", lambda: fake)
+    with use_identity(_owner(tenant="org-a")):
+        mcp_server.memory_search("q", exclude_retired=True)
+    assert fake.last_exclude_retired is True
+    assert fake.search_calls[-1] == {"tenant": "org-a"}
 
 
 def test_memory_get_denies_entry_outside_entitlement(monkeypatch):

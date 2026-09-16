@@ -179,6 +179,71 @@ def test_search_without_writable_only_passes_no_filter(tmp_path):
     assert store.last_filter is None
 
 
+# ------------------------------------------- 读侧退役过滤（#42 / ADR-0025 D19）
+
+def _status_hits(specs):
+    """specs: [(entry_id, score, status)] → FakeStore 命中形。"""
+    return [
+        {"text": f"body-{entry_id}", "score": score,
+         "meta": {"entry_id": entry_id, "title": entry_id, "writable": True,
+                  "tags": [], "type": "topic", "status": status,
+                  "source": f"kb/{entry_id}.md"}}
+        for entry_id, score, status in specs
+    ]
+
+
+def test_search_exclude_retired_drops_superseded_and_archived(tmp_path):
+    store = FakeStore(_status_hits([
+        ("current", 0.9, "current"),
+        ("draft", 0.8, "draft"),
+        ("old", 0.7, "superseded"),
+        ("gone", 0.6, "archived"),
+    ]))
+    index = MemoryIndex(store=store, manifest_path=os.path.join(tmp_path, "m.json"))
+
+    off = index.search("q", k=4)
+    on = index.search("q", k=4, exclude_retired=True)
+
+    assert {r["id"] for r in off} == {"current", "draft", "old", "gone"}
+    assert [r["id"] for r in on] == ["current", "draft"]
+
+
+def test_search_exclude_retired_keeps_entries_without_status(tmp_path):
+    # 只读语料条目常无 `status`（None）——语义是「排除已退役」，不是「只要 current」，
+    # 因此无 status 的条目**不能**被误伤。
+    store = FakeStore(_status_hits([
+        ("readonly-doc", 0.9, None),
+        ("current", 0.5, "current"),
+    ]))
+    index = MemoryIndex(store=store, manifest_path=os.path.join(tmp_path, "m.json"))
+
+    hits = index.search("q", k=5, exclude_retired=True)
+
+    assert [r["id"] for r in hits] == ["readonly-doc", "current"]
+
+
+def test_search_exclude_retired_backfills_to_k_beyond_retired_head(tmp_path):
+    # 前排被退役条目占据时仍要凑够 k 条：多取召回池再筛，避免 top-k 欠填。
+    store = FakeStore(_status_hits([
+        ("old-1", 0.99, "superseded"),
+        ("old-2", 0.98, "archived"),
+        ("live-1", 0.60, "current"),
+        ("live-2", 0.50, "current"),
+    ]))
+    index = MemoryIndex(store=store, manifest_path=os.path.join(tmp_path, "m.json"))
+
+    hits = index.search("q", k=2, exclude_retired=True)
+
+    assert [r["id"] for r in hits] == ["live-1", "live-2"]
+
+
+def test_search_default_off_keeps_retired(tmp_path):
+    store = FakeStore(_status_hits([("old", 0.9, "superseded")]))
+    index = MemoryIndex(store=store, manifest_path=os.path.join(tmp_path, "m.json"))
+
+    assert [r["id"] for r in index.search("q", k=5)] == ["old"]
+
+
 def test_search_rejects_empty_query(tmp_path):
     index = MemoryIndex(store=FakeStore(), manifest_path=os.path.join(tmp_path, "m.json"))
     with pytest.raises(ValueError):

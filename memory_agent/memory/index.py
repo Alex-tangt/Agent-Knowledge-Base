@@ -24,6 +24,11 @@ from memory_agent.settings import MAX_ENTRY_CHARS
 
 MANIFEST_VERSION = 1
 
+# 「已退役」状态（#42 / ADR-0025 D19）：被 supersede / archive 后不再参与默认读视图。
+# 语义是**排除已退役**，不是「只要 current」——只读语料条目常无 `status`（None），
+# 若按白名单筛会把它误伤。故只剔除明确退役的两个值，`current` / `draft` / `None` 都保留。
+RETIRED_STATUSES = frozenset({"superseded", "archived"})
+
 
 def _now() -> str:
     return datetime.now(timezone.utc).isoformat()
@@ -275,7 +280,8 @@ class MemoryIndex:
 
     @locked(INDEX_LOCK)
     def search(self, query: str, k: int = 5, writable_only: bool = False,
-               payload_filter: dict | None = None) -> list[dict]:
+               payload_filter: dict | None = None,
+               exclude_retired: bool = False) -> list[dict]:
         """条目级语义检索。score 为余弦相似度（越大越相关）。
 
         过滤在向量库侧执行（否则 top-k 之后再筛会欠填）。`payload_filter` 由网关
@@ -285,6 +291,12 @@ class MemoryIndex:
         每条命中带 `classification` / `residency` / `tenant`（payload 镜像）与
         `provenance`（来源平面 / 租户，issue #23）。
         另带 `owner`（域所有者，读侧可见；#45 / ADR-0025 D19）——只读条目 = 来源 label。
+
+        `exclude_retired`（#42 / ADR-0025 D19）：排除 `status ∈ {superseded, archived}`
+        的条目，**保留 `current` / `draft` / 无 `status`**（只读语料常无 status，不能被
+        误伤）。默认 `False`（不静默改行为），由 skill 指导 agent 显式开启。
+        这是**视图 / 质量**策略而非授权边界：授权过滤仍下沉到 store，这里只对候选池
+        做后置剔除，并**多取一些候选**（到召回池深度）以免 top-k 欠填。
         """
         if not query or not query.strip():
             raise ValueError("query 不能为空")
@@ -295,9 +307,16 @@ class MemoryIndex:
         if writable_only:
             merged["writable"] = True
 
+        # 开了退役过滤就多取候选（召回池深度），筛完再截回 k，避免 top-k 直接欠填。
+        fetch_k = k
+        if exclude_retired:
+            fetch_k = max(k, getattr(self.retriever, "pool_size", k))
+
         hits: list[dict] = []
         for score, text, meta in self.retriever.retrieve(
-                query, k=k, payload_filter=merged or None):
+                query, k=fetch_k, payload_filter=merged or None):
+            if exclude_retired and meta.get("status") in RETIRED_STATUSES:
+                continue
             hits.append({
                 "id": meta.get("entry_id"),
                 "title": meta.get("title"),
@@ -315,7 +334,7 @@ class MemoryIndex:
                 "snippet": " ".join(text.split())[:240],
             })
         hits.sort(key=lambda hit: hit["score"], reverse=True)
-        return hits
+        return hits[:k]
 
     @locked(INDEX_LOCK)
     def get(self, entry_id: str) -> dict:
