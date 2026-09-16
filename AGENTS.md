@@ -131,9 +131,9 @@ The `warmup()` function (called from `app.py` lifespan) eagerly triggers BGE-M3 
 - **Chunking**: Article-aware splitting at "第X条" boundaries (law documents), with title prepended. `ARTICLE_MAX_CHARS=800`. Fallback recursive split for non-law docs.
 - **Hybrid retrieval**: vector search (Qdrant cosine, pool=20) + article-number keyword match + anchor keyword match. Merged, deduplicated, then reranker re-scores → adaptive select (top `ADAPTIVE_MAX=8`).
 - **Query rewriting**: LLM compresses verbose queries into search-friendly phrases before retrieval (single-mode, unconditional — the <20-char skip was removed, see CONTEXT.md).
-- **No-evidence handling**: if best post-reranker distance > `RELEVANCE_THRESHOLD=0.85`, returns refusal message and skips LLM call. `RELEVANCE_THRESHOLD=None` to disable hard cutoff.
+- **No-evidence handling**: if best post-reranker distance > `RELEVANCE_THRESHOLD=0.85`, returns refusal message and skips LLM call（**硬闸门与阈值语义不变**；措辞已软化，ADR-0023）. `RELEVANCE_THRESHOLD=None` to disable hard cutoff.
 - **Prompt strategy**: LLM is instructed to answer based on partial context rather than refusing outright. Only refuses when context is completely unrelated.
-- `POST /api/chat/stream` streams **JSON Lines** (`application/jsonl`): each line is `{"type":"content"|"metadata"|"error", ...}`. `content` chunks and `metadata` carry a `sources` array `[{content, source, score, chunk_id}]` for citation display. Scores are post-reranker distances (lower = more relevant).
+- `POST /api/chat/stream` streams **JSON Lines** (`application/jsonl`): each line is `{"type":"content"|"metadata"|"error", ...}`. `content` chunks and `metadata` carry a `sources` array `[{content, source, score, chunk_id}]` for citation display. Scores are post-reranker distances (lower = more relevant). `metadata` 另含 **`best_distance`**（最优 post-rerank 距离，可观测置信度；#27）。
 
 ## Multi-view & Agent routing
 - **View Registry**: `ragcore/services/view_registry.py` manages view metadata. Stored as JSON at `legal_web/view_registry.json`（旧 `kb_registry.json` 一次性迁移）。Default view: `documents` (政策法规视图).
