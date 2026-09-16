@@ -43,7 +43,7 @@
 
 ```
 ├── ragcore/             # 可复用核心（零 FastAPI 依赖）；真包，含 pyproject.toml
-│   ├── services/        # rag/chat/vector_store/document/reranker/embedding/kb_registry
+│   ├── services/        # rag/chat/vector_store/document/reranker/embedding/view_registry
 │   ├── strategies/      # 切分+检索策略抽象（legal/default）
 │   ├── agents/          # LangGraph 路由 + 会话记忆
 │   └── config/ · models/ · utils/

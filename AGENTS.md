@@ -10,7 +10,7 @@ ragcore/            # 可复用核心（零 FastAPI 依赖）；真包
   services/  strategies/  models/  config/  utils/  agents/   # 各含 __init__.py
 legal_web/          # 适配层实例 / 回归锚点
   app.py  api/  frontend/  data/raw/  tests/
-  ingest.py  fetch_laws.py  test_langsmith.py  kb_registry.json
+  ingest.py  fetch_laws.py  test_langsmith.py  view_registry.json
   requirements.txt  .env  vector_db/  uploads/
 memory_agent/       # 记忆能力包（MCP + skill）；可安装
   __init__.py  pyproject.toml
@@ -91,12 +91,12 @@ Paths are anchored in code, not to CWD: `ROOT_DIR` / `RAGCORE_DIR` / `LEGAL_WEB_
 | Method | Path | Purpose |
 |--------|------|---------|
 | `POST` | `/chat/stream` | Chat streaming (RAG or LLM-only, JSONL SSE). Accepts `kb_name` and `session_id` params. Model services are instantiated lazily on first call. |
-| `POST` | `/documents/upload?kb_name=` | Upload document (.pdf/.txt/.md), process (load/split/embed), store in specified Qdrant collection. |
-| `GET` | `/documents/count?kb_name=` | Return chunk count in specified Qdrant collection. |
-| `DELETE` | `/documents/clear?kb_name=` | Clear all points in the specified Qdrant collection (keeps the collection). |
-| `GET` | `/kb/list` | List all registered knowledge bases. |
-| `POST` | `/kb/create?name=&label=&description=` | Create a new knowledge base (new Qdrant collection). |
-| `DELETE` | `/kb/{name}` | Delete a knowledge base (cannot delete default `documents`). |
+| `POST` | `/documents/upload?view_name=` | Upload document (.pdf/.txt/.md), process (load/split/embed), store in specified Qdrant collection. （`kb_name` 为兼容别名） |
+| `GET` | `/documents/count?view_name=` | Return chunk count in specified Qdrant collection. （`kb_name` 别名） |
+| `DELETE` | `/documents/clear?view_name=` | Clear all points in the specified Qdrant collection (keeps the collection). （`kb_name` 别名） |
+| `GET` | `/view/list` | List all registered views. （`/kb/list` 为隐藏别名） |
+| `POST` | `/view/create?name=&label=&description=` | Create a new view (new Qdrant collection). （`/kb/create` 别名） |
+| `DELETE` | `/view/{name}` | Delete a view (cannot delete default `documents`). （`/kb/{name}` 别名） |
 | `GET` | `/health` | Liveness check (`{"status":"healthy"}`). |
 | `GET` | `/status` | Model loading status (`{"embedding":"ready","reranker":"ready","ready":true}`). |
 
@@ -110,7 +110,7 @@ Paths are anchored in code, not to CWD: `ROOT_DIR` / `RAGCORE_DIR` / `LEGAL_WEB_
 | `reranker_service` | Cross-encoder reranker (`BAAI/bge-reranker-v2-m3`). Lazy-init on first use. |
 | `local_embedding_service` | Text embedding (`BAAI/bge-m3`, 1024-dim). Lazy-init on first use. |
 | `langsmith_service` | Optional LangSmith tracing (no-op when key not configured). |
-| `kb_registry` | Knowledge base registry — maps KB names to Qdrant collections. Persisted to `legal_web/kb_registry.json`. |
+| `view_registry` | View registry — maps view names to Qdrant collections. Persisted to `legal_web/view_registry.json`（旧 `kb_registry.json` 一次性迁移，不删）。旧 `kb_registry.py` 为无逻辑兼容 shim。 |
 
 ### Lazy-loading strategy
 All heavy imports and model loads are deferred to avoid blocking HTTP startup:
@@ -135,11 +135,11 @@ The `warmup()` function (called from `app.py` lifespan) eagerly triggers BGE-M3 
 - **Prompt strategy**: LLM is instructed to answer based on partial context rather than refusing outright. Only refuses when context is completely unrelated.
 - `POST /api/chat/stream` streams **JSON Lines** (`application/jsonl`): each line is `{"type":"content"|"metadata"|"error", ...}`. `content` chunks and `metadata` carry a `sources` array `[{content, source, score, chunk_id}]` for citation display. Scores are post-reranker distances (lower = more relevant).
 
-## Multi-KB & Agent routing
-- **KB Registry**: `ragcore/services/kb_registry.py` manages KB metadata. Stored as JSON at `legal_web/kb_registry.json`. Default KB: `documents` (政策法规知识库).
-- **Auto-routing**: When `kb_name="auto"`, the LangGraph router agent (`ragcore/agents/router_graph.py`) classifies the query and selects the best KB. Otherwise, uses the explicitly specified KB.
+## Multi-view & Agent routing
+- **View Registry**: `ragcore/services/view_registry.py` manages view metadata. Stored as JSON at `legal_web/view_registry.json`（旧 `kb_registry.json` 一次性迁移）。Default view: `documents` (政策法规视图).
+- **Auto-routing**: When `view_name="auto"`, the LangGraph router agent (`ragcore/agents/router_graph.py`) classifies the query and selects the best view. Otherwise, uses the explicitly specified view.
 - **Session memory**: `ragcore/agents/session_memory.py` stores recent conversation turns per `session_id`. Used for context-aware query rewriting (future enhancement).
-- Create additional KBs via `POST /api/kb/create`, ingest docs into them via `POST /api/documents/upload?kb_name=`.
+- Create additional views via `POST /api/view/create`, ingest docs into them via `POST /api/documents/upload?view_name=`.
 
 ## Frontend
 - Vanilla JS SPA with ES modules, served as static files. No build step.
@@ -147,7 +147,7 @@ The `warmup()` function (called from `app.py` lifespan) eagerly triggers BGE-M3 
 - **Loading screen**: On page load, shows a two-step progress indicator (Embedding / Reranker). Polls `GET /api/status` every 1s. When `ready=true`, hides overlay and enables chat input.
 - **Source citations**: Collapsed card list under each AI message. Score badges color-coded: green (<0.35), yellow (0.35-0.60), red (>0.60).
 - **RAG toggle**: Sidebar switch. Stored as `kbRagMode` in localStorage.
-- **KB selector**: Dropdown in sidebar with `🤖 自动选择` option plus all registered KBs. Stored as `kbSelectedKB` in localStorage.
+- **View selector**: Dropdown in sidebar with `🤖 自动选择` option plus all registered views. Stored as `selectedView` in localStorage（旧键 `kbSelectedKB` 兼容回退）。
 - **Versioning**: JS/CSS files use `?v=N` cache busting. Increment when changing any JS module.
 
 ## Tests
@@ -158,7 +158,7 @@ The `warmup()` function (called from `app.py` lifespan) eagerly triggers BGE-M3 
 - **记忆检索评测基座（#24，需 BGE-M3 [+ reranker]）**：`venv\Scripts\python.exe memory_agent/eval/retrieval_eval.py --mode hybrid-rerank`——不在 `tests/unit` 内（运行时证据），基线见 `memory_agent/eval/retrieval_baseline.md`。逐题计时口径见 `experiments/rerank-latency-survey/maxlen_results.md`。
 - **rerank token 上限 A/B（#28，需 BGE-M3 [+ reranker]）**：`venv\Scripts\python.exe experiments/rerank-latency-survey/bench_rerank_maxlen.py memory-census|legal-anchor`——结论 `experiments/rerank-latency-survey/maxlen_results.md` + ADR-0020。
 - Smoke test: `venv\Scripts\python.exe legal_web/test_langsmith.py`.
-- **启动冒烟（boot 闸门）**：后台起 `legal_web/app.py`，独立探测 `/api/status` → `ready:true`、`/` 与 `/script.js` → 200、`/api/kb/list`、`/api/documents/count?kb_name=documents`，再杀进程树确认端口与 Qdrant 锁释放。命令与结果见 `memory_agent/eval/baseline_A.md`（比"单测 + 导入冒烟"更强的收工锚点）。
+- **启动冒烟（boot 闸门）**：后台起 `legal_web/app.py`，独立探测 `/api/status` → `ready:true`、`/` 与 `/script.js` → 200、`/api/view/list`、`/api/documents/count?view_name=documents`，再杀进程树确认端口与 Qdrant 锁释放。命令与结果见 `memory_agent/eval/baseline_A.md`（比"单测 + 导入冒烟"更强的收工锚点）。
 - RAG vs LLM-only eval: from repo root run `venv\Scripts\python.exe legal_web/tests/run_eval.py` (backend on :8000, KB built). Parses `legal_web/tests/questions.md` and writes `legal_web/tests/results.md`. Fill `legal_web/tests/failure_analysis.md` for failure cases. `legal_web/tests/score_eval.py` does LLM-as-judge multi-dimension scoring.
 
 ## 开发工作流（AI 必走，请求先进来路由）
