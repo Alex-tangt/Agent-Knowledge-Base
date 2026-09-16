@@ -147,3 +147,25 @@ recall@5 0.8500、nDCG@10 0.755689、MRR 0.730247、1 miss；`metrics_match=true
 
 Relates（本次）：#33、#30（融合选型）、#32（网关强制过滤，本适配器只透传）、
 ADR-0025 D16（共享模式写路径）、ADR-0018 D2（授权在网关）、ADR-0013（并发 / 本地锁）。
+
+## 修订（2026-09-16）：BM25 词法路落地（#40）
+
+D5/D7 定了「本地 = Qdrant 原生（dense + sparse）；BM25 用 `fastembed`」，但当时**没落地**
+——本地平面一直是「dense + Python 子串关键词加法增强」（app 层手写）。本项落地：
+
+- **D14 BM25 编码器 + doc/query 不对称接缝**。`memory_agent/memory/bm25.py`（`fastembed`
+  的 `Qdrant/bm25`）产出 BM25 词权重，IDF 仍由集合 `SparseVectorParams(modifier=Idf)` 施加；
+  `VectorStoreService` 新增 `sparse_query_encoder`（查询侧取它、缺省回落文档编码器），
+  `open_store` 按 `MEMORY_SPARSE_BACKEND=tfidf|bm25` 构造（**默认 `tfidf` 不变**；`bm25` 是
+  可选软依赖 `memory-agent[bm25]`）。
+- **D15 本地 store 也支持 fusion 选择**（与网络化 store 对齐、落实 D6）：`rrf|dbsf|dense`。
+- **实测**（同 gen-2 / 134 条，`experiments/local-lexical-40/`）：主因是**词法表精度**，
+  不是 store 原生融合——同融合换 BM25：`rrf 0.5000→0.6407`、`dbsf 0.5444→0.7111`（miss 1→0）；
+  `bm25/dbsf` recall@1 **0.7111 ≈ 生产手写融合 0.7074**、recall@5 +1.5pp，但 MRR −3.5pp /
+  nDCG@10 −0.5pp（差异在噪声带，**非净胜**）。
+- **决策（owner 2026-09-16）**：本地默认**保持** dense + 手写关键词加法；**BM25 仅作可选后端**
+  （`MEMORY_SPARSE_BACKEND=bm25` + hybrid 集合），**不切默认**。D5 的「各平面用各自原生」在本地
+  仍是**待切**状态，触发条件 = 出现明确收益 / first-stage 退化（叙事 #21）。
+
+Relates（本次）：#40、#33（自制 TF sparse 的负面证据）、#30、ADR-0019 D5/D6/D7、
+`experiments/local-lexical-40/`、`memory_agent/memory/bm25.py`。
