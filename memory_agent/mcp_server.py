@@ -74,6 +74,7 @@ mcp = MCPServer(
         "Agent 长期记忆：memory_search 语义检索条目，memory_get 读回真实 Markdown，"
         "memory_add 写入新条目（先去重，命中近似则不写并返回候选）；"
         "memory_supersede 替代旧条目（新旧双向标注），memory_archive 只标记退役、不删文件。"
+        "memory_search 的 exclude_retired=True 会排除已退役条目（取新弃旧）；默认 False。"
         "supersede / archive 是破坏性变更，先看 preview，再以 confirm=true 重试。"
         "收录（哪些只读文件进基表）走 memory_ingest_list / memory_ingest_include /"
         "memory_ingest_exclude：改 overlay 免重启，移除默认只预览、confirm 才生效。"
@@ -188,7 +189,8 @@ def _resolve_section(section: str | None, domain: str | None, *, tool: str) -> s
 
 @mcp.tool()
 def memory_search(query: str, k: int = 5, writable_only: bool = False,
-                  payload_filter: dict | None = None) -> list[dict]:
+                  payload_filter: dict | None = None,
+                  exclude_retired: bool = False) -> list[dict]:
     """语义检索长期记忆条目（可写 KB 记忆 + 只读项目语料）。
 
     返回条目级命中：id / title / source / writable / type / tags / status / owner /
@@ -196,6 +198,11 @@ def memory_search(query: str, k: int = 5, writable_only: bool = False,
     来源 label）。score 越大越相关：检索链路是向量 + 关键词混合召回（关键词命中批次
     分数 >1，其余为余弦相似度 ∈[-1,1]）。用 memory_get(id) 读回完整 Markdown。
     writable=false 的是只读参考语料，不可写入。
+
+    `exclude_retired`（#42 / ADR-0025 D19）：置 True 时排除
+    `status ∈ {superseded, archived}` 的已退役条目（**取新弃旧**），保留
+    `current` / `draft` / 无 status（只读语料常无 status，不会被误伤）。默认 False
+    （不静默改行为）；回答依赖持久事实时建议显式开启。
 
     `payload_filter`（可选）只用于**进一步收窄**——网关会按当前身份无条件注入
     tenant / classification / residency 约束；试图放宽（越权）会被拒绝。
@@ -206,7 +213,7 @@ def memory_search(query: str, k: int = 5, writable_only: bool = False,
     except AuthorizationError as exc:
         raise ToolError(str(exc))
     return get_index().search(query, k=k, writable_only=writable_only,
-                              payload_filter=scoped)
+                              payload_filter=scoped, exclude_retired=exclude_retired)
 
 
 @mcp.tool()
