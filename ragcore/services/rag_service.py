@@ -15,10 +15,16 @@ from ragcore.strategies import get_retrieval_strategy
 from ragcore.utils.logger import logger
 from ragcore.utils.model_status import STATUS
 
-NO_EVIDENCE_MESSAGE = "知识库中未找到直接依据，建议提供更具体的问题或补充相关资料。"
+NO_EVIDENCE_MARKER = "知识库中没有检索到与这个问题直接相关的内容"
+
+NO_EVIDENCE_MESSAGE = (
+    "抱歉，" + NO_EVIDENCE_MARKER + "，暂时无法给出有依据的回答。"
+    "你可以把问题描述得更具体一些（例如涉及哪部法律、具体条款或适用情形），我再帮你查一次。"
+)
 
 PROMPT_NO_EVIDENCE = (
-    "若上下文完全不涉及用户问题，或内容完全不相关，才回复：" + NO_EVIDENCE_MESSAGE
+    "只有当上下文完全不涉及用户问题时，才用自然的口吻说明知识库里没有相关内容"
+    "（可参考：" + NO_EVIDENCE_MESSAGE + "）；其余情况都要基于上下文作答。"
 )
 
 
@@ -136,13 +142,23 @@ Answer:
             })
         return sources
 
+    def _best_distance(self, retrieved):
+        """最优（最小）post-rerank 距离；越低越相关。无候选时返回 None。
+
+        返回未取整的原始值，供硬闸门比较；透出到 metadata 时才取整。
+        """
+        distances = retrieved["distances"][0] if retrieved.get("distances") else []
+        if not distances:
+            return None
+        return float(min(distances))
+
     def _has_evidence(self, retrieved):
         docs = retrieved["documents"][0] if retrieved["documents"] else []
         if not docs:
             return False
         if RELEVANCE_THRESHOLD is not None:
-            distances = retrieved["distances"][0] if retrieved.get("distances") else []
-            if distances and min(distances) > RELEVANCE_THRESHOLD:
+            best = self._best_distance(retrieved)
+            if best is not None and best > RELEVANCE_THRESHOLD:
                 return False
         return True
 
@@ -312,6 +328,10 @@ Answer:
 
                 retrieved_docs = self._rerank(user_message, retrieved_docs)
                 t_after_rerank = time.time()
+                best_distance = self._best_distance(retrieved_docs)
+                best_distance_out = (
+                    None if best_distance is None else round(best_distance, 4)
+                )
 
                 if not self._has_evidence(retrieved_docs):
                     logger.info("未检索到可靠依据，返回无依据拒答")
@@ -324,6 +344,7 @@ Answer:
                         "output_tokens": 0,
                         "total_tokens": 0,
                         "sources": [],
+                        "best_distance": best_distance_out,
                         "timing": {
                             "rewrite_ms": round((t_after_rewrite - t_start) * 1000, 1),
                             "retrieve_ms": round((t_after_retrieve - t_after_rewrite) * 1000, 1),
@@ -345,7 +366,8 @@ Answer:
                             "你是一个政策法规问答助手。请依据提供的上下文回答用户问题，"
                             "使用 [n] 标注引用来源。若上下文中包含相关信息但不完整，"
                             "可以基于已知内容给出分析，同时说明局限性。"
-                            "仅当上下文完全不涉及问题时才说明无法回答。"
+                            "如果上下文与问题基本无关，请用自然、诚恳的口吻说明知识库里没有找到相关依据，"
+                            "不要凭空作答。"
                             "回答末尾注明" + "\uff08仅供学习参考，不构成法律意见\uff09\u3002"
                         )
                     },
@@ -397,6 +419,7 @@ Answer:
                     "output_tokens": output_tokens,
                     "total_tokens": total_tokens,
                     "sources": sources,
+                    "best_distance": best_distance_out,
                     "timing": {
                         "rewrite_ms": round((t_after_rewrite - t_start) * 1000, 1),
                         "retrieve_ms": round((t_after_retrieve - t_after_rewrite) * 1000, 1),

@@ -1,6 +1,7 @@
+import asyncio
 import json
 import re
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch, MagicMock, AsyncMock
 
 import pytest
 
@@ -10,6 +11,7 @@ from ragcore.strategies.legal import (
     _extract_key_anchors,
 )
 from ragcore.services.rag_service import (
+    NO_EVIDENCE_MARKER,
     NO_EVIDENCE_MESSAGE,
     RAGService,
 )
@@ -257,6 +259,30 @@ class TestRAGServiceMethods:
         finally:
             rs.RELEVANCE_THRESHOLD = original
 
+    def test_has_evidence_boundary_not_rounded(self, rag):
+        import ragcore.services.rag_service as rs
+        original = rs.RELEVANCE_THRESHOLD
+        try:
+            rs.RELEVANCE_THRESHOLD = 0.85
+            assert rag._has_evidence(self._make_retrieved(distances=[0.85001])) is False
+            assert rag._has_evidence(self._make_retrieved(distances=[0.85])) is True
+        finally:
+            rs.RELEVANCE_THRESHOLD = original
+
+    # --- _best_distance ---
+
+    def test_best_distance_is_min(self, rag):
+        retrieved = self._make_retrieved(distances=[0.9, 0.42, 1.5])
+        assert rag._best_distance(retrieved) == 0.42
+
+    def test_best_distance_empty(self, rag):
+        retrieved = {"documents": [[]], "metadatas": [[]], "distances": [[]]}
+        assert rag._best_distance(retrieved) is None
+
+    def test_best_distance_missing_distances_key(self, rag):
+        retrieved = {"documents": [["doc"]], "metadatas": [[{"source": "s"}]]}
+        assert rag._best_distance(retrieved) is None
+
     # --- _extract_sources ---
 
     def test_extract_sources(self, rag):
@@ -338,3 +364,83 @@ class TestRAGServiceMethods:
         assert data["type"] == "content"
         assert data["content"] == NO_EVIDENCE_MESSAGE
         assert data["sources"] == []
+
+    def test_no_evidence_message_contains_marker(self, rag):
+        assert NO_EVIDENCE_MARKER in NO_EVIDENCE_MESSAGE
+
+    def test_no_evidence_message_is_softened(self, rag):
+        assert NO_EVIDENCE_MESSAGE.startswith("抱歉")
+        assert "未找到直接依据" not in NO_EVIDENCE_MESSAGE
+
+
+# --- hard gate behaviour at the stream boundary (behaviour frozen, wording softened) ---
+
+class TestRAGChatStreamGate:
+    @pytest.fixture
+    def rag(self):
+        with patch.object(RAGService, "__init__", lambda self: None):
+            svc = RAGService()
+        svc.model = "test-model"
+        return svc
+
+    def _retrieved(self, distances):
+        return {
+            "documents": [[f"片段{i}" for i in range(len(distances))]],
+            "metadatas": [[{"source": f"doc{i}.pdf"} for i in range(len(distances))]],
+            "distances": [distances],
+        }
+
+    def _run_stream(self, rag, retrieved):
+        with patch.object(rag, "_route_query", new=AsyncMock(return_value="documents")), \
+             patch.object(rag, "_rewrite_query", new=AsyncMock(return_value=["问题"])), \
+             patch.object(rag, "_hybrid_retrieve", return_value=retrieved), \
+             patch.object(rag, "_rerank", return_value=retrieved):
+            async def collect():
+                return [
+                    c async for c in rag.rag_chat_stream(
+                        [{"role": "user", "content": "问题"}]
+                    )
+                ]
+            return asyncio.run(collect())
+
+    def test_off_topic_skips_llm_and_returns_soft_template(self, rag):
+        rag.client = MagicMock()
+        rag.client.chat.completions.create = AsyncMock()
+        retrieved = self._retrieved([0.9, 1.2])
+
+        chunks = self._run_stream(rag, retrieved)
+
+        assert rag.client.chat.completions.create.await_count == 0
+        first = json.loads(chunks[0].strip())
+        assert first["type"] == "content"
+        assert first["content"] == NO_EVIDENCE_MESSAGE
+        assert first["sources"] == []
+        meta = json.loads(chunks[1].strip())
+        assert meta["type"] == "metadata"
+        assert meta["best_distance"] == 0.9
+        assert meta["sources"] == []
+
+    def test_on_topic_metadata_carries_best_distance(self, rag):
+        retrieved = self._retrieved([0.2, 0.5])
+
+        class _Chunk:
+            def __init__(self, content):
+                self.choices = [MagicMock(delta=MagicMock(content=content))]
+                self.usage = None
+
+        async def _aiter():
+            for piece in ["答", "案"]:
+                yield _Chunk(piece)
+
+        rag.client = MagicMock()
+        rag.client.chat.completions.create = AsyncMock(return_value=_aiter())
+
+        chunks = self._run_stream(rag, retrieved)
+
+        assert rag.client.chat.completions.create.await_count == 1
+        payloads = [json.loads(c.strip()) for c in chunks]
+        content = "".join(p["content"] for p in payloads if p["type"] == "content")
+        assert content == "答案"
+        meta = payloads[-1]
+        assert meta["type"] == "metadata"
+        assert meta["best_distance"] == 0.2
