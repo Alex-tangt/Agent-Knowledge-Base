@@ -419,11 +419,12 @@ def test_mcp_surface_exposes_only_scoped_tools():
     }
     assert set(tools["memory_reindex"].parameters["properties"]) == {"cursor", "batch"}
     assert set(tools["memory_add"].parameters["properties"]) == {
-        "title", "body", "domain", "type", "tags", "slug", "sources",
-        "status", "allow_duplicate",
+        "title", "body", "section", "type", "tags", "slug", "sources",
+        "status", "allow_duplicate", "domain",
     }
     assert set(tools["memory_supersede"].parameters["properties"]) == {
-        "old_id", "title", "body", "domain", "type", "tags", "slug", "sources", "confirm",
+        "old_id", "title", "body", "section", "type", "tags", "slug", "sources",
+        "confirm", "domain",
     }
     assert set(tools["memory_archive"].parameters["properties"]) == {
         "entry_id", "reason", "confirm",
@@ -435,6 +436,48 @@ def test_mcp_surface_exposes_only_scoped_tools():
     assert set(tools["memory_ingest_exclude"].parameters["properties"]) == {
         "pattern", "confirm",
     }
+
+
+def test_mcp_section_is_canonical_and_domain_is_deprecated_alias(monkeypatch):
+    """#45 / ADR-0025 D19：工具参数正名 `section`，`domain` 仅作弃用别名。"""
+    from memory_agent import mcp_server
+
+    captured = {}
+
+    class FakeWriter:
+        def add(self, **kwargs):
+            captured.clear()
+            captured.update(kwargs)
+            return {"status": "written"}
+
+        def supersede(self, **kwargs):
+            captured.clear()
+            captured.update(kwargs)
+            return {"status": "written"}
+
+    monkeypatch.setattr(mcp_server, "get_writer", lambda: FakeWriter())
+    monkeypatch.setattr(mcp_server, "_require_writer", lambda: None)
+    monkeypatch.setattr(mcp_server, "_require_visible", lambda identity, entry_id: None)
+    monkeypatch.setattr(mcp_server, "effective_filter", lambda identity: None)
+
+    mcp_server.memory_add(title="t", body="b", section="topics",
+                          type="topic", tags=["x"])
+    assert captured["domain"] == "topics"
+
+    mcp_server.memory_add(title="t", body="b", domain="decisions",
+                          type="decision", tags=["x"])
+    assert captured["domain"] == "decisions"
+
+    mcp_server.memory_supersede(old_id="topics/a", title="t", body="b",
+                                section="projects/demo", type="project-knowledge",
+                                tags=["x"])
+    assert captured["domain"] == "projects/demo"
+
+    with pytest.raises(mcp_server.ToolError):
+        mcp_server.memory_add(title="t", body="b", section="topics", domain="decisions",
+                              type="topic", tags=["x"])
+    with pytest.raises(mcp_server.ToolError):
+        mcp_server.memory_add(title="t", body="b", type="topic", tags=["x"])
 
 
 def test_add_does_not_sync_refresh_the_index(tmp_path):

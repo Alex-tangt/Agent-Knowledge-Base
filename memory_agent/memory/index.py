@@ -284,6 +284,7 @@ class MemoryIndex:
         检索前核对自洽性：manifest 条数 ≠ 集合点数 → 显式报错，不静默返回空。
         每条命中带 `classification` / `residency` / `tenant`（payload 镜像）与
         `provenance`（来源平面 / 租户，issue #23）。
+        另带 `owner`（域所有者，读侧可见；#45 / ADR-0025 D19）——只读条目 = 来源 label。
         """
         if not query or not query.strip():
             raise ValueError("query 不能为空")
@@ -308,6 +309,7 @@ class MemoryIndex:
                 "classification": meta.get("classification") or DEFAULT_CLASSIFICATION,
                 "residency": meta.get("residency") or DEFAULT_RESIDENCY,
                 "tenant": meta.get("tenant"),
+                "owner": meta.get("owner"),
                 "provenance": _provenance(store),
                 "score": float(score),
                 "snippet": " ".join(text.split())[:240],

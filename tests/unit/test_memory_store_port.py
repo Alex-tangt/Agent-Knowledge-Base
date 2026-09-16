@@ -178,3 +178,16 @@ def test_memory_search_hits_carry_classification_and_provenance(tmp_path):
     assert hit["classification"] == "internal"
     assert hit["residency"] == "cloud"
     assert hit["provenance"] == {"plane": PLANE_LOCAL, "tenant": None}
+
+
+def test_memory_search_hits_expose_owner(tmp_path):
+    """#45 / ADR-0025 D19：读侧「域」可见——命中带 owner。"""
+    entry = _entry(tmp_path, "kb/a.md", "# A\n\nbody alpha\n", entry_id="a")
+    entry.owner = "team-x"
+    store = QdrantLocalStore(db_path=str(tmp_path / "q"), embeddings=StubEmbeddings())
+    index = MemoryIndex(store=store, manifest_path=str(tmp_path / "manifest.json"))
+    index.rebuild([entry])
+
+    hit = index.search("body", k=1)[0]
+
+    assert hit["owner"] == "team-x"
