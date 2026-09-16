@@ -61,7 +61,8 @@ class VectorStoreService:
     """
 
     def __init__(self, collection_name=None, db_path=None, embeddings=None,
-                 url=None, api_key=None, hybrid=False, sparse_encoder=None):
+                 url=None, api_key=None, hybrid=False, sparse_encoder=None,
+                 sparse_query_encoder=None):
         """两种形态共用同一套 API（issue #33）：
 
         - **本地嵌入**（默认）：`path=db_path`，client 按操作开/关（local mode 独占锁）。
@@ -80,6 +81,9 @@ class VectorStoreService:
         self._embeddings = embeddings
         self.hybrid = bool(hybrid)
         self._sparse_encoder = sparse_encoder
+        # BM25 的 doc/query 权重不对称（#40）：查询侧编码器缺省回落到文档编码器
+        # （tfidf 编码器对称，两者同形）。
+        self._sparse_query_encoder = sparse_query_encoder or sparse_encoder
         self._logged_init = False
         # 网络化：**长连接 client 复用**（server 自管并发；每次操作新建 client 会把
         # 纯 HTTP 的往返放大成秒级，实测 3.0s/题 vs 0.38s/题）。本地嵌入模式仍按操作开/关。
@@ -219,10 +223,11 @@ class VectorStoreService:
         )
         logger.info(f"Created Qdrant collection '{self.collection_name}' with dim={EMBEDDING_DIMENSION}")
 
-    def _sparse_vector(self, text: str) -> SparseVector:
-        if self._sparse_encoder is None:
+    def _sparse_vector(self, text: str, *, query: bool = False) -> SparseVector:
+        encoder = self._sparse_query_encoder if query else self._sparse_encoder
+        if encoder is None:
             raise RuntimeError("hybrid 集合需要 sparse_encoder（app 层 BYOE）")
-        indices, values = self._sparse_encoder(text)
+        indices, values = encoder(text)
         return SparseVector(indices=list(indices), values=list(values))
 
     @langsmith_service.trace(name="vector_store_add", metadata={"service": "VectorStoreService"})
@@ -389,7 +394,7 @@ class VectorStoreService:
                     prefetch=[
                         Prefetch(query=query_vec, using="dense", limit=depth,
                                  filter=query_filter),
-                        Prefetch(query=self._sparse_vector(query),
+                        Prefetch(query=self._sparse_vector(query, query=True),
                                  using="sparse", limit=depth, filter=query_filter),
                     ],
                     query=FusionQuery(fusion=fusion_query),

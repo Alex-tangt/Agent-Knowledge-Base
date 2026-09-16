@@ -208,6 +208,13 @@ STORE_HYBRID = os.environ.get("MEMORY_STORE_HYBRID", "1").strip().lower() in {
 # 默认 rrf（#33 要求的 store 原生 hybrid）；当前语料上 dense 实测更好，可显式切换。
 STORE_FUSION = os.environ.get("MEMORY_STORE_FUSION", "rrf").strip().lower() or "rrf"
 
+# ---- 稀疏词法编码器（#40 / ADR-0019 D5/D7）：tfidf | bm25 ----
+# `tfidf` = 现有零依赖自制词频哈希（memory_agent/memory/sparse.py，默认，不变）；
+# `bm25`  = fastembed `Qdrant/bm25`（ADR-0019 D7 定了没落地的路线；**本地平面**客户端编码，
+#           fastembed 为可选软依赖，只有选中才 import）。doc/query 权重不对称，接缝分开取。
+SPARSE_BACKEND = os.environ.get("MEMORY_SPARSE_BACKEND", "tfidf").strip().lower() or "tfidf"
+SPARSE_BM25_MODEL = os.environ.get("MEMORY_SPARSE_BM25_MODEL", "Qdrant/bm25")
+
 # 共享 daemon 的 HTTP 端点（issue #19）：单实例常驻，多个 opencode 会话经 proxy 转发。
 # 只绑本机回环；端口固定，proxy 用 /health 判断「是不是我们的 daemon 在跑」。
 MCP_HTTP_HOST = os.environ.get("MEMORY_MCP_HOST", "127.0.0.1")
