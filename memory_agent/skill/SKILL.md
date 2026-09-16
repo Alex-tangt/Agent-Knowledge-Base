@@ -1,6 +1,6 @@
 ---
 name: memory-agent
-description: 通过 memory-agent MCP 工具读写 agent 长期记忆——检索过往知识、读回条目、写入新记忆，以及替代/归档旧条目。当用户要求"记住/存入某事实"、要查平台/版本/错误/项目等跨会话知识、或写入前需要判重时使用。破坏性操作（supersede/archive）必须先拿到用户明确同意。
+description: 通过 memory-agent MCP 工具读写 agent 长期记忆——检索过往知识、读回条目、写入新记忆，以及替代/归档旧条目。当用户要求"记住/存入某事实"、要查平台/版本/错误/项目等跨会话知识、或写入前需要判重时使用。读取时用 exclude_retired 取新弃旧；无替代链接的矛盾条目要先呈现、请人裁决。破坏性操作（supersede/archive）必须先拿到用户明确同意。
 ---
 
 # memory-agent — agent 长期记忆
@@ -15,7 +15,7 @@ description: 通过 memory-agent MCP 工具读写 agent 长期记忆——检索
 
 | 工具 | 用途 | 破坏性 |
 |---|---|---|
-| `memory_search(query, k=5, writable_only=False)` | 语义检索条目 | 否 |
+| `memory_search(query, k=5, writable_only=False, exclude_retired=False)` | 语义检索条目 | 否 |
 | `memory_get(entry_id)` | 按 id 读回条目真实 Markdown | 否 |
 | `memory_add(title, body, section, type, tags, ...)` | 写入新条目（写前去重） | 否（不覆盖） |
 | `memory_supersede(old_id, ..., confirm=False)` | 新条目替代旧条目 | **是** |
@@ -30,12 +30,21 @@ description: 通过 memory-agent MCP 工具读写 agent 长期记忆——检索
 1. `memory_search` 用自然语言查询；命中字段为
    `id / title / source / writable / type / tags / status / owner / score / snippet`，`score` 越大越相关。
    `owner` 是域所有者（只读条目 = 来源 label），读侧可见（#45）。
-2. 要看原文用 `memory_get(id)`；`source` 指向的文件/URL 才是权威来源，关键结论跟过去核对。
-3. 引用时给出 `id`。本仓库内的事实优先于记忆；冲突则修正记忆（见 KB 约定）。
-4. **不要凭记忆回答平台/版本/错误/实测数字**——先 `memory_search`；没有就直说没查到。
-5. 索引未构建时报错会附上命令：`venv\Scripts\python.exe memory_agent/build_index.py`。
+2. **取新弃旧**：回答依赖持久事实时，用 `memory_search(..., exclude_retired=True)`
+   排除 `status ∈ {superseded, archived}` 的已退役条目（#42）。该开关**默认 False**，
+   不静默改行为。注意它只排除**已退役**，保留 `current` / `draft` / **无 status**
+   （只读语料常无 status，不能被误伤）。
+3. 要看原文用 `memory_get(id)`；`source` 指向的文件/URL 才是权威来源，关键结论跟过去核对。
+   判断替代关系看 frontmatter 的 `supersedes` / `superseded_by`。
+4. 引用时给出 `id`。本仓库内的事实优先于记忆；冲突则修正记忆（见"冲突裁决"）。
+5. **不要凭记忆回答平台/版本/错误/实测数字**——先 `memory_search`；没有就直说没查到。
+6. 索引未构建时报错会附上命令：`venv\Scripts\python.exe memory_agent/build_index.py`。
 
 ## 写：先搜 - 判重 - 再落
+
+**写目标 = 全局知识库**（唯一经工具可写的域，所有 agent 可读可写，经写入网关）；
+其它域由 agent 自己写工作区文件、本工具只读索引。写侧**无域寻址**——工具面只需
+`section`（全局 KB 内的分区），不指定写到哪个域。
 
 1. **先搜**：用拟写内容的关键词 `memory_search(..., writable_only=True)`。
 2. `memory_add` 命中近似会返回 `{status:"duplicate", candidates:[...]}` 且**不写**：
@@ -73,6 +82,21 @@ description: 通过 memory-agent MCP 工具读写 agent 长期记忆——检索
    archive 置 `status: archived` + `archive_reason`。
 5. 一次操作一个 git commit，只含本次触及的文件。
 
+## 冲突裁决
+
+读到对同一事实的**矛盾条目**时，按是否有替代链接分两种处理：
+
+1. **有 `supersede` 链**（新条目 frontmatter 有 `supersedes`，旧条目 `status: superseded`）
+   → **取新弃旧**：整段链路里采信最新的一条，旧的直接忽略/不提。检索时用
+   `exclude_retired=True` 就把旧条目挡在结果外；要确认链关系用 `memory_get` 看两侧
+   `supersedes` / `superseded_by`。
+2. **无 `supersede` 链接的矛盾条目**（两条都 `current`，却互相打架）
+   → **呈现两者、请人裁决**：把两个 `id` 与各自结论一并摆给用户，说明冲突点，
+   **不要自动择一、不要静默挑一个回答**。用户裁决后再用 `memory_supersede`
+   （**需用户明确同意**，见上节）把错误的一条退役。
+
+> 判据是**有没有替代链接**，不是新旧/分数高低——没链接就是未裁决的冲突，必须交人。
+
 ## 边界
 
 - `writable=false` 的只读语料不可写；写入一律走 add/supersede/archive。
@@ -88,4 +112,5 @@ description: 通过 memory-agent MCP 工具读写 agent 长期记忆——检索
 
 - 全局 KB 约定：`C:\Users\Tan\.config\opencode\knowledge\AGENTS.md`（`agent-kb` skill 的落点）。
 - 设计：`docs/adr/0008`（读路径）、`0009`（写入网关）、`0010`（生命周期工具）、
-  `0011`（索引一致性：代目录 + 指针切换 + 增量刷新）、`0012`（本 skill 的位置与确认规则归属）。
+  `0011`（索引一致性：代目录 + 指针切换 + 增量刷新）、`0012`（本 skill 的位置与确认规则归属）、
+  `0025` D19（读 = 整张基表 / 写 = 全局知识库 / 冲突裁决 + `exclude_retired`）。
