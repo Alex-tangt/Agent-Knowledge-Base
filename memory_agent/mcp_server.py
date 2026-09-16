@@ -13,6 +13,7 @@ memory_reindex / memory_index_status。真相源是 Markdown；索引是派生�
 from __future__ import annotations
 
 import argparse
+import asyncio
 import atexit
 import os
 import threading
@@ -25,6 +26,7 @@ from memory_agent.runtime import (  # noqa: E402  (导入即配 stderr 日志)
 )
 from memory_agent.gateway import (  # noqa: E402
     AuditLog,
+    AuthenticationError,
     AuthorizationError,
     GatewayAuthnMiddleware,
     Identity,
@@ -33,6 +35,7 @@ from memory_agent.gateway import (  # noqa: E402
     current_identity,
     effective_filter,
     load_auth_config,
+    resolve_identity,
 )
 from memory_agent.memory.admission import AdmissionError  # noqa: E402
 from memory_agent.memory.errors import IndexConsistencyError  # noqa: E402
@@ -53,6 +56,8 @@ from mcp.server import MCPServer  # noqa: E402
 from mcp.server.mcpserver.exceptions import ToolError  # noqa: E402
 from mcp.server.transport_security import TransportSecuritySettings  # noqa: E402
 from starlette.responses import JSONResponse  # noqa: E402
+from ragcore.config.config import LOCAL_EMBEDDING_MODEL  # noqa: E402
+from ragcore.services.embedding_provider import get_local_embedding_service  # noqa: E402
 from ragcore.utils.logger import logger  # noqa: E402
 
 DEFAULT_HOST = MCP_HTTP_HOST
@@ -84,6 +89,60 @@ mcp = MCPServer(
 async def _health(_request):
     """就绪/存活探测：HTTP 模式下 proxy 与运维脚本用它判断 daemon 是否在跑。"""
     return JSONResponse({"status": "ok", "service": "memory-agent"})
+
+
+def _embedding_error(message: str) -> JSONResponse:
+    return JSONResponse(
+        {"error": {"message": message, "type": "invalid_request_error"}},
+        status_code=400,
+    )
+
+
+@mcp.custom_route("/v1/embeddings", methods=["POST"])
+async def _embeddings(request):
+    """OpenAI 兼容 embeddings 端点（#43）：把守护进程里那份 BGE-M3 暴露给同机消费者。
+
+    复用 `get_local_embedding_service()`——与索引 store **同一个实例**（不新增模型副本）。
+    authn 与 `/mcp` 同源（ADR-0018 D2）：未配 token 时零配置直连；配了 token 则要 Bearer。
+    只支持 `input`（string | [string...]）与 float 向量。
+    """
+    try:
+        resolve_identity(request.headers.get("authorization"), load_auth_config())
+    except AuthenticationError as exc:
+        return JSONResponse(
+            {"error": {"message": str(exc), "type": "authentication_error"}},
+            status_code=401,
+        )
+    try:
+        payload = await request.json()
+    except Exception:  # noqa: BLE001 - 非法 JSON 由调用方负责
+        return _embedding_error("请求体不是合法 JSON")
+    if not isinstance(payload, dict):
+        return _embedding_error("请求体应为 JSON 对象")
+    raw_input = payload.get("input")
+    if isinstance(raw_input, str):
+        texts = [raw_input]
+    elif (isinstance(raw_input, list) and raw_input
+          and all(isinstance(item, str) for item in raw_input)):
+        texts = list(raw_input)
+    else:
+        return _embedding_error("`input` 应为字符串或非空字符串数组")
+    if payload.get("encoding_format") not in (None, "", "float"):
+        return _embedding_error("仅支持 float 向量（encoding_format 省略或 float）")
+
+    model = str(payload.get("model") or LOCAL_EMBEDDING_MODEL)
+    service = get_local_embedding_service()
+    vectors = await asyncio.to_thread(service.embed_documents, texts)
+    data = [
+        {"object": "embedding", "index": index, "embedding": vector}
+        for index, vector in enumerate(vectors)
+    ]
+    return JSONResponse({
+        "object": "list",
+        "data": data,
+        "model": model,
+        "usage": {"prompt_tokens": 0, "total_tokens": 0},
+    })
 
 
 def _require_writer() -> Identity:

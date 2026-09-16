@@ -72,8 +72,31 @@ Considered options：
     写仍只走本产品的写入网关；外部软件要写就**直接写自己的文件**，由我们**只读索引**（D10）。放开写 = 另票。
   - **不碰第三方软件自带的 KB 功能**：不做其 KB 文件格式的解析 / 互链（避免耦合到外部产品的内部形状）；
     共享只发生在**基表 + 服务**这一层。
-  - 与 D15 的关系：每个消费者 = 一个 agent 身份（token → 可见视图 / 可写域）；本机单部署者下
-    **不强制 token**（ADR-0018 D2 的 `require_token` 默认按"是否配了 token"决定），零配置即可直连。
+- 与 D15 的关系：每个消费者 = 一个 agent 身份（token → 可见视图 / 可写域）；本机单部署者下
+  **不强制 token**（ADR-0018 D2 的 `require_token` 默认按"是否配了 token"决定），零配置即可直连。
+
+## 追加决策（2026-09-16 续）：第二消费者 embedding = 共享 daemon 的 BGE-M3 端点（#43）
+
+> owner 拍板 2026-09-16：DeepTutor 的 embedding 绑到本机 **BGE-M3**（方案 A：复用 daemon，
+> 不新起服务进程、不新增模型副本）。
+
+- **D18 embedding 也是共享服务的一部分**：共享 daemon 新增 **OpenAI 兼容 `POST /v1/embeddings`**，
+  底层复用进程内**唯一一份 BGE-M3**——D17「共享服务即共享引擎」在 embedding 上的延伸。
+  - 消费者侧：DeepTutor embedding profile `binding=vllm`（OpenAI 兼容 + `provider_mode=local`，
+    免 api_key），`base_url=http://127.0.0.1:8765/v1/embeddings`，`dimension=1024`；
+    写它的部署级 `model_catalog.json`（幂等，保留 LLM profile 与其 key）。
+  - **不各跑一份**的理由：BGE-M3 常驻 ~3.9GB（ADR-0013 / #19），第二个消费者再起一份
+    与「一份引擎只付一次」相悖（同 D1/D7 的反碎片化）。
+  - **authn 与 `/mcp` 同源**（ADR-0018 D2）：未配 token = 本机零配置直连；配了 token 则要求
+    同一 Bearer（复用 `resolve_identity`）。端点**无 authz 维度**——只做嵌入计算，不触基表 /
+    不产生命中，故不注入 tenant/classification 过滤。
+  - **附带收敛**：BGE-M3 提升为**进程级单例**，顺带修「每次换代重建 store 就重载一次权重」
+    （实测每次 `memory_reindex` 步进都重新 `Loading embedding model`）。行为保持：同模型、
+    同 `normalize_embeddings=True`、同维度（1024）。
+  - **依赖订正**：`transformers` 钉 `4.57.6`——ST 5.4.1 会无条件调
+    `AutoProcessor.from_pretrained`，而 transformers 5.5.x 对 `BAAI/bge-m3`（无 processor 配置）
+    抛 `Unrecognized processing class`，使模型加载失败（#43 定位）。
+
 
 Relates: #20（本簇 RFC）、#21、#7（MVP）、#25（云 spike）、#32（身份 / 强制收窄）、#41（第二消费者）、
 ADR-0005、ADR-0006、ADR-0011、ADR-0014、ADR-0015、ADR-0018、ADR-0019。
