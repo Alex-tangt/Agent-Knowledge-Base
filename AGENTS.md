@@ -161,15 +161,21 @@ The `warmup()` function (called from `app.py` lifespan) eagerly triggers BGE-M3 
 - **启动冒烟（boot 闸门）**：后台起 `legal_web/app.py`，独立探测 `/api/status` → `ready:true`、`/` 与 `/script.js` → 200、`/api/view/list`、`/api/documents/count?view_name=documents`，再杀进程树确认端口与 Qdrant 锁释放。命令与结果见 `memory_agent/eval/baseline_A.md`（比"单测 + 导入冒烟"更强的收工锚点）。
 - RAG vs LLM-only eval: from repo root run `venv\Scripts\python.exe legal_web/tests/run_eval.py` (backend on :8000, KB built). Parses `legal_web/tests/questions.md` and writes `legal_web/tests/results.md`. Fill `legal_web/tests/failure_analysis.md` for failure cases. `legal_web/tests/score_eval.py` does LLM-as-judge multi-dimension scoring.
 
-## 开发工作流（AI 必走，请求先进来路由）
+## 开发纪律（AI 必走；2026-09-16 重整）
 
-> 本项目执行者是 AI（用户提供思路、AI 开发）。纪律内嵌在流程节点里，不是孤立清单。详见 `docs/adr/0004-dev-discipline-ai-self-maintenance.md`。
+> 本项目执行者是 AI（用户提供思路、AI 开发）。纪律内嵌在流程节点里，不是孤立清单。
+> **本文只放长期规矩**；"两条轨道 / 冻结区 / 优先级"属**计划**（见"当前计划"）。
+> 详见 `docs/adr/0004-dev-discipline-ai-self-maintenance.md`。
 
 任何工作请求先路由：
 - **缺陷** → 根因流程：先测量/复现定位 → 修复 → 留回归证据。
 - **新功能** → 功能流程：决策闸门 → 拆单元 → 逐单元实现+提交 → 收尾健康闸门。
 - **实验** → 实验流程：`experiments/<name>/`（脚本+数据+结论同处，先写记录再跑）。
 - **收工/请求结束** → 健康闸门（每个流程的最后一步，不是可跳过的独立清单）。
+
+### 角色分离（2026-09-16）
+- **架构 / 规划层**（owner + 架构会话）：收敛决策 → 写 ADR → 拆票 → **验收合并** → 地图同步。
+- **执行 / 实验层**（任务会话）：按 issue 实现或实验，**不做架构决策**；碰到决策**停下来**提给架构层；**不得自行改动架构级东西**（接口、数据模型、ADR 结论）。
 
 ### 单元（commit 的粒度）
 任何可独立验证、可一句话解释的增量即一个单元：修一个 bug、做一次优化、加一个工具都是单元。判定：一句话能说清 + 能独立验证 → 立即 commit；否则拆小或合并。不要等一个 feature 全做完才提交。
@@ -194,6 +200,8 @@ The `warmup()` function (called from `app.py` lifespan) eagerly triggers BGE-M3 
 - 研究 / 实验产出进 `experiments/`（一页结论），结论再进 ADR。
 - **ADR 粒度 = 一个决策簇（≈ 一个票据 / 一个阶段），内含 D1/D2/D3**，不是"一条决策一 ADR"（先例：ADR-0008/0009/0011）。修订既有决策时新 ADR 标 `amends` / `supersedes`。
 - **同类相聚（2026-09-15）**：**同类决策优先并入同簇 ADR（就地 amend 一节），不新开零散 ADR**。只有跨簇/新阶段才新开。
+- **ADR 活跃集（2026-09-16）**：`superseded` / `deferred` 的 ADR **不参与规划**。
+- **越界（2026-09-16）**：改动属于别的模块 / 会话的职责 → **提 issue**，不自行改。
 
 ### 地图同步
 结构一变就更新本文件与 `CONTEXT.md`。AGENTS.md 必须始终描述真实目录树，不允许文档脱离实际。
@@ -209,11 +217,16 @@ The `warmup()` function (called from `app.py` lifespan) eagerly triggers BGE-M3 
 - **杠杆是语料相关的**——一个语料上的收益不外推到另一个语料。
 - 排评测前先问：**有没有几分钟就能量出分布/曲线的办法**（长度分布、recall@k、命中位置分布）？有就先做，再决定要不要排重评测。
 - **倍数回算过再写**（226/15≈15x，不是 20x）。
+- **已定数值不重跑（2026-09-16）**：很多数值是**固定**的；只在新假设或明确触发条件时重测，**别反复实验确认**。
 - **census 能「排除」，不能「证明」**：离线上限论证 ≠ 端到端实测。2026-09-15 池裁剪先例：离线判「池 10/12 无损」（只验首个 gold 在 top-k），实测 pool=12 的 **nDCG@10 掉 0.22%、守门未过**（多 gold 题被挤出）。**要说"可用"，必须跑一次真实链路。**
 
 ### 长耗时活不进主会话（规划层不可阻塞）
 
 **主会话只做规划与协调，绝不亲自跑长耗时任务**——大评测 / 训练 / 大扫描一律**独立会话 + `git worktree`**。**派 subagent 也不行**：opencode 里 subagent 是**强阻塞**（返回前主会话无法推进），照样卡住规划层。2026-09-15 教训：主会话连续陷进池 / 延迟评测链，项目规划与协调长时间停摆。
+
+### 交接（2026-09-16）
+- **交接书先给 owner 审核，再派**。
+- 交接书放临时目录、**引用而非重复**、**redact 密钥**。
 
 ### 健康闸门（收工前必跑）
 1. `git status` 干净——无未提交工作（那批 CRLF-only 的 ` M` 假脏除外：`git diff --numstat` 应为空）。
@@ -238,6 +251,20 @@ The `warmup()` function (called from `app.py` lifespan) eagerly triggers BGE-M3 
 - **分支一票一条**：`feat/<n>-<slug>`，关闭票据后合回 `master`。提交已在别的分支上要挪，用 `cherry-pick`，**不改写共享分支历史**。
 - 一个单元 = 一个 commit（见"单元"），消息沿用本仓库的宽松前缀（`feat:` / `fix:` / `docs:` / `chore:`，中文描述）。
 - 密钥 / token 永不进提交。
+
+### 安全
+- 密钥 / token **永不落盘或提交**；凭据走**进程环境**；错误信息不回显凭证。
+
+## 当前计划（2026-09-16 重整）
+
+**两条轨道 + 一个冻结区**（这是**计划**，不是纪律）：
+
+- **主线 = 个人模式**（唯一开发重点）：**#41 一步安装 + 本机第二消费者** · **agent loop**（待开票）· 收尾。
+  **检索沿用现状、主线不碰检索**（owner 决定 2026-09-16「B」）。
+- **并行轨 = 检索优化**（**执行 / 实验**会话，自负验收合并）：**#21**（伞）· **#35**（deferred）· **#40**（deferred）。
+  跨轨**只提子 issue**；固定 / 已定数值不重跑。
+- **冻结区 = 共享 / 云**：**#38 联邦 · #39 租户泄漏修复 · #34 隔离套件 · #33 后续 · ADR-0015 / 0018** 移出计划（**0018 标 deferred**；#39 是已定位的真实缺陷，解冻时第一件修）。
+- **明确排除：`legal_web`**（上一版本遗留的无关产品；仅保留代码）。
 
 ## 当前路线图（2026-08 一周冲刺）
 
