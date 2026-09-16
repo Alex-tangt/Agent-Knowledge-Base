@@ -82,3 +82,35 @@ model-info / commits / discussions——**这条路径不受 `local_files_only` 
 
 单测 `tests/unit/test_hf_offline.py`（8 项）覆盖缓存判定 / 缺失保持联网 / 显式开关不被覆盖。
 
+## #46 追加：运行时兜底（HF 已被依赖链先 import）
+
+**问题**：#18 的修复只在「import HF 之前」设 `os.environ`。但 `huggingface_hub.constants.HF_HUB_OFFLINE`
+是 **import 期常量**；`memory_agent` 的依赖链（qdrant_client → huggingface_hub）会先把 HF import 进来，
+于是这次调用变成**空操作**——新进程里常量仍是 `False`（架构层三角测量，见 issue #46）。
+
+**修复**：`ensure_hf_offline()` 设完环境变量后，按**实际 import 图**改写已加载模块里的常量副本
+（`_patch_loaded_hf_modules()`）：`huggingface_hub.constants.HF_HUB_OFFLINE`（源头）、
+`transformers.utils.hub._is_offline_mode`（transformers 的 import 期缓存，`is_offline_mode()` 只读它）、
+`transformers.commands.serving.HF_HUB_OFFLINE`（唯一的 `from ... import` 绑定）。**先枚举实际绑定**
+（只改 `constants` 会漏 `transformers` 缓存）。入口（`memory_agent/runtime.py` 经 `_bootstrap.configure_hf_offline()`、
+`retrieval_eval.py` / `build_eval_set.py`）另在 import 任何 HF 之前先调一次。
+
+**A/B 证据**（`probe_46_runtime_fallback.py`，不可达 `HF_ENDPOINT=http://10.255.255.1`、无 shell env、
+先 `import qdrant_client` 制造「HF 已被先 import」条件）：
+
+| 变体 | 结果 | 加载耗时 | 外呼次数 | `HF_HUB_OFFLINE` |
+|---|---|---|---|---|
+| `fixed`（带运行时兜底） | **ok** | **20.7s** | **0** | `True` |
+| `legacy`（兜底打成 no-op，模拟修复前） | **失败** `ValueError` | **253.4s** | **31** | `False` |
+
+新进程断言（主树 venv，工作树 `PYTHONPATH`）：
+```
+$ import memory_agent.runtime; import huggingface_hub.constants as c; c.HF_HUB_OFFLINE
+True   # 日志：HF hub offline mode enabled (all models cached): BAAI/bge-m3, ...
+```
+若 HF 确实已先被 import，日志会补 `; patched already-imported: huggingface_hub.constants.HF_HUB_OFFLINE`。
+
+**回归**：`tests/unit/test_hf_offline.py` 增至 12 项（新增「HF 已先 import 仍生效」「缺失保持常量在线」
+「显式 `0` 不翻转已加载常量」「按 import 图改写缓存副本」）；`pytest tests/unit -q` → **385 passed /
+2 skipped / 3 xfailed**。
+

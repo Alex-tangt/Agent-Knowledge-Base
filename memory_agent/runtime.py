@@ -1,13 +1,16 @@
-"""memory_agent 运行时：先立 stdio 安全日志，再装配索引。
+"""memory_agent 运行时：先立 stdio 安全日志 + HF 离线，再装配索引。
 
 import 顺序有讲究：configure_stderr_logging() 必须在 import ragcore 之前执行
 （ragcore 的 logger 会把 root handler 抢配到 stdout，腐蚀 stdio 协议通道）。
+configure_hf_offline() 也必须在那之前——下面的 admission/index 依赖链会先 import
+huggingface_hub，把 `HF_HUB_OFFLINE` 常量定死（#46）。
 """
 from __future__ import annotations
 
 from memory_agent import _bootstrap
 
 _bootstrap.configure_stderr_logging()
+_bootstrap.configure_hf_offline()
 
 from memory_agent.memory.admission import AdmissionManager  # noqa: E402
 from memory_agent.memory.index import MemoryIndex  # noqa: E402
