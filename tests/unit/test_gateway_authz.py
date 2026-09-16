@@ -264,7 +264,7 @@ def test_write_tools_require_write_role(monkeypatch):
     monkeypatch.setattr(mcp_server, "get_writer", lambda: _FakeIndex())
     with use_identity(_owner(role="reader")):
         with pytest.raises(mcp_server.ToolError):
-            mcp_server.memory_add(title="t", body="b", domain="topics",
+            mcp_server.memory_add(title="t", body="b", section="topics",
                                   type="topic", tags=["x"])
 
 

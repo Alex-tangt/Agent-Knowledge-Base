@@ -17,7 +17,7 @@ description: 通过 memory-agent MCP 工具读写 agent 长期记忆——检索
 |---|---|---|
 | `memory_search(query, k=5, writable_only=False)` | 语义检索条目 | 否 |
 | `memory_get(entry_id)` | 按 id 读回条目真实 Markdown | 否 |
-| `memory_add(title, body, domain, type, tags, ...)` | 写入新条目（写前去重） | 否（不覆盖） |
+| `memory_add(title, body, section, type, tags, ...)` | 写入新条目（写前去重） | 否（不覆盖） |
 | `memory_supersede(old_id, ..., confirm=False)` | 新条目替代旧条目 | **是** |
 | `memory_archive(entry_id, reason, confirm=False)` | 归档条目（保留文件） | **是** |
 
@@ -28,7 +28,8 @@ description: 通过 memory-agent MCP 工具读写 agent 长期记忆——检索
 ## 读：回答前先查
 
 1. `memory_search` 用自然语言查询；命中字段为
-   `id / title / source / writable / type / tags / status / score / snippet`，`score` 越大越相关。
+   `id / title / source / writable / type / tags / status / owner / score / snippet`，`score` 越大越相关。
+   `owner` 是域所有者（只读条目 = 来源 label），读侧可见（#45）。
 2. 要看原文用 `memory_get(id)`；`source` 指向的文件/URL 才是权威来源，关键结论跟过去核对。
 3. 引用时给出 `id`。本仓库内的事实优先于记忆；冲突则修正记忆（见 KB 约定）。
 4. **不要凭记忆回答平台/版本/错误/实测数字**——先 `memory_search`；没有就直说没查到。
@@ -41,8 +42,8 @@ description: 通过 memory-agent MCP 工具读写 agent 长期记忆——检索
    - 同一事实的更新 → 用 `memory_supersede` 取代旧条目；
    - 确认确实不同 → 以 `allow_duplicate=true` 重试。
 3. 结构化字段（路径由工具决定，**没有裸文件写工具**）：
-   - `domain`：`topics` | `decisions` | `projects/<slug>`
-   - `type`（须与 domain 匹配）：`topics`→`topic`；`decisions`→`decision`/`research`；
+   - `section`：`topics` | `decisions` | `projects/<slug>`（全局知识库内的分区；旧名 `domain` 已弃用）
+   - `type`（须与 section 匹配）：`topics`→`topic`；`decisions`→`decision`/`research`；
      `projects/*`→`project-knowledge`
    - `tags`：从 KB 的 `tags.md` 受控表取，不要自造
    - `slug`：英文 slug；纯中文标题请显式给

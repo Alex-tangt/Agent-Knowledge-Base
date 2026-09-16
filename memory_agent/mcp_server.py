@@ -165,14 +165,36 @@ def _require_visible(identity: Identity, entry_id: str) -> None:
         raise ToolError(f"条目 {entry_id} 不在当前身份的授权范围内")
 
 
+def _resolve_section(section: str | None, domain: str | None, *, tool: str) -> str:
+    """解析分区参数（#45 / ADR-0025 D19）：正名 `section`，`domain` 为弃用别名。
+
+    二者语义相同（全局知识库内的目录分区），只允许给一个；都不给或相互冲突即报错。
+    内部（frontmatter / 写入器 / 文件布局）仍沿用历史字段名 `domain`——本轮只改工具面。
+    """
+    section = (section or "").strip()
+    domain = (domain or "").strip()
+    if section and domain and section != domain:
+        raise ToolError(
+            f"{tool}: `section` 与已弃用的别名 `domain` 同时给出且不一致；"
+            f"请只用 `section`"
+        )
+    resolved = section or domain
+    if not resolved:
+        raise ToolError(
+            f"{tool}: 缺少 `section`（topics | decisions | projects/<slug>）"
+        )
+    return resolved
+
+
 @mcp.tool()
 def memory_search(query: str, k: int = 5, writable_only: bool = False,
                   payload_filter: dict | None = None) -> list[dict]:
     """语义检索长期记忆条目（可写 KB 记忆 + 只读项目语料）。
 
-    返回条目级命中：id / title / source / writable / type / tags / status / score / snippet。
-    score 越大越相关：检索链路是向量 + 关键词混合召回（关键词命中批次分数 >1，
-    其余为余弦相似度 ∈[-1,1]）。用 memory_get(id) 读回完整 Markdown。
+    返回条目级命中：id / title / source / writable / type / tags / status / owner /
+    score / snippet。`owner` 是域所有者（#45 / ADR-0025 D19：读侧域可见；只读条目 =
+    来源 label）。score 越大越相关：检索链路是向量 + 关键词混合召回（关键词命中批次
+    分数 >1，其余为余弦相似度 ∈[-1,1]）。用 memory_get(id) 读回完整 Markdown。
     writable=false 的是只读参考语料，不可写入。
 
     `payload_filter`（可选）只用于**进一步收窄**——网关会按当前身份无条件注入
@@ -206,13 +228,15 @@ def memory_get(entry_id: str) -> dict:
 def memory_add(
     title: str,
     body: str,
-    domain: str,
     type: str,
     tags: list[str],
+    *,
+    section: str | None = None,
     slug: str | None = None,
     sources: list[str] | None = None,
     status: str = "current",
     allow_duplicate: bool = False,
+    domain: str | None = None,
 ) -> dict:
     """新增一条长期记忆（唯一写入口：不覆盖、不删除、不原地编辑已有条目）。
 
@@ -220,15 +244,17 @@ def memory_add(
     （确认不同则 allow_duplicate=true 重试；要替换则用 memory_supersede, #12）。
     写入 = frontmatter 过 KB 校验 + 一个新 git commit（只含本条目文件）。
 
-    - domain: topics | decisions | projects/<slug>
-    - type: topic | decision | research | project-knowledge（须与 domain 匹配）
+    - section: topics | decisions | projects/<slug>（全局知识库内的分区）
+    - type: topic | decision | research | project-knowledge（须与 section 匹配）
     - tags: 取 tags.md 的受控标签
     - slug: 英文 slug；省略时从 title 派生（纯中文标题请显式给）
+    - domain: **已弃用别名**，等价于 `section`（#45 / ADR-0025 D19）；只给一个
     """
+    resolved_section = _resolve_section(section, domain, tool="memory_add")
     identity = _require_writer()
     try:
         return get_writer().add(
-            title=title, body=body, domain=domain, type=type, tags=tags,
+            title=title, body=body, domain=resolved_section, type=type, tags=tags,
             slug=slug, sources=sources, status=status,
             allow_duplicate=allow_duplicate,
             payload_filter=effective_filter(identity),
@@ -244,12 +270,14 @@ def memory_supersede(
     old_id: str,
     title: str,
     body: str,
-    domain: str,
     type: str,
     tags: list[str],
+    *,
+    section: str | None = None,
     slug: str | None = None,
     sources: list[str] | None = None,
     confirm: bool = False,
+    domain: str | None = None,
 ) -> dict:
     """用新条目替代一条旧记忆（破坏性：旧条目被标注退役，但**文件保留**）。
 
@@ -257,12 +285,15 @@ def memory_supersede(
     调用方必须先把它给用户看、得到明确同意，再以 confirm=True 重试。
     落盘 = 新条目（frontmatter 带 supersedes=<old_id>）+ 旧条目改
     status: superseded / superseded_by=<new_id>，两个文件在同一个 commit 里。
+
+    `section` 是全局知识库内的分区（正名）；`domain` 是**已弃用别名**（#45 / D19）。
     """
+    resolved_section = _resolve_section(section, domain, tool="memory_supersede")
     identity = _require_writer()
     _require_visible(identity, old_id)
     try:
         return get_writer().supersede(
-            old_id=old_id, title=title, body=body, domain=domain, type=type,
+            old_id=old_id, title=title, body=body, domain=resolved_section, type=type,
             tags=tags, slug=slug, sources=sources, confirm=confirm,
         )
     except MemoryWriteError as exc:
