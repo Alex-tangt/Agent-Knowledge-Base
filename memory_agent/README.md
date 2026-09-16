@@ -18,6 +18,7 @@ Agent-Knowledge-Base 的第一个能力：让 coding agent 通过 MCP 语义检�
 memory_agent/
 ├── mcp_server.py          # MCP 服务：默认 stdio；--transport http 起共享 daemon （+ 可选 /health）(#10-#13,#19)
 ├── proxy.py               # 每会话瘦代理：幂等确保 daemon 在跑 + stdio<->HTTP 转发          (#19)
+├── connect.py             # 一步安装第二个消费者（DeepTutor）：部署级 mcp.json + 核验 + skill 落位 (#41)
 ├── runtime.py             # 先立 stderr 日志，再装配索引 / 写入网关单例
 ├── _bootstrap.py          # stdio 安全日志（import ragcore 前抢配 root logger 到 stderr）
 ├── settings.py            # 真相源 / 索引根 / 来源注册表 / overlay / 指针名 / 集合名 / 去重阈值 / daemon 端点
@@ -41,7 +42,7 @@ memory_agent/
 │   ├── context.py         #   请求期身份 ContextVar（工具层读取）
 │   └── audit.py           #   调用审计（JSONL；配额留钩子）
 ├── build_index.py         # CLI：从 Markdown 全量重建（新代 + 切指针）        (#10,#13)
-├── eval/                  # 运行时证据：baseline_A.md（锚点）、issue19_acceptance.md（#19）、write_path_sandbox.py + _results.md（#16）、readonly_corpus_17.py（#17 三仓库只读）、dogfood_17.md、retrieval_eval.py + metrics.py + retrieval_eval_set.json + retrieval_baseline.md（#24 确定性检索评测）、mcp_install_smoke_26.py + _results.md（#26 安装 + MCP 集成冒烟）
+├── eval/                  # 运行时证据：baseline_A.md（锚点）、issue19_acceptance.md（#19）、write_path_sandbox.py + _results.md（#16）、readonly_corpus_17.py（#17 三仓库只读）、dogfood_17.md、retrieval_eval.py + metrics.py + retrieval_eval_set.json + retrieval_baseline.md（#24 确定性检索评测）、mcp_install_smoke_26.py + _results.md（#26 安装 + MCP 集成冒烟）、shared_service_41.py + _results.md（#41 第二消费者共享服务）
 ├── pyproject.toml         # 本包（可安装，依赖 ragcore）                       (#26)
 └── (skill)                # 见 #14：指导 agent 何时 search/read/add 及破坏性确认规则
 ```
@@ -73,6 +74,19 @@ venv\Scripts\python.exe memory_agent/mcp_server.py --transport http
 #    代理会在会话启动时幂等确保 daemon 在跑；运维：proxy.py --status / --ensure / --stop
 #    --stop 手动停掉 daemon（回收 ~3.9GB）；不做自动空闲卸载（见 ADR-0013 D2）
 #    单会话/手动仍可直接跑 mcp_server.py（默认 stdio，不共享）。
+
+# 4) 第二个消费者（如 DeepTutor）一步接入：共享同一 daemon（#41 / ADR-0025 D17）
+venv\Scripts\python.exe -m memory_agent.connect --deeptutor-home <DeepTutor 运行根>
+#    它作为 MCP streamableHttp 客户端连 http://127.0.0.1:8765/mcp——不新建服务端、不复制索引，
+#    共享服务即共享基表 + 派生索引。安装器只做配置 + 核验：
+#      - 写 DeepTutor **部署级** <home>/data/user/settings/mcp.json（保留其它条目、原子写、幂等）；
+#        home 缺省 = $DEEPTUTOR_HOME，否则 CWD（与 DeepTutor 自身 get_runtime_home 一致）。
+#      - 落位 skill 到 ~/.config/opencode/skills/memory-agent/。
+#      - 核验 opencode 注册（缺则打印 patch，**不擅自改用户配置**）。
+#      - 幂等确保共享 daemon 在跑；--dry-run 只预览；--no-daemon 跳过。
+#    只读边界（D17）：安装器在 DeepTutor 侧用 enabled_tools 只放
+#    search / get / index_status / ingest_list；写仍只走本产品的写入网关。
+#    （console script：memory-agent-connect）
 ```
 
 只读来源（#17 → #36）：**注册表默认 ∪ 显式 overlay**，两者都在运行时重读，**改完免重启**。
