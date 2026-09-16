@@ -27,6 +27,7 @@ if REPO_ROOT not in sys.path:
 from memory_agent import _bootstrap  # noqa: E402
 
 _bootstrap.configure_stderr_logging()
+_bootstrap.configure_hf_offline()  # 早于 memory.index 的 HF 依赖链（#46）
 
 from memory_agent.eval.metrics import evaluate  # noqa: E402
 from memory_agent.memory.index import MemoryIndex  # noqa: E402
