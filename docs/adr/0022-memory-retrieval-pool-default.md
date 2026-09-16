@@ -187,3 +187,44 @@ Considered options：
 
 Relates（#29 追加）：#29（证据已合并 master）、#35（deferred）、#21、#24、#30、ADR-0020、
 ADR-0021、`experiments/rerank-model-survey/`。
+
+## #35 复验（2026-09-16）：jina int8 零新依赖落地 + **全量**质量复核
+
+Status: accepted（D8 由 owner 确认为「**若开则用 jina int8**」；D7 默认关不变）。
+
+### 背景
+
+#29（D8）选定 jina int8 ONNX，依据是 **12 题子集**上「质量逐位持平 + 4.8x」，且当时记录
+jina ONNX 必须经 `sentence-transformers` 的 onnx backend → `optimum[onnxruntime]`，
+会牵动 `transformers`（D12 要求实现前复验）。#35 落地时两项都复验了。
+
+### 复验结论
+
+- **D12 复验（依赖）**：`pip install optimum[onnxruntime]` 实测会把 `transformers`
+  5.5.4 → **4.57.6**、`huggingface_hub` 1.31 → **0.36**（整仓）。**改为不需要 optimum**：
+  jina 的 ONNX 图（`onnx/model_int8.onnx`，输入 `input_ids`+`attention_mask` → `logits`）
+  用已在装的 `onnxruntime` + `tokenizers` 直跑，**零新依赖、不动 transformers**
+  （`memory_agent/memory/onnx_reranker.py`，`MEMORY_RERANK_BACKEND=onnx`）。
+- **全量质量复核（51 题，同 gen-2 / 同候选池）**：**#29 的 12 题子集（q001–q012，偏易）
+  掩盖了差异**——全量下 jina **不是**「逐位持平」：
+
+  | 重排器 | recall@1 | recall@5 | nDCG@10 | MRR | 延迟/题 |
+  |---|---|---|---|---|---|
+  | m3（torch） | **0.8815** | 0.9685 | **0.9709** | **0.9889** | 11.68 s |
+  | jina int8 ONNX | 0.8315（**−5.0pp**） | **0.9685（同）** | 0.9443 | 0.9426 | **2.67 s（4.4x）** |
+
+  手写 ONNX 实现与 #29 的 sbert-ONNX 路径在前 12 题**排名 0 处不一致** → 差异源于模型本身。
+- **消费者口径**（`memory_search` 默认 k=5）两者 **recall@5 相同（0.9685）**：−5.0pp 只体现
+  在 rank-1/3 排序，不改变 agent 读到的 5 条。
+
+### 决策
+
+- **D8 确认（owner 2026-09-16）**：memory rerank **若开则用 `jina-reranker-v2-base-multilingual`
+  int8 ONNX**（`MEMORY_RERANK_BACKEND=onnx`、`MEMORY_RERANK_MODEL` 指向该模型）。接受
+  CC-BY-NC-4.0。**默认仍关**（D7 不变），m3 仍是 `MEMORY_RERANK_BACKEND=torch` 的缺省。
+- **D10 落地**：接缝已从「预留」变「已实现」——`default_reranker_factory` 按后端分派，
+  两后端接口同形；权重优先走 HF 缓存（离线可用），缺文件默认不联网。
+
+证据：`experiments/rerank-jina-35/`（脚本 + 三档 JSON + 结论）。
+
+Relates（#35 复验）：#35、#29、#21、ADR-0020/0021、`experiments/{rerank-jina-35,rerank-model-survey}/`。

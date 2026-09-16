@@ -193,6 +193,18 @@ RERANK_MODEL = os.environ.get("MEMORY_RERANK_MODEL", "BAAI/bge-reranker-v2-m3")
 # 记忆条目的相关性信号集中在标题 + 开头，截断几乎不损排序。
 RERANK_MAX_CHARS = int(os.environ.get("MEMORY_RERANK_MAX_CHARS", "512"))
 
+# reranker **后端**（#35 / ADR-0022 D8/D10）：`torch` = sbert CrossEncoder（默认，m3）；
+# `onnx` = onnxruntime 直跑导出的 ONNX 图（如 jina-reranker-v2-base-multilingual int8）。
+# onnx 路径**零新依赖**（onnxruntime + tokenizers 已在装），不牵动 transformers 版本
+# ——这是对 ADR-0022 里「optimum 会降 transformers」的复验结论。模型名仍走 RERANK_MODEL。
+RERANK_BACKEND = os.environ.get("MEMORY_RERANK_BACKEND", "torch").strip().lower() or "torch"
+RERANK_ONNX_FILE = os.environ.get("MEMORY_RERANK_ONNX_FILE", "onnx/model_int8.onnx")
+RERANK_ONNX_MAX_LENGTH = int(os.environ.get("MEMORY_RERANK_ONNX_MAX_LENGTH", "1024"))
+RERANK_ONNX_BATCH = int(os.environ.get("MEMORY_RERANK_ONNX_BATCH", "16"))
+# 权重解析优先走 HF 缓存；缓存缺文件时默认**不联网**（弱网/离线安全），设 1 才下载。
+RERANK_ALLOW_DOWNLOAD = os.environ.get("MEMORY_RERANK_ALLOW_DOWNLOAD", "0").strip().lower() in {
+    "1", "true", "yes", "on"}
+
 # ---- 网络化 store（共享平面，issue #33 / ADR-0025 D16）----
 # 配了 `MEMORY_STORE_URL` 时，store 工厂切到网络化 Qdrant（**自建服务或云托管同一适配器**）：
 # `path=`（本地嵌入）/ `url=`（自建服务）/ `url=+api_key=`（云托管）是同一套 API。
@@ -207,6 +219,13 @@ STORE_HYBRID = os.environ.get("MEMORY_STORE_HYBRID", "1").strip().lower() in {
 # experiments/networked-store-33/fusion_ablation.json）：rrf | dbsf | dense。
 # 默认 rrf（#33 要求的 store 原生 hybrid）；当前语料上 dense 实测更好，可显式切换。
 STORE_FUSION = os.environ.get("MEMORY_STORE_FUSION", "rrf").strip().lower() or "rrf"
+
+# ---- 稀疏词法编码器（#40 / ADR-0019 D5/D7）：tfidf | bm25 ----
+# `tfidf` = 现有零依赖自制词频哈希（memory_agent/memory/sparse.py，默认，不变）；
+# `bm25`  = fastembed `Qdrant/bm25`（ADR-0019 D7 定了没落地的路线；**本地平面**客户端编码，
+#           fastembed 为可选软依赖，只有选中才 import）。doc/query 权重不对称，接缝分开取。
+SPARSE_BACKEND = os.environ.get("MEMORY_SPARSE_BACKEND", "tfidf").strip().lower() or "tfidf"
+SPARSE_BM25_MODEL = os.environ.get("MEMORY_SPARSE_BM25_MODEL", "Qdrant/bm25")
 
 # 共享 daemon 的 HTTP 端点（issue #19）：单实例常驻，多个 opencode 会话经 proxy 转发。
 # 只绑本机回环；端口固定，proxy 用 /health 判断「是不是我们的 daemon 在跑」。
