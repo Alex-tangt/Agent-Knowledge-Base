@@ -158,6 +158,7 @@ The `warmup()` function (called from `app.py` lifespan) eagerly triggers BGE-M3 
 - **写路径 sandbox 套件（#16，真实 KB 版，需 BGE-M3）**：`venv\Scripts\python.exe memory_agent/eval/write_path_sandbox.py`——不在 `tests/unit` 内（运行时证据），证据见 `memory_agent/eval/write_path_sandbox_results.md`。
 - **个人模式验收（#36，无需模型；Stub 嵌入）**：`venv\Scripts\python.exe memory_agent/eval/personal_mode_36.py`——外部改文件 / 改 overlay 免重启、D13 惰性追平、exclude 预览+确认不误删。证据见 `memory_agent/eval/personal_mode_36_results.md`（15/15，真实语料指纹 172 文件 / 51ms）。
 - **共享服务验收（#41，无需模型；Stub 嵌入）**：`venv\Scripts\python.exe memory_agent/eval/shared_service_41.py`——一步安装（DeepTutor 部署级 mcp.json：幂等 + dry-run + 保留其它条目）、两传输（`streamableHttp` + `proxy.py` stdio）连**同一**临时 daemon（同 `gen` / 同 top-k）、外部改已收录 `.md` 的惰性追平、**跨消费者双向写→读**、共享工具白名单（含 `add`/`supersede`/`archive`，不含维护 / 收录 DDL）、**审计归属到 agent**；配置另用 **DeepTutor 自身**（系统 Python 3.12）的 `load_mcp_config` / `validate_mcp_url` 校验。证据见 `memory_agent/eval/shared_service_41_results.md`（**37/37**）。
+- **主 agent loop 验收（#42，无需模型；Stub 嵌入）**：`venv\Scripts\python.exe memory_agent/eval/agent_loop_42.py`——沙箱临时 KB/索引/daemon + 真 MCP（stdio 代理）、**无 LLM 判分**：确定性（`exclude_retired` 排除已退役、保留 `current`/`draft`/**无 status 的只读语料不被误伤**、候选扩容不欠填）+ dogfood（`add` → 新会话召回 → `supersede` 预览不落盘 → confirm 落盘 → 取新弃旧）。证据见 `memory_agent/eval/agent_loop_42_results.md`（**15/15**）。
 - **embeddings 端点验收（#43，需 BGE-M3）**：`venv\Scripts\python.exe memory_agent/eval/bge_m3_embeddings_43.py`——`POST /v1/embeddings` 契约（dim=1024 / 单位范数 / 批量 / 错误码）、authn 同源、以及 **DeepTutor 自身 `EmbeddingClient`** 端到端取到 1024 维向量；临时 daemon + 独立端口。证据见 `memory_agent/eval/bge_m3_embeddings_43_results.md`（**17/17**）。（分支未并主树时运行需 `PYTHONPATH=<worktree>`。）
 - **网关 authn/authz 套件（#32，无需模型）**：`venv\Scripts\python.exe memory_agent/eval/gateway_authz_32.py`——外部行为断言（身份绑定 / 越权拒绝 / tenant+ABAC 真实 Qdrant 过滤 / 审计不含凭证），证据见 `memory_agent/eval/gateway_authz_32_results.md`（13/13）。
 - **记忆检索评测基座（#24，需 BGE-M3 [+ reranker]）**：`venv\Scripts\python.exe memory_agent/eval/retrieval_eval.py --mode hybrid-rerank`——不在 `tests/unit` 内（运行时证据），基线见 `memory_agent/eval/retrieval_baseline.md`。逐题计时口径见 `experiments/rerank-latency-survey/maxlen_results.md`。
@@ -264,7 +265,7 @@ The `warmup()` function (called from `app.py` lifespan) eagerly triggers BGE-M3 
 
 **两条轨道 + 一个冻结区**（这是**计划**，不是纪律）：
 
-- **主线 = 个人模式**（唯一开发重点）：✅ **#41 一步安装 + 第二消费者** · ✅ **#43 embedding 绑本机 BGE-M3** · ✅ **#45 命名 + 域可见（`section` / 命中 `owner`）** · ✅ **#44 第二消费者共享可读写全局 KB**（`ADR-0025` D19 修订 D17）· **#42 agent loop** · 收尾。
+- **主线 = 个人模式**（唯一开发重点，**功能票全部闭环 ✅**）：✅ **#41 一步安装 + 第二消费者** · ✅ **#43 embedding 绑本机 BGE-M3** · ✅ **#45 命名 + 域可见（`section` / 命中 `owner`）** · ✅ **#44 第二消费者共享可读写全局 KB**（`ADR-0025` D19 修订 D17）· ✅ **#42 agent loop**（skill + 读侧 `exclude_retired` + 场景评测）· **余：收尾（文档 / 证据整理 / 地图复核）**。
   **模型（`ADR-0025` D19）**：**读 = 整张基表**（本地统一向量索引 `memory_entries`）；**写 = 全局知识库**（唯一经工具可写域，**所有 agent 可读写**，经写入网关 + 单 daemon 串行化）；其它域由 agent 自己写文件、我们只读索引。**写侧无域寻址**。
   **检索沿用现状、主线不碰检索**（owner 决定 2026-09-16「B」）。
 - **并行轨 = 检索优化**（**执行 / 实验**会话，自负验收合并）：**#21**（伞）· **#35**（deferred）· **#40**（deferred）。
