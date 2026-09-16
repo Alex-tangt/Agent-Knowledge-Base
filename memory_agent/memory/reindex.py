@@ -30,10 +30,15 @@ def _default_loader():
 
 class Reindexer:
     def __init__(self, layout: IndexLayout | None = None, entry_loader=None,
-                 store_factory=None):
+                 store_factory=None, fingerprint_provider=None):
         self._layout = layout or IndexLayout()
         self._load = entry_loader or _default_loader
         self._store_factory = store_factory or open_store
+        # 只在用默认装载器（真实语料）时采集指纹；注入装载器（测试）不再扫真实仓库。
+        self._fingerprint = fingerprint_provider
+        if entry_loader is None and fingerprint_provider is None:
+            from memory_agent.corpus.loader import scan_fingerprint
+            self._fingerprint = scan_fingerprint
 
     def run_all(self, batch: int = DEFAULT_REINDEX_BATCH) -> dict:
         """把整轮重建跑完（CLI 用；服务端 MCP 用分块 cursor）。"""
@@ -65,7 +70,9 @@ class Reindexer:
         ]
         store = self._store_factory(self._layout.db_path(gen))
         self._write_json(self._layout.plan_path(gen), plan)
-        self._write_manifest(gen, {"version": 1, "built_at": None, "entries": {}})
+        self._write_manifest(
+            gen, {"version": 1, "built_at": None, "fingerprint": None, "entries": {}}
+        )
         return self._process(gen, plan, 0, batch, store)
 
     def _advance(self, cursor: dict, batch: int) -> dict:
@@ -119,6 +126,11 @@ class Reindexer:
                 f"重建未通过自洽核对：manifest {counted} 条 != 集合 {points} 点"
                 f"（代 {gen} 未启用，旧代继续服务）"
             )
+        if self._fingerprint is not None:
+            try:
+                manifest["fingerprint"] = self._fingerprint()[0]
+            except Exception:  # noqa: BLE001 - 指纹失败不该挡住已建好的索引
+                manifest["fingerprint"] = None
         manifest["built_at"] = _now()
         self._write_manifest(gen, manifest)
         self._layout.write_pointer(gen)

@@ -69,6 +69,7 @@ def test_incremental_refresh_skips_unchanged_and_drops_orphans(tmp_path):
     stats = index.refresh()
 
     assert stats == {"entries": 2, "added": 1, "updated": 0, "skipped": 1,
-                     "removed": 1, "embedded": 1}
+                     "removed": 1, "deferred_removed": 0, "embedded": 1,
+                     "complete": True}
     assert {h["id"] for h in index.search("body", k=5)} == {"a", "c"}
     assert index.status()["consistent"] is True
