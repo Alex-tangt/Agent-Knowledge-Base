@@ -1,6 +1,6 @@
 # AGENTS.md
 
-FastAPI + vanilla-JS RAG 应用，已重构为三模块单仓：`ragcore/`（可复用核心）、`legal_web/`（适配层实例 / 回归锚点——FastAPI 应用 + 前端）、`memory_agent/`（agent 记忆能力包，MCP + skill）。目标形状为 **Agent-Knowledge-Base**（hero = 记忆能力包；政策法规问答 web 退为适配层实例与回归锚点，见 `docs/adr/0005`–`0007`）。起点是大学 NLP 课程作业（政策法规问答助手）。Backend serves the frontend as static files, so there is no separate frontend build or server.
+FastAPI + vanilla-JS RAG 应用，已重构为三模块单仓：`ragcore/`（可复用核心）、`legal_web/`（**【已排除】上一版本遗留的无关产品**——仅保留代码；不优化 / 不依赖 / 不作对象）、`memory_agent/`（agent 记忆能力包，MCP + skill）。目标形状为 **Agent-Knowledge-Base**（hero = 记忆能力包；政策法规问答 web **已排除**，见 `docs/adr/0005`–`0007` 与 2026-09-16 owner 决定）。起点是大学 NLP 课程作业（政策法规问答助手）。Backend serves the frontend as static files, so there is no separate frontend build or server.
 
 ## 目录布局
 
@@ -8,7 +8,7 @@ FastAPI + vanilla-JS RAG 应用，已重构为三模块单仓：`ragcore/`（可
 ragcore/            # 可复用核心（零 FastAPI 依赖）；真包
   __init__.py  pyproject.toml
   services/  strategies/  models/  config/  utils/  agents/   # 各含 __init__.py
-legal_web/          # 适配层实例 / 回归锚点
+legal_web/          # 【已排除】上一版本遗留的无关产品（仅保留代码）
   app.py  api/  frontend/  data/raw/  tests/
   ingest.py  fetch_laws.py  test_langsmith.py  view_registry.json
   requirements.txt  .env  vector_db/  uploads/
@@ -251,7 +251,7 @@ The `warmup()` function (called from `app.py` lifespan) eagerly triggers BGE-M3 
 
 ## 方向重定向（2026-09-14）
 
-项目升级为 **Agent-Knowledge-Base**：hero = agent 记忆能力包（MCP + skill），`legal_web` 退为适配层实例 / 回归锚点。决策见 `docs/adr/0005`–`0007`，领域语言见 `CONTEXT.md`。
+项目升级为 **Agent-Knowledge-Base**：hero = agent 记忆能力包（MCP + skill）；`legal_web` **【已排除】**（上一版本遗留的无关产品，仅保留代码）。决策见 `docs/adr/0005`–`0007`，领域语言见 `CONTEXT.md`。
 
 - ✅ 甲⁺ 布局重排（#9 第一轮）：`backend/` 拆为 `ragcore/` + `legal_web/`，新建 `memory_agent/`；T1 锚点复现（71 passed + 导入冒烟 + 启动冒烟，见 `memory_agent/eval/baseline_A.md`）。
 - ✅ 更名（#9 第二轮，2026-09-14 完成）：GitHub 仓库已改为 `Alex-tangt/Agent-Knowledge-Base`，`origin` 是干净 URL（原嵌的明文 token 已移除）；本地目录已改名（会话内被 MCP 子进程 CWD 锁住，由用户在会话外完成）。在新路径复跑锚点验收：`pytest tests/unit -q` → 71 passed、legal_web 导入冒烟 → import-ok。venv 采用"移动后原样验证"策略，一律用 `venv\Scripts\python.exe -m ...`（`Scripts\*.exe` 内嵌旧绝对路径已失效，不使用）。详见 `docs/adr/0007`。

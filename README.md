@@ -1,6 +1,6 @@
 # Agent-Knowledge-Base
 
-目标形状：**Agent 知识库**——把 Markdown 知识库变成 agent 可安全读写、可检索的长期知识底座；hero 是**记忆能力包**（MCP + skill，`memory_agent/`）。三模块单仓：`ragcore/`（可复用核心）、`legal_web/`（适配层实例 / 回归锚点）、`memory_agent/`（记忆能力包）。决策见 `docs/adr/0005`–`0007`，领域语言见 `CONTEXT.md`。
+目标形状：**Agent 知识库**——把 Markdown 知识库变成 agent 可安全读写、可检索的长期知识底座；hero 是**记忆能力包**（MCP + skill，`memory_agent/`）。三模块单仓：`ragcore/`（可复用核心）、`legal_web/`（**【已排除】上一版本遗留的无关产品**，仅保留代码）、`memory_agent/`（记忆能力包）。决策见 `docs/adr/0005`–`0007`，领域语言见 `CONTEXT.md`。
 
 `legal_web/` 是当前**可运行、有评测证据**的适配层：可复用的 RAG 检索/问答核心 + 「21 部中国现行法律法规」问答 demo（起点为大学 NLP 课程作业）。下文即该适配层的评测证据与工程纪律样本。
 
@@ -47,7 +47,7 @@
 │   ├── strategies/      # 切分+检索策略抽象（legal/default）
 │   ├── agents/          # LangGraph 路由 + 会话记忆
 │   └── config/ · models/ · utils/
-├── legal_web/           # 适配层实例 / 回归锚点
+├── legal_web/           # 【已排除】上一版本遗留的无关产品（仅保留代码）
 │   ├── app.py · api/routes.py · frontend/   # FastAPI + 零构建 SPA
 │   ├── data/raw/        # 21 部法律法规全文
 │   ├── tests/           # 评测子系统：questions/ground_truth/run_eval/score_eval + 结果
