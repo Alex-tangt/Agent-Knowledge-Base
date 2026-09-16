@@ -287,6 +287,7 @@ The `warmup()` function (called from `app.py` lifespan) eagerly triggers BGE-M3 
 - ✅ **网关 authn/authz（#32，feat/32-gateway-authz）**：`memory_agent/gateway/`——`/mcp` 边界 authn（进程配置 / Bearer token）→ 请求期身份上下文 → 工具层**强制过滤注入**（tenant + classification/residency，白名单构造、**只可收窄**、越权拒绝）；审计 JSONL；**proxy 非信任源**。就地 amend `docs/adr/0018`（D2.5–D2.8）/ `docs/adr/0019`（D3 多值 `payload_filter` → Qdrant `MatchAny`）。验收：**248 passed** + 套件 13/13（`memory_agent/eval/gateway_authz_32_results.md`）。→ 解锁 **#34 隔离绕过套件**。
 - env knob 变更：`MEMORY_RETRIEVAL_POOL` 默认 **20 → 14**（`docs/adr/0022`：质量 + 延迟双优）。
 - **合并后锚点（2026-09-15，#30 + #32 + #18）**：`pytest tests/unit -q` → **261 passed**；网关套件 **13/13**；启动冒烟不再需要手动设 `HF_HUB_OFFLINE=1`（#18 已修：缓存命中自动离线）。
+- ✅ **个人模式架构锁定（ADR-0025，2026-09-16 accepted）**：Post-MVP 形状由"双平面（本地/企业云）"改为 **所有权轴（个人/共享）× 部署轴（本地/托管）**；本质 = **以「文件 + git」为基表、ANN 为派生索引的知识数据库**（基表 / 域 / 视图 / 集合；**读视图、写域**；中央索引就地索引；**收录 = 来源注册表默认 ∪ 独立 overlay**；**查询时惰性刷新**，无 watcher；多写者仅在"共写域"时需真 DB）。取代 ADR-0015 D1 主轴；ADR-0006 收窄到单写者；ADR-0011 写后钩子改为惰性（D13）。词汇见 `CONTEXT.md`（视图 / 域 / 集合 / 基表 / 来源注册表 / 收录 / 授权表）。新票：**#36 个人模式落地**（动态语料 + overlay 收录 + 惰性刷）、**#37 命名迁移**（库 → 视图）。
 
 ## 后续优化待办（Backlog / 简历谈资池）
 
