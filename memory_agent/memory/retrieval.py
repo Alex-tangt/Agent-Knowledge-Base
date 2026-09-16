@@ -15,9 +15,30 @@ from ragcore.strategies.default import DefaultRetrievalStrategy
 
 
 def default_reranker_factory():
-    """惰性构造 ragcore 的交叉编码器重排器（不到重排这一步不加载权重）。"""
+    """惰性构造交叉编码器重排器（不到重排这一步不加载权重）。
+
+    后端由 `MEMORY_RERANK_BACKEND` 选（#35）：`torch` = ragcore 的 sbert CrossEncoder
+    （默认，m3）；`onnx` = onnxruntime 直跑导出的 ONNX 图（jina int8，零新依赖）。
+    两者接口同形（`rerank(query, docs, top_k) -> [(score, doc)]`）。
+    """
+    from memory_agent.settings import (
+        RERANK_ALLOW_DOWNLOAD,
+        RERANK_BACKEND,
+        RERANK_MODEL,
+        RERANK_ONNX_BATCH,
+        RERANK_ONNX_FILE,
+        RERANK_ONNX_MAX_LENGTH,
+    )
+    if RERANK_BACKEND == "onnx":
+        from memory_agent.memory.onnx_reranker import OnnxReranker
+        return OnnxReranker(
+            RERANK_MODEL,
+            onnx_file=RERANK_ONNX_FILE,
+            max_length=RERANK_ONNX_MAX_LENGTH,
+            batch_size=RERANK_ONNX_BATCH,
+            allow_download=RERANK_ALLOW_DOWNLOAD,
+        )
     from ragcore.services.reranker_service import RerankerService
-    from memory_agent.settings import RERANK_MODEL
     return RerankerService(RERANK_MODEL)
 
 
