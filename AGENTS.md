@@ -265,7 +265,7 @@ The `warmup()` function (called from `app.py` lifespan) eagerly triggers BGE-M3 
 
 **两条轨道 + 一个冻结区**（这是**计划**，不是纪律）：
 
-- **主线 = 个人模式**（唯一开发重点，**功能票全部闭环 ✅**）：✅ **#41 一步安装 + 第二消费者** · ✅ **#43 embedding 绑本机 BGE-M3** · ✅ **#45 命名 + 域可见（`section` / 命中 `owner`）** · ✅ **#44 第二消费者共享可读写全局 KB**（`ADR-0025` D19 修订 D17）· ✅ **#42 agent loop**（skill + 读侧 `exclude_retired` + 场景评测）· **余：收尾（文档 / 证据整理 / 地图复核）**。
+- **主线 = 个人模式**（唯一开发重点，**功能票全部闭环 ✅**）：✅ **#41 一步安装 + 第二消费者** · ✅ **#43 embedding 绑本机 BGE-M3** · ✅ **#45 命名 + 域可见（`section` / 命中 `owner`）** · ✅ **#44 第二消费者共享可读写全局 KB**（`ADR-0025` D19 修订 D17）· ✅ **#42 agent loop**（skill + 读侧 `exclude_retired` + 场景评测）· ✅ **#46 HF 离线运行时兜底**（#18 未覆盖回归）· **余：收尾（文档 / 证据整理 / 地图复核）**。
   **模型（`ADR-0025` D19）**：**读 = 整张基表**（本地统一向量索引 `memory_entries`）；**写 = 全局知识库**（唯一经工具可写域，**所有 agent 可读写**，经写入网关 + 单 daemon 串行化）；其它域由 agent 自己写文件、我们只读索引。**写侧无域寻址**。
   **检索沿用现状、主线不碰检索**（owner 决定 2026-09-16「B」）。
 - **并行轨 = 检索优化**（**执行 / 实验**会话，自负验收合并）：**#21**（伞）· **#35**（deferred）· **#40**（deferred）。
@@ -346,6 +346,7 @@ The `warmup()` function (called from `app.py` lifespan) eagerly triggers BGE-M3 
 - **包命名空间（ADR-0024）**：`ragcore` 是真包——一律 `from ragcore.services.reranker_service import ...` 这样带 `ragcore.` 前缀导入；**不要再加 sys.path 垫片，也不要再用裸 `services/`、`config/` 顶层名**。`memory_agent` 依赖已安装的 `ragcore`（`pip install -e ragcore -e memory_agent`），并继续用 `memory_agent.` 前缀绝对导入。
 - **First run** after `pip install` downloads BGE-M3 (~2.2GB) and bge-reranker-v2-m3 (~2.2GB) from HuggingFace. Subsequent runs load from cache instantly.
 - **HF 外呼（#18 已修）**：`local_files_only=True` 只挡文件下载、**不挡** HF 元数据/revision 解析（会发 `GET /api/models/<repo>` 等）；弱网/代理不稳时冷启动被拖到分钟级甚至 `ValueError` 失败。现在 `ragcore/config/hf.py::ensure_hf_offline()` 在 import HF **之前**按「模型是否已缓存」自动切离线（`HF_HUB_OFFLINE=1`+`TRANSFORMERS_OFFLINE=1`），两个模型服务各自调用；有模型缺失则保持联网并告警（首次下载仍可用）。显式设置 `HF_HUB_OFFLINE`（含 `0`）不覆盖。复现与数据见 `experiments/hf-offline-warmup/`；因此启动冒烟**无需**再手动设离线。
+  - **#46 加固**：`HF_HUB_OFFLINE` 是 **import 期常量**，依赖链（qdrant_client → huggingface_hub）常**先于**该调用把 HF import 进来 → 只设 env 是空操作。现设完 env 后按**实际 import 图改写已加载常量副本**（`_patch_loaded_hf_modules()`：`huggingface_hub.constants.HF_HUB_OFFLINE` / `transformers.utils.hub._is_offline_mode` / `transformers.commands.serving.HF_HUB_OFFLINE`），入口（`_bootstrap.configure_hf_offline()` + 评测 harness）再提前调一次。运行时 A/B（不可达 endpoint、先 import HF）：fixed **20.7s / 0 外呼** vs legacy **253.4s / 31 外呼 / 失败**；证据 `experiments/hf-offline-warmup/probe_46_runtime_fallback.py`。
 - **`memory_search` 前会做 stat-only 指纹检查**（#36 / ADR-0025 D9）：无变更时只 stat（172 文件 ~51ms），有变更才读语料 + 增量重嵌；`memory_get` 直接读真相源、不触发刷新。写入工具返回的 `index` 字段是 `mode=lazy`（D13，不再嵌入）。`refresh()` 返回值新增 `deferred_removed` / `complete`。改 `readonly_repos.json` / `overlay.json` 免重启，但来源根暂时不可达时条目**不会被删**（`complete=false`，只报 `deferred_removed`）。
 - **`RELEVANCE_THRESHOLD=0.85`** is a generous post-reranker value; the prompt handles most boundary cases. Use `experiments/relevance-calibration/calibrate_relevance.py` to recalibrate if needed.
 - **别把「一个语料的杠杆」外推到另一个语料**（2026-09-15 严重误判）：memory 的 rerank 截断收益（226s→15s，长条目）不能外推到 legal（块 ≤820 token，长度从来不是约束）。**先做分钟级 census（长度分布 / recall@k / 命中位置）再排多小时评测**。详见「开发工作流 · 廉价测量优先」。
