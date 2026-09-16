@@ -228,3 +228,17 @@ jina ONNX 必须经 `sentence-transformers` 的 onnx backend → `optimum[onnxru
 证据：`experiments/rerank-jina-35/`（脚本 + 三档 JSON + 结论）。
 
 Relates（#35 复验）：#35、#29、#21、ADR-0020/0021、`experiments/{rerank-jina-35,rerank-model-survey}/`。
+
+## #21 k census（2026-09-16）：默认 k 保持 **5**
+
+D6/#29 后果节点名「先动 k」。#21 做了一次**纯离线** k 收益曲线（同 gen-2 / 池 14 / 51 题，
+证据 `experiments/k-census/`）：
+
+- 默认链路（rerank 关）recall@k：k=5 **0.918** → k=6 0.952 → **k=8 0.974（+5.6pp ≈ 2.5 题）**，
+  **k≥8 边际收益为 0**；rerank 链路 k=5 已 0.969、k=8 封顶 0.980。
+- 「默认@8 **不重排**」（0.974）> 「m3@5 **重排**」（0.969）且零重排延迟 → k 是**免费杠杆**，
+  按消费者口径（gold 在不在读到的集合里）先调 k 比开 rerank 划算。
+- **决策（owner 2026-09-16）**：`memory_search` 默认 **k 保持 5**（不切 8）；调用方按需传 k。
+  证据留档，触发条件 = 需要更高 recall 且容忍上下文增长（每条 snippet ~240 字）。
+
+Relates（k census）：#21、#24、#35、ADR-0021、`experiments/k-census/`。
