@@ -47,9 +47,11 @@ description: 通过 memory-agent MCP 工具读写 agent 长期记忆——检索
    - `tags`：从 KB 的 `tags.md` 受控表取，不要自造
    - `slug`：英文 slug；纯中文标题请显式给
 4. 成功返回 `{status:"written", id, path, commit, warnings, index}`；`warnings` 要转述给用户。
-   写入会**自动增量刷新**派生索引（只重嵌受影响条目），紧接着的 `memory_search` 就能搜到。
-5. `index` 字段是刷新的如实报告：`{ok:false, error}` 表示索引刷新失败（文件已提交、真相源没丢），
-   此时改调 `memory_reindex(cursor=None, batch=16)` 分块全量重建，拿 `cursor` 续调到 `done=true`；
+5. **写入只落真相源，不同步刷索引**（D13）：`index` 字段为
+   `{ok:true, refreshed:false, mode:"lazy"}`——索引由**下一次 `memory_search`** 的廉价指纹检查
+   （stat `mtime`+`size`）增量追平，因此刚写的条目在下一次检索即被搜到，通常**无需手动重建**。
+6. 只有在检索报**索引不自洽**（manifest 条数 ≠ 集合点数）时，才调
+   `memory_reindex(cursor=None, batch=16)` 分块全量重建，拿 `cursor` 续调到 `done=true`；
    `memory_index_status()` 可查当前代与是否自洽。
 
 ## 破坏性操作：必须先确认
