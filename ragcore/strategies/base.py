@@ -1,7 +1,7 @@
 """策略抽象基类 — 将领域特化的切分与检索逻辑从通用引擎中剥离。
 
-- SplitStrategy：文档切分策略（入库时按 KB 配置绑定）
-- RetrievalStrategy：检索策略（查询时按 KB 配置生效）
+- SplitStrategy：文档切分策略（入库时按视图配置绑定）
+- RetrievalStrategy：检索策略（查询时按视图配置生效）
 """
 from abc import ABC, abstractmethod
 from typing import List

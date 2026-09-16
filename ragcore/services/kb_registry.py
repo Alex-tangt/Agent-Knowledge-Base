@@ -1,69 +1,21 @@
-import json
-import os
-from ragcore.config.config import LEGAL_WEB_DIR
-from ragcore.utils.logger import logger
+"""**兼容别名（deprecated）**：`知识库（kb）→ 视图（view）` 命名迁移（#37）。
 
-KB_REGISTRY_FILE = os.path.join(LEGAL_WEB_DIR, "kb_registry.json")
+新代码请用 `ragcore.services.view_registry`。本模块只为**尚未迁移**的内部接缝
+（`rag_service` / `router_graph`）与外部旧调用保留同义名，不承载任何逻辑。
 
+别名映射：
+- `KBRegistry`        → `ViewRegistry`
+- `KB_REGISTRY_FILE`  → `VIEW_REGISTRY_FILE`（`legal_web/view_registry.json`）
+- `kb_registry`       → `view_registry`
+"""
+from ragcore.services.view_registry import (
+    VIEW_REGISTRY_FILE,
+    ViewRegistry,
+    view_registry,
+)
 
-def _load():
-    if not os.path.exists(KB_REGISTRY_FILE):
-        default = {
-            "documents": {
-                "name": "documents",
-                "label": "政策法规知识库",
-                "description": "中国政策法规文档",
-                "split_strategy": "legal",
-                "retrieval_strategy": "legal",
-            }
-        }
-        _save(default)
-        return default
-    with open(KB_REGISTRY_FILE, "r", encoding="utf-8") as f:
-        return json.load(f)
+KB_REGISTRY_FILE = VIEW_REGISTRY_FILE
+KBRegistry = ViewRegistry
+kb_registry = view_registry
 
-
-def _save(registry):
-    with open(KB_REGISTRY_FILE, "w", encoding="utf-8") as f:
-        json.dump(registry, f, ensure_ascii=False, indent=2)
-
-
-class KBRegistry:
-    def list(self):
-        reg = _load()
-        return [{"name": k, **v} for k, v in reg.items()]
-
-    def get(self, name):
-        reg = _load()
-        return reg.get(name)
-
-    def create(self, name, label, description="", split_strategy="default", retrieval_strategy="default"):
-        reg = _load()
-        if name in reg:
-            raise ValueError(f"知识库 '{name}' 已存在")
-        reg[name] = {
-            "name": name,
-            "label": label,
-            "description": description,
-            "split_strategy": split_strategy,
-            "retrieval_strategy": retrieval_strategy,
-        }
-        _save(reg)
-        logger.info(f"Created KB: {name} ({label}) strategies=split:{split_strategy}/retrieval:{retrieval_strategy}")
-        return reg[name]
-
-    def delete(self, name):
-        reg = _load()
-        if name not in reg:
-            raise ValueError(f"知识库 '{name}' 不存在")
-        if name == "documents":
-            raise ValueError("不能删除默认知识库")
-        del reg[name]
-        _save(reg)
-        logger.info(f"Deleted KB: {name}")
-
-    def default_name(self):
-        return "documents"
-
-
-kb_registry = KBRegistry()
+__all__ = ["KBRegistry", "KB_REGISTRY_FILE", "kb_registry"]

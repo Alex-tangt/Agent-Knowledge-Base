@@ -1,6 +1,6 @@
-"""策略注册与解析 — 按 KB 配置加载切分/检索策略。
+"""策略注册与解析 — 按视图（view）配置加载切分/检索策略。
 
-KB 元数据中可通过 `split_strategy` / `retrieval_strategy` 字段指定策略名：
+视图元数据中可通过 `split_strategy` / `retrieval_strategy` 字段指定策略名：
 - legal：法律域策略（条文感知切分 + 条文/锚点混合检索）
 - default：通用策略（递归切分 + 纯向量检索）
 未指定时使用 default，保证通用工具开箱即用。
@@ -23,30 +23,30 @@ DEFAULT_SPLIT = "default"
 DEFAULT_RETRIEVAL = "default"
 
 
-def _kb_config(kb_name):
-    if not kb_name:
+def _view_config(view_name):
+    if not view_name:
         try:
-            from ragcore.services.kb_registry import kb_registry
-            kb_name = kb_registry.default_name()
+            from ragcore.services.view_registry import view_registry
+            view_name = view_registry.default_name()
         except Exception:
             pass
-    if not kb_name:
+    if not view_name:
         return {}
     try:
-        from ragcore.services.kb_registry import kb_registry
-        return kb_registry.get(kb_name) or {}
+        from ragcore.services.view_registry import view_registry
+        return view_registry.get(view_name) or {}
     except Exception:
         return {}
 
 
-def get_split_strategy(kb_name=None) -> SplitStrategy:
-    name = _kb_config(kb_name).get("split_strategy", DEFAULT_SPLIT)
+def get_split_strategy(view_name=None) -> SplitStrategy:
+    name = _view_config(view_name).get("split_strategy", DEFAULT_SPLIT)
     cls = SPLIT_STRATEGIES.get(name, DefaultSplitStrategy)
     return cls()
 
 
-def get_retrieval_strategy(kb_name=None) -> RetrievalStrategy:
-    name = _kb_config(kb_name).get("retrieval_strategy", DEFAULT_RETRIEVAL)
+def get_retrieval_strategy(view_name=None) -> RetrievalStrategy:
+    name = _view_config(view_name).get("retrieval_strategy", DEFAULT_RETRIEVAL)
     cls = RETRIEVAL_STRATEGIES.get(name, DefaultRetrievalStrategy)
     return cls()
 
