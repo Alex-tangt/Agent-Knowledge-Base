@@ -22,6 +22,9 @@ DEFAULT_RESIDENCY = "local"
 
 PLANE_LOCAL = "local"
 PLANE_CLOUD = "cloud"
+# 共享平面（#33 / ADR-0025）：所有权轴 = 共享（DB 即真相源，写路径按 domain plane 分叉）；
+# 部署轴可以是自建服务或云托管——**一个 url= 适配器覆盖两者**，故这里按所有权命名。
+PLANE_SHARED = "shared"
 
 
 @runtime_checkable
@@ -40,6 +43,9 @@ class VectorStore(Protocol):
 
     plane: str
     tenant: str | None
+    # 可选能力声明（#33）：store 的 `search` 是否已是**原生 hybrid**（自行融合 dense +
+    # 词法通道）。为 True 时检索层**不再叠加**自己的关键词融合（ADR-0019 D4，杜绝双重融合）。
+    native_hybrid: bool
 
     def add(self, texts: Sequence[str], metadata_list: list[dict] | None = None,
             ids: Sequence[str] | None = None) -> list[str]:

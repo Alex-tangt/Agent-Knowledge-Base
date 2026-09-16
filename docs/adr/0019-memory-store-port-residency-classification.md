@@ -100,3 +100,50 @@ D3 只说「`payload_filter` 是 {字段: 值} 精确匹配、只可收窄」。
 - 归属不变：网关按身份 entitlement **白名单构造**过滤；多值只是「范围内可选」的表达，仍是收窄。
 - 条目 payload 新增可选 `tenant` 镜像（缺省 `None`），供绑定租户的 store 过滤与 `memory_get`
   可见性预检使用（frontmatter 是真相源，缺省即单租户未绑定）。
+
+## 修订（2026-09-16）：网络化 store 适配器（#33）
+
+D1 只给了本地嵌入实现；本项落地**共享平面的第二个后端**（ADR-0025 的共享模式）。
+落地位置：`memory_agent/memory/store.py::QdrantNetworkStore`、`memory_agent/memory/sparse.py`、
+`memory_agent/memory/shared_writer.py`、`ragcore/services/vector_store_service.py`、
+`memory_agent/settings.py`（`MEMORY_STORE_URL/API_KEY/COLLECTION/HYBRID/FUSION`）。
+
+- **D8 一个适配器覆盖「自建服务」与「云托管」。** Qdrant 客户端 `path=`（本地嵌入）/
+  `url=`（自建 server）/ `url=+api_key=`（云托管）是**同一套 API** → `QdrantNetworkStore`
+  同时服务两者，经工厂 `open_store`（配 `MEMORY_STORE_URL` 即切换）拿存储。
+  `plane` 取**所有权轴** `PLANE_SHARED="shared"`（deployment 由其 `url` 决定；ADR-0025 D16 的
+  写路径分叉按此）。`api_key` 只经构造参数 / 进程环境，**绝不落盘 / 落日志**。
+- **D9 共享平面检索 = store 原生 hybrid（D4 的落地）。** 集合为具名 `dense` + `sparse`
+  （`SparseVectorParams(modifier=IDF)`），检索在 Qdrant 侧 `prefetch` 双路 + `FusionQuery`
+  （RRF/DBSF）融合；app 只提供 dense 嵌入（BGE-M3，BYOE）+ **词频稀疏编码**
+  （`memory_agent/memory/sparse.py`，确定性、零依赖；IDF 由 store 施加）。检索层对
+  `native_hybrid=True` 的 store **退化为薄封装**（`MemoryRetriever._recall` 直接取 store 结果），
+  `search_by_keywords` 返回空 → **杜绝双重融合**。合并过滤**必须挂在每个 prefetch 上**：
+  实测 local mode 有 prefetch 时忽略顶层 `query_filter`，只靠顶层会在本地泄漏跨租户命中。
+- **D10 分数语义按平面（D6 的落地）。** 共享平面 RRF 分 ∈ (0,1]、本地平面余弦 ∈ [-1,1]；
+  **不跨后端共用阈值**。按阈值的操作（写前去重）走 `store.search_dense` 的**余弦通道**，
+  不套融合分。融合方式经 `MEMORY_STORE_FUSION=rrf|dbsf|dense` 可切换（默认 `rrf`）。
+  本语料实测 **dense 单路优于 RRF/DBSF**（0.6407 vs 0.5222 recall@1，证据
+  `experiments/networked-store-33/fusion_ablation.json`）→ 融合选型属 #21，非本票。
+- **D11 融合并列的确定性由适配器收口。** 实测 Qdrant **server** 的 `FusionQuery` 对**同分**
+  并列项的次序不可复现（同集合同 query 两次调用换序；dense/sparse 单路是确定的），
+  `run_hash` 因此不稳。适配器在 hybrid 结果上按 `(score 降序, entry_id 升序)` 稳定排序
+  （只影响同分并列、不改语义），恢复**同后端**可复现性。（跨后端 `run_hash` 仍可不同：
+  稀疏 IDF 浮点精度差异会让近并列换序，但**指标逐项相同**。）
+- **D12 网络化 client 长连接复用。** 网络化模式持有进程内 client 单例（server 自管并发），
+  不再按操作开/关——实测 **3.0 s/题 → 0.23–0.27 s/题**。本地嵌入模式仍按操作开/关
+  （local mode 独占锁，D1/ADR-0013 D3 不变）。
+- **D13 共享域写入 = DB（ADR-0025 D16 落地）。** `shared_writer.py` 的
+  add/supersede/archive 只做 DB upsert/delete（payload 即真相源），**无 git commit /
+  代目录 / 指针切换 / 惰性重建**；结构化校验 / 渲染 / 生命周期语义复用 `authoring`。
+  本地域维持 `writer.py`（文件 + git）。
+
+**验收证据**（`experiments/networked-store-33/`）：自建 Qdrant server 上真实运行 smoke
+**12/12**；**同一评测集双后端指标逐项相同**（local-path vs shared-url：recall@1 0.5222、
+recall@5 0.8500、nDCG@10 0.755689、MRR 0.730247、1 miss；`metrics_match=true`）；
+生产参考（dense + 关键词融合，gen-2）0.7074 / 0.8817 / 0.8731。单测
+`tests/unit/test_memory_networked_store.py`（端口契约 / 无双重融合 / 本地 hybrid 过滤 /
+共享 DB 写入；需服务的用例**显式 skip**）。
+
+Relates（本次）：#33、#30（融合选型）、#32（网关强制过滤，本适配器只透传）、
+ADR-0025 D16（共享模式写路径）、ADR-0018 D2（授权在网关）、ADR-0013（并发 / 本地锁）。

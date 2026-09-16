@@ -52,8 +52,7 @@ class MemoryRetriever:
 
     def retrieve(self, query: str, *, k: int = 5,
                  payload_filter: dict | None = None) -> list[tuple[float, str, dict]]:
-        result = self.strategy.retrieve(
-            query, self.store, pool_size=self.pool_size, payload_filter=payload_filter)
+        result = self._recall(query, payload_filter)
         docs = result["documents"][0] if result.get("documents") else []
         metas = result["metadatas"][0] if result.get("metadatas") else []
         dists = result["distances"][0] if result.get("distances") else []
@@ -65,6 +64,19 @@ class MemoryRetriever:
         if reranker is not None and candidates:
             candidates = self._rerank(query, candidates, reranker)
         return candidates[:k]
+
+    def _recall(self, query: str, payload_filter: dict | None) -> dict:
+        """召回：store 声明 `native_hybrid` 时**直接取 store 原生检索**，不再叠加融合。
+
+        ADR-0019 D4：检索由 store 提供（含其原生融合与打分）；策略层对这类 store 退化为
+        薄封装（只注入过滤 → 调 store → 返回）。否则走 `DefaultRetrievalStrategy`
+        （dense + 关键词加法增强，本地平面当前形态）。
+        """
+        if getattr(self.store, "native_hybrid", False):
+            return self.store.search_documents(
+                query, k=self.pool_size, payload_filter=payload_filter)
+        return self.strategy.retrieve(
+            query, self.store, pool_size=self.pool_size, payload_filter=payload_filter)
 
     def _rerank(self, query, candidates, reranker):
         """交叉编码器重排整个候选池，返回同形降序候选。

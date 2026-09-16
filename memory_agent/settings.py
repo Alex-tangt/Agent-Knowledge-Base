@@ -193,6 +193,21 @@ RERANK_MODEL = os.environ.get("MEMORY_RERANK_MODEL", "BAAI/bge-reranker-v2-m3")
 # 记忆条目的相关性信号集中在标题 + 开头，截断几乎不损排序。
 RERANK_MAX_CHARS = int(os.environ.get("MEMORY_RERANK_MAX_CHARS", "512"))
 
+# ---- 网络化 store（共享平面，issue #33 / ADR-0025 D16）----
+# 配了 `MEMORY_STORE_URL` 时，store 工厂切到网络化 Qdrant（**自建服务或云托管同一适配器**）：
+# `path=`（本地嵌入）/ `url=`（自建服务）/ `url=+api_key=`（云托管）是同一套 API。
+# `api_key` 是凭据：只从进程环境 / gitignored `.env` 读，**绝不落盘 / 落日志**（#25）。
+STORE_URL = os.environ.get("MEMORY_STORE_URL") or None
+STORE_API_KEY = os.environ.get("MEMORY_STORE_API_KEY") or None
+STORE_COLLECTION = os.environ.get("MEMORY_STORE_COLLECTION") or COLLECTION_NAME
+# 检索走 store 原生 hybrid（服务端 prefetch + fusion）；关掉退回纯 dense。
+STORE_HYBRID = os.environ.get("MEMORY_STORE_HYBRID", "1").strip().lower() in {
+    "1", "true", "yes", "on"}
+# 原生融合方式（ADR-0019 D6：分数/阈值按平面；实测见
+# experiments/networked-store-33/fusion_ablation.json）：rrf | dbsf | dense。
+# 默认 rrf（#33 要求的 store 原生 hybrid）；当前语料上 dense 实测更好，可显式切换。
+STORE_FUSION = os.environ.get("MEMORY_STORE_FUSION", "rrf").strip().lower() or "rrf"
+
 # 共享 daemon 的 HTTP 端点（issue #19）：单实例常驻，多个 opencode 会话经 proxy 转发。
 # 只绑本机回环；端口固定，proxy 用 /health 判断「是不是我们的 daemon 在跑」。
 MCP_HTTP_HOST = os.environ.get("MEMORY_MCP_HOST", "127.0.0.1")

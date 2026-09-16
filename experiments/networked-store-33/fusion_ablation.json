@@ -1,0 +1,28 @@
+{
+  "collection": "memory_eval_33",
+  "url": "http://127.0.0.1:6333",
+  "top_k": 10,
+  "results": {
+    "dense": {
+      "recall@1": 0.640741,
+      "recall@5": 0.901852,
+      "nDCG@10": 0.843541,
+      "mrr": 0.807496,
+      "misses": 0
+    },
+    "rrf": {
+      "recall@1": 0.522222,
+      "recall@5": 0.85,
+      "nDCG@10": 0.755689,
+      "mrr": 0.730247,
+      "misses": 1
+    },
+    "dbsf": {
+      "recall@1": 0.544444,
+      "recall@5": 0.785185,
+      "nDCG@10": 0.744435,
+      "mrr": 0.713915,
+      "misses": 1
+    }
+  }
+}
