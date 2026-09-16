@@ -19,6 +19,8 @@ from memory_agent.memory.ports import PLANE_LOCAL, PLANE_SHARED
 from memory_agent.memory.sparse import encode_sparse
 from memory_agent.settings import (
     COLLECTION_NAME,
+    SPARSE_BACKEND,
+    SPARSE_BM25_MODEL,
     STORE_API_KEY,
     STORE_COLLECTION,
     STORE_FUSION,
@@ -26,6 +28,23 @@ from memory_agent.settings import (
     STORE_URL,
 )
 from ragcore.services.vector_store_service import VectorStoreService
+
+
+def _resolve_sparse_encoders(backend, model_name, sparse_encoder):
+    """返回 `(doc_encoder, query_encoder)`（#40）。
+
+    显式 `sparse_encoder` 优先（测试注入 / 调用方指定，query 侧同形回落）。
+    否则按 `MEMORY_SPARSE_BACKEND` 选：`tfidf`（默认，零依赖自制词频）或 `bm25`
+    （fastembed `Qdrant/bm25`，软依赖，只有选中才 import）。
+    """
+    if sparse_encoder is not None:
+        return sparse_encoder, sparse_encoder
+    if str(backend).lower() == "bm25":
+        from memory_agent.memory.bm25 import Bm25Encoder
+
+        encoder = Bm25Encoder(model_name)
+        return encoder.encode_document, encoder.encode_query
+    return encode_sparse, encode_sparse
 
 
 class QdrantLocalStore:
@@ -37,18 +56,25 @@ class QdrantLocalStore:
     def __init__(self, db_path: str, collection_name: str | None = None,
                  embeddings=None, tenant: str | None = None,
                  hybrid: bool = False,
-                 sparse_encoder: Callable[[str], tuple[list[int], list[float]]] | None = encode_sparse):
+                 sparse_encoder: Callable[[str], tuple[list[int], list[float]]] | None = encode_sparse,
+                 sparse_query_encoder: Callable[[str], tuple[list[int], list[float]]] | None = None,
+                 fusion: str | None = None):
         """`hybrid=True` 时本地集合也用具名 dense+sparse + 原生 fusion（机制与共享平面同源，
-        供"同一机制、两种部署"的双后端对照；生产本地平面默认仍 dense + 策略层关键词）。"""
+        供"同一机制、两种部署"的双后端对照；生产本地平面默认仍 dense + 策略层关键词）。
+
+        `sparse_query_encoder` 供 doc/query 不对称的编码器（BM25；#40）。`fusion` 选原生融合
+        方式（ADR-0019 D6：按平面选型），缺省取 `MEMORY_STORE_FUSION`（默认 `rrf`）。"""
         self._service = VectorStoreService(
             collection_name=collection_name or COLLECTION_NAME,
             db_path=db_path,
             embeddings=embeddings,
             hybrid=hybrid,
             sparse_encoder=sparse_encoder,
+            sparse_query_encoder=sparse_query_encoder,
         )
         self.tenant = tenant
         self.native_hybrid = bool(hybrid)
+        self.fusion = (fusion or STORE_FUSION or "rrf").lower()
 
     # ----------------------------------------------------------------- writes
 
@@ -73,12 +99,21 @@ class QdrantLocalStore:
     def search(self, query: str, k: int = 3,
                payload_filter: Mapping[str, Any] | None = None,
                tenant: str | None = None) -> dict:
-        """向量召回。绑定 tenant 的 store 不允许被调用方放宽（ADR-0018 D2）。"""
+        """向量召回。绑定 tenant 的 store 不允许被调用方放宽（ADR-0018 D2）。
+
+        `native_hybrid` 时走 store 原生 hybrid（可按 `fusion` 选 RRF/DBSF），否则纯 dense。
+        """
         scoped = dict(payload_filter or {})
         effective_tenant = self.tenant if self.tenant is not None else tenant
         if effective_tenant is not None:
             scoped["tenant"] = effective_tenant
-        return self._service.search_documents(query, k=k, payload_filter=scoped or None)
+        if self.native_hybrid:
+            if self.fusion == "dense":
+                return self._service.search_dense_documents(
+                    query, k=k, payload_filter=scoped or None)
+            return self._service.search_hybrid_documents(
+                query, k=k, payload_filter=scoped or None, fusion=self.fusion)
+        return self._service.search_dense_documents(query, k=k, payload_filter=scoped or None)
 
     def search_documents(self, query: str, k: int = 3,
                          payload_filter: Mapping[str, Any] | None = None) -> dict:
@@ -124,7 +159,8 @@ class QdrantNetworkStore:
                  collection_name: str | None = None, embeddings=None,
                  tenant: str | None = None, hybrid: bool = True,
                  fusion: str | None = None,
-                 sparse_encoder: Callable[[str], tuple[list[int], list[float]]] | None = encode_sparse):
+                 sparse_encoder: Callable[[str], tuple[list[int], list[float]]] | None = encode_sparse,
+                 sparse_query_encoder: Callable[[str], tuple[list[int], list[float]]] | None = None):
         if not url:
             raise ValueError("QdrantNetworkStore 需要 url（自建 Qdrant 服务或云托管端点）")
         self._service = VectorStoreService(
@@ -134,6 +170,7 @@ class QdrantNetworkStore:
             embeddings=embeddings,
             hybrid=hybrid,
             sparse_encoder=sparse_encoder,
+            sparse_query_encoder=sparse_query_encoder,
         )
         self.url = url
         self.tenant = tenant
@@ -218,14 +255,20 @@ def open_store(db_path: str | None = None, *, tenant: str | None = None,
                url: str | None = None, api_key: str | None = None,
                collection_name: str | None = None, hybrid: bool | None = None,
                embeddings=None,
-               sparse_encoder: Callable[[str], tuple[list[int], list[float]]] | None = None):
+               sparse_encoder: Callable[[str], tuple[list[int], list[float]]] | None = None,
+               sparse_query_encoder: Callable[[str], tuple[list[int], list[float]]] | None = None,
+               fusion: str | None = None,
+               sparse_backend: str | None = None):
     """store 工厂：`url`（或配置的 `MEMORY_STORE_URL`）优先 → 网络化共享后端；否则本地。
 
-    - 显式 `url` / `api_key` / `hybrid` 覆盖配置。
+    - 显式 `url` / `api_key` / `hybrid` / `fusion` 覆盖配置。
+    - 词法稀疏编码器按 `sparse_backend`（缺省 `MEMORY_SPARSE_BACKEND`）选：tfidf（默认）| bm25。
     - 本地平面保持默认 dense + 策略层关键词（`QdrantLocalStore`）。
     """
-    if sparse_encoder is None:
-        sparse_encoder = encode_sparse
+    doc_encoder, query_encoder = _resolve_sparse_encoders(
+        sparse_backend or SPARSE_BACKEND, SPARSE_BM25_MODEL, sparse_encoder)
+    if sparse_query_encoder is not None:
+        query_encoder = sparse_query_encoder
     resolved_url = url if url is not None else STORE_URL
     if resolved_url:
         resolved_hybrid = STORE_HYBRID if hybrid is None else hybrid
@@ -236,10 +279,13 @@ def open_store(db_path: str | None = None, *, tenant: str | None = None,
             embeddings=embeddings,
             tenant=tenant,
             hybrid=resolved_hybrid,
-            sparse_encoder=sparse_encoder,
+            fusion=fusion,
+            sparse_encoder=doc_encoder,
+            sparse_query_encoder=query_encoder,
         )
     return QdrantLocalStore(
         db_path=db_path, collection_name=collection_name, tenant=tenant,
         embeddings=embeddings, hybrid=bool(hybrid),
-        sparse_encoder=sparse_encoder,
+        sparse_encoder=doc_encoder, sparse_query_encoder=query_encoder,
+        fusion=fusion,
     )

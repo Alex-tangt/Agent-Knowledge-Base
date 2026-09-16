@@ -13,6 +13,11 @@ dependencies = [
     "python-dotenv",
 ]
 
+# 可选：本地平面词法路用 fastembed BM25（#40 / ADR-0019 D7）。只有把
+# MEMORY_SPARSE_BACKEND 设为 bm25 才需要；不压默认包体（#26）。
+[project.optional-dependencies]
+bm25 = ["fastembed>=0.4"]
+
 [project.scripts]
 memory-agent = "memory_agent.mcp_server:main"
 memory-agent-proxy = "memory_agent.proxy:main"
