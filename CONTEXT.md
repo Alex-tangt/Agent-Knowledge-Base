@@ -121,6 +121,13 @@ daemon 在 `/mcp` 边界校验的 Bearer token → 身份映射。授权 = 调�
 越权**显式拒绝**。凭证绝不回显 / 落日志。
 _Avoid_: 用可伪造 header 当身份、把 UNAUTHORIZED 静默降级为默认身份
 
+**授权表（Authorization Table）**：
+把 **agent（按软件）→（可见视图, 可写域）** 持久化的配置（**DDL**，不是数据）。扩展 `#32` 的
+token→身份 映射（`MEMORY_AUTH_TOKENS`）：每个软件一条目，给出它能**看见哪些视图**（读）与
+**能写哪些域**（写，通常是它自己）。**凭证（token 值）绝不提交**——表结构可入库，token 材料走
+进程环境 / gitignored。
+_Avoid_: 把凭证写进表并提交、让调用方自选可写域
+
 **来源标注（Provenance）**：
 检索命中自带 `{plane, tenant}`，指明结果来自哪个存储平面 / 租户；联邦召回时逐条区分来源。
 _Avoid_: 只给聚合结果、丢失来源

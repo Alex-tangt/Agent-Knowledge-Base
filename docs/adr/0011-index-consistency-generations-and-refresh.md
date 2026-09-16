@@ -1,6 +1,6 @@
 # 0011 索引一致性（#13）：代目录 + 指针切换、增量刷新、失败要响
 
-Status: accepted
+Status: accepted（**D3 的"写后钩子"已被 ADR-0025 D13 修订为"仅查询时惰性刷新"**：写路径不再同步刷新，索引追上由下一次 `memory_search` 的指纹检查驱动。）
 
 索引一致性落地时确定的三条难逆/反直觉决策。实现见 `memory_agent/memory/layout.py`
 （代目录 + 指针）、`memory_agent/memory/index.py`（当前代视图 + 增量 `refresh`）、
