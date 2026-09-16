@@ -1,16 +1,24 @@
-"""issue #41 验收：一步安装 + 第二消费者共享同一 daemon（真传输，Stub 嵌入）。
+"""issue #41 验收（#44 返工后重跑）：一步安装 + 第二消费者共享**可读写**全局 KB。
 
-要证明的事（与 issue #41 验收清单对应）：
+要证明的事（与 issue #41 / #44 验收清单对应）：
 1. 一步安装：`memory_agent.connect` 写 DeepTutor 部署级 mcp.json（streamableHttp →
    共享 daemon），**幂等**、可 dry-run，保留其它条目。
 2. 两个消费者读同一 KB：streamableHttp 客户端 + `proxy.py` stdio 客户端连**同一**
    daemon → 同 `index_status().gen`、同 query 同 top-k id。
 3. 共享真相（D9）：外部改一个已收录 `.md` → 两消费者下一次 `memory_search` 都反映，
    **无需重启**。
-4. 写入可见：opencode 侧（stdio）`memory_add` → DeepTutor 侧（streamableHttp）
-   `memory_search` 搜到；只读边界（D17）落在 DeepTutor 的 `enabled_tools` 白名单。
-5. 用 **DeepTutor 自身**的 `load_mcp_config` / `validate_mcp_url`（系统 Python 3.12）
+4. **共享可写（#44 / ADR-0025 D19 修订 D17）**：DeepTutor 侧（streamableHttp，带自己的
+   agent token）能 `memory_add` / `memory_supersede` / `memory_archive` 全局 KB，两消费者
+   下一次 `memory_search` 都搜到；边界 = `enabled_tools`（读 + 内容写，不含维护 reindex）。
+5. **agent 级归属（审计优先）**：daemon 审计 JSONL 对**每个** `tools/call` 记身份——
+   上面三次写调用的审计事件带 **DeepTutor 的 agent 身份**（principal=deeptutor-agent），
+   证明共享写入可归属到 agent（D15），不引入条目元数据 / commit author 等新机制。
+6. 用 **DeepTutor 自身**的 `load_mcp_config` / `validate_mcp_url`（系统 Python 3.12）
    校验写出的配置。
+
+身份：临时 daemon 配 `MEMORY_AUTH_TOKENS`（两个 consumer 各一个 role=owner 的身份），
+但 `MEMORY_AUTH_REQUIRE_TOKEN=0`——http 侧带自己的 token 取到具名身份（供审计断言），
+stdio 代理无 token 回落到进程默认身份（本机零配置直连，D17）。
 
 本题验的是**服务共享 / 基表共享 / 惰性刷 / 边界**，与嵌入质量无关：临时 daemon 注入
 **确定性 Stub 嵌入**（无 BGE-M3、无网络、毫秒级），使 top-k 逐位可复现——与
@@ -50,6 +58,7 @@ INDEX = os.path.join(WORK, "index")
 DT_HOME = os.path.join(WORK, "deeptutor-home")
 OPENCODE_HOME = os.path.join(WORK, "opencode-home")
 LOG = os.path.join(WORK, "daemon.log")
+AUDIT_LOG = os.path.join(INDEX, "audit.log")
 WRAPPER = os.path.join(WORK, "stub_daemon.py")
 HOST = MCP_HTTP_HOST
 # 临时 daemon 用**独立端口**：不抢占 / 不停掉真实 daemon（8765 可能正在服务本会话）。
@@ -65,6 +74,13 @@ def _free_port() -> int:
 
 MARKER = "zephyrhaptic"
 WRITE_MARKER = "quillfeather"
+
+#: 两个消费者各一个具名身份（#44 / ADR-0025 D15）：http 侧带自己的 token → 审计可归属。
+#: 单部署者零配置下 role 默认 owner；这里显式配置以**验证**写权限而非假设。
+DEEPTUTOR_TOKEN = "tok-deeptutor-44"
+OPENCODE_TOKEN = "tok-opencode-44"
+DEEPTUTOR_PRINCIPAL = "deeptutor-agent"
+OPENCODE_PRINCIPAL = "opencode-agent"
 
 RESULTS: list[str] = []
 CHECKS: list[tuple[str, bool, str]] = []
@@ -217,12 +233,18 @@ def _daemon_env() -> dict:
         "MEMORY_MCP_HOST": HOST,
         "MEMORY_MCP_PORT": str(PORT),
         "MEMORY_MCP_PATH": "/mcp",
-        "MEMORY_AUDIT_LOG": os.path.join(INDEX, "audit.log"),
+        "MEMORY_AUDIT_LOG": AUDIT_LOG,
         "MEMORY_DAEMON_LOG": LOG,
+        # 两个消费者各一个具名身份（role=owner → 可写全局 KB）；显式验证写权限，不假设。
+        # require_token=0：http 侧主动带 token 取具名身份（供审计断言），stdio 代理无 token
+        # 回落到进程默认身份（本机零配置直连）。
+        "MEMORY_AUTH_TOKENS": json.dumps({
+            DEEPTUTOR_TOKEN: {"principal": DEEPTUTOR_PRINCIPAL, "role": "owner"},
+            OPENCODE_TOKEN: {"principal": OPENCODE_PRINCIPAL, "role": "owner"},
+        }, ensure_ascii=False),
         "MEMORY_AUTH_REQUIRE_TOKEN": "0",
         "MEMORY_RERANK": "0",
     })
-    env.pop("MEMORY_AUTH_TOKENS", None)
     env.pop("MEMORY_STORE_URL", None)
     return env
 
@@ -266,7 +288,9 @@ def start_daemon() -> subprocess.Popen:
 
 # --------------------------------------------------------------------- 两个客户端
 
-async def _call_stdio(tool: str, args: dict, timeout: float | None = None):
+async def _call_stdio(tool: str, args: dict, timeout: float | None = None,
+                      *, token: str | None = None):
+    # stdio 代理不支持带凭证（proxy.py 只传输，不是信任源）——token 仅 http 侧使用。
     from mcp import ClientSession
     from mcp.client.stdio import StdioServerParameters, stdio_client
 
@@ -280,12 +304,14 @@ async def _call_stdio(tool: str, args: dict, timeout: float | None = None):
             return await session.call_tool(tool, args, read_timeout_seconds=timeout)
 
 
-async def _call_http(tool: str, args: dict, timeout: float | None = None):
+async def _call_http(tool: str, args: dict, timeout: float | None = None,
+                     *, token: str | None = None):
     from mcp import ClientSession
     from mcp.client.streamable_http import streamable_http_client
     from mcp.shared._httpx_utils import create_mcp_http_client
 
-    http_client = create_mcp_http_client()
+    headers = {"Authorization": f"Bearer {token}"} if token else None
+    http_client = create_mcp_http_client(headers=headers)
     try:  # 本机回环不走代理
         http_client.trust_env = False
     except Exception:  # noqa: BLE001
@@ -301,11 +327,39 @@ TRANSPORTS = {"opencode-stdio": _call_stdio, "deeptutor-http": _call_http}
 
 
 async def invoke(transport: str, tool: str, args: dict | None = None,
-                 timeout: float | None = None):
-    result = await TRANSPORTS[transport](tool, args or {}, timeout)
+                 timeout: float | None = None, *, token: str | None = None):
+    result = await TRANSPORTS[transport](tool, args or {}, timeout, token=token)
     if getattr(result, "is_error", False):
         raise RuntimeError(f"[{transport}] {tool} tool error: {_text(result)}")
     return _decode(result)
+
+
+# --------------------------------------------------------------------- 审计
+
+def audit_events() -> list[dict]:
+    """读 daemon 审计 JSONL——每个 `tools/call` 一条（身份 + 工具名 + 结果）。"""
+    if not os.path.isfile(AUDIT_LOG):
+        return []
+    events: list[dict] = []
+    with open(AUDIT_LOG, "r", encoding="utf-8") as handle:
+        for line in handle:
+            line = line.strip()
+            if not line:
+                continue
+            try:
+                events.append(json.loads(line))
+            except json.JSONDecodeError:
+                continue
+    return events
+
+
+def audited_write_principals(tool: str) -> list[str]:
+    """某写工具**成功**调用的审计身份 principal——证明共享写入可归属到 agent。"""
+    return [
+        (event.get("identity") or {}).get("principal")
+        for event in audit_events()
+        if event.get("tool") == tool and event.get("outcome") == "ok"
+    ]
 
 
 async def build_index_via_daemon() -> dict:
@@ -427,12 +481,15 @@ def main() -> int:
               dt["validate_deployment"] == [True, ""], str(dt["validate_deployment"]))
         check("自服务严格校验拦下 loopback（证明必须走部署级配置）",
               dt["validate_strict_ok"] is False)
-        for forbidden in ("memory_add", "memory_supersede", "memory_archive",
-                          "memory_reindex"):
-            check(f"只读边界：enabled_tools 不含 {forbidden}",
-                  forbidden not in dt["enabled_tools"])
-        check("只读白名单 = search/get/index_status/ingest_list",
-              set(dt["enabled_tools"]) == set(connect.READONLY_TOOLS),
+        for allowed in ("memory_add", "memory_supersede", "memory_archive"):
+            check(f"共享边界：enabled_tools 含 {allowed}",
+                  allowed in dt["enabled_tools"])
+        for banned in ("memory_reindex", "memory_ingest_include",
+                       "memory_ingest_exclude"):
+            check(f"维护 / 收录 DDL 不进白名单：{banned}",
+                  banned not in dt["enabled_tools"])
+        check("共享工具 = 读 + 内容写（不含 reindex）",
+              set(dt["enabled_tools"]) == set(connect.SHARED_TOOLS),
               ", ".join(dt["enabled_tools"]))
 
     # --- 3. 临时 daemon + 建索引 --------------------------------------------
@@ -492,26 +549,70 @@ def main() -> int:
               status_after["gen"] == status_http["gen"] and status_after["consistent"],
               f"gen={status_after['gen']}")
 
-        # --- 6. 跨消费者写 → 读（只读边界下的可见性） --------------------
-        note("\n[6] opencode（stdio）写 → DeepTutor（http）读可见")
-        added = asyncio.run(invoke("opencode-stdio", "memory_add", {
+        # --- 6. 共享可写（#44 / D19）：第二消费者写全局 KB → 两消费者可见 ------
+        note("\n[6] DeepTutor（http，带自己的 agent token）写全局 KB → 两消费者读可见")
+        added = asyncio.run(invoke("deeptutor-http", "memory_add", {
             "title": f"Shared service write visibility {WRITE_MARKER}",
-            "body": f"Written by the opencode side; {WRITE_MARKER} must be readable "
-                    "from the second consumer on its next search.",
-            "domain": "topics", "type": "topic", "tags": ["demo"],
+            "body": f"Written by the DeepTutor side; {WRITE_MARKER} must be readable "
+                    "from every consumer on its next search.",
+            "section": "topics", "type": "topic", "tags": ["demo"],
             "slug": "shared-service-write-visibility", "allow_duplicate": True,
-        }))
-        check("stdio 侧 memory_add 落盘", bool(added.get("written")),
+        }, token=DEEPTUTOR_TOKEN))
+        check("第二消费者（http）memory_add 落盘", bool(added.get("written")),
               f"id={added.get('id')}")
+        new_id = added.get("id")
         found_http = asyncio.run(invoke("deeptutor-http", "memory_search",
-                                        {"query": WRITE_MARKER, "k": 3}))
+                                        {"query": WRITE_MARKER, "k": 3},
+                                        token=DEEPTUTOR_TOKEN))
         found_stdio = asyncio.run(invoke("opencode-stdio", "memory_search",
                                          {"query": WRITE_MARKER, "k": 3}))
-        new_id = added.get("id")
-        check("DeepTutor 侧搜到 opencode 写入的条目",
+        check("DeepTutor 侧（http）搜到自己写入的条目",
               any(h["id"] == new_id for h in found_http), new_id)
-        check("两消费者对新写入条目可见性一致",
-              [h["id"] for h in found_http] == [h["id"] for h in found_stdio])
+        check("opencode 侧（stdio）搜到 DeepTutor 写入的条目",
+              any(h["id"] == new_id for h in found_stdio), new_id)
+
+        superseded = asyncio.run(invoke("deeptutor-http", "memory_supersede", {
+            "old_id": new_id,
+            "title": f"Shared service supersede {WRITE_MARKER}",
+            "body": f"Superseded by the DeepTutor side ({WRITE_MARKER}).",
+            "section": "topics", "type": "topic", "tags": ["demo"],
+            "slug": "shared-service-write-visibility-v2", "confirm": True,
+        }, token=DEEPTUTOR_TOKEN))
+        check("第二消费者 memory_supersede(confirm=True) 落盘",
+              bool(superseded.get("written")), f"new_id={superseded.get('new_id')}")
+
+        archived = asyncio.run(invoke("deeptutor-http", "memory_archive", {
+            "entry_id": superseded.get("new_id") or new_id,
+            "reason": f"#44 attribution check {WRITE_MARKER}", "confirm": True,
+        }, token=DEEPTUTOR_TOKEN))
+        check("第二消费者 memory_archive(confirm=True) 落盘",
+              bool(archived.get("written")), f"id={archived.get('id')}")
+
+        # --- 6b. 审计可归属到 agent（D15：写调用带 agent 身份） -----------
+        note("\n[6b] 审计（每个 tools/call 记身份）：写调用可归属到 agent")
+        write_tools = ("memory_add", "memory_supersede", "memory_archive")
+        for tool in write_tools:
+            principals = audited_write_principals(tool)
+            check(f"审计含 {tool} 的成功事件 → agent 身份",
+                  principals == [DEEPTUTOR_PRINCIPAL],
+                  f"principal(s)={principals}")
+        audit_text = open(AUDIT_LOG, encoding="utf-8").read() if os.path.isfile(AUDIT_LOG) \
+            else ""
+        write_identities = [
+            (event.get("identity") or {})
+            for event in audit_events()
+            if event.get("tool") in write_tools and event.get("outcome") == "ok"
+        ]
+        check("写审计身份带 principal + role（可归属到 agent）",
+              bool(write_identities)
+              and all(i.get("principal") and i.get("role") for i in write_identities),
+              f"{len(write_identities)} 条写事件")
+        check("第二消费者身份 role=owner（显式验证可写全局 KB）",
+              all(i.get("role") == "owner" and i.get("principal") == DEEPTUTOR_PRINCIPAL
+                  for i in write_identities),
+              f"identities={write_identities[:1]}")
+        check("审计不落凭证（token 不出现在审计文件）",
+              DEEPTUTOR_TOKEN not in audit_text and OPENCODE_TOKEN not in audit_text)
     finally:
         _kill_tree(proc.pid)
         time.sleep(1.0)
@@ -536,7 +637,7 @@ def main() -> int:
 def write_results(verdict: str, passed: int, total: int) -> None:
     """把结论 + PASS 矩阵 + 运行日志写成 UTF-8 的 `_results.md`。"""
     lines = [
-        "# #41 共享服务验收结果（第二消费者 = DeepTutor）",
+        "# #41 共享服务验收结果（第二消费者 = DeepTutor；#44 返工：共享**可读写**全局 KB）",
         "",
         f"- 日期：{time.strftime('%Y-%m-%d %H:%M:%S')}",
         f"- 脚本：`memory_agent/eval/shared_service_41.py`",
