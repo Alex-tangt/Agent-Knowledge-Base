@@ -20,9 +20,10 @@ memory_agent/
 ├── proxy.py               # 每会话瘦代理：幂等确保 daemon 在跑 + stdio<->HTTP 转发          (#19)
 ├── runtime.py             # 先立 stderr 日志，再装配索引 / 写入网关单例
 ├── _bootstrap.py          # stdio 安全日志（import ragcore 前抢配 root logger 到 stderr）
-├── settings.py            # 真相源 / 索引根 / 只读仓库清单 / 指针名 / 集合名 / 去重阈值 / daemon 端点
-├── readonly_repos.json    # 本地只读仓库清单（gitignored；模板见 .example.json）(#17)
-├── corpus/loader.py       # KB 条目 + 多仓库只读文档 的发现、标签消歧与噪声排除 (#10,#17)
+├── settings.py            # 真相源 / 索引根 / 来源注册表 / overlay / 指针名 / 集合名 / 去重阈值 / daemon 端点
+├── readonly_repos.json    # 本地只读来源注册表（gitignored；模板见 .example.json）(#17,#36)
+├── overlay.json           # 显式收录清单 include/exclude（gitignored；模板见 overlay.example.json）(#36)
+├── corpus/loader.py       # 运行时收录解析（注册表默认 ∪ overlay）+ KB/只读文档发现 + 指纹 (#10,#17,#36)
 ├── memory/entries.py      # frontmatter 解析 -> Entry；稳定点 id（uuid5）    (#10,#13)
 ├── memory/index.py        # 当前代视图：检索 + 增量 refresh（hash 跳过/孤儿清理）(#10,#13)
 ├── memory/retrieval.py    # 检索接缝：策略召回（向量+关键词，走 ragcore）+ 可选 rerank   (#24)
@@ -31,7 +32,8 @@ memory_agent/
 ├── memory/errors.py       # IndexNotBuiltError / IndexConsistencyError       (#13)
 ├── memory/locks.py        # 进程内 INDEX/WRITE 锁（单 daemon 并发安全）        (#19)
 ├── memory/authoring.py    # 渲染 frontmatter + 镜像 kb.py check 的校验        (#11)
-├── memory/writer.py       # 写入网关：搜索→去重→校验→落盘→commit→增量刷新    (#11,#12,#13)
+├── memory/writer.py       # 写入网关：搜索→去重→校验→落盘→commit（不刷索引，D13）(#11,#12,#36)
+├── memory/admission.py    # 收录接口面：include/exclude/list（DDL；移除走预览+确认）(#36)
 ├── gateway/               # 检索网关：/mcp 边界 authn + 工具层 authz 强制注入 (#32)
 │   ├── identity.py        #   身份形状 + token/进程配置解析（绝不回显凭证）
 │   ├── authz.py           #   effective filter（白名单，只可收窄；tenant + ABAC）
@@ -44,8 +46,9 @@ memory_agent/
 └── (skill)                # 见 #14：指导 agent 何时 search/read/add 及破坏性确认规则
 ```
 
-写入后自动**增量刷新**索引（只重嵌受影响条目）；刚写入的条目立即可被 `memory_search` 搜到。
-索引不自洽（manifest 条数 ≠ 集合点数）时检索会**显式报错**，用 `memory_reindex` 分块全量重建。
+写入**只落真相源**（不再同步刷索引，D13）；索引由下一次 `memory_search` 前的**廉价指纹检查**
+（stat `mtime`+`size`）驱动增量追平——刚写入的条目在下一次检索即被搜到。索引不自洽
+（manifest 条数 ≠ 集合点数）时检索会**显式报错**，用 `memory_reindex` 分块全量重建。
 
 ## 用法
 
@@ -72,16 +75,22 @@ venv\Scripts\python.exe memory_agent/mcp_server.py --transport http
 #    单会话/手动仍可直接跑 mcp_server.py（默认 stdio，不共享）。
 ```
 
-只读仓库清单（用户故事 #17）：把要检索的**项目仓库文档**写进 `memory_agent/readonly_repos.json`
-（gitignored；复制 `readonly_repos.example.json` 改）。只索引 `.md`，不索引代码；`label` 用于
-跨仓库消歧义。**改完必须重启 daemon**（见 `docs/adr/0014`）。
+只读来源（#17 → #36）：**注册表默认 ∪ 显式 overlay**，两者都在运行时重读，**改完免重启**。
+
+- 注册表 `memory_agent/readonly_repos.json`（gitignored；复制 `readonly_repos.example.json` 改）：
+  只索引 `.md`、不索引代码；`label` 跨仓库消歧义；可选 `owner`（缺省 = label）。
 
 ```json
 [
-  {"label": "agent-knowledge-base", "path": "."},
+  {"label": "agent-knowledge-base", "path": ".", "owner": "me"},
   {"label": "agent-infra", "path": "D:/python_work/work2026-8/Agent-infra"}
 ]
 ```
+
+- overlay `memory_agent/overlay.json`（gitignored；复制 `overlay.example.json` 改）：显式追加
+  `include`（精确文件 / 窄 glob）、收窄 `exclude`；粒度 = 路径模式。也可直接用 MCP 工具管理：
+  `memory_ingest_list` / `memory_ingest_include` / `memory_ingest_exclude`（移除走预览 + 确认）。
+  见 `docs/adr/0025` D8。改完下一次 `memory_search` 即生效（指纹变化 → 增量刷新）。
 
 写路径确定性 sandbox 套件（#16，需 BGE-M3；真实 KB 只读、不污染）：
 
