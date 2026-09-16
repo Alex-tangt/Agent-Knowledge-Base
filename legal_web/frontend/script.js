@@ -1,11 +1,11 @@
 // 主脚本文件
-import { initTheme, toggleTheme } from './js/themeManager.js?v=3';
-import { initEmojiWindow, showEmojis, initEmojiEvents } from './js/emojiManager.js?v=3';
-import { addMessage, updateMessage, clearHistory } from './js/messageHandler.js?v=3';
-import { sendMessageToAPI, uploadDocument as apiUploadDocument, clearDocuments as apiClearDocuments } from './js/apiService.js?v=3';
-import { initDocumentManager } from './js/documentManager.js?v=3';
-import { initRagUI, getRagMode, getSelectedKB, refreshKBCount } from './js/ragUI.js?v=3';
-import { config } from './js/config.js?v=3';
+import { initTheme, toggleTheme } from './js/themeManager.js?v=4';
+import { initEmojiWindow, showEmojis, initEmojiEvents } from './js/emojiManager.js?v=4';
+import { addMessage, updateMessage, clearHistory } from './js/messageHandler.js?v=4';
+import { sendMessageToAPI, uploadDocument as apiUploadDocument, clearDocuments as apiClearDocuments } from './js/apiService.js?v=4';
+import { initDocumentManager } from './js/documentManager.js?v=4';
+import { initRagUI, getRagMode, getSelectedView, refreshViewCount } from './js/ragUI.js?v=4';
+import { config } from './js/config.js?v=4';
 
 let messages = [];
 let modelsReady = false;
@@ -115,8 +115,8 @@ async function sendMessage() {
 
     try {
         const useRag = getRagMode();
-        const kbName = getSelectedKB();
-        await sendMessageToAPI(messages, loadingMessageId, useRag, kbName, currentSessionId);
+        const viewName = getSelectedView();
+        await sendMessageToAPI(messages, loadingMessageId, useRag, viewName, currentSessionId);
     } catch (error) {
         console.error('发送消息失败:', error);
     } finally {
@@ -144,15 +144,15 @@ async function uploadDocument() {
     }
     
     try {
-        const kbName = getSelectedKB();
-        const result = await apiUploadDocument(file, kbName);
+        const viewName = getSelectedView();
+        const result = await apiUploadDocument(file, viewName);
         if (statusElement) {
             statusElement.textContent = `上传成功！文档分块数: ${result.chunks}`;
             statusElement.style.color = 'green';
         }
         
         fileInput.value = '';
-        await refreshKBCount();
+        await refreshViewCount();
     } catch (error) {
         if (statusElement) {
             statusElement.textContent = `上传失败: ${error.message}`;
@@ -173,14 +173,14 @@ async function clearDocuments() {
     }
     
     try {
-        const kbName = getSelectedKB();
-        await apiClearDocuments(kbName);
+        const viewName = getSelectedView();
+        await apiClearDocuments(viewName);
         if (statusElement) {
             statusElement.textContent = '清空成功！';
             statusElement.style.color = 'green';
         }
         
-        await refreshKBCount();
+        await refreshViewCount();
     } catch (error) {
         if (statusElement) {
             statusElement.textContent = `清空失败: ${error.message}`;
