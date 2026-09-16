@@ -9,9 +9,15 @@ from qdrant_client.models import (
     FieldCondition,
     Filter,
     FilterSelector,
+    Fusion,
+    FusionQuery,
     MatchAny,
     MatchValue,
+    Modifier,
     PointStruct,
+    Prefetch,
+    SparseVector,
+    SparseVectorParams,
     VectorParams,
 )
 from ragcore.config.config import (
@@ -33,6 +39,9 @@ _LOCK_RETRY_DELAY = 0.05
 # 退避重试兜不住。单实例 daemon 并发服务多会话时必须把这把锁串起来。
 _SESSION_LOCK = threading.RLock()
 
+# 原生 hybrid 融合前每路的候选深度下限（issue #33）。
+_HYBRID_PREFETCH_DEFAULT = 20
+
 
 def _field_condition(key, value):
     """payload 过滤子句：标量 → 精确匹配；序列 → 任一匹配（多值 ABAC）。"""
@@ -51,10 +60,26 @@ class VectorStoreService:
     得以与其共存。
     """
 
-    def __init__(self, collection_name=None, db_path=None, embeddings=None):
+    def __init__(self, collection_name=None, db_path=None, embeddings=None,
+                 url=None, api_key=None, hybrid=False, sparse_encoder=None):
+        """两种形态共用同一套 API（issue #33）：
+
+        - **本地嵌入**（默认）：`path=db_path`，client 按操作开/关（local mode 独占锁）。
+        - **网络化**（`url=` [+ `api_key=`]）：Qdrant server（自建服务）或云托管。
+          `api_key` 只经构造参数传入，**绝不写日志 / payload**。
+
+        `hybrid=True` 时集合为 **具名 dense + sparse**，检索走 **store 原生 hybrid**
+        （`prefetch` + `FusionQuery`），策略层不再叠加自己的融合（ADR-0019 D4/D5）。
+        sparse 向量由 `sparse_encoder(text) -> (indices, values)` 提供（app 层 BYOE，
+        见 `memory_agent.memory.sparse`）；dense 维度仍取 `EMBEDDING_DIMENSION`。
+        """
         self.collection_name = collection_name or QDRANT_COLLECTION_NAME
         self._db_path = db_path or VECTOR_DB_PATH
+        self._url = url
+        self._api_key = api_key
         self._embeddings = embeddings
+        self.hybrid = bool(hybrid)
+        self._sparse_encoder = sparse_encoder
         self._logged_init = False
 
     @property
@@ -81,7 +106,28 @@ class VectorStoreService:
         """预热嵌入模型。不触碰 Qdrant，因此不占锁。"""
         self.embeddings
 
+    @property
+    def is_remote(self) -> bool:
+        return bool(self._url)
+
     def _open_client(self):
+        if self.is_remote:
+            # 网络化：Qdrant server / 云托管，同一套 API（issue #33）。server 自管并发，
+            # 不需要 local mode 的独占锁重试。
+            client = QdrantClient(url=self._url, api_key=self._api_key)
+            try:
+                self._ensure_collection(client)
+            except Exception:
+                client.close()
+                raise
+            if not self._logged_init:
+                logger.info(
+                    f"VectorStoreService connected Qdrant remote, "
+                    f"url={self._url}, collection={self.collection_name}"
+                )
+                self._logged_init = True
+            return client
+
         last_error = None
         for attempt in range(_LOCK_RETRY_ATTEMPTS):
             try:
@@ -113,7 +159,15 @@ class VectorStoreService:
 
         进程内再串一道 `_SESSION_LOCK`：Qdrant local mode 同进程也不能并发开 client。
         锁覆盖「构造 -> 操作 -> close」整段，故同一进程的检索/写入天然排队。
+        网络化模式无本地锁语义，不进这把锁（server 自管并发）。
         """
+        if self.is_remote:
+            client = self._open_client()
+            try:
+                yield client
+            finally:
+                client.close()
+            return
         with _SESSION_LOCK:
             client = self._open_client()
             try:
@@ -124,12 +178,37 @@ class VectorStoreService:
     def _ensure_collection(self, client):
         try:
             client.get_collection(self.collection_name)
+            return
         except Exception:
+            pass
+
+        if self.hybrid:
             client.create_collection(
                 collection_name=self.collection_name,
-                vectors_config=VectorParams(size=EMBEDDING_DIMENSION, distance=Distance.COSINE),
+                vectors_config={
+                    "dense": VectorParams(size=EMBEDDING_DIMENSION, distance=Distance.COSINE)
+                },
+                sparse_vectors_config={
+                    "sparse": SparseVectorParams(modifier=Modifier.IDF)
+                },
             )
-            logger.info(f"Created Qdrant collection '{self.collection_name}' with dim={EMBEDDING_DIMENSION}")
+            logger.info(
+                f"Created hybrid Qdrant collection '{self.collection_name}' "
+                f"(dense dim={EMBEDDING_DIMENSION} + sparse IDF)"
+            )
+            return
+
+        client.create_collection(
+            collection_name=self.collection_name,
+            vectors_config=VectorParams(size=EMBEDDING_DIMENSION, distance=Distance.COSINE),
+        )
+        logger.info(f"Created Qdrant collection '{self.collection_name}' with dim={EMBEDDING_DIMENSION}")
+
+    def _sparse_vector(self, text: str) -> SparseVector:
+        if self._sparse_encoder is None:
+            raise RuntimeError("hybrid 集合需要 sparse_encoder（app 层 BYOE）")
+        indices, values = self._sparse_encoder(text)
+        return SparseVector(indices=list(indices), values=list(values))
 
     @langsmith_service.trace(name="vector_store_add", metadata={"service": "VectorStoreService"})
     def add_documents(self, documents, metadata_list=None, ids=None):
@@ -159,11 +238,14 @@ class VectorStoreService:
             for i in range(len(texts)):
                 payload = {"text": texts[i]}
                 payload.update(metadata_list[i])
-                points.append(PointStruct(
-                    id=ids[i],
-                    vector=embeddings[i],
-                    payload=payload,
-                ))
+                if self.hybrid:
+                    vector = {
+                        "dense": embeddings[i],
+                        "sparse": self._sparse_vector(texts[i]),
+                    }
+                else:
+                    vector = embeddings[i]
+                points.append(PointStruct(id=ids[i], vector=vector, payload=payload))
 
             with self._session() as client:
                 client.upsert(collection_name=self.collection_name, points=points)
@@ -175,10 +257,21 @@ class VectorStoreService:
 
     @langsmith_service.trace(name="vector_store_search", metadata={"service": "VectorStoreService"})
     def search_documents(self, query, k=3, payload_filter=None):
-        """向量检索。payload_filter 在 Qdrant 侧过滤（而非取回后再筛），避免欠填。
+        """该 store 的**原生检索**：hybrid 集合 → 原生 hybrid；否则 → 纯 dense。
 
+        `payload_filter` 在 Qdrant 侧过滤（而非取回后再筛），避免欠填。
         值是标量 → 精确匹配（`MatchValue`）；值是 list/tuple/set → 任一匹配
         （`MatchAny`，供网关多值 ABAC，如 `classification ∈ {private, internal}`）。
+        """
+        if self.hybrid:
+            return self.search_hybrid_documents(query, k=k, payload_filter=payload_filter)
+        return self.search_dense_documents(query, k=k, payload_filter=payload_filter)
+
+    def search_dense_documents(self, query, k=3, payload_filter=None):
+        """**纯 dense**（余弦）检索——无论集合是否 hybrid 都可用。
+
+        分数量纲 = 余弦，跨平面可比；用作**按阈值**的操作（如去重）的通道：hybrid 的
+        融合分（RRF/DBSF）量纲不同，不能套余弦阈值（ADR-0019 D6）。
         """
         try:
             query_vec = self.embeddings.embed_query(query)
@@ -188,31 +281,90 @@ class VectorStoreService:
                     must=[_field_condition(key, value) for key, value in payload_filter.items()]
                 )
             with self._session() as client:
+                if self.hybrid:
+                    results = client.query_points(
+                        collection_name=self.collection_name,
+                        query=query_vec,
+                        using="dense",
+                        query_filter=query_filter,
+                        limit=k,
+                        with_payload=True,
+                    )
+                else:
+                    results = client.query_points(
+                        collection_name=self.collection_name,
+                        query=query_vec,
+                        query_filter=query_filter,
+                        limit=k,
+                        with_payload=True,
+                    )
+
+            logger.info(f"Found {len(results.points)} dense documents for query: {query}")
+            return self._format_results(results.points)
+        except Exception as e:
+            logger.error(f"Error searching dense documents: {e}")
+            raise
+
+    @staticmethod
+    def _format_results(points) -> dict:
+        docs = []
+        metas = []
+        dists = []
+        for r in points:
+            payload = r.payload or {}
+            docs.append(payload.get("text", ""))
+            metas.append({k: v for k, v in payload.items() if k != "text"})
+            dists.append(r.score)
+        return {"documents": [docs], "metadatas": [metas], "distances": [dists]}
+
+    def search_hybrid_documents(self, query, k=3, payload_filter=None,
+                                prefetch_limit=None, fusion="rrf"):
+        """**store 原生 hybrid**（issue #33 / ADR-0019 D4）：dense + sparse 两路
+        `prefetch` 在 Qdrant 侧融合（RRF / DBSF）。**不在 Python 里再融合一次**。
+
+        - `payload_filter` 透传（网关白名单构造，适配器不做授权）。
+        - `fusion ∈ {"rrf", "dbsf"}`；分数量纲由 store 定义（ADR-0019 D6，不跨后端共用阈值）。
+        - `prefetch_limit` 缺省 `max(k, 20)`：融合前每路的候选深度。
+        """
+        if self._sparse_encoder is None:
+            raise RuntimeError("search_hybrid_documents 需要 sparse_encoder（app 层 BYOE）")
+        try:
+            query_vec = self.embeddings.embed_query(query)
+            query_filter = None
+            if payload_filter:
+                query_filter = Filter(
+                    must=[_field_condition(key, value) for key, value in payload_filter.items()]
+                )
+            depth = int(prefetch_limit or max(int(k), _HYBRID_PREFETCH_DEFAULT))
+            fusion_query = {
+                "rrf": Fusion.RRF,
+                "dbsf": Fusion.DBSF,
+            }.get(str(fusion).lower())
+            if fusion_query is None:
+                raise ValueError(f"未知 fusion：{fusion!r}（应为 rrf / dbsf）")
+            # 过滤**必须挂在每个 prefetch 上**：实测 Qdrant **local mode 在有 prefetch 时
+            # 忽略顶层 `query_filter`**（server 会生效）→ 只靠顶层过滤会在本地泄漏跨租户命中。
+            # 两处都挂：本地靠 prefetch、server 双保险（仍是同一 filter，只可收窄）。
+            with self._session() as client:
                 results = client.query_points(
                     collection_name=self.collection_name,
-                    query=query_vec,
+                    prefetch=[
+                        Prefetch(query=query_vec, using="dense", limit=depth,
+                                 filter=query_filter),
+                        Prefetch(query=self._sparse_vector(query),
+                                 using="sparse", limit=depth, filter=query_filter),
+                    ],
+                    query=FusionQuery(fusion=fusion_query),
                     query_filter=query_filter,
                     limit=k,
                     with_payload=True,
                 )
-
-            docs = []
-            metas = []
-            dists = []
-            for r in results.points:
-                payload = r.payload or {}
-                docs.append(payload.get("text", ""))
-                metas.append({k: v for k, v in payload.items() if k != "text"})
-                dists.append(r.score)
-
-            logger.info(f"Found {len(docs)} relevant documents for query: {query}")
-            return {
-                "documents": [docs],
-                "metadatas": [metas],
-                "distances": [dists],
-            }
+            logger.info(
+                f"Native hybrid ({fusion}) found {len(results.points)} documents for query: {query}"
+            )
+            return self._format_results(results.points)
         except Exception as e:
-            logger.error(f"Error searching documents: {e}")
+            logger.error(f"Error in hybrid search: {e}")
             raise
 
     def _scroll_all(self, client):
@@ -332,6 +484,27 @@ class VectorStoreService:
             return True
         except Exception as e:
             logger.error(f"Error deleting documents: {e}")
+            raise
+
+    def retrieve_documents(self, ids):
+        """按点 id 取回 payload（不做语义检索）——供按 id 读条目用（共享平面，issue #33）。
+
+        与 `delete_documents` 同口径：id 一律按 UUID 解析。返回 payload dict 列表，
+        未命中的 id 直接缺席（调用方按返回判断存在性）。
+        """
+        try:
+            import uuid as _uuid
+            uid_list = [_uuid.UUID(str(id_str)) for id_str in ids]
+            with self._session() as client:
+                records = client.retrieve(
+                    collection_name=self.collection_name,
+                    ids=uid_list,
+                    with_payload=True,
+                    with_vectors=False,
+                )
+            return [dict(record.payload or {}) for record in records]
+        except Exception as e:
+            logger.error(f"Error retrieving documents by id: {e}")
             raise
 
     @langsmith_service.trace(name="vector_store_count", metadata={"service": "VectorStoreService"})
