@@ -22,6 +22,7 @@ bm25 = ["fastembed>=0.4"]
 memory-agent = "memory_agent.mcp_server:main"
 memory-agent-proxy = "memory_agent.proxy:main"
 memory-agent-build-index = "memory_agent.build_index:main"
+memory-agent-connect = "memory_agent.connect:main"
 
 [tool.setuptools]
 packages = [
