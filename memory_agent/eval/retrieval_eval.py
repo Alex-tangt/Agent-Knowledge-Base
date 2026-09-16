@@ -60,7 +60,9 @@ def build_index(args) -> tuple[MemoryIndex, str]:
     factory = build_retriever_factory(args.mode)
     if not args.store_url and not args.store_dir:
         return MemoryIndex(retriever_factory=factory), "local-pointer"
-    store = open_store(db_path=args.store_dir, url=args.store_url,
+    # `--store-dir` 必须**压过**配置里的 MEMORY_STORE_URL（否则会静默打到服务端）。
+    url = args.store_url if args.store_url else ("" if args.store_dir else None)
+    store = open_store(db_path=args.store_dir, url=url,
                        collection_name=args.collection, hybrid=True)
     backend = "shared-url" if args.store_url else "local-path"
     index = MemoryIndex(store=store, manifest_path=args.manifest,
@@ -174,6 +176,14 @@ def latency_stats(records: list[dict]) -> dict | None:
     }
 
 
+def _relpath(path: str) -> str:
+    """相对仓库根的展示路径；跨盘（Windows）时退回绝对路径，不因证据字段崩掉。"""
+    try:
+        return os.path.relpath(os.path.abspath(path), REPO_ROOT)
+    except ValueError:
+        return os.path.abspath(path)
+
+
 def _fmt(value) -> str:
     return f"{value:.4f}" if isinstance(value, float) else str(value)
 
@@ -245,7 +255,7 @@ def main(argv: list[str] | None = None) -> int:
         "backend": backend,
         "plane": plane,
         "native_hybrid": bool(getattr(getattr(index, "_store", None), "native_hybrid", False)),
-        "eval_set": os.path.relpath(os.path.abspath(args.eval_set), REPO_ROOT),
+        "eval_set": _relpath(args.eval_set),
         "index_gen": index.gen,
         "top_k": top_k,
         "indexed_entries": len(known),

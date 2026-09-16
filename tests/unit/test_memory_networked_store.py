@@ -57,6 +57,15 @@ def test_sparse_encoder_is_deterministic_and_nonempty():
     assert all(0 <= idx < SPARSE_DIM for idx in a[0])
 
 
+def test_sparse_encoder_indices_unique_and_sorted():
+    """长文本（大量 token）必须产出**唯一且有序**的 index——Qdrant 校验唯一性，
+    哈希碰撞靠权重相加合并（否则服务端 422）。"""
+    text = "".join(f"术语{i} token{i} " for i in range(2000))
+    indices, values = encode_sparse(text)
+    assert len(indices) == len(set(indices)) == len(values) > 1500
+    assert indices == sorted(indices)
+
+
 def test_sparse_encoder_empty_text_and_tf_weighting():
     assert encode_sparse("") == ([], [])
     # 重复词 → 单 index、值 1+ln(tf) > 1（次线性词频）

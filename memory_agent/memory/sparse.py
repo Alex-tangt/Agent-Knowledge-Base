@@ -67,17 +67,21 @@ def encode_sparse(text: str) -> tuple[list[int], list[float]]:
     """文本 -> `(indices, values)`（供 `SparseVector`）。
 
     值 = `1 + ln(tf)`（次线性词频）。空文本返回空向量（Qdrant 侧视为无稀疏命中）。
+
+    **索引必须唯一**（Qdrant 校验）：哈希碰撞的两个 token 落到同一 index 时，权重**相加**
+    （hashing trick 的标准处理）。index 递增排序（确定性 + Qdrant 索引友好）。
     """
     counts: dict[str, int] = {}
     for token in tokenize(text):
         counts[token] = counts.get(token, 0) + 1
     if not counts:
         return [], []
-    indices: list[int] = []
-    values: list[float] = []
+    weights: dict[int, float] = {}
     for token, tf in counts.items():
-        indices.append(_index_of(token))
-        values.append(1.0 + math.log(tf))
+        index = _index_of(token)
+        weights[index] = weights.get(index, 0.0) + (1.0 + math.log(tf))
+    indices = sorted(weights)
+    values = [weights[index] for index in indices]
     return indices, values
 
 

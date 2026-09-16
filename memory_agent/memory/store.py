@@ -200,6 +200,8 @@ def open_store(db_path: str | None = None, *, tenant: str | None = None,
     - 显式 `url` / `api_key` / `hybrid` 覆盖配置。
     - 本地平面保持默认 dense + 策略层关键词（`QdrantLocalStore`）。
     """
+    if sparse_encoder is None:
+        sparse_encoder = encode_sparse
     resolved_url = url if url is not None else STORE_URL
     if resolved_url:
         resolved_hybrid = STORE_HYBRID if hybrid is None else hybrid
