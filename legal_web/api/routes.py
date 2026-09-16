@@ -8,12 +8,23 @@ import os
 import re
 import uuid
 import locale
+from typing import Optional
 
 router = APIRouter()
+
+DEFAULT_VIEW_NAME = "documents"
 
 _chat_service = None
 _rag_service = None
 _document_service = None
+
+
+def _resolve_view_name(view_name: Optional[str] = None, kb_name: Optional[str] = None) -> str:
+    """#37 命名迁移：canonical 参数 `view_name`；`kb_name` 为兼容别名（已废弃）。
+
+    两个都给时以 `view_name` 为准；都不给时用默认视图。
+    """
+    return view_name or kb_name or DEFAULT_VIEW_NAME
 
 
 def _get_chat_service():
@@ -68,15 +79,16 @@ os.makedirs(UPLOAD_DIR, exist_ok=True)
 @router.post("/chat/stream")
 async def chat_stream(request: ChatRequest):
     try:
-        logger.info(f"Received chat stream request, kb={request.kb_name}")
+        logger.info(f"Received chat stream request, view={request.view_name}")
 
         async def generate():
             messages = [msg.model_dump() for msg in request.messages]
             if request.use_rag:
                 rag_service = _get_rag_service()
+                # 内部接缝 (rag_service) 仍用 kb_name 参数名，待其独立迁移。
                 async for chunk in rag_service.chat_stream(
                     messages, use_rag=True,
-                    kb_name=request.kb_name, session_id=request.session_id
+                    kb_name=request.view_name, session_id=request.session_id
                 ):
                     yield chunk
             else:
@@ -91,9 +103,11 @@ async def chat_stream(request: ChatRequest):
 
 
 @router.post("/documents/upload")
-async def upload_document(file: UploadFile = File(...), kb_name: str = "documents"):
+async def upload_document(file: UploadFile = File(...), view_name: Optional[str] = None,
+                          kb_name: Optional[str] = None):
+    view = _resolve_view_name(view_name, kb_name)
     try:
-        logger.info(f"Received document upload: {file.filename} to kb={kb_name}")
+        logger.info(f"Received document upload: {file.filename} to view={view}")
 
         safe_name = _safe_filename(file.filename) or f"upload_{uuid.uuid4().hex}.md"
         file_path = os.path.join(UPLOAD_DIR, safe_name)
@@ -102,16 +116,16 @@ async def upload_document(file: UploadFile = File(...), kb_name: str = "document
             f.write(content)
 
         document_service = _get_document_service()
-        split_docs = document_service.process_document(file_path, kb_name=kb_name)
+        split_docs = document_service.process_document(file_path, view_name=view)
         rag_service = _get_rag_service()
-        vs = rag_service.get_vector_store(kb_name)
+        vs = rag_service.get_vector_store(view)
         doc_ids = vs.add_documents(split_docs)
 
         os.remove(file_path)
 
         return {
             "filename": file.filename,
-            "kb_name": kb_name,
+            "view_name": view,
             "chunks": len(split_docs),
             "doc_ids": doc_ids
         }
@@ -121,24 +135,26 @@ async def upload_document(file: UploadFile = File(...), kb_name: str = "document
 
 
 @router.get("/documents/count")
-async def get_document_count(kb_name: str = "documents"):
+async def get_document_count(view_name: Optional[str] = None, kb_name: Optional[str] = None):
+    view = _resolve_view_name(view_name, kb_name)
     try:
         rag_service = _get_rag_service()
-        vs = rag_service.get_vector_store(kb_name)
+        vs = rag_service.get_vector_store(view)
         count = vs.get_document_count()
-        return {"count": count, "kb_name": kb_name}
+        return {"count": count, "view_name": view}
     except Exception as e:
         logger.error(f"Error getting document count: {e}")
         raise HTTPException(status_code=500, detail="Internal server error")
 
 
 @router.delete("/documents/clear")
-async def clear_documents(kb_name: str = "documents"):
+async def clear_documents(view_name: Optional[str] = None, kb_name: Optional[str] = None):
+    view = _resolve_view_name(view_name, kb_name)
     try:
         rag_service = _get_rag_service()
-        vs = rag_service.get_vector_store(kb_name)
+        vs = rag_service.get_vector_store(view)
         vs.clear_all_documents()
-        return {"status": "success", "kb_name": kb_name}
+        return {"status": "success", "view_name": view}
     except Exception as e:
         logger.error(f"Error clearing documents: {e}")
         raise HTTPException(status_code=500, detail="Internal server error")
@@ -154,34 +170,42 @@ async def model_status():
     return STATUS
 
 
-@router.get("/kb/list")
-async def list_kb():
-    from ragcore.services.kb_registry import kb_registry
-    return kb_registry.list()
+async def list_views():
+    from ragcore.services.view_registry import view_registry
+    return view_registry.list()
 
 
-@router.post("/kb/create")
-async def create_kb(name: str, label: str, description: str = "",
-                    split_strategy: str = "default", retrieval_strategy: str = "default"):
-    from ragcore.services.kb_registry import kb_registry
+async def create_view(name: str, label: str, description: str = "",
+                      split_strategy: str = "default", retrieval_strategy: str = "default"):
+    from ragcore.services.view_registry import view_registry
     try:
-        kb = kb_registry.create(
+        view = view_registry.create(
             name, label, description,
             split_strategy=split_strategy,
             retrieval_strategy=retrieval_strategy,
         )
         rag_service = _get_rag_service()
         rag_service.get_vector_store(name)
-        return kb
+        return view
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
 
 
-@router.delete("/kb/{name}")
-async def delete_kb(name: str):
-    from ragcore.services.kb_registry import kb_registry
+async def delete_view(name: str):
+    from ragcore.services.view_registry import view_registry
     try:
-        kb_registry.delete(name)
-        return {"status": "deleted"}
+        view_registry.delete(name)
+        return {"status": "deleted", "view_name": name}
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
+
+
+# canonical：/view/*；/kb/* 为 #37 兼容别名（隐藏于 schema，标记 deprecated）。
+router.add_api_route("/view/list", list_views, methods=["GET"])
+router.add_api_route("/kb/list", list_views, methods=["GET"], include_in_schema=False, deprecated=True)
+
+router.add_api_route("/view/create", create_view, methods=["POST"])
+router.add_api_route("/kb/create", create_view, methods=["POST"], include_in_schema=False, deprecated=True)
+
+router.add_api_route("/view/{name}", delete_view, methods=["DELETE"])
+router.add_api_route("/kb/{name}", delete_view, methods=["DELETE"], include_in_schema=False, deprecated=True)
