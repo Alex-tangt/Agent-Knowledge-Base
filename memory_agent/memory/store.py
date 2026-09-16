@@ -21,6 +21,7 @@ from memory_agent.settings import (
     COLLECTION_NAME,
     STORE_API_KEY,
     STORE_COLLECTION,
+    STORE_FUSION,
     STORE_HYBRID,
     STORE_URL,
 )
@@ -100,6 +101,9 @@ class QdrantLocalStore:
     def fetch(self, ids: Sequence[str]) -> list[dict]:
         return self._service.retrieve_documents(ids)
 
+    def close(self) -> None:
+        self._service.close()
+
 
 class QdrantNetworkStore:
     """网络化 Qdrant（共享平面）：自建 server 与云托管**同一个适配器**（issue #33）。
@@ -119,6 +123,7 @@ class QdrantNetworkStore:
     def __init__(self, url: str, api_key: str | None = None,
                  collection_name: str | None = None, embeddings=None,
                  tenant: str | None = None, hybrid: bool = True,
+                 fusion: str | None = None,
                  sparse_encoder: Callable[[str], tuple[list[int], list[float]]] | None = encode_sparse):
         if not url:
             raise ValueError("QdrantNetworkStore 需要 url（自建 Qdrant 服务或云托管端点）")
@@ -132,6 +137,7 @@ class QdrantNetworkStore:
         )
         self.url = url
         self.tenant = tenant
+        self.fusion = (fusion or STORE_FUSION or "rrf").lower()
 
     # ----------------------------------------------------------------- writes
 
@@ -161,7 +167,10 @@ class QdrantNetworkStore:
         effective_tenant = self.tenant if self.tenant is not None else tenant
         if effective_tenant is not None:
             scoped["tenant"] = effective_tenant
-        return self._service.search_documents(query, k=k, payload_filter=scoped or None)
+        if self.fusion == "dense":
+            return self._service.search_dense_documents(query, k=k, payload_filter=scoped or None)
+        return self._service.search_hybrid_documents(
+            query, k=k, payload_filter=scoped or None, fusion=self.fusion)
 
     def search_documents(self, query: str, k: int = 3,
                          payload_filter: Mapping[str, Any] | None = None) -> dict:
@@ -185,9 +194,24 @@ class QdrantNetworkStore:
             scoped["tenant"] = effective_tenant
         return self._service.search_dense_documents(query, k=k, payload_filter=scoped or None)
 
+    def search_hybrid(self, query: str, k: int = 3,
+                      payload_filter: Mapping[str, Any] | None = None,
+                      fusion: str = "rrf") -> dict:
+        """store 原生 hybrid，显式选融合方式（`rrf` / `dbsf`）——供按平面选型（D6）。"""
+        scoped = dict(payload_filter or {})
+        effective_tenant = self.tenant if self.tenant is not None else None
+        if effective_tenant is not None:
+            scoped["tenant"] = effective_tenant
+        return self._service.search_hybrid_documents(
+            query, k=k, payload_filter=scoped or None, fusion=fusion)
+
     def fetch(self, ids: Sequence[str]) -> list[dict]:
         """按点 id 取回 payload（共享平面无文件，读回靠 DB）。"""
         return self._service.retrieve_documents(ids)
+
+    def close(self) -> None:
+        """释放网络化长连接（进程退出 / 用例结束后调用，避免连接泄漏告警）。"""
+        self._service.close()
 
 
 def open_store(db_path: str | None = None, *, tenant: str | None = None,

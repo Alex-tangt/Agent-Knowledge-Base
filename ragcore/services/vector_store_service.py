@@ -81,6 +81,9 @@ class VectorStoreService:
         self.hybrid = bool(hybrid)
         self._sparse_encoder = sparse_encoder
         self._logged_init = False
+        # 网络化：**长连接 client 复用**（server 自管并发；每次操作新建 client 会把
+        # 纯 HTTP 的往返放大成秒级，实测 3.0s/题 vs 0.38s/题）。本地嵌入模式仍按操作开/关。
+        self._remote_client = None
 
     @property
     def embeddings(self):
@@ -110,23 +113,38 @@ class VectorStoreService:
     def is_remote(self) -> bool:
         return bool(self._url)
 
+    def _get_remote_client(self):
+        """网络化 client 的惰性单例（进程内复用；server 端并发安全）。"""
+        if self._remote_client is not None:
+            return self._remote_client
+        with _SESSION_LOCK:
+            if self._remote_client is None:
+                client = QdrantClient(url=self._url, api_key=self._api_key)
+                try:
+                    self._ensure_collection(client)
+                except Exception:
+                    client.close()
+                    raise
+                self._remote_client = client
+                if not self._logged_init:
+                    logger.info(
+                        f"VectorStoreService connected Qdrant remote, "
+                        f"url={self._url}, collection={self.collection_name}"
+                    )
+                    self._logged_init = True
+        return self._remote_client
+
+    def close(self):
+        """释放网络化长连接（本地模式无长持有，空操作）。"""
+        if self._remote_client is not None:
+            try:
+                self._remote_client.close()
+            finally:
+                self._remote_client = None
+
     def _open_client(self):
         if self.is_remote:
-            # 网络化：Qdrant server / 云托管，同一套 API（issue #33）。server 自管并发，
-            # 不需要 local mode 的独占锁重试。
-            client = QdrantClient(url=self._url, api_key=self._api_key)
-            try:
-                self._ensure_collection(client)
-            except Exception:
-                client.close()
-                raise
-            if not self._logged_init:
-                logger.info(
-                    f"VectorStoreService connected Qdrant remote, "
-                    f"url={self._url}, collection={self.collection_name}"
-                )
-                self._logged_init = True
-            return client
+            return self._get_remote_client()
 
         last_error = None
         for attempt in range(_LOCK_RETRY_ATTEMPTS):
@@ -162,11 +180,8 @@ class VectorStoreService:
         网络化模式无本地锁语义，不进这把锁（server 自管并发）。
         """
         if self.is_remote:
-            client = self._open_client()
-            try:
-                yield client
-            finally:
-                client.close()
+            # 长连接不随操作关闭（close() 由调用方显式释放）。
+            yield self._get_remote_client()
             return
         with _SESSION_LOCK:
             client = self._open_client()
@@ -306,6 +321,29 @@ class VectorStoreService:
             raise
 
     @staticmethod
+    def _stabilize(result: dict) -> dict:
+        """融合结果的**确定性同分排序**（issue #33）。
+
+        实测：Qdrant server 的 `FusionQuery` 对**同分**（RRF 分数相等很常见）的并列项
+        顺序不可复现（dense / sparse 单路是确定的）；同一集合、同一 query 两次调用
+        会在并列处换序，`run_hash` 因此不稳定。这里按 `(score 降序, entry_id 升序)`
+        重排——只影响**同分**并列，不改语义，却让共享平面的评测可复现。
+        """
+        docs = result.get("documents", [[]])[0]
+        metas = result.get("metadatas", [[]])[0]
+        dists = result.get("distances", [[]])[0]
+        order = sorted(
+            range(len(docs)),
+            key=lambda i: (-float(dists[i]), str((metas[i] or {}).get("entry_id")
+                                                 or docs[i])),
+        )
+        return {
+            "documents": [[docs[i] for i in order]],
+            "metadatas": [[metas[i] for i in order]],
+            "distances": [[dists[i] for i in order]],
+        }
+
+    @staticmethod
     def _format_results(points) -> dict:
         docs = []
         metas = []
@@ -362,7 +400,7 @@ class VectorStoreService:
             logger.info(
                 f"Native hybrid ({fusion}) found {len(results.points)} documents for query: {query}"
             )
-            return self._format_results(results.points)
+            return self._stabilize(self._format_results(results.points))
         except Exception as e:
             logger.error(f"Error in hybrid search: {e}")
             raise

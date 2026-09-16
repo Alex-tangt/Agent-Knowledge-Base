@@ -109,6 +109,18 @@ def test_vector_store_hybrid_local_mode_filters_at_prefetch(tmp_path):
     assert dense["distances"][0][0] == pytest.approx(1.0)
 
 
+def test_hybrid_fusion_ties_are_stabilized_deterministically():
+    """同分并列按 entry_id 升序稳定排序（server 的 fusion 并列顺序不可复现，见实验证据）。"""
+    result = {
+        "documents": [["doc-b", "doc-a", "doc-c"]],
+        "metadatas": [[{"entry_id": "b"}, {"entry_id": "a"}, {"entry_id": "c"}]],
+        "distances": [[0.5, 0.5, 0.9]],
+    }
+    out = VectorStoreService._stabilize(result)
+    assert [m["entry_id"] for m in out["metadatas"][0]] == ["c", "a", "b"]
+    assert out["distances"][0] == [0.9, 0.5, 0.5]
+
+
 def test_retriever_does_not_double_fuse_on_native_hybrid_store():
     """`native_hybrid` store：检索层直接取 store 结果，**不调**关键词通道（ADR-0019 D4）。"""
     calls = {"strategy": 0, "keywords": 0, "search": 0}

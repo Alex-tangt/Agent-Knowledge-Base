@@ -272,6 +272,9 @@ def main(argv: list[str] | None = None) -> int:
         with open(args.out, "w", encoding="utf-8") as handle:
             json.dump(full, handle, ensure_ascii=False, indent=2)
     print_summary(report, meta)
+    store = getattr(index, "_store", None)
+    if store is not None and hasattr(store, "close"):
+        store.close()
     return 0
 
 

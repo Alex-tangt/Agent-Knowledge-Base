@@ -203,6 +203,10 @@ STORE_COLLECTION = os.environ.get("MEMORY_STORE_COLLECTION") or COLLECTION_NAME
 # 检索走 store 原生 hybrid（服务端 prefetch + fusion）；关掉退回纯 dense。
 STORE_HYBRID = os.environ.get("MEMORY_STORE_HYBRID", "1").strip().lower() in {
     "1", "true", "yes", "on"}
+# 原生融合方式（ADR-0019 D6：分数/阈值按平面；实测见
+# experiments/networked-store-33/fusion_ablation.json）：rrf | dbsf | dense。
+# 默认 rrf（#33 要求的 store 原生 hybrid）；当前语料上 dense 实测更好，可显式切换。
+STORE_FUSION = os.environ.get("MEMORY_STORE_FUSION", "rrf").strip().lower() or "rrf"
 
 # 共享 daemon 的 HTTP 端点（issue #19）：单实例常驻，多个 opencode 会话经 proxy 转发。
 # 只绑本机回环；端口固定，proxy 用 /health 判断「是不是我们的 daemon 在跑」。
