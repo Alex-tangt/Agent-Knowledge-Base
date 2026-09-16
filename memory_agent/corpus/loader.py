@@ -48,27 +48,40 @@ def _read_text(path: str) -> str:
         return handle.read()
 
 
-def _iter_markdown(root: str) -> list[tuple[str, str]]:
-    """遍历 root 下的 .md，返回 [(绝对路径, 相对 root 的 posix 路径)]，按路径排序。"""
-    found: list[tuple[str, str]] = []
+def _iter_markdown(root: str) -> list[tuple[str, str, int, int]]:
+    """遍历 root 下的 .md：`[(绝对路径, 相对 posix 路径, mtime_ns, size)]`。
+
+    用 `os.scandir` + `DirEntry.stat()` 一次拿全（#36 / D9 的廉价指纹就靠它）——
+    避免 `os.walk` + 二次 stat 的双倍系统调用。
+    """
     root = os.path.abspath(root)
-    for dirpath, dirnames, filenames in os.walk(root):
-        dirnames[:] = sorted(d for d in dirnames if d not in EXCLUDE_DIR_NAMES)
+    found: list[tuple[str, str, int, int]] = []
+    stack = [root]
+    while stack:
+        dirpath = stack.pop()
+        try:
+            entries = list(os.scandir(dirpath))
+        except OSError:
+            continue
         rel_dir = os.path.relpath(dirpath, root)
         rel_dir = "" if rel_dir == "." else rel_dir.replace(os.sep, "/")
-        for name in sorted(filenames):
-            if not name.lower().endswith(".md"):
-                continue
-            rel = f"{rel_dir}/{name}" if rel_dir else name
-            if any(rel == p or rel.startswith(p + "/") for p in EXCLUDE_REL_PREFIXES):
-                continue
-            full = os.path.join(dirpath, name)
+        for entry in sorted(entries, key=lambda e: e.name):
             try:
-                if os.path.getsize(full) > MAX_CORPUS_FILE_BYTES:
+                if entry.is_dir(follow_symlinks=False):
+                    if entry.name not in EXCLUDE_DIR_NAMES:
+                        stack.append(entry.path)
+                    continue
+                if not entry.name.lower().endswith(".md"):
+                    continue
+                rel = f"{rel_dir}/{entry.name}" if rel_dir else entry.name
+                if any(rel == p or rel.startswith(p + "/") for p in EXCLUDE_REL_PREFIXES):
+                    continue
+                stat = entry.stat()
+                if stat.st_size > MAX_CORPUS_FILE_BYTES:
                     continue
             except OSError:
                 continue
-            found.append((full, rel))
+            found.append((entry.path, rel, stat.st_mtime_ns, stat.st_size))
     return found
 
 
@@ -101,6 +114,8 @@ class SelectedFile:
     owner: str | None
     writable: bool
     explicit: bool
+    mtime_ns: int | None = None
+    size: int | None = None
 
 
 @dataclass
@@ -191,8 +206,16 @@ def load_overlay() -> tuple[dict, bool]:
     return {"include": include, "exclude": exclude}, True
 
 
-def resolve_include(spec: dict) -> tuple[str, str, str | None, list[str]]:
-    """展开一条 include：返回 `(root, label, owner, 匹配的绝对文件列表)`。
+def _stat_file(path: str) -> tuple[str, int, int] | None:
+    try:
+        stat = os.stat(path)
+    except OSError:
+        return None
+    return os.path.abspath(path), stat.st_mtime_ns, stat.st_size
+
+
+def resolve_include(spec: dict) -> tuple[str, str, str | None, list[tuple[str, int, int]]]:
+    """展开一条 include：返回 `(root, label, owner, [(绝对路径, mtime_ns, size)])`。
 
     - 精确文件 → 该文件；label 取所在目录名。
     - 目录 → 目录下 `.md`（沿用噪声排除）。
@@ -201,19 +224,20 @@ def resolve_include(spec: dict) -> tuple[str, str, str | None, list[str]]:
     pattern = spec["pattern"]
     absolute = os.path.abspath(_abspath(pattern))
     if os.path.isfile(absolute):
-        files = [absolute] if absolute.lower().endswith(".md") else []
+        entries = [absolute] if absolute.lower().endswith(".md") else []
         root = os.path.dirname(absolute)
+        files = [s for s in (_stat_file(f) for f in entries) if s]
     elif os.path.isdir(absolute):
         root = absolute
-        files = [full for full, _ in _iter_markdown(root)]
+        files = [(full, mtime, size) for full, _, mtime, size in _iter_markdown(root)]
     else:
         root = _pattern_root(absolute)
-        matches = glob.glob(absolute, recursive=True)
-        files = sorted(
-            os.path.abspath(m) for m in matches
+        matches = sorted(
+            os.path.abspath(m) for m in glob.glob(absolute, recursive=True)
             if os.path.isfile(m) and m.lower().endswith(".md")
         )
-    files = [f for f in files if _within_size(f)]
+        files = [s for s in (_stat_file(f) for f in matches) if s
+                 and s[2] <= MAX_CORPUS_FILE_BYTES]
     label = spec.get("label") or os.path.basename(root.rstrip("\\/")) or "overlay"
     return root, label, spec.get("owner"), files
 
@@ -257,7 +281,8 @@ def resolve_selection() -> Selection:
     files: list[SelectedFile] = []
     seen: set[str] = set()
 
-    def add(path: str, source: str, root: str, owner, writable: bool, explicit: bool) -> None:
+    def add(path: str, source: str, root: str, owner, writable: bool, explicit: bool,
+            mtime_ns: int | None = None, size: int | None = None) -> None:
         key = os.path.normcase(os.path.abspath(path))
         if key in seen:
             return
@@ -265,24 +290,25 @@ def resolve_selection() -> Selection:
         files.append(SelectedFile(
             path=os.path.abspath(path), source=source, root=root,
             owner=owner, writable=writable, explicit=explicit,
+            mtime_ns=mtime_ns, size=size,
         ))
 
     kb_dir = os.path.abspath(settings.KB_DIR)
     kb_source = Source(label=KB_LABEL, root=kb_dir, owner=settings.KB_OWNER)
     sources.append(kb_source)
     if os.path.isdir(kb_dir):
-        for full, rel in _iter_markdown(kb_dir):
-            add(full, rel, kb_dir, settings.KB_OWNER, True, False)
+        for full, rel, mtime_ns, size in _iter_markdown(kb_dir):
+            add(full, rel, kb_dir, settings.KB_OWNER, True, False, mtime_ns, size)
 
     for spec in overlay["include"]:
         root, label, owner, matched = resolve_include(spec)
         label = spec.get("label") or label
         owner = spec.get("owner") or owner
         sources.append(Source(label=label, root=root, owner=owner, explicit=True))
-        for full in matched:
+        for full, mtime_ns, size in matched:
             rel = os.path.relpath(full, root).replace(os.sep, "/")
             resolved_owner = owner or owner_for_path(full, registry, label)
-            add(full, f"{label}/{rel}", root, resolved_owner, False, True)
+            add(full, f"{label}/{rel}", root, resolved_owner, False, True, mtime_ns, size)
 
     for item in registry:
         root = item["path"]
@@ -290,8 +316,9 @@ def resolve_selection() -> Selection:
         sources.append(source)
         if not os.path.isdir(root):
             continue
-        for full, rel in _iter_markdown(root):
-            add(full, f"{item['label']}/{rel}", root, item.get("owner"), False, False)
+        for full, rel, mtime_ns, size in _iter_markdown(root):
+            add(full, f"{item['label']}/{rel}", root, item.get("owner"), False, False,
+                mtime_ns, size)
 
     if selection.exclude_specs:
         files = [f for f in files if not any(
@@ -311,7 +338,7 @@ def load_kb_entries(kb_dir: str | None = None) -> list[Entry]:
     if not os.path.isdir(kb_dir):
         return []
     entries: list[Entry] = []
-    for full, rel in _iter_markdown(kb_dir):
+    for full, rel, _mtime_ns, _size in _iter_markdown(kb_dir):
         name = os.path.basename(rel)
         if name in KB_META_FILES or name.startswith("_"):
             continue
@@ -354,7 +381,7 @@ def load_readonly_entries(roots: list | None = None,
         for label, root in _normalize_roots(roots):
             if not os.path.isdir(root):
                 continue
-            for full, rel in _iter_markdown(root):
+            for full, rel, _mtime_ns, _size in _iter_markdown(root):
                 entries.append(Entry.from_file(
                     full, source=f"{label}/{rel}", writable=False, owner=label, root=root
                 ))
@@ -393,9 +420,7 @@ def scan_fingerprint() -> tuple[dict[str, list[int]], bool]:
     selection = resolve_selection()
     fingerprint: dict[str, list[int]] = {}
     for selected in selection.files:
-        try:
-            stat = os.stat(selected.path)
-        except OSError:
+        if selected.mtime_ns is None or selected.size is None:
             continue
-        fingerprint[os.path.normcase(selected.path)] = [stat.st_mtime_ns, stat.st_size]
+        fingerprint[os.path.normcase(selected.path)] = [selected.mtime_ns, selected.size]
     return fingerprint, selection.complete

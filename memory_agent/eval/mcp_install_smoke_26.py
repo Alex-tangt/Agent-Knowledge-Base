@@ -176,7 +176,7 @@ async def run_checks(kb_dir: str, workdir: str, env: dict) -> None:
                 "memory_search", {"query": ADD_TITLE, "k": 5, "writable_only": True}
             ))
             check(
-                "6. 新条目立即可检索（写后增量刷新）",
+                "6. 新条目立即可检索（查询时惰性刷新，D13）",
                 any(hit["id"] == ADD_ID for hit in added),
                 f"top={[h['id'] for h in added[:3]]}",
             )

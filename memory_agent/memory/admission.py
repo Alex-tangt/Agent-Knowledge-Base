@@ -110,7 +110,7 @@ class AdmissionManager:
         registry, _ = settings.readonly_sources()
 
         files: list[dict] = []
-        for path in matched:
+        for path, _mtime_ns, _size in matched:
             file_owner = explicit_owner or loader.owner_for_path(path, registry, resolved_label)
             entry = Entry.from_file(
                 path, source=resolved_label, writable=False, owner=file_owner, root=root,
