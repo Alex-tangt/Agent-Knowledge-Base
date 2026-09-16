@@ -1,15 +1,15 @@
 // API服务模块
-import { config } from './config.js?v=3';
-import { addMessage, updateMessage, completeMessageRender } from './messageHandler.js?v=3';
-import { renderReferences } from './ragUI.js?v=3';
+import { config } from './config.js?v=4';
+import { addMessage, updateMessage, completeMessageRender } from './messageHandler.js?v=4';
+import { renderReferences } from './ragUI.js?v=4';
 
 // 发送消息到后端API
-export async function sendMessageToAPI(messages, loadingMessageId, useRag = true, kbName = 'documents', sessionId = '') {
+export async function sendMessageToAPI(messages, loadingMessageId, useRag = true, viewName = 'documents', sessionId = '') {
     try {
         console.log('开始发送消息到API:', config.API_URL);
         console.log('消息内容:', messages);
         console.log('RAG模式:', useRag);
-        console.log('KB:', kbName);
+        console.log('View:', viewName);
         
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 30000);
@@ -19,7 +19,7 @@ export async function sendMessageToAPI(messages, loadingMessageId, useRag = true
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ messages: messages, use_rag: useRag, kb_name: kbName, session_id: sessionId }),
+            body: JSON.stringify({ messages: messages, use_rag: useRag, view_name: viewName, session_id: sessionId }),
             signal: controller.signal
         });
         
@@ -126,13 +126,13 @@ export async function sendMessageToAPI(messages, loadingMessageId, useRag = true
     }
 }
 
-export async function uploadDocument(file, kbName = 'documents') {
+export async function uploadDocument(file, viewName = 'documents') {
     try {
         const formData = new FormData();
         formData.append('file', file);
 
         const url = new URL(config.API_URL.replace('/chat/stream', '/documents/upload'));
-        url.searchParams.set('kb_name', kbName);
+        url.searchParams.set('view_name', viewName);
 
         const response = await fetch(url.toString(), {
             method: 'POST',
@@ -152,10 +152,10 @@ export async function uploadDocument(file, kbName = 'documents') {
     }
 }
 
-export async function getDocumentCount(kbName = 'documents') {
+export async function getDocumentCount(viewName = 'documents') {
     try {
         const url = new URL(config.API_URL.replace('/chat/stream', '/documents/count'));
-        url.searchParams.set('kb_name', kbName);
+        url.searchParams.set('view_name', viewName);
         const response = await fetch(url.toString());
 
         if (!response.ok) {
@@ -171,10 +171,10 @@ export async function getDocumentCount(kbName = 'documents') {
     }
 }
 
-export async function clearDocuments(kbName = 'documents') {
+export async function clearDocuments(viewName = 'documents') {
     try {
         const url = new URL(config.API_URL.replace('/chat/stream', '/documents/clear'));
-        url.searchParams.set('kb_name', kbName);
+        url.searchParams.set('view_name', viewName);
         const response = await fetch(url.toString(), {
             method: 'DELETE'
         });
@@ -192,14 +192,14 @@ export async function clearDocuments(kbName = 'documents') {
     }
 }
 
-export async function listKnowledgeBases() {
+export async function listViews() {
     try {
-        const url = config.API_URL.replace('/chat/stream', '/kb/list');
+        const url = config.API_URL.replace('/chat/stream', '/view/list');
         const response = await fetch(url);
-        if (!response.ok) throw new Error('获取知识库列表失败');
+        if (!response.ok) throw new Error('获取视图列表失败');
         return await response.json();
     } catch (error) {
-        console.error('获取知识库列表出错:', error);
+        console.error('获取视图列表出错:', error);
         return [];
     }
 }

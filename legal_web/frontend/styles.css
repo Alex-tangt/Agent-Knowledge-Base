@@ -185,8 +185,8 @@ body.dark .btn-danger { background: #3a1f20; color: #ff7b7b; }
 .upload-status { font-size: 12px; margin-top: 8px; min-height: 16px; color: var(--sub); }
 #document-count { font-size: 12px; color: var(--sub); margin-top: 6px; }
 
-/* 知识库选择器 */
-.kb-select {
+/* 视图选择器 */
+.view-select {
     width: 100%;
     padding: 7px 10px;
     border: 1px solid var(--line);
@@ -198,8 +198,8 @@ body.dark .btn-danger { background: #3a1f20; color: #ff7b7b; }
     cursor: pointer;
     appearance: auto;
 }
-.kb-select:focus { border-color: var(--brand); }
-.kb-info { font-size: 12px; color: var(--sub); margin-top: 6px; }
+.view-select:focus { border-color: var(--brand); }
+.view-info { font-size: 12px; color: var(--sub); margin-top: 6px; }
 
 /* 开关 */
 .switch { display: flex; align-items: center; justify-content: space-between; font-size: 13px; margin-bottom: 12px; }

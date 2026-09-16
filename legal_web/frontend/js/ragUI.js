@@ -1,5 +1,5 @@
 // RAG界面模块
-import { getDocumentCount, listKnowledgeBases } from './apiService.js?v=3';
+import { getDocumentCount, listViews } from './apiService.js?v=4';
 
 function _scoreClass(dist) {
     if (dist === null || dist === undefined) return '';
@@ -74,7 +74,8 @@ export function initRagUI() {
     if (ragControls) {
         const ragToggle = ragControls.querySelector('input[type="checkbox"]');
         if (ragToggle) {
-            const savedState = localStorage.getItem('kbRagMode');
+            // #37 命名迁移：ragMode 为 canonical；回退读取旧键 kbRagMode。
+            const savedState = localStorage.getItem('ragMode') ?? localStorage.getItem('kbRagMode');
             if (savedState !== null) {
                 ragToggle.checked = savedState === 'true';
             } else {
@@ -82,12 +83,12 @@ export function initRagUI() {
             }
             ragToggle.addEventListener('change', (e) => {
                 const ragMode = e.target.checked;
-                localStorage.setItem('kbRagMode', ragMode.toString());
+                localStorage.setItem('ragMode', ragMode.toString());
             });
         }
     }
 
-    initKBSelector();
+    initViewSelector();
 }
 
 export function getRagMode() {
@@ -96,20 +97,21 @@ export function getRagMode() {
     return true;
 }
 
-export function getSelectedKB() {
-    const select = document.getElementById('kb-select');
+export function getSelectedView() {
+    const select = document.getElementById('view-select');
     if (select) return select.value;
     return 'documents';
 }
 
-async function initKBSelector() {
-    const select = document.getElementById('kb-select');
+async function initViewSelector() {
+    const select = document.getElementById('view-select');
     if (!select) return;
 
-    const savedKB = localStorage.getItem('kbSelectedKB');
+    // canonical = selectedView；回退读取旧键 kbSelectedKB。
+    const savedView = localStorage.getItem('selectedView') ?? localStorage.getItem('kbSelectedKB');
 
     try {
-        const kbList = await listKnowledgeBases();
+        const viewList = await listViews();
         select.innerHTML = '';
 
         const autoOpt = document.createElement('option');
@@ -117,35 +119,35 @@ async function initKBSelector() {
         autoOpt.textContent = '🤖 自动选择';
         select.appendChild(autoOpt);
 
-        kbList.forEach(kb => {
+        viewList.forEach(view => {
             const opt = document.createElement('option');
-            opt.value = kb.name;
-            opt.textContent = `📚 ${kb.label}`;
+            opt.value = view.name;
+            opt.textContent = `📚 ${view.label}`;
             select.appendChild(opt);
         });
 
-        if (savedKB && select.querySelector(`option[value="${savedKB}"]`)) {
-            select.value = savedKB;
-        } else if (!savedKB) {
+        if (savedView && select.querySelector(`option[value="${savedView}"]`)) {
+            select.value = savedView;
+        } else if (!savedView) {
             select.value = 'auto';
         }
     } catch (e) {
-        console.error('加载知识库列表失败:', e);
+        console.error('加载视图列表失败:', e);
     }
 
     select.addEventListener('change', async () => {
-        localStorage.setItem('kbSelectedKB', select.value);
-        await refreshKBCount();
+        localStorage.setItem('selectedView', select.value);
+        await refreshViewCount();
     });
 
-    await refreshKBCount();
+    await refreshViewCount();
 }
 
-export async function refreshKBCount() {
-    const kbName = getSelectedKB();
+export async function refreshViewCount() {
+    const viewName = getSelectedView();
     try {
-        const count = await getDocumentCount(kbName);
-        const info = document.getElementById('kb-info');
+        const count = await getDocumentCount(viewName);
+        const info = document.getElementById('view-info');
         if (info) info.textContent = `共 ${count} 个文本片段`;
     } catch (e) {
         console.error('获取文档数量失败:', e);

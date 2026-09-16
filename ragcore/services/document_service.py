@@ -36,9 +36,9 @@ class DocumentService:
             raise
 
     @langsmith_service.trace(name="document_split", metadata={"service": "DocumentService"})
-    def split_document(self, documents, kb_name=None):
+    def split_document(self, documents, view_name=None):
         try:
-            strategy = get_split_strategy(kb_name)
+            strategy = get_split_strategy(view_name)
             split_docs = strategy.split(documents)
             logger.info(f"Split documents into {len(split_docs)} chunks (strategy={type(strategy).__name__})")
             return split_docs
@@ -47,10 +47,10 @@ class DocumentService:
             raise
 
     @langsmith_service.trace(name="document_process", metadata={"service": "DocumentService"})
-    def process_document(self, file_path, kb_name=None):
+    def process_document(self, file_path, view_name=None):
         try:
             documents = self.load_document(file_path)
-            split_docs = self.split_document(documents, kb_name=kb_name)
+            split_docs = self.split_document(documents, view_name=view_name)
             logger.info(f"Processed document: {file_path}")
             return split_docs
         except Exception as e:
