@@ -245,8 +245,10 @@ def test_open_store_switches_to_network_when_url_given():
     assert store.plane == PLANE_SHARED and store.tenant == "org-a"
     assert store.native_hybrid is True
 
+    # 本地平面默认也走 store 原生 hybrid（2026-09-16 起；显式 hybrid=False 可回旧行为）
     local = open_store(db_path="unused")
-    assert local.plane == PLANE_LOCAL and local.native_hybrid is False
+    assert local.plane == PLANE_LOCAL and local.native_hybrid is True
+    assert open_store(db_path="unused", hybrid=False).native_hybrid is False
 
 
 # --------------------------------------- 端口契约（共享适配器，需自建 Qdrant 服务）

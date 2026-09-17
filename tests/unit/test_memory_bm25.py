@@ -76,7 +76,23 @@ def test_open_store_wires_bm25_encoders(fake_fastembed):
     assert store._service._sparse_query_encoder("x") == ([1], [1.0])
 
 
-def test_open_store_defaults_to_tfidf(monkeypatch):
+def test_open_store_defaults_to_bm25(monkeypatch):
+    """2026-09-16 owner 决定：本地默认词法路 = BM25（ADR-0019 D14 修订）。"""
     monkeypatch.delenv("MEMORY_SPARSE_BACKEND", raising=False)
     store = open_store(db_path="unused")
-    assert store._service._sparse_encoder is encode_sparse
+    assert callable(store._service._sparse_encoder)
+    assert store._service._sparse_encoder is not encode_sparse
+
+
+def test_open_store_can_fall_back_to_tfidf_and_dense_local(monkeypatch):
+    """可回退：tfidf 词法路 + 非 hybrid 本地平面 = 改前的旧行为。
+
+    settings 的 knob 是 **import 期常量**，故直接 patch `store` 模块里已绑定的名字。
+    """
+    from memory_agent.memory import store as store_module
+
+    monkeypatch.setattr(store_module, "SPARSE_BACKEND", "tfidf")
+    monkeypatch.setattr(store_module, "LOCAL_HYBRID", False)
+    legacy = store_module.open_store(db_path="unused")
+    assert legacy._service._sparse_encoder is encode_sparse
+    assert legacy.native_hybrid is False
