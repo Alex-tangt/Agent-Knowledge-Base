@@ -1,10 +1,28 @@
 # Agent-Knowledge-Base
 
-目标形状：**Agent 知识库**——把 Markdown 知识库变成 agent 可安全读写、可检索的长期知识底座；hero 是**记忆能力包**（MCP + skill，`memory_agent/`）。三模块单仓：`ragcore/`（可复用核心）、`legal_web/`（**【已排除】上一版本遗留的无关产品**，仅保留代码）、`memory_agent/`（记忆能力包）。决策见 `docs/adr/0005`–`0007`，领域语言见 `CONTEXT.md`。
+**把 Markdown 知识库变成 agent 可安全读写、可检索的长期知识底座。**
 
-`legal_web/` 是当前**可运行、有评测证据**的适配层：可复用的 RAG 检索/问答核心 + 「21 部中国现行法律法规」问答 demo（起点为大学 NLP 课程作业）。下文即该适配层的评测证据与工程纪律样本。
+三模块单仓：
 
-## 核心亮点
+- **`memory_agent/`** —— 记忆能力包（项目主体）：以 **MCP 协议 + Skill** 对外暴露，让 coding agent 跨会话记住知识；统一多个本地来源、共享单实例服务、权限隔离，配生命周期工具（新增 / 取代 / 归档）与确定性评测。
+- **`ragcore/`** —— 可复用核心：检索 / 重排 / 路由 / 会话记忆，零 FastAPI 依赖的真包。
+- **`legal_web/`** —— 一个可运行、有评测证据的 RAG 问答 demo：「21 部中国现行法律法规」问答（含 53 题评测集与结果，起点为大学 NLP 课程作业）。
+
+设计要点：**Markdown + Git 为真相源、向量索引可随时重建**；**28 篇 ADR** 记录架构决策，**426 项自动化测试**，实验留痕可复现。决策见 `docs/adr/`，领域语言见 `CONTEXT.md`。
+
+---
+
+## 记忆能力包（`memory_agent`）核心亮点
+
+- **统一多来源检索**：把多个项目 / 仓库的 Markdown 统一进一套索引并标注来源（打通数据孤岛），读写分离——读整张知识表、写只经受控网关。
+- **共享单实例服务**：一个常驻服务唯一持有语义 embedding 模型，各会话经轻量代理接入，内存占用从 N×3.9GB 降到 1×3.9GB + N×数十 MB，根治多会话并发 OOM。
+- **权限隔离**：MCP 边界 Bearer 鉴权 → 身份上下文 → 工具层强制注入租户 / 密级过滤（只可收窄、越权拒绝），审计不落凭证。
+- **迭代检索（Agentic RAG）**：基于 MultiHop-RAG 开源基线，三臂实验（N=200）证明多轮检索较单轮**答案 +10.2pp、recall@5 +9.1pp（显著）**。
+- **索引一致性**：代目录 + `CURRENT` 指针原子切换（中断不留坏索引）；查询时轻量指纹增量刷新（172 文件 / 51ms）。
+
+---
+
+## 政策法规问答 Demo 亮点（`legal_web`）
 
 - **混合检索**：向量语义（BGE-M3，1024-dim）+ 法条编号精确匹配 + 锚点关键词，合并去重后由 `bge-reranker-v2-m3` cross-encoder 精排 → 自适应选择上下文
 - **法条感知切分**：按「第X条」边界切块（≥3 标记启用，带标题前缀），策略抽象支持按知识库绑定（`ragcore/strategies/`）
@@ -47,7 +65,7 @@
 │   ├── strategies/      # 切分+检索策略抽象（legal/default）
 │   ├── agents/          # LangGraph 路由 + 会话记忆
 │   └── config/ · models/ · utils/
-├── legal_web/           # 【已排除】上一版本遗留的无关产品（仅保留代码）
+├── legal_web/           # 可运行的政策法规 RAG 问答 demo（含评测集与结果）
 │   ├── app.py · api/routes.py · frontend/   # FastAPI + 零构建 SPA
 │   ├── data/raw/        # 21 部法律法规全文
 │   ├── tests/           # 评测子系统：questions/ground_truth/run_eval/score_eval + 结果
