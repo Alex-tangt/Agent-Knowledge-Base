@@ -32,6 +32,11 @@ LLM 自判的**过早停**有多严重？（研究实测 Adaptive-RAG 路由误�
 
 - 检索链与 Phase A 一致：`MemoryIndex`/`MemoryRetriever` + `DefaultRetrievalStrategy`（向量 + 关键词），
   **pool=50**（使 B1 的 recall@5 ≡ Phase A），每轮取 **top-5** 入累计证据，**rerank 关**。
+  - **检索链在代码里显式固定、不依赖 `MEMORY_*` env**（验收澄清，2026-09-17）：
+    `run_census.open_searcher` 以 **`open_store(..., hybrid=False)`** 打开（dense-only，
+    因此 **不读 `MEMORY_LOCAL_HYBRID` / `MEMORY_SPARSE_BACKEND` / `MEMORY_STORE_FUSION`**），
+    词法走 **`DefaultRetrievalStrategy(enable_keyword=True)`**（策略层，**不读 `MEMORY_*`**；rerank 关不含其中）。
+    ⇒ **master 的「默认词法路换 BM25/DBSF」变更不影响本实验**，无需 env pin 即可复现。
 - **`R_max=4`**（1 初始 + ≤3 追问）；**累计证据上限 20 篇**。
 - 停止优先序：**① LLM 判定足够 / 已得答案 → ② 本轮无新 id → ③ 用完 `R_max`**；
   另有 `no_next_query`（判不足但给不出新的、非重复 query）归为**停滞族**。每条停都落盘触发条件。
