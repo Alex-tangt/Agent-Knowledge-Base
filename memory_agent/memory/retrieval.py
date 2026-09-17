@@ -90,8 +90,9 @@ class MemoryRetriever:
         """召回：store 声明 `native_hybrid` 时**直接取 store 原生检索**，不再叠加融合。
 
         ADR-0019 D4：检索由 store 提供（含其原生融合与打分）；策略层对这类 store 退化为
-        薄封装（只注入过滤 → 调 store → 返回）。否则走 `DefaultRetrievalStrategy`
-        （dense + 关键词加法增强，本地平面当前形态）。
+        薄封装（只注入过滤 → 调 store → 返回）。**本地平面默认即此形态**（D16：BM25 sparse +
+        DBSF）；只有 `MEMORY_LOCAL_HYBRID=0`（dense-only）时才走 `DefaultRetrievalStrategy`
+        （dense + 手写关键词加法增强）。
         """
         if getattr(self.store, "native_hybrid", False):
             return self.store.search_documents(

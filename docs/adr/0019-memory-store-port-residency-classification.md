@@ -163,9 +163,57 @@ D5/D7 定了「本地 = Qdrant 原生（dense + sparse）；BM25 用 `fastembed`
   不是 store 原生融合——同融合换 BM25：`rrf 0.5000→0.6407`、`dbsf 0.5444→0.7111`（miss 1→0）；
   `bm25/dbsf` recall@1 **0.7111 ≈ 生产手写融合 0.7074**、recall@5 +1.5pp，但 MRR −3.5pp /
   nDCG@10 −0.5pp（差异在噪声带，**非净胜**）。
-- **决策（owner 2026-09-16）**：本地默认**保持** dense + 手写关键词加法；**BM25 仅作可选后端**
+- **决策（owner 2026-09-16，前一轮）**：本地默认**保持** dense + 手写关键词加法；**BM25 仅作可选后端**
   （`MEMORY_SPARSE_BACKEND=bm25` + hybrid 集合），**不切默认**。D5 的「各平面用各自原生」在本地
   仍是**待切**状态，触发条件 = 出现明确收益 / first-stage 退化（叙事 #21）。
 
 Relates（本次）：#40、#33（自制 TF sparse 的负面证据）、#30、ADR-0019 D5/D6/D7、
 `experiments/local-lexical-40/`、`memory_agent/memory/bm25.py`。
+
+## D16（2026-09-16 晚，**修订 D14**）：本地默认词法路 = **BM25**，手写关键词退役
+
+Status: accepted（owner 拍板「换 BM25」）。
+
+### 背景
+
+三条词法路（手写 kw / BM25 / BGE-M3 原生 sparse）**生态位相同**，owner 要求**只留一条**。
+`experiments/bge-m3-sparse-colbert/`（`compare_lexical.py` + `bm25_matrix.py`，蒸馏口径 + bootstrap）实测：
+
+| 单路 | r@1 | r@3 | r@5 | nDCG@10 | MRR |
+|---|---|---|---|---|---|
+| **BM25**（fastembed `Qdrant/bm25`，Qdrant IDF） | **0.4111** | 0.5444 | 0.6111 | 0.5847 | 0.5370 |
+| 手写 kw（CJK 二元组子串） | 0.1667 | 0.4111 | 0.4778 | 0.3865 | 0.3462 |
+| BGE-M3 原生 sparse | 0.1333 | 0.2222 | 0.2667 | 0.2520 | 0.2382 |
+
+- **BM25 是唯一像样的独立词法信号**（kw 的 2.5×、sparse 的 3×）；IDF 是关键（另两者都缺）。
+- 但 **`dense + L` 融合里三者两两不显著**（Δr@1 的 95% CI 全含 0），也都不显著优于生产 0.7074：
+  最优点估计 `dense+bm25/zscore/[.85,.15]` 蒸馏 0.8088 > 生产 0.8029，**但 r@1 略低**（0.6963 vs 0.7074）
+  → 目标与 qrels 在此粒度不一致 = 噪声。
+- **归一化必需**（owner 判断被证实）：BM25 原始分 max **34.06**（dense ~0.78）→ 不归一化只能把词法权重
+  压到下限 0.05；`zscore` 后可到 0.15。store 原生 DBSF 是**秩融合**，天然无量纲问题。
+- 放弃 colbert（存储不可接受）后，**本轨唯一"显著净胜"的方案不落地**；剩余可调项测不出显著提升。
+
+### 决策
+
+- **D16.1 本地平面默认 `hybrid=True`**（`MEMORY_LOCAL_HYBRID`，默认开）→ 走 **store 原生 hybrid**
+  （ADR-0019 D4/D5 在本地**落地**；`MemoryRetriever._recall` 退化为薄封装）。
+- **D16.2 默认词法编码器 = `bm25`**（`MEMORY_SPARSE_BACKEND`，默认由 `tfidf` 改 `bm25`；
+  `memory-agent[bm25]` 软依赖成为默认路径依赖）。
+- **D16.3 默认融合 = `dbsf`**（`MEMORY_STORE_FUSION`，默认由 `rrf` 改 `dbsf`；#40 实测同融合下
+  bm25 `rrf 0.6407` → `dbsf 0.7111`）。
+- **D16.4 手写 CJK 二元组关键词通道退役**（`DefaultRetrievalStrategy` 的加法增强不再在记忆默认路径上生效；
+  代码保留，`MEMORY_LOCAL_HYBRID=0` 时可回）。
+- **D16.5 fastembed 缓存固定到用户级目录**（`MEMORY_BM25_CACHE_DIR`，默认 `~/.cache/fastembed`）：
+  fastembed 默认落在 `%TEMP%/fastembed_cache`，会被系统清理 → 默认链路可能查不到模型。
+
+### 理由与如实记账
+
+- 换 BM25 的收益是**标准化 + 免自研 + 独立质量强 2.5×**（可维护性/鲁棒性），**不是可测的融合增益**
+  （CI 全含 0；MRR 点估计略降）。属 owner 决策，已记录证据强度。
+- 代价：索引需 **dense + sparse 具名集合**（本次重建为 `gen-4`，188 条：迁移复用 dense 向量 + 增量追平 64 条）；
+  多一个软依赖（fastembed）。
+- **回退**：`MEMORY_LOCAL_HYBRID=0` + `MEMORY_SPARSE_BACKEND=tfidf` → 旧行为（dense + 手写关键词；
+  需把索引指回 dense-only 代）。
+
+Relates（D16）：#21、#40、`experiments/bge-m3-sparse-colbert/{compare_lexical.py,bm25_matrix.py,README.md §11}`、
+ADR-0022 D4（同批修订）、`docs/retrieval_optimization_report.md` §C2。
