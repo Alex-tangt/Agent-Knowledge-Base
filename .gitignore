@@ -82,6 +82,13 @@ memory_agent/overlay.json
 #
 legal_web/uploads/
 
+# External benchmark dataset (MultiHop-RAG, ODC-BY) — not committed (issue #47)
+#
+experiments/agentic-rag-census/data/
+experiments/agentic-rag-census/store/
+experiments/agentic-rag-census/artifacts/eval_set.json
+experiments/agentic-rag-census/artifacts/trace/
+
 # Trae IDE
 #
 .trae/
