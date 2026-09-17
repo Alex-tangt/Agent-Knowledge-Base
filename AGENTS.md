@@ -363,6 +363,7 @@ The `warmup()` function (called from `app.py` lifespan) eagerly triggers BGE-M3 
 5. **多轮上下文改写（省略 / 指代补全，deferred）**：把依赖上文的省略式追问补全为自足检索 query。MultiHop-RAG **单轮无历史，测不到**；需自造多轮集（成本高、偏差大）。与 #48 的单轮改写 / 迭代不同。**触发条件见 #49（deferred）**。
 
 ## Gotchas
+- **别用宽口径进程名清理**（如 `taskkill /IM python.exe` / `Stop-Process -Name python`）——会**误伤并行会话的长任务**（#48 Phase B 实测被误杀**两次**，~1085 次 LLM 调用作废重跑）。要杀就用**唯一进程名**（如复制解释器为 `phaseb.exe`）或 **PID**。
 - **Always activate venv first** (`venv\Scripts\activate` on Windows). Running without it may miss installed dependencies.
 - **Qdrant local mode 的锁按操作持有**（`VectorStoreService` 每次操作开/关一个 client，见 ADR-0008 D5）。`legal_web` 与 `memory_agent` 现在可以并存；只有两个进程的重活**恰好撞在同一瞬间**才会短暂争锁，靠内置退避重试兜住。若仍报 "already accessed"：确认没有残留进程，必要时删 `.lock`。**同进程内也不能并发开 client**（单 daemon 服务 N 会话时）——`VectorStoreService._session` 用模块级 `RLock` 串行化，见 ADR-0013 D3。
 - **stdio MCP: stdout is the protocol channel.** `ragcore/utils/logger.py` configures logging to `sys.stdout`; `memory_agent` must grab the root logger to stderr *before* importing `ragcore` (`_bootstrap.configure_stderr_logging`). Any stray stdout write corrupts the JSON-RPC stream. `proxy.py` 同理：它不 import ragcore，所有诊断写 stderr，stdout 只留给 stdio 协议。
