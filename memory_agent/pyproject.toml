@@ -17,6 +17,9 @@ dependencies = [
 # MEMORY_SPARSE_BACKEND 设为 bm25 才需要；不压默认包体（#26）。
 [project.optional-dependencies]
 bm25 = ["fastembed>=0.4"]
+# 可选：文档解析（PDF / DOCX）首装引擎 Docling（#50 / ADR-0027 D3/D5）。
+# 只在收录管线解析时用；不进程内 daemon，不压默认包体。
+parse = ["docling>=2.0"]
 
 [project.scripts]
 memory-agent = "memory_agent.mcp_server:main"
@@ -30,6 +33,7 @@ packages = [
     "memory_agent.corpus",
     "memory_agent.gateway",
     "memory_agent.memory",
+    "memory_agent.parse",
 ]
 
 [tool.setuptools.package-dir]
