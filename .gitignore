@@ -89,6 +89,9 @@ experiments/agentic-rag-census/store/
 experiments/agentic-rag-census/artifacts/eval_set.json
 experiments/agentic-rag-census/artifacts/trace/
 
+# Phase B raw per-query logs (contain dataset query text / model answers)
+experiments/agentic-rag-census/phase_b/artifacts/trace/
+
 # Trae IDE
 #
 .trae/

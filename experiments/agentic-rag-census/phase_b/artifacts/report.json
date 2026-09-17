@@ -1,0 +1,2555 @@
+{
+ "meta": {
+  "model": "qwen3.7-flash",
+  "judge_model": "qwen3.7-max",
+  "thinking": true,
+  "prompt_version": "phase-b-v1-20260917",
+  "n": 200,
+  "answerable": 176,
+  "null_query": 24,
+  "seed": 42,
+  "sample_seed": 20260917,
+  "dev": 141,
+  "holdout": 59,
+  "pool": 50,
+  "round_top_k": 5,
+  "r_max": 4,
+  "evidence_cap": 20,
+  "trace_b1": "artifacts/trace/base_hybrid.jsonl（Phase A）",
+  "completed": {
+   "b1": 200,
+   "b2": 200,
+   "b3": 200
+  },
+  "errors": {
+   "b1": 0,
+   "b2": 0,
+   "b3": 0
+  },
+  "common": 176
+ },
+ "arms": {
+  "b1": {
+   "count": 176,
+   "recall": {
+    "1": 0.249527,
+    "3": 0.49858,
+    "5": 0.648201,
+    "10": 0.78125,
+    "20": 0.902936,
+    "50": 0.961648
+   },
+   "evidence_recall": 0.648201,
+   "full@5": 0.369318,
+   "answer_accuracy": 0.715909,
+   "answer_intersection": 0.698864,
+   "answer_judged": 21
+  },
+  "b2": {
+   "count": 176,
+   "recall": {
+    "1": 0.237689,
+    "3": 0.489583,
+    "5": 0.624527,
+    "10": 0.762784,
+    "20": 0.905303,
+    "50": 0.951231
+   },
+   "evidence_recall": 0.624527,
+   "full@5": 0.335227,
+   "answer_accuracy": 0.721591,
+   "answer_intersection": 0.704545,
+   "answer_judged": 23
+  },
+  "b3": {
+   "count": 176,
+   "recall": {
+    "1": 0.31392,
+    "3": 0.576705,
+    "5": 0.73911,
+    "10": 0.837595,
+    "20": 0.945549,
+    "50": 0.981061
+   },
+   "evidence_recall": 0.73911,
+   "full@5": 0.477273,
+   "answer_accuracy": 0.818182,
+   "answer_intersection": 0.801136,
+   "answer_judged": 19
+  }
+ },
+ "by_failure_type": {
+  "full@5": {
+   "n": 65,
+   "recall@5": {
+    "b1": 1.0,
+    "b2": 0.933333,
+    "b3": 1.0
+   },
+   "accuracy": {
+    "b1": 0.815385,
+    "b2": 0.753846,
+    "b3": 0.830769
+   }
+  },
+  "rank_miss": {
+   "n": 94,
+   "recall@5": {
+    "b1": 0.445922,
+    "b2": 0.445922,
+    "b3": 0.585106
+   },
+   "accuracy": {
+    "b1": 0.659574,
+    "b2": 0.712766,
+    "b3": 0.787234
+   }
+  },
+  "cover_miss": {
+   "n": 17,
+   "recall@5": {
+    "b1": 0.421569,
+    "b2": 0.431373,
+    "b3": 0.593137
+   },
+   "accuracy": {
+    "b1": 0.647059,
+    "b2": 0.647059,
+    "b3": 0.941176
+   }
+  }
+ },
+ "by_question_type": {
+  "comparison_query": {
+   "n": 67,
+   "recall@5": {
+    "b1": 0.699005,
+    "b2": 0.689055,
+    "b3": 0.830846
+   },
+   "accuracy": {
+    "b1": 0.567164,
+    "b2": 0.567164,
+    "b3": 0.791045
+   }
+  },
+  "inference_query": {
+   "n": 63,
+   "recall@5": {
+    "b1": 0.572751,
+    "b2": 0.519841,
+    "b3": 0.625661
+   },
+   "accuracy": {
+    "b1": 0.984127,
+    "b2": 0.968254,
+    "b3": 1.0
+   }
+  },
+  "temporal_query": {
+   "n": 46,
+   "recall@5": {
+    "b1": 0.677536,
+    "b2": 0.673913,
+    "b3": 0.76087
+   },
+   "accuracy": {
+    "b1": 0.565217,
+    "b2": 0.608696,
+    "b3": 0.608696
+   }
+  }
+ },
+ "by_evidence_count": {
+  "2": {
+   "n": 91,
+   "recall@5": {
+    "b1": 0.747253,
+    "b2": 0.736264,
+    "b3": 0.851648
+   },
+   "accuracy": {
+    "b1": 0.637363,
+    "b2": 0.637363,
+    "b3": 0.758242
+   }
+  },
+  "3": {
+   "n": 61,
+   "recall@5": {
+    "b1": 0.579235,
+    "b2": 0.535519,
+    "b3": 0.661202
+   },
+   "accuracy": {
+    "b1": 0.721311,
+    "b2": 0.737705,
+    "b3": 0.836066
+   }
+  },
+  "4": {
+   "n": 24,
+   "recall@5": {
+    "b1": 0.447917,
+    "b2": 0.427083,
+    "b3": 0.510417
+   },
+   "accuracy": {
+    "b1": 1.0,
+    "b2": 1.0,
+    "b3": 1.0
+   }
+  }
+ },
+ "null_query": {
+  "n": 24,
+  "refusal_rate": {
+   "b1": 0.9167,
+   "b2": 0.9583,
+   "b3": 0.9167
+  },
+  "mean_evidence_recall": {
+   "b1": 0.0,
+   "b2": 0.0,
+   "b3": 0.0
+  }
+ },
+ "deltas": {
+  "B2−B1 · recall@5": {
+   "n": 176,
+   "mean_delta": -0.023674,
+   "ci95": [
+    -0.051136,
+    0.003314
+   ],
+   "significant": false,
+   "discordant": 40,
+   "discordance_rate": 0.2273,
+   "b01": null,
+   "b10": null,
+   "mde_80pct_power_at_n": 0.1005,
+   "metric": "recall@5"
+  },
+  "B3−B2 · recall@5": {
+   "n": 176,
+   "mean_delta": 0.114583,
+   "ci95": [
+    0.081439,
+    0.149148
+   ],
+   "significant": true,
+   "discordant": 54,
+   "discordance_rate": 0.3068,
+   "b01": null,
+   "b10": null,
+   "mde_80pct_power_at_n": 0.1144,
+   "metric": "recall@5"
+  },
+  "B3−B1 · recall@5": {
+   "n": 176,
+   "mean_delta": 0.090909,
+   "ci95": [
+    0.064394,
+    0.119318
+   ],
+   "significant": true,
+   "discordant": 37,
+   "discordance_rate": 0.2102,
+   "b01": null,
+   "b10": null,
+   "mde_80pct_power_at_n": 0.0949,
+   "metric": "recall@5"
+  },
+  "B2−B1 · full@5": {
+   "n": 176,
+   "mean_delta": -0.034091,
+   "ci95": [
+    -0.079545,
+    0.005682
+   ],
+   "significant": false,
+   "discordant": 14,
+   "discordance_rate": 0.0795,
+   "b01": 4,
+   "b10": 10,
+   "mde_80pct_power_at_n": 0.0591,
+   "metric": "full@5"
+  },
+  "B3−B2 · full@5": {
+   "n": 176,
+   "mean_delta": 0.142045,
+   "ci95": [
+    0.090909,
+    0.198864
+   ],
+   "significant": true,
+   "discordant": 27,
+   "discordance_rate": 0.1534,
+   "b01": 26,
+   "b10": 1,
+   "mde_80pct_power_at_n": 0.077,
+   "metric": "full@5"
+  },
+  "B3−B1 · full@5": {
+   "n": 176,
+   "mean_delta": 0.107955,
+   "ci95": [
+    0.0625,
+    0.153409
+   ],
+   "significant": true,
+   "discordant": 19,
+   "discordance_rate": 0.108,
+   "b01": 19,
+   "b10": 0,
+   "mde_80pct_power_at_n": 0.0655,
+   "metric": "full@5"
+  },
+  "B2−B1 · answer": {
+   "n": 176,
+   "mean_delta": 0.005682,
+   "ci95": [
+    -0.045455,
+    0.056818
+   ],
+   "significant": false,
+   "discordant": 19,
+   "discordance_rate": 0.108,
+   "b01": 10,
+   "b10": 9,
+   "mde_80pct_power_at_n": 0.0693,
+   "metric": "answer"
+  },
+  "B3−B2 · answer": {
+   "n": 176,
+   "mean_delta": 0.096591,
+   "ci95": [
+    0.045455,
+    0.153409
+   ],
+   "significant": true,
+   "discordant": 25,
+   "discordance_rate": 0.142,
+   "b01": 21,
+   "b10": 4,
+   "mde_80pct_power_at_n": 0.0769,
+   "metric": "answer"
+  },
+  "B3−B1 · answer": {
+   "n": 176,
+   "mean_delta": 0.102273,
+   "ci95": [
+    0.051136,
+    0.159091
+   ],
+   "significant": true,
+   "discordant": 26,
+   "discordance_rate": 0.1477,
+   "b01": 22,
+   "b10": 4,
+   "mde_80pct_power_at_n": 0.0782,
+   "metric": "answer"
+  }
+ },
+ "stop": {
+  "answerable": 176,
+  "triggers": {
+   "budget": 14,
+   "llm_enough": 133,
+   "no_new_ids": 29
+  },
+  "categories": {
+   "budget": 14,
+   "complete": 70,
+   "premature": 63,
+   "stall": 29
+  },
+  "premature": {
+   "count": 63,
+   "rate_among_llm_stops": 0.473684,
+   "rate_among_answerable": 0.357955
+  },
+  "over_retrieval_strong": {
+   "count": 26,
+   "rate_among_completed": 0.288889,
+   "mean_extra_rounds": 1.7308
+  },
+  "over_retrieval_weak": {
+   "count": 65,
+   "rate": 0.369318,
+   "mean_wasted_rounds": 1.8769
+  },
+  "per_query": [
+   {
+    "id": "mhr1221",
+    "trigger": "llm_enough",
+    "category": "complete",
+    "reach_size": 2,
+    "reach_missing": 0,
+    "r_star": 1,
+    "rounds_used": 1,
+    "extra_rounds": 0,
+    "wasted_rounds": 0,
+    "final_complete": true
+   },
+   {
+    "id": "mhr2012",
+    "trigger": "llm_enough",
+    "category": "complete",
+    "reach_size": 2,
+    "reach_missing": 0,
+    "r_star": 1,
+    "rounds_used": 1,
+    "extra_rounds": 0,
+    "wasted_rounds": 0,
+    "final_complete": true
+   },
+   {
+    "id": "mhr1926",
+    "trigger": "no_new_ids",
+    "category": "stall",
+    "reach_size": 2,
+    "reach_missing": 0,
+    "r_star": 1,
+    "rounds_used": 3,
+    "extra_rounds": 2,
+    "wasted_rounds": 2,
+    "final_complete": true
+   },
+   {
+    "id": "mhr1797",
+    "trigger": "llm_enough",
+    "category": "complete",
+    "reach_size": 2,
+    "reach_missing": 0,
+    "r_star": 2,
+    "rounds_used": 2,
+    "extra_rounds": 0,
+    "wasted_rounds": 0,
+    "final_complete": true
+   },
+   {
+    "id": "mhr0443",
+    "trigger": "budget",
+    "category": "budget",
+    "reach_size": 1,
+    "reach_missing": 1,
+    "r_star": 1,
+    "rounds_used": 4,
+    "extra_rounds": 3,
+    "wasted_rounds": 3,
+    "final_complete": true
+   },
+   {
+    "id": "mhr1912",
+    "trigger": "budget",
+    "category": "budget",
+    "reach_size": 2,
+    "reach_missing": 0,
+    "r_star": 1,
+    "rounds_used": 4,
+    "extra_rounds": 3,
+    "wasted_rounds": 3,
+    "final_complete": true
+   },
+   {
+    "id": "mhr0905",
+    "trigger": "llm_enough",
+    "category": "premature",
+    "reach_size": 2,
+    "reach_missing": 0,
+    "r_star": null,
+    "rounds_used": 2,
+    "extra_rounds": null,
+    "wasted_rounds": 1,
+    "final_complete": false
+   },
+   {
+    "id": "mhr1565",
+    "trigger": "budget",
+    "category": "budget",
+    "reach_size": 2,
+    "reach_missing": 0,
+    "r_star": 4,
+    "rounds_used": 4,
+    "extra_rounds": 0,
+    "wasted_rounds": 0,
+    "final_complete": true
+   },
+   {
+    "id": "mhr0524",
+    "trigger": "llm_enough",
+    "category": "complete",
+    "reach_size": 2,
+    "reach_missing": 0,
+    "r_star": 1,
+    "rounds_used": 1,
+    "extra_rounds": 0,
+    "wasted_rounds": 0,
+    "final_complete": true
+   },
+   {
+    "id": "mhr0157",
+    "trigger": "llm_enough",
+    "category": "premature",
+    "reach_size": 1,
+    "reach_missing": 1,
+    "r_star": null,
+    "rounds_used": 1,
+    "extra_rounds": null,
+    "wasted_rounds": 1,
+    "final_complete": false
+   },
+   {
+    "id": "mhr2063",
+    "trigger": "llm_enough",
+    "category": "complete",
+    "reach_size": 2,
+    "reach_missing": 0,
+    "r_star": 1,
+    "rounds_used": 1,
+    "extra_rounds": 0,
+    "wasted_rounds": 0,
+    "final_complete": true
+   },
+   {
+    "id": "mhr2052",
+    "trigger": "llm_enough",
+    "category": "complete",
+    "reach_size": 2,
+    "reach_missing": 0,
+    "r_star": 1,
+    "rounds_used": 1,
+    "extra_rounds": 0,
+    "wasted_rounds": 0,
+    "final_complete": true
+   },
+   {
+    "id": "mhr1902",
+    "trigger": "llm_enough",
+    "category": "complete",
+    "reach_size": 2,
+    "reach_missing": 0,
+    "r_star": 1,
+    "rounds_used": 1,
+    "extra_rounds": 0,
+    "wasted_rounds": 0,
+    "final_complete": true
+   },
+   {
+    "id": "mhr1168",
+    "trigger": "llm_enough",
+    "category": "complete",
+    "reach_size": 2,
+    "reach_missing": 0,
+    "r_star": 1,
+    "rounds_used": 1,
+    "extra_rounds": 0,
+    "wasted_rounds": 0,
+    "final_complete": true
+   },
+   {
+    "id": "mhr1154",
+    "trigger": "llm_enough",
+    "category": "complete",
+    "reach_size": 2,
+    "reach_missing": 0,
+    "r_star": 1,
+    "rounds_used": 1,
+    "extra_rounds": 0,
+    "wasted_rounds": 0,
+    "final_complete": true
+   },
+   {
+    "id": "mhr1389",
+    "trigger": "llm_enough",
+    "category": "complete",
+    "reach_size": 2,
+    "reach_missing": 0,
+    "r_star": 1,
+    "rounds_used": 1,
+    "extra_rounds": 0,
+    "wasted_rounds": 0,
+    "final_complete": true
+   },
+   {
+    "id": "mhr1071",
+    "trigger": "llm_enough",
+    "category": "complete",
+    "reach_size": 2,
+    "reach_missing": 0,
+    "r_star": 1,
+    "rounds_used": 1,
+    "extra_rounds": 0,
+    "wasted_rounds": 0,
+    "final_complete": true
+   },
+   {
+    "id": "mhr0766",
+    "trigger": "llm_enough",
+    "category": "complete",
+    "reach_size": 2,
+    "reach_missing": 0,
+    "r_star": 1,
+    "rounds_used": 1,
+    "extra_rounds": 0,
+    "wasted_rounds": 0,
+    "final_complete": true
+   },
+   {
+    "id": "mhr1988",
+    "trigger": "llm_enough",
+    "category": "complete",
+    "reach_size": 2,
+    "reach_missing": 0,
+    "r_star": 1,
+    "rounds_used": 1,
+    "extra_rounds": 0,
+    "wasted_rounds": 0,
+    "final_complete": true
+   },
+   {
+    "id": "mhr0583",
+    "trigger": "llm_enough",
+    "category": "premature",
+    "reach_size": 2,
+    "reach_missing": 0,
+    "r_star": null,
+    "rounds_used": 1,
+    "extra_rounds": null,
+    "wasted_rounds": 0,
+    "final_complete": false
+   },
+   {
+    "id": "mhr0794",
+    "trigger": "no_new_ids",
+    "category": "stall",
+    "reach_size": 2,
+    "reach_missing": 0,
+    "r_star": null,
+    "rounds_used": 4,
+    "extra_rounds": null,
+    "wasted_rounds": 3,
+    "final_complete": false
+   },
+   {
+    "id": "mhr2358",
+    "trigger": "budget",
+    "category": "budget",
+    "reach_size": 1,
+    "reach_missing": 1,
+    "r_star": 1,
+    "rounds_used": 4,
+    "extra_rounds": 3,
+    "wasted_rounds": 2,
+    "final_complete": true
+   },
+   {
+    "id": "mhr2018",
+    "trigger": "no_new_ids",
+    "category": "stall",
+    "reach_size": 1,
+    "reach_missing": 1,
+    "r_star": 1,
+    "rounds_used": 4,
+    "extra_rounds": 3,
+    "wasted_rounds": 3,
+    "final_complete": true
+   },
+   {
+    "id": "mhr2503",
+    "trigger": "llm_enough",
+    "category": "complete",
+    "reach_size": 2,
+    "reach_missing": 0,
+    "r_star": 1,
+    "rounds_used": 1,
+    "extra_rounds": 0,
+    "wasted_rounds": 0,
+    "final_complete": true
+   },
+   {
+    "id": "mhr2119",
+    "trigger": "llm_enough",
+    "category": "complete",
+    "reach_size": 2,
+    "reach_missing": 0,
+    "r_star": 1,
+    "rounds_used": 1,
+    "extra_rounds": 0,
+    "wasted_rounds": 0,
+    "final_complete": true
+   },
+   {
+    "id": "mhr0949",
+    "trigger": "llm_enough",
+    "category": "complete",
+    "reach_size": 2,
+    "reach_missing": 0,
+    "r_star": 1,
+    "rounds_used": 1,
+    "extra_rounds": 0,
+    "wasted_rounds": 0,
+    "final_complete": true
+   },
+   {
+    "id": "mhr0960",
+    "trigger": "llm_enough",
+    "category": "complete",
+    "reach_size": 2,
+    "reach_missing": 0,
+    "r_star": 1,
+    "rounds_used": 1,
+    "extra_rounds": 0,
+    "wasted_rounds": 0,
+    "final_complete": true
+   },
+   {
+    "id": "mhr2075",
+    "trigger": "no_new_ids",
+    "category": "stall",
+    "reach_size": 2,
+    "reach_missing": 0,
+    "r_star": 1,
+    "rounds_used": 2,
+    "extra_rounds": 1,
+    "wasted_rounds": 1,
+    "final_complete": true
+   },
+   {
+    "id": "mhr0807",
+    "trigger": "llm_enough",
+    "category": "complete",
+    "reach_size": 2,
+    "reach_missing": 0,
+    "r_star": 1,
+    "rounds_used": 1,
+    "extra_rounds": 0,
+    "wasted_rounds": 0,
+    "final_complete": true
+   },
+   {
+    "id": "mhr1486",
+    "trigger": "no_new_ids",
+    "category": "stall",
+    "reach_size": 2,
+    "reach_missing": 0,
+    "r_star": null,
+    "rounds_used": 4,
+    "extra_rounds": null,
+    "wasted_rounds": 3,
+    "final_complete": false
+   },
+   {
+    "id": "mhr0833",
+    "trigger": "budget",
+    "category": "budget",
+    "reach_size": 2,
+    "reach_missing": 0,
+    "r_star": null,
+    "rounds_used": 4,
+    "extra_rounds": null,
+    "wasted_rounds": 3,
+    "final_complete": false
+   },
+   {
+    "id": "mhr1896",
+    "trigger": "llm_enough",
+    "category": "complete",
+    "reach_size": 2,
+    "reach_missing": 0,
+    "r_star": 1,
+    "rounds_used": 2,
+    "extra_rounds": 1,
+    "wasted_rounds": 1,
+    "final_complete": true
+   },
+   {
+    "id": "mhr0082",
+    "trigger": "llm_enough",
+    "category": "complete",
+    "reach_size": 2,
+    "reach_missing": 0,
+    "r_star": 1,
+    "rounds_used": 2,
+    "extra_rounds": 1,
+    "wasted_rounds": 1,
+    "final_complete": true
+   },
+   {
+    "id": "mhr1426",
+    "trigger": "llm_enough",
+    "category": "complete",
+    "reach_size": 2,
+    "reach_missing": 0,
+    "r_star": 1,
+    "rounds_used": 1,
+    "extra_rounds": 0,
+    "wasted_rounds": 0,
+    "final_complete": true
+   },
+   {
+    "id": "mhr0006",
+    "trigger": "llm_enough",
+    "category": "complete",
+    "reach_size": 2,
+    "reach_missing": 0,
+    "r_star": 1,
+    "rounds_used": 1,
+    "extra_rounds": 0,
+    "wasted_rounds": 0,
+    "final_complete": true
+   },
+   {
+    "id": "mhr0495",
+    "trigger": "llm_enough",
+    "category": "complete",
+    "reach_size": 2,
+    "reach_missing": 0,
+    "r_star": 2,
+    "rounds_used": 2,
+    "extra_rounds": 0,
+    "wasted_rounds": 0,
+    "final_complete": true
+   },
+   {
+    "id": "mhr1134",
+    "trigger": "budget",
+    "category": "budget",
+    "reach_size": 1,
+    "reach_missing": 1,
+    "r_star": null,
+    "rounds_used": 4,
+    "extra_rounds": null,
+    "wasted_rounds": 4,
+    "final_complete": false
+   },
+   {
+    "id": "mhr0168",
+    "trigger": "no_new_ids",
+    "category": "stall",
+    "reach_size": 1,
+    "reach_missing": 1,
+    "r_star": 1,
+    "rounds_used": 4,
+    "extra_rounds": 3,
+    "wasted_rounds": 3,
+    "final_complete": true
+   },
+   {
+    "id": "mhr0429",
+    "trigger": "llm_enough",
+    "category": "complete",
+    "reach_size": 2,
+    "reach_missing": 0,
+    "r_star": 1,
+    "rounds_used": 1,
+    "extra_rounds": 0,
+    "wasted_rounds": 0,
+    "final_complete": true
+   },
+   {
+    "id": "mhr0896",
+    "trigger": "no_new_ids",
+    "category": "stall",
+    "reach_size": 2,
+    "reach_missing": 0,
+    "r_star": 2,
+    "rounds_used": 3,
+    "extra_rounds": 1,
+    "wasted_rounds": 1,
+    "final_complete": true
+   },
+   {
+    "id": "mhr0376",
+    "trigger": "budget",
+    "category": "budget",
+    "reach_size": 2,
+    "reach_missing": 0,
+    "r_star": 3,
+    "rounds_used": 4,
+    "extra_rounds": 1,
+    "wasted_rounds": 1,
+    "final_complete": true
+   },
+   {
+    "id": "mhr2176",
+    "trigger": "llm_enough",
+    "category": "premature",
+    "reach_size": 2,
+    "reach_missing": 0,
+    "r_star": null,
+    "rounds_used": 2,
+    "extra_rounds": null,
+    "wasted_rounds": 1,
+    "final_complete": false
+   },
+   {
+    "id": "mhr1270",
+    "trigger": "llm_enough",
+    "category": "complete",
+    "reach_size": 2,
+    "reach_missing": 0,
+    "r_star": 1,
+    "rounds_used": 1,
+    "extra_rounds": 0,
+    "wasted_rounds": 0,
+    "final_complete": true
+   },
+   {
+    "id": "mhr2330",
+    "trigger": "llm_enough",
+    "category": "complete",
+    "reach_size": 2,
+    "reach_missing": 0,
+    "r_star": 1,
+    "rounds_used": 1,
+    "extra_rounds": 0,
+    "wasted_rounds": 0,
+    "final_complete": true
+   },
+   {
+    "id": "mhr2525",
+    "trigger": "llm_enough",
+    "category": "complete",
+    "reach_size": 2,
+    "reach_missing": 0,
+    "r_star": 1,
+    "rounds_used": 1,
+    "extra_rounds": 0,
+    "wasted_rounds": 0,
+    "final_complete": true
+   },
+   {
+    "id": "mhr1390",
+    "trigger": "llm_enough",
+    "category": "premature",
+    "reach_size": 2,
+    "reach_missing": 0,
+    "r_star": null,
+    "rounds_used": 2,
+    "extra_rounds": null,
+    "wasted_rounds": 1,
+    "final_complete": false
+   },
+   {
+    "id": "mhr0091",
+    "trigger": "llm_enough",
+    "category": "complete",
+    "reach_size": 2,
+    "reach_missing": 0,
+    "r_star": 1,
+    "rounds_used": 1,
+    "extra_rounds": 0,
+    "wasted_rounds": 0,
+    "final_complete": true
+   },
+   {
+    "id": "mhr2380",
+    "trigger": "llm_enough",
+    "category": "complete",
+    "reach_size": 2,
+    "reach_missing": 0,
+    "r_star": 2,
+    "rounds_used": 2,
+    "extra_rounds": 0,
+    "wasted_rounds": 0,
+    "final_complete": true
+   },
+   {
+    "id": "mhr0760",
+    "trigger": "llm_enough",
+    "category": "complete",
+    "reach_size": 2,
+    "reach_missing": 0,
+    "r_star": 2,
+    "rounds_used": 2,
+    "extra_rounds": 0,
+    "wasted_rounds": 0,
+    "final_complete": true
+   },
+   {
+    "id": "mhr0170",
+    "trigger": "llm_enough",
+    "category": "complete",
+    "reach_size": 2,
+    "reach_missing": 0,
+    "r_star": 1,
+    "rounds_used": 1,
+    "extra_rounds": 0,
+    "wasted_rounds": 0,
+    "final_complete": true
+   },
+   {
+    "id": "mhr1851",
+    "trigger": "llm_enough",
+    "category": "complete",
+    "reach_size": 2,
+    "reach_missing": 0,
+    "r_star": 2,
+    "rounds_used": 2,
+    "extra_rounds": 0,
+    "wasted_rounds": 0,
+    "final_complete": true
+   },
+   {
+    "id": "mhr0014",
+    "trigger": "no_new_ids",
+    "category": "stall",
+    "reach_size": 2,
+    "reach_missing": 0,
+    "r_star": 1,
+    "rounds_used": 3,
+    "extra_rounds": 2,
+    "wasted_rounds": 2,
+    "final_complete": true
+   },
+   {
+    "id": "mhr0113",
+    "trigger": "llm_enough",
+    "category": "complete",
+    "reach_size": 3,
+    "reach_missing": 0,
+    "r_star": 2,
+    "rounds_used": 2,
+    "extra_rounds": 0,
+    "wasted_rounds": 0,
+    "final_complete": true
+   },
+   {
+    "id": "mhr0811",
+    "trigger": "no_new_ids",
+    "category": "stall",
+    "reach_size": 2,
+    "reach_missing": 0,
+    "r_star": 2,
+    "rounds_used": 3,
+    "extra_rounds": 1,
+    "wasted_rounds": 1,
+    "final_complete": true
+   },
+   {
+    "id": "mhr2143",
+    "trigger": "llm_enough",
+    "category": "premature",
+    "reach_size": 3,
+    "reach_missing": 0,
+    "r_star": null,
+    "rounds_used": 4,
+    "extra_rounds": null,
+    "wasted_rounds": 3,
+    "final_complete": false
+   },
+   {
+    "id": "mhr2197",
+    "trigger": "llm_enough",
+    "category": "complete",
+    "reach_size": 3,
+    "reach_missing": 0,
+    "r_star": 1,
+    "rounds_used": 1,
+    "extra_rounds": 0,
+    "wasted_rounds": 0,
+    "final_complete": true
+   },
+   {
+    "id": "mhr1416",
+    "trigger": "budget",
+    "category": "budget",
+    "reach_size": 3,
+    "reach_missing": 0,
+    "r_star": null,
+    "rounds_used": 4,
+    "extra_rounds": null,
+    "wasted_rounds": 2,
+    "final_complete": false
+   },
+   {
+    "id": "mhr2442",
+    "trigger": "llm_enough",
+    "category": "complete",
+    "reach_size": 2,
+    "reach_missing": 1,
+    "r_star": 1,
+    "rounds_used": 2,
+    "extra_rounds": 1,
+    "wasted_rounds": 0,
+    "final_complete": true
+   },
+   {
+    "id": "mhr0409",
+    "trigger": "no_new_ids",
+    "category": "stall",
+    "reach_size": 3,
+    "reach_missing": 0,
+    "r_star": null,
+    "rounds_used": 3,
+    "extra_rounds": null,
+    "wasted_rounds": 2,
+    "final_complete": false
+   },
+   {
+    "id": "mhr1019",
+    "trigger": "llm_enough",
+    "category": "premature",
+    "reach_size": 3,
+    "reach_missing": 0,
+    "r_star": null,
+    "rounds_used": 3,
+    "extra_rounds": null,
+    "wasted_rounds": 2,
+    "final_complete": false
+   },
+   {
+    "id": "mhr1181",
+    "trigger": "llm_enough",
+    "category": "premature",
+    "reach_size": 3,
+    "reach_missing": 0,
+    "r_star": null,
+    "rounds_used": 3,
+    "extra_rounds": null,
+    "wasted_rounds": 2,
+    "final_complete": false
+   },
+   {
+    "id": "mhr0549",
+    "trigger": "llm_enough",
+    "category": "complete",
+    "reach_size": 3,
+    "reach_missing": 0,
+    "r_star": 1,
+    "rounds_used": 1,
+    "extra_rounds": 0,
+    "wasted_rounds": 0,
+    "final_complete": true
+   },
+   {
+    "id": "mhr0330",
+    "trigger": "budget",
+    "category": "budget",
+    "reach_size": 3,
+    "reach_missing": 0,
+    "r_star": null,
+    "rounds_used": 4,
+    "extra_rounds": null,
+    "wasted_rounds": 3,
+    "final_complete": false
+   },
+   {
+    "id": "mhr0236",
+    "trigger": "llm_enough",
+    "category": "complete",
+    "reach_size": 2,
+    "reach_missing": 0,
+    "r_star": 1,
+    "rounds_used": 1,
+    "extra_rounds": 0,
+    "wasted_rounds": 0,
+    "final_complete": true
+   },
+   {
+    "id": "mhr1120",
+    "trigger": "llm_enough",
+    "category": "complete",
+    "reach_size": 3,
+    "reach_missing": 0,
+    "r_star": 3,
+    "rounds_used": 4,
+    "extra_rounds": 1,
+    "wasted_rounds": 1,
+    "final_complete": true
+   },
+   {
+    "id": "mhr1250",
+    "trigger": "llm_enough",
+    "category": "complete",
+    "reach_size": 2,
+    "reach_missing": 0,
+    "r_star": 1,
+    "rounds_used": 1,
+    "extra_rounds": 0,
+    "wasted_rounds": 0,
+    "final_complete": true
+   },
+   {
+    "id": "mhr0571",
+    "trigger": "llm_enough",
+    "category": "complete",
+    "reach_size": 2,
+    "reach_missing": 0,
+    "r_star": 1,
+    "rounds_used": 1,
+    "extra_rounds": 0,
+    "wasted_rounds": 0,
+    "final_complete": true
+   },
+   {
+    "id": "mhr2024",
+    "trigger": "llm_enough",
+    "category": "complete",
+    "reach_size": 2,
+    "reach_missing": 0,
+    "r_star": 1,
+    "rounds_used": 1,
+    "extra_rounds": 0,
+    "wasted_rounds": 0,
+    "final_complete": true
+   },
+   {
+    "id": "mhr1817",
+    "trigger": "llm_enough",
+    "category": "complete",
+    "reach_size": 2,
+    "reach_missing": 0,
+    "r_star": 1,
+    "rounds_used": 1,
+    "extra_rounds": 0,
+    "wasted_rounds": 0,
+    "final_complete": true
+   },
+   {
+    "id": "mhr2234",
+    "trigger": "llm_enough",
+    "category": "premature",
+    "reach_size": 2,
+    "reach_missing": 0,
+    "r_star": null,
+    "rounds_used": 1,
+    "extra_rounds": null,
+    "wasted_rounds": 0,
+    "final_complete": false
+   },
+   {
+    "id": "mhr0999",
+    "trigger": "llm_enough",
+    "category": "complete",
+    "reach_size": 1,
+    "reach_missing": 1,
+    "r_star": 1,
+    "rounds_used": 2,
+    "extra_rounds": 1,
+    "wasted_rounds": 0,
+    "final_complete": true
+   },
+   {
+    "id": "mhr1047",
+    "trigger": "llm_enough",
+    "category": "premature",
+    "reach_size": 3,
+    "reach_missing": 0,
+    "r_star": null,
+    "rounds_used": 3,
+    "extra_rounds": null,
+    "wasted_rounds": 1,
+    "final_complete": false
+   },
+   {
+    "id": "mhr1622",
+    "trigger": "llm_enough",
+    "category": "premature",
+    "reach_size": 2,
+    "reach_missing": 0,
+    "r_star": null,
+    "rounds_used": 1,
+    "extra_rounds": null,
+    "wasted_rounds": 0,
+    "final_complete": false
+   },
+   {
+    "id": "mhr0059",
+    "trigger": "llm_enough",
+    "category": "premature",
+    "reach_size": 2,
+    "reach_missing": 1,
+    "r_star": null,
+    "rounds_used": 4,
+    "extra_rounds": null,
+    "wasted_rounds": 2,
+    "final_complete": false
+   },
+   {
+    "id": "mhr0796",
+    "trigger": "llm_enough",
+    "category": "complete",
+    "reach_size": 2,
+    "reach_missing": 0,
+    "r_star": 1,
+    "rounds_used": 1,
+    "extra_rounds": 0,
+    "wasted_rounds": 0,
+    "final_complete": true
+   },
+   {
+    "id": "mhr0022",
+    "trigger": "llm_enough",
+    "category": "complete",
+    "reach_size": 3,
+    "reach_missing": 0,
+    "r_star": 1,
+    "rounds_used": 1,
+    "extra_rounds": 0,
+    "wasted_rounds": 0,
+    "final_complete": true
+   },
+   {
+    "id": "mhr0065",
+    "trigger": "llm_enough",
+    "category": "complete",
+    "reach_size": 3,
+    "reach_missing": 0,
+    "r_star": 1,
+    "rounds_used": 1,
+    "extra_rounds": 0,
+    "wasted_rounds": 0,
+    "final_complete": true
+   },
+   {
+    "id": "mhr0913",
+    "trigger": "llm_enough",
+    "category": "premature",
+    "reach_size": 2,
+    "reach_missing": 0,
+    "r_star": null,
+    "rounds_used": 1,
+    "extra_rounds": null,
+    "wasted_rounds": 0,
+    "final_complete": false
+   },
+   {
+    "id": "mhr0248",
+    "trigger": "llm_enough",
+    "category": "complete",
+    "reach_size": 2,
+    "reach_missing": 0,
+    "r_star": 1,
+    "rounds_used": 2,
+    "extra_rounds": 1,
+    "wasted_rounds": 1,
+    "final_complete": true
+   },
+   {
+    "id": "mhr1252",
+    "trigger": "budget",
+    "category": "budget",
+    "reach_size": 3,
+    "reach_missing": 0,
+    "r_star": null,
+    "rounds_used": 4,
+    "extra_rounds": null,
+    "wasted_rounds": 2,
+    "final_complete": false
+   },
+   {
+    "id": "mhr0045",
+    "trigger": "llm_enough",
+    "category": "complete",
+    "reach_size": 3,
+    "reach_missing": 0,
+    "r_star": 1,
+    "rounds_used": 1,
+    "extra_rounds": 0,
+    "wasted_rounds": 0,
+    "final_complete": true
+   },
+   {
+    "id": "mhr0665",
+    "trigger": "llm_enough",
+    "category": "complete",
+    "reach_size": 3,
+    "reach_missing": 0,
+    "r_star": 1,
+    "rounds_used": 1,
+    "extra_rounds": 0,
+    "wasted_rounds": 0,
+    "final_complete": true
+   },
+   {
+    "id": "mhr0115",
+    "trigger": "llm_enough",
+    "category": "premature",
+    "reach_size": 3,
+    "reach_missing": 0,
+    "r_star": null,
+    "rounds_used": 1,
+    "extra_rounds": null,
+    "wasted_rounds": 0,
+    "final_complete": false
+   },
+   {
+    "id": "mhr1597",
+    "trigger": "llm_enough",
+    "category": "complete",
+    "reach_size": 3,
+    "reach_missing": 0,
+    "r_star": 1,
+    "rounds_used": 1,
+    "extra_rounds": 0,
+    "wasted_rounds": 0,
+    "final_complete": true
+   },
+   {
+    "id": "mhr1757",
+    "trigger": "llm_enough",
+    "category": "premature",
+    "reach_size": 3,
+    "reach_missing": 0,
+    "r_star": null,
+    "rounds_used": 1,
+    "extra_rounds": null,
+    "wasted_rounds": 1,
+    "final_complete": false
+   },
+   {
+    "id": "mhr0431",
+    "trigger": "llm_enough",
+    "category": "premature",
+    "reach_size": 3,
+    "reach_missing": 0,
+    "r_star": null,
+    "rounds_used": 1,
+    "extra_rounds": null,
+    "wasted_rounds": 0,
+    "final_complete": false
+   },
+   {
+    "id": "mhr0535",
+    "trigger": "llm_enough",
+    "category": "premature",
+    "reach_size": 3,
+    "reach_missing": 0,
+    "r_star": null,
+    "rounds_used": 1,
+    "extra_rounds": null,
+    "wasted_rounds": 0,
+    "final_complete": false
+   },
+   {
+    "id": "mhr2000",
+    "trigger": "llm_enough",
+    "category": "premature",
+    "reach_size": 3,
+    "reach_missing": 0,
+    "r_star": null,
+    "rounds_used": 1,
+    "extra_rounds": null,
+    "wasted_rounds": 0,
+    "final_complete": false
+   },
+   {
+    "id": "mhr2456",
+    "trigger": "llm_enough",
+    "category": "premature",
+    "reach_size": 3,
+    "reach_missing": 0,
+    "r_star": null,
+    "rounds_used": 2,
+    "extra_rounds": null,
+    "wasted_rounds": 1,
+    "final_complete": false
+   },
+   {
+    "id": "mhr1977",
+    "trigger": "llm_enough",
+    "category": "premature",
+    "reach_size": 3,
+    "reach_missing": 0,
+    "r_star": null,
+    "rounds_used": 1,
+    "extra_rounds": null,
+    "wasted_rounds": 0,
+    "final_complete": false
+   },
+   {
+    "id": "mhr1343",
+    "trigger": "llm_enough",
+    "category": "premature",
+    "reach_size": 3,
+    "reach_missing": 0,
+    "r_star": null,
+    "rounds_used": 1,
+    "extra_rounds": null,
+    "wasted_rounds": 0,
+    "final_complete": false
+   },
+   {
+    "id": "mhr0480",
+    "trigger": "llm_enough",
+    "category": "premature",
+    "reach_size": 3,
+    "reach_missing": 0,
+    "r_star": null,
+    "rounds_used": 1,
+    "extra_rounds": null,
+    "wasted_rounds": 0,
+    "final_complete": false
+   },
+   {
+    "id": "mhr0920",
+    "trigger": "llm_enough",
+    "category": "premature",
+    "reach_size": 3,
+    "reach_missing": 0,
+    "r_star": null,
+    "rounds_used": 1,
+    "extra_rounds": null,
+    "wasted_rounds": 1,
+    "final_complete": false
+   },
+   {
+    "id": "mhr0581",
+    "trigger": "llm_enough",
+    "category": "premature",
+    "reach_size": 3,
+    "reach_missing": 0,
+    "r_star": null,
+    "rounds_used": 1,
+    "extra_rounds": null,
+    "wasted_rounds": 0,
+    "final_complete": false
+   },
+   {
+    "id": "mhr1058",
+    "trigger": "llm_enough",
+    "category": "premature",
+    "reach_size": 3,
+    "reach_missing": 0,
+    "r_star": null,
+    "rounds_used": 1,
+    "extra_rounds": null,
+    "wasted_rounds": 0,
+    "final_complete": false
+   },
+   {
+    "id": "mhr0371",
+    "trigger": "llm_enough",
+    "category": "premature",
+    "reach_size": 3,
+    "reach_missing": 0,
+    "r_star": null,
+    "rounds_used": 1,
+    "extra_rounds": null,
+    "wasted_rounds": 0,
+    "final_complete": false
+   },
+   {
+    "id": "mhr1333",
+    "trigger": "llm_enough",
+    "category": "premature",
+    "reach_size": 3,
+    "reach_missing": 0,
+    "r_star": null,
+    "rounds_used": 1,
+    "extra_rounds": null,
+    "wasted_rounds": 0,
+    "final_complete": false
+   },
+   {
+    "id": "mhr0222",
+    "trigger": "llm_enough",
+    "category": "complete",
+    "reach_size": 3,
+    "reach_missing": 0,
+    "r_star": 2,
+    "rounds_used": 2,
+    "extra_rounds": 0,
+    "wasted_rounds": 0,
+    "final_complete": true
+   },
+   {
+    "id": "mhr0004",
+    "trigger": "no_new_ids",
+    "category": "stall",
+    "reach_size": 3,
+    "reach_missing": 0,
+    "r_star": 1,
+    "rounds_used": 3,
+    "extra_rounds": 2,
+    "wasted_rounds": 2,
+    "final_complete": true
+   },
+   {
+    "id": "mhr0979",
+    "trigger": "llm_enough",
+    "category": "complete",
+    "reach_size": 3,
+    "reach_missing": 0,
+    "r_star": 2,
+    "rounds_used": 2,
+    "extra_rounds": 0,
+    "wasted_rounds": 0,
+    "final_complete": true
+   },
+   {
+    "id": "mhr0063",
+    "trigger": "llm_enough",
+    "category": "complete",
+    "reach_size": 3,
+    "reach_missing": 0,
+    "r_star": 1,
+    "rounds_used": 1,
+    "extra_rounds": 0,
+    "wasted_rounds": 0,
+    "final_complete": true
+   },
+   {
+    "id": "mhr2553",
+    "trigger": "no_new_ids",
+    "category": "stall",
+    "reach_size": 3,
+    "reach_missing": 0,
+    "r_star": null,
+    "rounds_used": 4,
+    "extra_rounds": null,
+    "wasted_rounds": 3,
+    "final_complete": false
+   },
+   {
+    "id": "mhr2094",
+    "trigger": "llm_enough",
+    "category": "premature",
+    "reach_size": 3,
+    "reach_missing": 0,
+    "r_star": null,
+    "rounds_used": 1,
+    "extra_rounds": null,
+    "wasted_rounds": 0,
+    "final_complete": false
+   },
+   {
+    "id": "mhr2334",
+    "trigger": "llm_enough",
+    "category": "premature",
+    "reach_size": 3,
+    "reach_missing": 0,
+    "r_star": null,
+    "rounds_used": 2,
+    "extra_rounds": null,
+    "wasted_rounds": 0,
+    "final_complete": false
+   },
+   {
+    "id": "mhr1508",
+    "trigger": "llm_enough",
+    "category": "premature",
+    "reach_size": 3,
+    "reach_missing": 0,
+    "r_star": null,
+    "rounds_used": 2,
+    "extra_rounds": null,
+    "wasted_rounds": 1,
+    "final_complete": false
+   },
+   {
+    "id": "mhr2389",
+    "trigger": "llm_enough",
+    "category": "premature",
+    "reach_size": 4,
+    "reach_missing": 0,
+    "r_star": null,
+    "rounds_used": 1,
+    "extra_rounds": null,
+    "wasted_rounds": 0,
+    "final_complete": false
+   },
+   {
+    "id": "mhr1035",
+    "trigger": "llm_enough",
+    "category": "premature",
+    "reach_size": 3,
+    "reach_missing": 0,
+    "r_star": null,
+    "rounds_used": 1,
+    "extra_rounds": null,
+    "wasted_rounds": 0,
+    "final_complete": false
+   },
+   {
+    "id": "mhr1016",
+    "trigger": "llm_enough",
+    "category": "premature",
+    "reach_size": 4,
+    "reach_missing": 0,
+    "r_star": null,
+    "rounds_used": 1,
+    "extra_rounds": null,
+    "wasted_rounds": 0,
+    "final_complete": false
+   },
+   {
+    "id": "mhr0327",
+    "trigger": "llm_enough",
+    "category": "premature",
+    "reach_size": 4,
+    "reach_missing": 0,
+    "r_star": null,
+    "rounds_used": 1,
+    "extra_rounds": null,
+    "wasted_rounds": 0,
+    "final_complete": false
+   },
+   {
+    "id": "mhr0274",
+    "trigger": "llm_enough",
+    "category": "premature",
+    "reach_size": 4,
+    "reach_missing": 0,
+    "r_star": null,
+    "rounds_used": 1,
+    "extra_rounds": null,
+    "wasted_rounds": 0,
+    "final_complete": false
+   },
+   {
+    "id": "mhr0206",
+    "trigger": "llm_enough",
+    "category": "premature",
+    "reach_size": 4,
+    "reach_missing": 0,
+    "r_star": null,
+    "rounds_used": 1,
+    "extra_rounds": null,
+    "wasted_rounds": 0,
+    "final_complete": false
+   },
+   {
+    "id": "mhr1429",
+    "trigger": "llm_enough",
+    "category": "premature",
+    "reach_size": 3,
+    "reach_missing": 1,
+    "r_star": null,
+    "rounds_used": 2,
+    "extra_rounds": null,
+    "wasted_rounds": 0,
+    "final_complete": false
+   },
+   {
+    "id": "mhr0944",
+    "trigger": "llm_enough",
+    "category": "premature",
+    "reach_size": 4,
+    "reach_missing": 0,
+    "r_star": null,
+    "rounds_used": 1,
+    "extra_rounds": null,
+    "wasted_rounds": 1,
+    "final_complete": false
+   },
+   {
+    "id": "mhr1549",
+    "trigger": "llm_enough",
+    "category": "premature",
+    "reach_size": 4,
+    "reach_missing": 0,
+    "r_star": null,
+    "rounds_used": 1,
+    "extra_rounds": null,
+    "wasted_rounds": 0,
+    "final_complete": false
+   },
+   {
+    "id": "mhr0303",
+    "trigger": "llm_enough",
+    "category": "premature",
+    "reach_size": 4,
+    "reach_missing": 0,
+    "r_star": null,
+    "rounds_used": 2,
+    "extra_rounds": null,
+    "wasted_rounds": 0,
+    "final_complete": false
+   },
+   {
+    "id": "mhr2475",
+    "trigger": "llm_enough",
+    "category": "premature",
+    "reach_size": 4,
+    "reach_missing": 0,
+    "r_star": null,
+    "rounds_used": 1,
+    "extra_rounds": null,
+    "wasted_rounds": 0,
+    "final_complete": false
+   },
+   {
+    "id": "mhr0765",
+    "trigger": "llm_enough",
+    "category": "premature",
+    "reach_size": 4,
+    "reach_missing": 0,
+    "r_star": null,
+    "rounds_used": 1,
+    "extra_rounds": null,
+    "wasted_rounds": 0,
+    "final_complete": false
+   },
+   {
+    "id": "mhr2356",
+    "trigger": "llm_enough",
+    "category": "premature",
+    "reach_size": 4,
+    "reach_missing": 0,
+    "r_star": null,
+    "rounds_used": 1,
+    "extra_rounds": null,
+    "wasted_rounds": 0,
+    "final_complete": false
+   },
+   {
+    "id": "mhr0138",
+    "trigger": "llm_enough",
+    "category": "premature",
+    "reach_size": 4,
+    "reach_missing": 0,
+    "r_star": null,
+    "rounds_used": 2,
+    "extra_rounds": null,
+    "wasted_rounds": 1,
+    "final_complete": false
+   },
+   {
+    "id": "mhr2285",
+    "trigger": "llm_enough",
+    "category": "premature",
+    "reach_size": 4,
+    "reach_missing": 0,
+    "r_star": null,
+    "rounds_used": 1,
+    "extra_rounds": null,
+    "wasted_rounds": 0,
+    "final_complete": false
+   },
+   {
+    "id": "mhr1980",
+    "trigger": "llm_enough",
+    "category": "premature",
+    "reach_size": 4,
+    "reach_missing": 0,
+    "r_star": null,
+    "rounds_used": 1,
+    "extra_rounds": null,
+    "wasted_rounds": 0,
+    "final_complete": false
+   },
+   {
+    "id": "mhr1042",
+    "trigger": "llm_enough",
+    "category": "premature",
+    "reach_size": 4,
+    "reach_missing": 0,
+    "r_star": null,
+    "rounds_used": 2,
+    "extra_rounds": null,
+    "wasted_rounds": 0,
+    "final_complete": false
+   },
+   {
+    "id": "mhr0487",
+    "trigger": "llm_enough",
+    "category": "premature",
+    "reach_size": 4,
+    "reach_missing": 0,
+    "r_star": null,
+    "rounds_used": 2,
+    "extra_rounds": null,
+    "wasted_rounds": 1,
+    "final_complete": false
+   },
+   {
+    "id": "mhr1112",
+    "trigger": "llm_enough",
+    "category": "premature",
+    "reach_size": 4,
+    "reach_missing": 0,
+    "r_star": null,
+    "rounds_used": 1,
+    "extra_rounds": null,
+    "wasted_rounds": 0,
+    "final_complete": false
+   },
+   {
+    "id": "mhr1702",
+    "trigger": "llm_enough",
+    "category": "premature",
+    "reach_size": 4,
+    "reach_missing": 0,
+    "r_star": null,
+    "rounds_used": 1,
+    "extra_rounds": null,
+    "wasted_rounds": 0,
+    "final_complete": false
+   },
+   {
+    "id": "mhr1828",
+    "trigger": "llm_enough",
+    "category": "premature",
+    "reach_size": 3,
+    "reach_missing": 1,
+    "r_star": null,
+    "rounds_used": 2,
+    "extra_rounds": null,
+    "wasted_rounds": 1,
+    "final_complete": false
+   },
+   {
+    "id": "mhr0995",
+    "trigger": "llm_enough",
+    "category": "premature",
+    "reach_size": 3,
+    "reach_missing": 1,
+    "r_star": null,
+    "rounds_used": 1,
+    "extra_rounds": null,
+    "wasted_rounds": 0,
+    "final_complete": false
+   },
+   {
+    "id": "mhr2088",
+    "trigger": "llm_enough",
+    "category": "premature",
+    "reach_size": 3,
+    "reach_missing": 1,
+    "r_star": null,
+    "rounds_used": 1,
+    "extra_rounds": null,
+    "wasted_rounds": 0,
+    "final_complete": false
+   },
+   {
+    "id": "mhr0544",
+    "trigger": "llm_enough",
+    "category": "complete",
+    "reach_size": 3,
+    "reach_missing": 1,
+    "r_star": 4,
+    "rounds_used": 4,
+    "extra_rounds": 0,
+    "wasted_rounds": 0,
+    "final_complete": true
+   },
+   {
+    "id": "mhr1060",
+    "trigger": "no_new_ids",
+    "category": "stall",
+    "reach_size": 4,
+    "reach_missing": 0,
+    "r_star": null,
+    "rounds_used": 3,
+    "extra_rounds": null,
+    "wasted_rounds": 1,
+    "final_complete": false
+   },
+   {
+    "id": "mhr1836",
+    "trigger": "llm_enough",
+    "category": "complete",
+    "reach_size": 2,
+    "reach_missing": 0,
+    "r_star": 1,
+    "rounds_used": 1,
+    "extra_rounds": 0,
+    "wasted_rounds": 0,
+    "final_complete": true
+   },
+   {
+    "id": "mhr0986",
+    "trigger": "llm_enough",
+    "category": "complete",
+    "reach_size": 2,
+    "reach_missing": 0,
+    "r_star": 1,
+    "rounds_used": 1,
+    "extra_rounds": 0,
+    "wasted_rounds": 0,
+    "final_complete": true
+   },
+   {
+    "id": "mhr1593",
+    "trigger": "llm_enough",
+    "category": "complete",
+    "reach_size": 1,
+    "reach_missing": 1,
+    "r_star": 1,
+    "rounds_used": 2,
+    "extra_rounds": 1,
+    "wasted_rounds": 0,
+    "final_complete": true
+   },
+   {
+    "id": "mhr1504",
+    "trigger": "llm_enough",
+    "category": "complete",
+    "reach_size": 2,
+    "reach_missing": 0,
+    "r_star": 1,
+    "rounds_used": 3,
+    "extra_rounds": 2,
+    "wasted_rounds": 2,
+    "final_complete": true
+   },
+   {
+    "id": "mhr1543",
+    "trigger": "llm_enough",
+    "category": "premature",
+    "reach_size": 2,
+    "reach_missing": 0,
+    "r_star": null,
+    "rounds_used": 1,
+    "extra_rounds": null,
+    "wasted_rounds": 0,
+    "final_complete": false
+   },
+   {
+    "id": "mhr1838",
+    "trigger": "no_new_ids",
+    "category": "stall",
+    "reach_size": 2,
+    "reach_missing": 0,
+    "r_star": 1,
+    "rounds_used": 2,
+    "extra_rounds": 1,
+    "wasted_rounds": 1,
+    "final_complete": true
+   },
+   {
+    "id": "mhr0414",
+    "trigger": "llm_enough",
+    "category": "complete",
+    "reach_size": 2,
+    "reach_missing": 0,
+    "r_star": 1,
+    "rounds_used": 1,
+    "extra_rounds": 0,
+    "wasted_rounds": 0,
+    "final_complete": true
+   },
+   {
+    "id": "mhr2291",
+    "trigger": "llm_enough",
+    "category": "complete",
+    "reach_size": 2,
+    "reach_missing": 0,
+    "r_star": 1,
+    "rounds_used": 1,
+    "extra_rounds": 0,
+    "wasted_rounds": 0,
+    "final_complete": true
+   },
+   {
+    "id": "mhr0951",
+    "trigger": "budget",
+    "category": "budget",
+    "reach_size": 2,
+    "reach_missing": 0,
+    "r_star": 4,
+    "rounds_used": 4,
+    "extra_rounds": 0,
+    "wasted_rounds": 0,
+    "final_complete": true
+   },
+   {
+    "id": "mhr1606",
+    "trigger": "llm_enough",
+    "category": "complete",
+    "reach_size": 2,
+    "reach_missing": 0,
+    "r_star": 1,
+    "rounds_used": 1,
+    "extra_rounds": 0,
+    "wasted_rounds": 0,
+    "final_complete": true
+   },
+   {
+    "id": "mhr2114",
+    "trigger": "no_new_ids",
+    "category": "stall",
+    "reach_size": 2,
+    "reach_missing": 0,
+    "r_star": null,
+    "rounds_used": 3,
+    "extra_rounds": null,
+    "wasted_rounds": 2,
+    "final_complete": false
+   },
+   {
+    "id": "mhr1073",
+    "trigger": "llm_enough",
+    "category": "complete",
+    "reach_size": 2,
+    "reach_missing": 0,
+    "r_star": 1,
+    "rounds_used": 1,
+    "extra_rounds": 0,
+    "wasted_rounds": 0,
+    "final_complete": true
+   },
+   {
+    "id": "mhr1251",
+    "trigger": "no_new_ids",
+    "category": "stall",
+    "reach_size": 2,
+    "reach_missing": 0,
+    "r_star": null,
+    "rounds_used": 4,
+    "extra_rounds": null,
+    "wasted_rounds": 3,
+    "final_complete": false
+   },
+   {
+    "id": "mhr0373",
+    "trigger": "llm_enough",
+    "category": "complete",
+    "reach_size": 2,
+    "reach_missing": 0,
+    "r_star": 1,
+    "rounds_used": 1,
+    "extra_rounds": 0,
+    "wasted_rounds": 0,
+    "final_complete": true
+   },
+   {
+    "id": "mhr1982",
+    "trigger": "llm_enough",
+    "category": "complete",
+    "reach_size": 2,
+    "reach_missing": 0,
+    "r_star": 1,
+    "rounds_used": 1,
+    "extra_rounds": 0,
+    "wasted_rounds": 0,
+    "final_complete": true
+   },
+   {
+    "id": "mhr2547",
+    "trigger": "no_new_ids",
+    "category": "stall",
+    "reach_size": 2,
+    "reach_missing": 0,
+    "r_star": null,
+    "rounds_used": 3,
+    "extra_rounds": null,
+    "wasted_rounds": 2,
+    "final_complete": false
+   },
+   {
+    "id": "mhr0607",
+    "trigger": "no_new_ids",
+    "category": "stall",
+    "reach_size": 2,
+    "reach_missing": 0,
+    "r_star": 1,
+    "rounds_used": 3,
+    "extra_rounds": 2,
+    "wasted_rounds": 2,
+    "final_complete": true
+   },
+   {
+    "id": "mhr0184",
+    "trigger": "no_new_ids",
+    "category": "stall",
+    "reach_size": 2,
+    "reach_missing": 0,
+    "r_star": null,
+    "rounds_used": 4,
+    "extra_rounds": null,
+    "wasted_rounds": 4,
+    "final_complete": false
+   },
+   {
+    "id": "mhr1638",
+    "trigger": "no_new_ids",
+    "category": "stall",
+    "reach_size": 2,
+    "reach_missing": 0,
+    "r_star": 1,
+    "rounds_used": 4,
+    "extra_rounds": 3,
+    "wasted_rounds": 3,
+    "final_complete": true
+   },
+   {
+    "id": "mhr0179",
+    "trigger": "no_new_ids",
+    "category": "stall",
+    "reach_size": 2,
+    "reach_missing": 0,
+    "r_star": 1,
+    "rounds_used": 2,
+    "extra_rounds": 1,
+    "wasted_rounds": 1,
+    "final_complete": true
+   },
+   {
+    "id": "mhr0308",
+    "trigger": "llm_enough",
+    "category": "premature",
+    "reach_size": 2,
+    "reach_missing": 0,
+    "r_star": null,
+    "rounds_used": 2,
+    "extra_rounds": null,
+    "wasted_rounds": 1,
+    "final_complete": false
+   },
+   {
+    "id": "mhr0592",
+    "trigger": "llm_enough",
+    "category": "complete",
+    "reach_size": 2,
+    "reach_missing": 0,
+    "r_star": 2,
+    "rounds_used": 2,
+    "extra_rounds": 0,
+    "wasted_rounds": 0,
+    "final_complete": true
+   },
+   {
+    "id": "mhr2146",
+    "trigger": "llm_enough",
+    "category": "complete",
+    "reach_size": 2,
+    "reach_missing": 0,
+    "r_star": 1,
+    "rounds_used": 1,
+    "extra_rounds": 0,
+    "wasted_rounds": 0,
+    "final_complete": true
+   },
+   {
+    "id": "mhr2281",
+    "trigger": "budget",
+    "category": "budget",
+    "reach_size": 2,
+    "reach_missing": 0,
+    "r_star": null,
+    "rounds_used": 4,
+    "extra_rounds": null,
+    "wasted_rounds": 3,
+    "final_complete": false
+   },
+   {
+    "id": "mhr1179",
+    "trigger": "no_new_ids",
+    "category": "stall",
+    "reach_size": 2,
+    "reach_missing": 0,
+    "r_star": null,
+    "rounds_used": 4,
+    "extra_rounds": null,
+    "wasted_rounds": 3,
+    "final_complete": false
+   },
+   {
+    "id": "mhr0622",
+    "trigger": "llm_enough",
+    "category": "premature",
+    "reach_size": 3,
+    "reach_missing": 0,
+    "r_star": null,
+    "rounds_used": 1,
+    "extra_rounds": null,
+    "wasted_rounds": 0,
+    "final_complete": false
+   },
+   {
+    "id": "mhr1875",
+    "trigger": "no_new_ids",
+    "category": "stall",
+    "reach_size": 1,
+    "reach_missing": 1,
+    "r_star": 1,
+    "rounds_used": 2,
+    "extra_rounds": 1,
+    "wasted_rounds": 1,
+    "final_complete": true
+   },
+   {
+    "id": "mhr1256",
+    "trigger": "llm_enough",
+    "category": "premature",
+    "reach_size": 3,
+    "reach_missing": 0,
+    "r_star": null,
+    "rounds_used": 1,
+    "extra_rounds": null,
+    "wasted_rounds": 0,
+    "final_complete": false
+   },
+   {
+    "id": "mhr0785",
+    "trigger": "budget",
+    "category": "budget",
+    "reach_size": 2,
+    "reach_missing": 0,
+    "r_star": 1,
+    "rounds_used": 4,
+    "extra_rounds": 3,
+    "wasted_rounds": 3,
+    "final_complete": true
+   },
+   {
+    "id": "mhr0567",
+    "trigger": "llm_enough",
+    "category": "premature",
+    "reach_size": 3,
+    "reach_missing": 0,
+    "r_star": null,
+    "rounds_used": 1,
+    "extra_rounds": null,
+    "wasted_rounds": 0,
+    "final_complete": false
+   },
+   {
+    "id": "mhr1767",
+    "trigger": "llm_enough",
+    "category": "premature",
+    "reach_size": 3,
+    "reach_missing": 0,
+    "r_star": null,
+    "rounds_used": 1,
+    "extra_rounds": null,
+    "wasted_rounds": 0,
+    "final_complete": false
+   },
+   {
+    "id": "mhr1630",
+    "trigger": "budget",
+    "category": "budget",
+    "reach_size": 3,
+    "reach_missing": 0,
+    "r_star": null,
+    "rounds_used": 4,
+    "extra_rounds": null,
+    "wasted_rounds": 3,
+    "final_complete": false
+   },
+   {
+    "id": "mhr1779",
+    "trigger": "llm_enough",
+    "category": "complete",
+    "reach_size": 2,
+    "reach_missing": 1,
+    "r_star": 1,
+    "rounds_used": 1,
+    "extra_rounds": 0,
+    "wasted_rounds": 0,
+    "final_complete": true
+   },
+   {
+    "id": "mhr0220",
+    "trigger": "no_new_ids",
+    "category": "stall",
+    "reach_size": 3,
+    "reach_missing": 0,
+    "r_star": null,
+    "rounds_used": 3,
+    "extra_rounds": null,
+    "wasted_rounds": 2,
+    "final_complete": false
+   },
+   {
+    "id": "mhr0814",
+    "trigger": "llm_enough",
+    "category": "complete",
+    "reach_size": 3,
+    "reach_missing": 0,
+    "r_star": 1,
+    "rounds_used": 1,
+    "extra_rounds": 0,
+    "wasted_rounds": 0,
+    "final_complete": true
+   },
+   {
+    "id": "mhr1541",
+    "trigger": "no_new_ids",
+    "category": "stall",
+    "reach_size": 3,
+    "reach_missing": 0,
+    "r_star": null,
+    "rounds_used": 3,
+    "extra_rounds": null,
+    "wasted_rounds": 1,
+    "final_complete": false
+   },
+   {
+    "id": "mhr0257",
+    "trigger": "llm_enough",
+    "category": "premature",
+    "reach_size": 3,
+    "reach_missing": 0,
+    "r_star": null,
+    "rounds_used": 1,
+    "extra_rounds": null,
+    "wasted_rounds": 0,
+    "final_complete": false
+   },
+   {
+    "id": "mhr1726",
+    "trigger": "no_new_ids",
+    "category": "stall",
+    "reach_size": 3,
+    "reach_missing": 0,
+    "r_star": null,
+    "rounds_used": 3,
+    "extra_rounds": null,
+    "wasted_rounds": 1,
+    "final_complete": false
+   },
+   {
+    "id": "mhr1698",
+    "trigger": "llm_enough",
+    "category": "complete",
+    "reach_size": 3,
+    "reach_missing": 0,
+    "r_star": 1,
+    "rounds_used": 1,
+    "extra_rounds": 0,
+    "wasted_rounds": 0,
+    "final_complete": true
+   },
+   {
+    "id": "mhr1040",
+    "trigger": "llm_enough",
+    "category": "premature",
+    "reach_size": 3,
+    "reach_missing": 0,
+    "r_star": null,
+    "rounds_used": 1,
+    "extra_rounds": null,
+    "wasted_rounds": 0,
+    "final_complete": false
+   },
+   {
+    "id": "mhr0381",
+    "trigger": "llm_enough",
+    "category": "complete",
+    "reach_size": 3,
+    "reach_missing": 0,
+    "r_star": 1,
+    "rounds_used": 1,
+    "extra_rounds": 0,
+    "wasted_rounds": 0,
+    "final_complete": true
+   },
+   {
+    "id": "mhr1800",
+    "trigger": "no_new_ids",
+    "category": "stall",
+    "reach_size": 3,
+    "reach_missing": 0,
+    "r_star": null,
+    "rounds_used": 4,
+    "extra_rounds": null,
+    "wasted_rounds": 2,
+    "final_complete": false
+   },
+   {
+    "id": "mhr0864",
+    "trigger": "no_new_ids",
+    "category": "stall",
+    "reach_size": 3,
+    "reach_missing": 0,
+    "r_star": null,
+    "rounds_used": 3,
+    "extra_rounds": null,
+    "wasted_rounds": 2,
+    "final_complete": false
+   },
+   {
+    "id": "mhr1937",
+    "trigger": "llm_enough",
+    "category": "premature",
+    "reach_size": 3,
+    "reach_missing": 0,
+    "r_star": null,
+    "rounds_used": 1,
+    "extra_rounds": null,
+    "wasted_rounds": 0,
+    "final_complete": false
+   },
+   {
+    "id": "mhr0736",
+    "trigger": "no_new_ids",
+    "category": "stall",
+    "reach_size": 3,
+    "reach_missing": 0,
+    "r_star": null,
+    "rounds_used": 3,
+    "extra_rounds": null,
+    "wasted_rounds": 2,
+    "final_complete": false
+   },
+   {
+    "id": "mhr0623",
+    "trigger": "llm_enough",
+    "category": "premature",
+    "reach_size": 3,
+    "reach_missing": 0,
+    "r_star": null,
+    "rounds_used": 4,
+    "extra_rounds": null,
+    "wasted_rounds": 2,
+    "final_complete": false
+   }
+  ]
+ },
+ "hop_curve": {
+  "answerable": 176,
+  "recall_by_round": {
+   "5": [
+    0.648201,
+    0.714489,
+    0.730114,
+    0.73911
+   ],
+   "10": [
+    0.78125,
+    0.825758,
+    0.837595,
+    0.837595
+   ],
+   "20": [
+    0.902936,
+    0.932292,
+    0.942708,
+    0.945549
+   ],
+   "50": [
+    0.961648,
+    0.976799,
+    0.981061,
+    0.981061
+   ]
+  }
+ },
+ "constraint": {
+  "n": 159,
+  "content_retention": 0.9443,
+  "source_retention": 0.7338,
+  "corr_with_delta": 0.0888
+ },
+ "n_recommendation": {
+  "primary_metric": "answer accuracy (B3−B1)",
+  "observed_delta": 0.1023,
+  "discordance_rate": 0.1477,
+  "mde_at_200": 0.0782,
+  "significant_at_200": true,
+  "n_for_observed": 150,
+  "n_for_5pp": 500,
+  "note": "McNemar 配对比例样本量近似（80% power, α=0.05 双侧，实测不一致率 0.148）；观察到的效应在 N=200 已显著。",
+  "suggested_n": 200
+ },
+ "cost": {
+  "raw": "main={'calls': 1039, 'prompt_tokens': 7631121, 'completion_tokens': 1783122} answer_judge={'calls': 46, 'prompt_tokens': 8181, 'completion_tokens': 8726}",
+  "run_log": "D:\\python_work\\work2026-4\\wk-48\\experiments\\agentic-rag-census\\phase_b\\artifacts\\trace\\run.log"
+ },
+ "hashes": {
+  "b1_recall": "db55c5a3a45fa4e6",
+  "arms": {
+   "b1": "9319b46102cd9d70",
+   "b2": "374f457c22803f68",
+   "b3": "aa2d77c0a0fd5d52"
+  }
+ }
+}
