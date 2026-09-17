@@ -1,0 +1,11 @@
+{
+  "model": "jinaai/jina-reranker-v2-base-multilingual",
+  "onnx_file": "onnx/model_int8.onnx",
+  "max_length": 1024,
+  "max_chars": 512,
+  "queries": 2,
+  "docs": 134,
+  "scored": 268,
+  "dedup_saved": 6,
+  "seconds": 31.2
+}
