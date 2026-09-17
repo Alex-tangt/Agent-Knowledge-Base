@@ -28,19 +28,9 @@ def _resolve_gen(index_dir: str, gen: str | None) -> str:
         return fh.read().strip()
 
 
-def _load_docs(index_dir: str, gen: str) -> tuple[list[str], list[str]]:
-    manifest_path = os.path.join(index_dir, gen, "manifest.json")
-    with open(manifest_path, encoding="utf-8") as fh:
-        manifest = json.load(fh)
-    ids, texts = [], []
-    for entry_id, meta in manifest["entries"].items():
-        path = meta.get("path")
-        if not path or not os.path.isfile(path):
-            continue
-        with open(path, encoding="utf-8") as fh:
-            texts.append(fh.read())
-        ids.append(entry_id)
-    return ids, texts
+def _load_docs(index_dir: str, gen: str, source: str) -> tuple[list[str], list[str]]:
+    from docs_source import load_texts
+    return load_texts(index_dir, gen, source)
 
 
 def _load_queries(eval_set: str) -> list[dict]:
@@ -82,10 +72,12 @@ def main(argv=None) -> int:
     parser.add_argument("--max-length", type=int, default=8192)
     parser.add_argument("--batch-size", type=int, default=4)
     parser.add_argument("--prefixes", default="128,512", help="colbert 前缀截断（full 总会算）")
+    parser.add_argument("--text-source", default="qdrant", choices=["qdrant", "file"],
+                        help="正文来源：qdrant=索引 payload（生产一致，默认）｜file=原始 .md（含 frontmatter，仅对照）")
     args = parser.parse_args(argv)
 
     gen = _resolve_gen(args.index_dir, args.gen)
-    doc_ids, doc_texts = _load_docs(args.index_dir, gen)
+    doc_ids, doc_texts = _load_docs(args.index_dir, gen, args.text_source)
     queries = _load_queries(args.eval_set)
     _log(f"gen={gen} docs={len(doc_ids)} queries={len(queries)}")
 

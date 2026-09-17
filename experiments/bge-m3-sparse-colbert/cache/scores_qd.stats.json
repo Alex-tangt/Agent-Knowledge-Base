@@ -1,0 +1,13 @@
+{
+  "gen": "gen-2",
+  "docs": 134,
+  "queries": 51,
+  "max_length": 8192,
+  "d_tokens_mean": 1338.5149253731342,
+  "d_tokens_max": 3798,
+  "d_tokens_over_512": 109,
+  "d_tokens_over_8192": 0,
+  "sparse_nonzero_mean": 89.19402985074628,
+  "colbert_bytes_full": 734662656,
+  "colbert_bytes_128": 69279744
+}
