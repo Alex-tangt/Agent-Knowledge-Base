@@ -44,10 +44,10 @@ query
 
 **结论一句话**：**参数级优化已做尽（6 轮扫描）；召回已近上限，剩下的分歧都在"选择"而非"调参"。**
 结构性未决收敛为 **1 个**：**C7 缺失的"重排+阈值"这一级**。
-BGE-M3 的两种未用表示已在 2026-09-16 实测（`experiments/bge-m3-sparse-colbert/`）：
-**sparse ④ 否决**（0.167，且拖累任何融合）；**colbert ⑤ 是正向信号**（单路 0.669 > dense 0.641；
-与 ST-dense z-score 融合 **0.746 / r@3 0.935 / nDCG 0.9046 / MRR 0.8937**，**全指标超生产 0.7074**）
-——但 **未过"+3 题"闸门**（r@1 +1.7 题），落地需 multivector schema + 281MB（@512）→ **待 owner 定是否开票**。
+BGE-M3 的另两种表示 + **蒸馏拟合**已在 2026-09-16 做完（`experiments/bge-m3-sparse-colbert/`）：
+**sparse ④ 否决**（0.133）；**colbert ⑤ 正向**（单路 0.698 > dense 0.641）；**⑦ 蒸馏拟合的 4 路融合**
+把默认链路推到 **r@1 0.7759（+3.1 题，bootstrap CI 显著净胜）/ r@5 0.9685 / nDCG 0.9143 / MRR 0.9144**
+——**过闸门**。落地仍需 multivector schema + 281MB（@512）+ 全量重建；**待 owner 定是否开票**（§4 U3）。
 
 ---
 
@@ -71,9 +71,10 @@ BGE-M3 的两种未用表示已在 2026-09-16 实测（`experiments/bge-m3-spars
 | **① 手写关键词加法（现状）** | `ragcore/strategies/default.py`（CJK 二元组子串匹配 + 加法增强） | **0.7074** | 0.9185 | **0.8817** | **0.8731** | **默认在用** |
 | ② tfidf sparse + store 原生 hybrid | `memory_agent/memory/sparse.py` | 0.5000 (rrf) / 0.5444 (dbsf) | 0.8556 / 0.8037 | 0.7626 / 0.7518 | 0.7254 / 0.7095 | 已实现、默认关 |
 | ③ **BM25**（fastembed `Qdrant/bm25`）+ 原生 hybrid | `memory_agent/memory/bm25.py`（#40） | 0.6407 (rrf) / **0.7111 (dbsf)** | 0.9111 / **0.9333** | 0.8385 / 0.8765 | 0.7988 / 0.8380 | 已实现、**可选后端** |
-| ④ BGE-M3 **原生 sparse**（学习词权重） | `FlagEmbedding`，实测 2026-09-16 | **0.167** | 0.400 | 0.3298 | 0.2967 | **已测 → 否决** |
-| ⑤ **ColBERT** 多向量 | `FlagEmbedding`，实测 2026-09-16 | **0.669**（full） | 0.907 | 0.8476 | 0.8241 | **已测**（见下） |
-| ⑥ ST-dense + ⑤（z-score .5/.5） | 同上 | **0.746** | 0.946 | **0.9046** | **0.8937** | **全指标超生产** |
+| ④ BGE-M3 **原生 sparse**（学习词权重） | `FlagEmbedding`，实测 2026-09-16（**渲染正文**） | **0.133** | 0.222 | 0.2520 | 0.2382 | **已测 → 否决** |
+| ⑤ **ColBERT** 多向量（512/full） | 同上 | **0.698** | 0.874 | 0.8645 | 0.8533 | **已测**（见下） |
+| ⑥ ST-dense + ⑤（z-score .5/.5） | 同上 | **0.754** | 0.913 | **0.9053** | **0.9007** | **全指标超生产** |
+| ⑦ ⑥+手写 kw+sparse（**蒸馏拟合**，z-score） | `fit_fusion.py`，实测 2026-09-16 | **0.7759**（qrels 选则 0.7981） | 0.891 | **0.9685** | **0.9143** | **+3.1 题，bootstrap 显著** |
 
 - **为什么不是"并存"**：①②③ 是**互斥路径**。默认（`hybrid=False`）走策略层手写加法（`DefaultRetrievalStrategy`）；
   一旦集合是 `dense+sparse`（`hybrid=True`/网络化），`MemoryRetriever._recall` 就**整条绕过**策略层、
@@ -86,13 +87,23 @@ BGE-M3 的两种未用表示已在 2026-09-16 实测（`experiments/bge-m3-spars
     但 nDCG@10 0.8765 < 0.8817、MRR 0.8380 < 0.8731 → **不是净胜，落在噪声带内**。
   - **决策（owner 2026-09-16）**：默认**保持手写加法**；BM25 仅作可选后端
     （`MEMORY_SPARSE_BACKEND=bm25` + hybrid 集合），**不切默认**（ADR-0019 D14/D15）。
-- **BGE-M3 另两种表示的实测（`experiments/bge-m3-sparse-colbert/`，2026-09-16，22 臂）**：
-  - **④ sparse 否决**：单路 **0.167**（不加 IDF，长文档 ~395 项求和 → 噪声淹没；且原始标度 max **15.4**
-    是 dense/colbert 的 7–20 倍 → **官方"不归一化加权"直接崩：`.4/.2/.4` 只得 0.189**）。
-  - **⑤ colbert 正向**：单路 **0.669 > ST dense 0.641**；与 ST-dense z-score 融合
-    **0.746 / r@3 0.935 / r@5 0.946 / nDCG 0.9046 / MRR 0.8937**（**全指标超生产**，r@1 +1.7 题）。
-  - **colbert 截断 512 ≈ full**（0.746/0.746）→ 存储 **281MB** 而非 1.02GB；官方建议的 **128 太激进**（0.602）。
-  - **闸门：未过**（要求 r@1 ≥ +3 题）→ 见 §4 U3。
+- **BGE-M3 另两种表示的实测（`experiments/bge-m3-sparse-colbert/`，2026-09-16）**：
+  - **④ sparse 否决**：单路 **0.133**（不加 IDF；且原始标度远大于 dense/colbert →
+    官方"不归一化加权"仍然差：`.4/.2/.4` = **0.544**）。
+  - **⑤ colbert 正向**：单路 **0.698 > ST dense 0.641**；与 ST-dense z-score 融合
+    **0.754 / r@3 0.913 / r@5 0.941 / nDCG 0.9053 / MRR 0.9007**（**全指标超生产**）。
+  - **colbert 截断 512 = full**（0.698/0.698）→ 存储 **281MB** 而非 1.02GB；官方建议的 **128 偏低**（0.631）。
+  - ⚠ **口径修正**：早前一轮用了**原始 .md**（含 frontmatter）而非**索引渲染正文**，sparse/colbert 数字
+    偏悲观（sparse 0.167 / 官方 raw 0.189 / dense+colbert 0.746）→ 已用 `docs_source.py` 统一到
+    Qdrant payload 正文并重录（见 `experiments/bge-m3-sparse-colbert/README.md` §9.1）。
+- **⑦ 蒸馏拟合（把 rerank 排序当老师，2026-09-16）**：`fit_fusion.py` —— 用 **51×134 全量 rerank 分数**
+  （jina int8，一次性录制）作监督，求**融合参数的数学最优**（凸代理 + 离散网格交叉验证）：
+  - 选定 `colbertfull+dense+kw+sparse / z-score / [.40,.45,.10,.05]` →
+    **r@1 0.7759（+6.9pp = +3.1 题）· r@3 0.891 · r@5 0.9685 · nDCG@10 0.9143 · MRR 0.9144**；
+    **paired bootstrap Δ(r@1) 95% CI = [+0.059, +0.235] → 显著净胜**。
+  - **蒸馏回收率 47%**（按 qrels 选则 62%）：即拿回重排增益的一半左右，**且不付重排延迟**。
+  - **per-query oracle headroom = −0.087** → **不需要 query 自适应**，全局一组权重已是最优形态。
+  - 凸解（LS/成对 logistic）与网格**同区**、差 0.5%；教训 = **目标必须 top 加权**（全语料 Spearman 仅 ~0.46）。
 - **依赖影响**：`fastembed` 只在可选 extra `memory-agent[bm25]`，且 `store.py:42-46` **懒 import**
   （仅 backend=bm25 时）→ 基础包零影响。约束宽松（python 3.12 → `numpy>=1.26` 无上限、`hub<2.0`、
   `tokenizers<1.0`、`onnxruntime>=1.17`），实测**无降级**。既有 `pip check` 的 2 条冲突
@@ -236,7 +247,7 @@ BGE-M3 的两种未用表示已在 2026-09-16 实测（`experiments/bge-m3-spars
 |---|---|---|---|
 | U1 | **记忆读路径缺「重排 + 分数阈值」这一级** | 池有 / 重排默认关 / **阈值没有** | 属检索链路形态（默认链路）变更，且需先定"阈值语义"（分数量纲按平面，ADR-0019 D6/D10） |
 | U2 | **本地平面是否切 store 原生 sparse** | 手写加法在用；BM25 已验证"≈现状不净胜" | ADR-0019 D5「各平面各用其原生」在本地仍是**待切**态；触发条件 = 明确收益 / first-stage 退化 |
-| U3 | **ColBERT 落地（⑤）** | **已测**：单路 0.669；+ST-dense **0.746（全指标超生产）**；**未过 +3 题闸门** | 结构性（multivector schema + 281MB@512 + 全量重建）；建议形状 = dense 召回 → colbert 重打分（非全量 first-stage）。**待 owner 决定是否开票** |
+| U3 | **ColBERT + 蒸馏融合落地（⑤⑦）** | **已测并过闸门**：`colbertfull+dense+kw+sparse / z-score / [.40,.45,.10,.05]` → **r@1 0.7759（+3.1 题）/ r@5 0.9685 / nDCG 0.9143**，bootstrap CI [+0.059,+0.235] 显著；**不需要 query 自适应**（oracle headroom −0.087） | 结构性（multivector schema `MAX_SIM` + 281MB@512 + 全量重建）；建议形状 = dense 召回 → colbert 重打分（非全量 first-stage）。**待 owner 决定是否开票** |
 | U3b | ~~BGE-M3 原生 sparse（④）~~ | **已否决**（0.167，且拖累任何融合） | 关闭，登记即可 |
 | U4 | 主指标噪声带 | 未定 | 影响所有后续"过没过线"的判定 |
 
