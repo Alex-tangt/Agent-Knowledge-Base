@@ -1,6 +1,6 @@
 # 0027 文档解析与收录：物化 Markdown·按节切 + 可插拔引擎
 
-Status: **proposed**（2026-09-17 讨论收敛，待 owner 接受 / 改）。
+Status: **accepted**（2026-09-17 owner 拍板）。
 
 Relates: **ADR-0025**（基表 = 文件 + git；D8 收录机制；D19 写侧单目标）、**ADR-0019**（端口 + 平面分工的范式）、
 **ADR-0024**（打包 / optional extra 先例）、**#36**（overlay / 收录）、**#47**（6000 字截断实证）；
