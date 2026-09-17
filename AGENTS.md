@@ -86,6 +86,7 @@ Paths are anchored in code, not to CWD: `ROOT_DIR` / `RAGCORE_DIR` / `LEGAL_WEB_
 - `memory_agent/requirements.txt` — only its own dep (`mcp>=2.2,<3`); engine deps are reused from `legal_web/requirements.txt` since it calls `ragcore` in-process.
 - `memory_agent[bm25]`（可选 extra，`pyproject.toml`）— `fastembed`，**只有** `MEMORY_SPARSE_BACKEND=bm25` 才需要（#40 / ADR-0019 D7）；不压默认包体。
 - 当前 venv 已装 `fastembed`（#40 本地 BM25 实验）。
+- `memory_agent[parse]`（可选 extra，规划中 / `ADR-0027`）— 文档解析（**Docling**）；只在解析 PDF / DOCX 时需要，**不进 daemon**；不压默认包体。`pypdf` 走兜底（已在 `legal_web/requirements.txt`）。
 
 ## Architecture / entrypoints
 - `legal_web/app.py` — FastAPI app, CORS (`*`), mounts API router under `API_PREFIX="/api"` and static files at `/`. Lifespan event triggers background model warmup.
@@ -288,6 +289,7 @@ The `warmup()` function (called from `app.py` lifespan) eagerly triggers BGE-M3 
   **模型（`ADR-0025` D19）**：**读 = 整张基表**（本地统一向量索引 `memory_entries`）；**写 = 全局知识库**（唯一经工具可写域，**所有 agent 可读写**，经写入网关 + 单 daemon 串行化）；其它域由 agent 自己写文件、我们只读索引。**写侧无域寻址**。
   **检索沿用现状、主线不碰检索**（owner 决定 2026-09-16「B」）。
 - **下一阶段 = agentic RAG（agent loop 做深）**：**先量检索头寸、再谈机制 / 工具**（`ADR-0026` accepted）；✅ **#47 Phase A**（MultiHop-RAG 单次证据 census，**D4 = 有头寸**：recall@5 0.650 / @50 0.965，**排序头寸为主**；证据 `experiments/agentic-rag-census/`）→ **#48 Phase B**（迭代检索三臂；N=200 先导、`qwen3.7-flash`）。范围冻结：只 skill + 读侧确定性工具，**不碰检索默认 / 合成**。
+- **新功能线 = 文档解析与收录**（`ADR-0027` proposed）：PDF / DOCX → **物化 Markdown · 按节切**（每节一个条目）→ 复用现有 `.md` 条目管线（**保 ADR-0025**，顺带修 #47 的 6000 字截断）；引擎 = 可插拔 `DocumentParser` 端口 + **Docling 首装 / `pypdf` 兜底**；本地个人模式、**全局 KB 上传为主**；重依赖走 extra、**不进 daemon**。调研 `experiments/document-parsing-survey/`。
 - **并行轨 = 检索优化**（**执行 / 实验**会话，自负验收合并）：✅ **已走完（2026-09-17）**——本地默认词法路换 **BM25 + DBSF**（`a288ada` / merge `afea427`，ADR-0019 D14/D15）；#35 / #40 已关（deferred）；**#21（伞）已收口关闭**（2026-09-17，附结论 + 原始"单向量"约束作废记录）。固定 / 已定数值不重跑。
   ⚠️ **默认已变**：本地平面默认 `MEMORY_SPARSE_BACKEND=bm25` + `STORE_FUSION=dbsf` + `LOCAL_HYBRID=1`；任何要复现旧口径的实验（如 #48 Phase B）必须**显式 pin**。
 - **冻结区 = 共享 / 云**：**#38 联邦 · #39 租户泄漏修复 · #34 隔离套件 · #33 后续 · ADR-0015 / 0018** 移出计划（**0018 标 deferred**；#39 是已定位的真实缺陷，解冻时第一件修）。
