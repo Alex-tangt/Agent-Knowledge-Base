@@ -68,3 +68,15 @@ Considered options：
 - **D8 入口 v1 = CLI**：先用**窄 CLI** 跑通端到端；**agent 面的 MCP 工具**（如 `memory_ingest_document`）**另开票**。
 - **D9 原始二进制 = gitignored 附件**：原件**不进 git**，真相源仍是**物化 Markdown**；保留原件供重解析 / 来源审计。
 - 附带：Docling 首次使用会**下载模型**——离网 / air-gapped 部署需**显式预热缓存**（部署说明记此步）。
+
+## 追加（2026-09-17，续）：目标域 = 只读语料（修正 D6）
+
+owner 在 **#51 实现期当场定**：**上传的文档不进可写记忆 KB**，而是**物化 Markdown 后作为只读语料经 overlay 收录**
+（`writable=false`、`owner=<label>`、`source=<label>/<rel>`）——**不走 `MemoryWriter`、不 git commit**。
+
+- **理由**：解析产物是"**来源文档**"，不是"**记忆条目**"；写入网关（去重 / 生命周期 / 冲突裁决）是给记忆用的，
+  套在文档上语义错位。
+- **D2 仍成立**：物化 `.md` 复用现有条目管线（loader + overlay 收录，`#36`），**且不需要新写路径**。
+- **D6 措辞修正**：入口 = 上传文档 → **收录为只读语料（overlay）**；其余（本地个人模式 / 格式先 PDF+DOCX /
+  不做共享云 / 不改检索 / 不做多模态）不变。
+- **D7（独立解析环境）/ D8（入口 v1 CLI）/ D9（原件 gitignored）不变。**
