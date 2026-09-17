@@ -1,8 +1,9 @@
 """`VectorStore` 端口的 Qdrant 适配器（issue #23 / #33）：本地嵌入 + 网络化共享后端。
 
 - **本地**（`QdrantLocalStore`，`plane=local`）：Qdrant local mode（`path=`），薄适配
-  `services.vector_store_service.VectorStoreService`。检索语义不变（dense + 策略层关键词，
-  D7 的本地 native-hybrid 迁移另票）。
+  `services.vector_store_service.VectorStoreService`。**默认走 store 原生 hybrid**
+  （具名 `dense` + `sparse`，BM25 客户端编码，`FusionQuery` DBSF）——ADR-0019 **D16**；
+  `MEMORY_LOCAL_HYBRID=0` 可退回 dense + 策略层手写关键词（旧行为）。
 - **网络化**（`QdrantNetworkStore`，`plane=shared`，issue #33）：Qdrant **server**
   （自建服务，公司内部同步场景）或**云托管**——`url=`[+`api_key=`]，**同一个适配器**
   （Qdrant 客户端 `path=` / `url=` / `url=+api_key=` 是同一套 API）。检索走 **store 原生
@@ -61,8 +62,9 @@ class QdrantLocalStore:
                  sparse_encoder: Callable[[str], tuple[list[int], list[float]]] | None = encode_sparse,
                  sparse_query_encoder: Callable[[str], tuple[list[int], list[float]]] | None = None,
                  fusion: str | None = None):
-        """`hybrid=True` 时本地集合也用具名 dense+sparse + 原生 fusion（机制与共享平面同源，
-        供"同一机制、两种部署"的双后端对照；生产本地平面默认仍 dense + 策略层关键词）。
+        """`hybrid=True`（**默认**，ADR-0019 D16）时本地集合用具名 dense+sparse + 原生 fusion：
+        词法线 = `MEMORY_SPARSE_BACKEND`（默认 `bm25`），融合 = `MEMORY_STORE_FUSION`（默认 `dbsf`）。
+        与共享平面同机制；关掉即回 dense + 策略层手写关键词。
 
         `sparse_query_encoder` 供 doc/query 不对称的编码器（BM25；#40）。`fusion` 选原生融合
         方式（ADR-0019 D6：按平面选型），缺省取 `MEMORY_STORE_FUSION`（默认 `rrf`）。"""
@@ -264,8 +266,8 @@ def open_store(db_path: str | None = None, *, tenant: str | None = None,
     """store 工厂：`url`（或配置的 `MEMORY_STORE_URL`）优先 → 网络化共享后端；否则本地。
 
     - 显式 `url` / `api_key` / `hybrid` / `fusion` 覆盖配置。
-    - 词法稀疏编码器按 `sparse_backend`（缺省 `MEMORY_SPARSE_BACKEND`）选：tfidf（默认）| bm25。
-    - 本地平面保持默认 dense + 策略层关键词（`QdrantLocalStore`）。
+    - 词法稀疏编码器按 `sparse_backend`（缺省 `MEMORY_SPARSE_BACKEND`）选：**bm25（默认，D16）** | tfidf。
+    - 本地平面默认 hybrid（`MEMORY_LOCAL_HYBRID`，D16）；`hybrid=False` 才回 dense-only。
     """
     doc_encoder, query_encoder = _resolve_sparse_encoders(
         sparse_backend or SPARSE_BACKEND, SPARSE_BM25_MODEL, sparse_encoder)

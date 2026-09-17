@@ -111,6 +111,12 @@ Considered options：
 - 关键词通道不再「补召回」到头部，只做**池内重排**；`keyword_cap` 仅管池尾补充。
 - 未决：β 是否随语料/模型变化（换 embedding 后可能需重扫）；reranker 是否默认开（#29）。
 
+> **D4 修订（2026-09-16 晚，见 ADR-0019 D16）**：本地默认词法路改为 **BM25 sparse + store 原生 DBSF**
+> （`MEMORY_LOCAL_HYBRID=1` / `MEMORY_SPARSE_BACKEND=bm25` / `MEMORY_STORE_FUSION=dbsf`），
+> 手写关键词加法**退出记忆默认路径**（代码保留，可回退）。本节的加法增强口径对
+> `MEMORY_LOCAL_HYBRID=0` 的回退路径与新融合对照仍有效，池默认 14 的结论不受影响
+> （池曲线在 BM25 链上未重跑 → 将来重跑时以 `#24` harness 为准）。
+
 Relates（#30 追加）：#21、#24、#29、ADR-0013（daemon 内存）、ADR-0021、ADR-0023、
 `experiments/fusion-selection/`。
 
