@@ -56,6 +56,15 @@ Considered options：
 - **新增证据目录** `experiments/document-parsing-survey/`（本调研）。
 - **解析质量成为新的质量杠杆**：需评测"解析后条目 vs 原文窗口"的检索对照（沿用 #24 harness 口径）。
 - **旧钉依赖待澄清**：根 `requirements.txt` 的 `unstructured==0.22.21` 已钉未装、来源不明——留用还是删除？
-- **两个未决（下一票定）**：① **原始二进制**是否入库（gitignored 附件 vs 提交）；② **入口形态**
-  （新 MCP 工具 vs CLI / 管理命令）。
+- **两个未决**（已在下方「追加」中定）：原始二进制处置；入口形态。
 - 与 ADR-0025（D8 / D19）、ADR-0024（打包）一致；本 ADR 不修改它们。
+
+## 追加（2026-09-17）：部署形态与入口（#50 验收后定）
+
+- **D7 部署 = 独立解析环境**：`memory-agent[parse]`（Docling 带 **torch / torchvision / opencv** 等重依赖）
+  **只装进一个专用解析环境**（独立 venv / 容器），**绝不装进主 venv 或 daemon**——主 venv 保持轻与钉死
+  （如 #43 的 `transformers==4.57.6`）。解析以**子进程 / CLI** 被写入流程调用，产物（物化 `.md`）
+  交回主环境走写入网关。**开发期隔离验证 = 部署期隔离，同一套形状**。
+- **D8 入口 v1 = CLI**：先用**窄 CLI** 跑通端到端；**agent 面的 MCP 工具**（如 `memory_ingest_document`）**另开票**。
+- **D9 原始二进制 = gitignored 附件**：原件**不进 git**，真相源仍是**物化 Markdown**；保留原件供重解析 / 来源审计。
+- 附带：Docling 首次使用会**下载模型**——离网 / air-gapped 部署需**显式预热缓存**（部署说明记此步）。

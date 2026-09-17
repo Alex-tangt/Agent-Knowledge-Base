@@ -86,7 +86,7 @@ Paths are anchored in code, not to CWD: `ROOT_DIR` / `RAGCORE_DIR` / `LEGAL_WEB_
 - `memory_agent/requirements.txt` — only its own dep (`mcp>=2.2,<3`); engine deps are reused from `legal_web/requirements.txt` since it calls `ragcore` in-process.
 - `memory_agent[bm25]`（可选 extra，`pyproject.toml`）— `fastembed`，**只有** `MEMORY_SPARSE_BACKEND=bm25` 才需要（#40 / ADR-0019 D7）；不压默认包体。
 - 当前 venv 已装 `fastembed`（#40 本地 BM25 实验）。
-- `memory_agent[parse]`（可选 extra，规划中 / `ADR-0027`）— 文档解析（**Docling**）；只在解析 PDF / DOCX 时需要，**不进 daemon**；不压默认包体。`pypdf` 走兜底（已在 `legal_web/requirements.txt`）。
+- `memory_agent[parse]`（可选 extra / `ADR-0027`）— 文档解析（**Docling**，带 torch/torchvision/opencv）；**装进独立解析环境（专用 venv / 容器），绝不进主 venv 或 daemon**（D7）；`pypdf` 走兜底（已在 `legal_web/requirements.txt`）。解析以子进程 / CLI 被调用。
 
 ## Architecture / entrypoints
 - `legal_web/app.py` — FastAPI app, CORS (`*`), mounts API router under `API_PREFIX="/api"` and static files at `/`. Lifespan event triggers background model warmup.
