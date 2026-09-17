@@ -1,0 +1,54 @@
+{
+  "corpus": {
+    "articles": 609,
+    "url_unique": true,
+    "title_unique": true,
+    "body_chars": {
+      "min": 4770,
+      "p50": 7836,
+      "p90": 16939,
+      "max": 71034,
+      "mean": 10340.2,
+      "over_embedding_window": 477
+    },
+    "metadata_missing": {
+      "author_null": 68,
+      "published_at_null": 0,
+      "source_null": 0,
+      "category_null": 0
+    }
+  },
+  "queries": {
+    "total": 2556,
+    "by_question_type": {
+      "comparison_query": 856,
+      "inference_query": 816,
+      "null_query": 301,
+      "temporal_query": 583
+    },
+    "null_query": 301,
+    "answerable": 2255,
+    "evidence_count_raw_distribution": {
+      "0": 301,
+      "2": 1079,
+      "3": 778,
+      "4": 398
+    },
+    "evidence_count_unique_distribution": {
+      "0": 301,
+      "2": 1169,
+      "3": 774,
+      "4": 312
+    },
+    "queries_with_duplicate_evidence_url": 168
+  },
+  "provenance": {
+    "evidence_slots": 6084,
+    "evidence_urls_not_in_corpus": [],
+    "distinct_gold_articles": 609,
+    "facts_not_substring_of_body": 0,
+    "facts_outside_embedding_window_chars": 6000,
+    "facts_not_in_embedding_window": 1935,
+    "queries_with_any_fact_outside_window": 1415
+  }
+}
