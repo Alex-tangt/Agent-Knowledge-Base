@@ -19,7 +19,9 @@ from memory_agent.memory.ports import PLANE_LOCAL, PLANE_SHARED
 from memory_agent.memory.sparse import encode_sparse
 from memory_agent.settings import (
     COLLECTION_NAME,
+    LOCAL_HYBRID,
     SPARSE_BACKEND,
+    SPARSE_BM25_CACHE_DIR,
     SPARSE_BM25_MODEL,
     STORE_API_KEY,
     STORE_COLLECTION,
@@ -42,7 +44,7 @@ def _resolve_sparse_encoders(backend, model_name, sparse_encoder):
     if str(backend).lower() == "bm25":
         from memory_agent.memory.bm25 import Bm25Encoder
 
-        encoder = Bm25Encoder(model_name)
+        encoder = Bm25Encoder(model_name, cache_dir=SPARSE_BM25_CACHE_DIR)
         return encoder.encode_document, encoder.encode_query
     return encode_sparse, encode_sparse
 
@@ -285,7 +287,7 @@ def open_store(db_path: str | None = None, *, tenant: str | None = None,
         )
     return QdrantLocalStore(
         db_path=db_path, collection_name=collection_name, tenant=tenant,
-        embeddings=embeddings, hybrid=bool(hybrid),
+        embeddings=embeddings, hybrid=LOCAL_HYBRID if hybrid is None else bool(hybrid),
         sparse_encoder=doc_encoder, sparse_query_encoder=query_encoder,
         fusion=fusion,
     )

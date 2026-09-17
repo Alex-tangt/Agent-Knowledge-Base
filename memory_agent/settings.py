@@ -217,15 +217,26 @@ STORE_HYBRID = os.environ.get("MEMORY_STORE_HYBRID", "1").strip().lower() in {
     "1", "true", "yes", "on"}
 # 原生融合方式（ADR-0019 D6：分数/阈值按平面；实测见
 # experiments/networked-store-33/fusion_ablation.json）：rrf | dbsf | dense。
-# 默认 rrf（#33 要求的 store 原生 hybrid）；当前语料上 dense 实测更好，可显式切换。
-STORE_FUSION = os.environ.get("MEMORY_STORE_FUSION", "rrf").strip().lower() or "rrf"
+# 默认 **dbsf**（2026-09-16 owner 决定词法路换 BM25；BM25 下 rrf 0.6407 vs dbsf 0.7111，见
+# experiments/local-lexical-40/ 与 ADR-0019 D15）。
+STORE_FUSION = os.environ.get("MEMORY_STORE_FUSION", "dbsf").strip().lower() or "dbsf"
+
+# 本地平面是否走 store 原生 hybrid（dense + sparse）。**默认开**（2026-09-16 owner 决定）：
+# 手写 CJK 二元组关键词退役，词法路改由 BM25 sparse 承载（ADR-0019 D14 修订）。
+# 关掉（`MEMORY_LOCAL_HYBRID=0`）即回旧行为：dense + 策略层手写关键词加法。
+LOCAL_HYBRID = os.environ.get("MEMORY_LOCAL_HYBRID", "1").strip().lower() in {
+    "1", "true", "yes", "on"}
 
 # ---- 稀疏词法编码器（#40 / ADR-0019 D5/D7）：tfidf | bm25 ----
-# `tfidf` = 现有零依赖自制词频哈希（memory_agent/memory/sparse.py，默认，不变）；
-# `bm25`  = fastembed `Qdrant/bm25`（ADR-0019 D7 定了没落地的路线；**本地平面**客户端编码，
-#           fastembed 为可选软依赖，只有选中才 import）。doc/query 权重不对称，接缝分开取。
-SPARSE_BACKEND = os.environ.get("MEMORY_SPARSE_BACKEND", "tfidf").strip().lower() or "tfidf"
+# `bm25`  = fastembed `Qdrant/bm25`（**默认**，2026-09-16；本地平面客户端编码，fastembed 为可选
+#           软依赖 `memory-agent[bm25]`，只有选中才 import）。doc/query 权重不对称，接缝分开取。
+# `tfidf` = 自制词频哈希（`memory_agent/memory/sparse.py`），保留作回退与对照。
+SPARSE_BACKEND = os.environ.get("MEMORY_SPARSE_BACKEND", "bm25").strip().lower() or "bm25"
 SPARSE_BM25_MODEL = os.environ.get("MEMORY_SPARSE_BM25_MODEL", "Qdrant/bm25")
+# fastembed 模型缓存目录。默认 fastembed 用 `%TEMP%/fastembed_cache`——**可能被系统清理**，
+# 会导致默认链路查不到 BM25 模型。这里固定到用户级稳定目录（可用 env 覆盖）。
+SPARSE_BM25_CACHE_DIR = os.environ.get("MEMORY_BM25_CACHE_DIR") or os.path.join(
+    os.path.expanduser("~"), ".cache", "fastembed")
 
 # 共享 daemon 的 HTTP 端点（issue #19）：单实例常驻，多个 opencode 会话经 proxy 转发。
 # 只绑本机回环；端口固定，proxy 用 /health 判断「是不是我们的 daemon 在跑」。
