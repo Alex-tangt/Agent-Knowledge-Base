@@ -16,8 +16,8 @@ langchain-community==0.4.1
 chromadb==1.5.7
 
 # 文档处理
-pypdf==6.10.2
-unstructured==0.22.21
+pypdf==6.10.2
+
 markdown==3.10.2
 # 本地嵌入模型
 
