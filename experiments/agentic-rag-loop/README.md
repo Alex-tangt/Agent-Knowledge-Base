@@ -4,6 +4,11 @@
 - 方式：三路并行子代理，读**一手来源**（OSS 仓库源码 / 论文 / 官方文档），只回报、不写仓库
 - 目的：判断"把 agent loop 做深"在本项目（循环跑在**宿主 agent**、只交付 **SKILL.md + MCP 工具**）里**能做实什么**
 
+**原始子报告**（未编辑，逐份随附）：
+- `01-deep-research-systems.md` —— deepresearch 系统循环架构对照（OSS 源码 + 官方文档）
+- `02-agentic-rag-mechanisms.md` —— 多跳 / 充分性 / 终止的可实现机制（论文，含 arXiv 编号核对）
+- `03-skill-and-tool-affordances.md` —— 循环在宿主时的能力边界（skill 规则 vs 工具信号 vs 引擎）
+
 ## 1. deep research / deepsearch 的检索循环（一手核对）
 
 | 系统 | 循环形状 | 多跳机制 | 充分性判定 | 终止条件 |
