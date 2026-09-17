@@ -1,0 +1,8 @@
+{
+  "model": "Qdrant/bm25",
+  "docs": 134,
+  "queries": 51,
+  "nonzero_mean": 38.372549019607845,
+  "score_mean": 0.7776652574539185,
+  "score_max": 34.056785583496094
+}

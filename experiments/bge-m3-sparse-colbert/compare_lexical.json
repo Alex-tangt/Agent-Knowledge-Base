@@ -1,0 +1,380 @@
+{
+  "单路 kw": {
+    "keys": [
+      "kw"
+    ],
+    "norm": "minmax",
+    "w": [
+      1.0
+    ],
+    "distill5": 0.486423,
+    "spearman": 0.4041,
+    "recall@1": 0.166667,
+    "recall@3": 0.411111,
+    "recall@5": 0.477778,
+    "nDCG@10": 0.386483,
+    "mrr": 0.346225,
+    "misses": 0
+  },
+  "单路 bm25": {
+    "keys": [
+      "bm25"
+    ],
+    "norm": "minmax",
+    "w": [
+      1.0
+    ],
+    "distill5": 0.522562,
+    "spearman": 0.2941,
+    "recall@1": 0.411111,
+    "recall@3": 0.544444,
+    "recall@5": 0.611111,
+    "nDCG@10": 0.584739,
+    "mrr": 0.536956,
+    "misses": 0
+  },
+  "单路 sparse": {
+    "keys": [
+      "sparse"
+    ],
+    "norm": "minmax",
+    "w": [
+      1.0
+    ],
+    "distill5": 0.333161,
+    "spearman": 0.2594,
+    "recall@1": 0.133333,
+    "recall@3": 0.222222,
+    "recall@5": 0.266667,
+    "nDCG@10": 0.252037,
+    "mrr": 0.238157,
+    "misses": 0
+  },
+  "单路 dense": {
+    "keys": [
+      "dense_st"
+    ],
+    "norm": "minmax",
+    "w": [
+      1.0
+    ],
+    "distill5": 0.79873,
+    "spearman": 0.4851,
+    "recall@1": 0.640741,
+    "recall@3": 0.868519,
+    "recall@5": 0.918519,
+    "nDCG@10": 0.852433,
+    "mrr": 0.81358,
+    "misses": 0
+  },
+  "生产 dense+0.05kw（锚点）": {
+    "keys": [
+      "dense_st",
+      "kw"
+    ],
+    "norm": "raw",
+    "w": [
+      1.0,
+      0.05
+    ],
+    "distill5": 0.803434,
+    "spearman": 0.4924,
+    "recall@1": 0.707407,
+    "recall@3": 0.868519,
+    "recall@5": 0.918519,
+    "nDCG@10": 0.881725,
+    "mrr": 0.873148,
+    "misses": 0
+  },
+  "dense + kw / none": {
+    "keys": [
+      "dense_st",
+      "kw"
+    ],
+    "norm": "none",
+    "w": [
+      0.95,
+      0.05
+    ],
+    "distill5": 0.802872,
+    "spearman": 0.4928,
+    "recall@1": 0.707407,
+    "recall@3": 0.868519,
+    "recall@5": 0.918519,
+    "nDCG@10": 0.881725,
+    "mrr": 0.873148,
+    "misses": 0
+  },
+  "dense + kw / minmax": {
+    "keys": [
+      "dense_st",
+      "kw"
+    ],
+    "norm": "minmax",
+    "w": [
+      0.95,
+      0.05
+    ],
+    "distill5": 0.803202,
+    "spearman": 0.4917,
+    "recall@1": 0.674074,
+    "recall@3": 0.868519,
+    "recall@5": 0.918519,
+    "nDCG@10": 0.86712,
+    "mrr": 0.839815,
+    "misses": 0
+  },
+  "dense + kw / zscore": {
+    "keys": [
+      "dense_st",
+      "kw"
+    ],
+    "norm": "zscore",
+    "w": [
+      0.95,
+      0.05
+    ],
+    "distill5": 0.802586,
+    "spearman": 0.4906,
+    "recall@1": 0.67963,
+    "recall@3": 0.868519,
+    "recall@5": 0.918519,
+    "nDCG@10": 0.870322,
+    "mrr": 0.850926,
+    "misses": 0
+  },
+  "dense + kw / rrf": {
+    "keys": [
+      "dense_st",
+      "kw"
+    ],
+    "norm": "rrf",
+    "w": [
+      0.95,
+      0.05
+    ],
+    "distill5": 0.7972,
+    "spearman": 0.4917,
+    "recall@1": 0.601852,
+    "recall@3": 0.868519,
+    "recall@5": 0.918519,
+    "nDCG@10": 0.837458,
+    "mrr": 0.802469,
+    "misses": 0
+  },
+  "dense + bm25 / none": {
+    "keys": [
+      "dense_st",
+      "bm25"
+    ],
+    "norm": "none",
+    "w": [
+      0.95,
+      0.05
+    ],
+    "distill5": 0.793226,
+    "spearman": 0.4779,
+    "recall@1": 0.711111,
+    "recall@3": 0.824074,
+    "recall@5": 0.940741,
+    "nDCG@10": 0.866195,
+    "mrr": 0.832963,
+    "misses": 0
+  },
+  "dense + bm25 / minmax": {
+    "keys": [
+      "dense_st",
+      "bm25"
+    ],
+    "norm": "minmax",
+    "w": [
+      0.9,
+      0.1
+    ],
+    "distill5": 0.806551,
+    "spearman": 0.4902,
+    "recall@1": 0.696296,
+    "recall@3": 0.868519,
+    "recall@5": 0.940741,
+    "nDCG@10": 0.880062,
+    "mrr": 0.84836,
+    "misses": 0
+  },
+  "dense + bm25 / zscore": {
+    "keys": [
+      "dense_st",
+      "bm25"
+    ],
+    "norm": "zscore",
+    "w": [
+      0.85,
+      0.15
+    ],
+    "distill5": 0.808793,
+    "spearman": 0.4905,
+    "recall@1": 0.696296,
+    "recall@3": 0.868519,
+    "recall@5": 0.940741,
+    "nDCG@10": 0.880062,
+    "mrr": 0.84836,
+    "misses": 0
+  },
+  "dense + bm25 / rrf": {
+    "keys": [
+      "dense_st",
+      "bm25"
+    ],
+    "norm": "rrf",
+    "w": [
+      0.95,
+      0.05
+    ],
+    "distill5": 0.795691,
+    "spearman": 0.4868,
+    "recall@1": 0.618519,
+    "recall@3": 0.868519,
+    "recall@5": 0.918519,
+    "nDCG@10": 0.844552,
+    "mrr": 0.802778,
+    "misses": 0
+  },
+  "dense + sparse / none": {
+    "keys": [
+      "dense_st",
+      "sparse"
+    ],
+    "norm": "none",
+    "w": [
+      0.95,
+      0.05
+    ],
+    "distill5": 0.793962,
+    "spearman": 0.4946,
+    "recall@1": 0.640741,
+    "recall@3": 0.862963,
+    "recall@5": 0.918519,
+    "nDCG@10": 0.846735,
+    "mrr": 0.803792,
+    "misses": 0
+  },
+  "dense + sparse / minmax": {
+    "keys": [
+      "dense_st",
+      "sparse"
+    ],
+    "norm": "minmax",
+    "w": [
+      0.9,
+      0.1
+    ],
+    "distill5": 0.798579,
+    "spearman": 0.4944,
+    "recall@1": 0.662963,
+    "recall@3": 0.885185,
+    "recall@5": 0.918519,
+    "nDCG@10": 0.852337,
+    "mrr": 0.813051,
+    "misses": 0
+  },
+  "dense + sparse / zscore": {
+    "keys": [
+      "dense_st",
+      "sparse"
+    ],
+    "norm": "zscore",
+    "w": [
+      0.95,
+      0.05
+    ],
+    "distill5": 0.796621,
+    "spearman": 0.4908,
+    "recall@1": 0.640741,
+    "recall@3": 0.862963,
+    "recall@5": 0.918519,
+    "nDCG@10": 0.848414,
+    "mrr": 0.807496,
+    "misses": 0
+  },
+  "dense + sparse / rrf": {
+    "keys": [
+      "dense_st",
+      "sparse"
+    ],
+    "norm": "rrf",
+    "w": [
+      0.95,
+      0.05
+    ],
+    "distill5": 0.786199,
+    "spearman": 0.4947,
+    "recall@1": 0.551852,
+    "recall@3": 0.862963,
+    "recall@5": 0.918519,
+    "nDCG@10": 0.810297,
+    "mrr": 0.756173,
+    "misses": 0
+  },
+  "dense + kw + bm25 / minmax": {
+    "keys": [
+      "dense_st",
+      "kw",
+      "bm25"
+    ],
+    "norm": "minmax",
+    "w": [
+      0.8,
+      0.05,
+      0.15
+    ],
+    "distill5": 0.810405,
+    "spearman": 0.4984,
+    "recall@1": 0.72963,
+    "recall@3": 0.861111,
+    "recall@5": 0.940741,
+    "nDCG@10": 0.893715,
+    "mrr": 0.885397,
+    "misses": 0
+  },
+  "dense + kw + sparse / minmax": {
+    "keys": [
+      "dense_st",
+      "kw",
+      "sparse"
+    ],
+    "norm": "minmax",
+    "w": [
+      0.9,
+      0.05,
+      0.05
+    ],
+    "distill5": 0.803517,
+    "spearman": 0.4967,
+    "recall@1": 0.67963,
+    "recall@3": 0.890741,
+    "recall@5": 0.918519,
+    "nDCG@10": 0.874451,
+    "mrr": 0.856173,
+    "misses": 0
+  },
+  "dense + bm25 + sparse / minmax": {
+    "keys": [
+      "dense_st",
+      "bm25",
+      "sparse"
+    ],
+    "norm": "minmax",
+    "w": [
+      0.8,
+      0.15,
+      0.05
+    ],
+    "distill5": 0.809444,
+    "spearman": 0.4975,
+    "recall@1": 0.718519,
+    "recall@3": 0.877778,
+    "recall@5": 0.940741,
+    "nDCG@10": 0.890024,
+    "mrr": 0.863175,
+    "misses": 0
+  }
+}
