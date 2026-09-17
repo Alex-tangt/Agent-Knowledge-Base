@@ -15,7 +15,7 @@ legal_web/          # 【已排除】上一版本遗留的无关产品（仅保�
 memory_agent/       # 记忆能力包（MCP + skill）；可安装
   __init__.py  pyproject.toml
   mcp_server.py  proxy.py  connect.py  runtime.py  _bootstrap.py  settings.py  build_index.py
-  gateway/  corpus/  memory/  skill/  eval/  requirements.txt  vector_db/  README.md
+  gateway/  corpus/  memory/  parse/  skill/  eval/  requirements.txt  vector_db/  README.md
   # gateway/ = 检索网关（#32）：/mcp 边界 authn + 工具层 authz（强制过滤注入）
 tests/unit/         # ragcore 核心 + memory_agent 单测（pytest）
 experiments/  docs/
@@ -290,7 +290,7 @@ The `warmup()` function (called from `app.py` lifespan) eagerly triggers BGE-M3 
   **检索沿用现状、主线不碰检索**（owner 决定 2026-09-16「B」）。
 - **下一阶段 = agentic RAG（agent loop 做深）**：**先量检索头寸、再谈机制 / 工具**（`ADR-0026` accepted）；✅ **#47 Phase A**（MultiHop-RAG 单次证据 census，**D4 = 有头寸**：recall@5 0.650 / @50 0.965，**排序头寸为主**；证据 `experiments/agentic-rag-census/`）→ ✅ **#48 Phase B**（三臂，N=200、`qwen3.7-flash`）：**迭代有效**（B3 答案 +10.2pp / recall@5 +9.1pp，均显著；增益主落「排序 miss」；两跳拿走大部分）；**裸改写无增益**（B2−B1 CI 含 0）；**LLM 早停 35.8%**；`ADR-0026` D5：机制证据、非产品增益。证据 `experiments/agentic-rag-census/phase_b/`。
   → ✅ **A 已落地**：`SKILL.md` 新增「迭代检索」节（**≤2 跳预算 / 迭代而非改写 / 停止 OR / 别早停 / 证据不足明说**），措辞由 Phase B 缺口决定；skill 是**规劝**、统计验证后置。**仍不碰检索默认 / 合成**。
-- **新功能线 = 文档解析与收录**（`ADR-0027` accepted；票 **#50 → #51**）：PDF / DOCX → **物化 Markdown · 按节切**（每节一个条目）→ 复用现有 `.md` 条目管线（**保 ADR-0025**，顺带修 #47 的 6000 字截断）；引擎 = 可插拔 `DocumentParser` 端口 + **Docling 首装 / `pypdf` 兜底**；本地个人模式、**全局 KB 上传为主**；重依赖走 extra、**不进 daemon**。调研 `experiments/document-parsing-survey/`。
+- **新功能线 = 文档解析与收录**（`ADR-0027` accepted；票 **#50 ✅ → #51**）：✅ **#50 已合**（`memory_agent/parse/` 端口 + Docling/pypdf + 按节切；415 passed）——PDF / DOCX → **物化 Markdown · 按节切**（每节一个条目）→ 复用现有 `.md` 条目管线（**保 ADR-0025**，顺带修 #47 的 6000 字截断）；引擎 = 可插拔 `DocumentParser` 端口 + **Docling 首装 / `pypdf` 兜底**；本地个人模式、**全局 KB 上传为主**；重依赖走 extra、**不进 daemon**。调研 `experiments/document-parsing-survey/`。
 - **并行轨 = 检索优化**（**执行 / 实验**会话，自负验收合并）：✅ **已走完（2026-09-17）**——本地默认词法路换 **BM25 + DBSF**（`a288ada` / merge `afea427`，ADR-0019 D14/D15）；#35 / #40 已关（deferred）；**#21（伞）已收口关闭**（2026-09-17，附结论 + 原始"单向量"约束作废记录）。固定 / 已定数值不重跑。
   ⚠️ **默认已变**：本地平面默认 `MEMORY_SPARSE_BACKEND=bm25` + `STORE_FUSION=dbsf` + `LOCAL_HYBRID=1`；任何要复现旧口径的实验（如 #48 Phase B）必须**显式 pin**。
 - **冻结区 = 共享 / 云**：**#38 联邦 · #39 租户泄漏修复 · #34 隔离套件 · #33 后续 · ADR-0015 / 0018** 移出计划（**0018 标 deferred**；#39 是已定位的真实缺陷，解冻时第一件修）。
