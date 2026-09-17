@@ -1,0 +1,278 @@
+# 记忆检索组件决策报告（现状选择 + 实验证据）
+
+> 2026-09-16 · 对象 = **记忆检索**（`memory_agent`，个人模式本地平面）
+> 范围：`memory_agent/` 检索链路；**不含** `legal_web`（已排除）、共享/云平面（冻结）、
+> 写入网关、索引刷新与收录（DDL）。
+> 评测口径：`#24` 确定性评测集（51 题 = 45 有答案 + 6 无答案，条目级二值，**不调 LLM**），
+> 索引固定 **gen-2（134 条）**，主指标见 ADR-0021（`recall@1` + `MRR`）。
+> 状态：**已收口**（2026-09-16；C2 的 ④⑤ 已实测回填，§3.1 缺口已补）。
+
+---
+
+## 0. 一页摘要
+
+链路与每级的**当前选择**：
+
+```
+query
+  │
+  ├─(C1) 嵌入 dense: BGE-M3 / 1024d / 余弦          ← 未做过替代实验
+  │
+  ├─(C2) 词法路: 手写 CJK 二元组关键词（无独立倒排）  ← BM25/原生 sparse 是备选
+  │
+  ├─(C3) 融合: score = 余弦 + 0.05 × 命中强度（加法增强）
+  │
+  ├─(C4) 候选池: pool = 14
+  │
+  ├─(C5) 重排: 默认关；开则 m3(torch) / jina-int8(onnx)；送排上限 512
+  │
+  └─(C6) 截断: k = 5 （返回给 agent）
+       (C7) 阈值: 无
+```
+
+| 组件 | 目前选择 | 一句话证据 | 决策落点 | 状态 |
+|---|---|---|---|---|
+| C1 嵌入 | BGE-M3 dense 1024d | 未做替代对照 | ADR-0008 D5 / ADR-0013 | 定 |
+| C2 词法路 | **手写关键词加法**（非 BM25、非 store 原生 sparse） | 旧"关键词优先"0.6407→0.2500；改加法后 **0.7074**；BGE-M3 原生 sparse **0.167（否决）** | ADR-0022 D4；ADR-0019 D14；`experiments/bge-m3-sparse-colbert/` | 定（native 待切） |
+| C3 融合 | 加法增强 β=0.05 | 37 变体 × 6 池：β 平台 [0.05,0.08]；RRF/归一化**更差** | ADR-0022 D4–D6 | 定 |
+| C4 池深 | 14 | 20→14：nDCG +0.53%、召回 +2.59%、**延迟 −32.5%**；非单调 | ADR-0022 D1–D3 | 定 |
+| C5 重排 | **默认关**；jina-int8 若开 | 增量只在 rank-1（消费者口径仅 +5.0pp）；许可干净候选全掉 8–17pp | ADR-0022 D7–D12 / #35 | 定 |
+| C5b 送排上限 | 512 | memory max=381 token → 512 **严格 no-op**；收益要下到 256 | ADR-0020 D1–D4 | 定 |
+| C6 返回条数 | k 保持 5 | k=5→8 召回 +5.6pp，但**召回不是瓶颈**（池内 ~0.985） | ADR-0022「k census」节 | 定（owner 2026-09-16） |
+| C7 阈值 | **无** | 记忆读路径没有任何分数阈值 | —（缺口） | **未决** |
+| C8 查询改写 | 不在链路 | 只在 legal 链路；改写实验有结构性冲突 | — | 不属本轨 |
+
+**结论一句话**：**参数级优化已做尽（6 轮扫描）；召回已近上限，剩下的分歧都在"选择"而非"调参"。**
+结构性未决收敛为 **1 个**：**C7 缺失的"重排+阈值"这一级**。
+BGE-M3 的两种未用表示已在 2026-09-16 实测（`experiments/bge-m3-sparse-colbert/`）：
+**sparse ④ 否决**（0.167，且拖累任何融合）；**colbert ⑤ 是正向信号**（单路 0.669 > dense 0.641；
+与 ST-dense z-score 融合 **0.746 / r@3 0.935 / nDCG 0.9046 / MRR 0.8937**，**全指标超生产 0.7074**）
+——但 **未过"+3 题"闸门**（r@1 +1.7 题），落地需 multivector schema + 281MB（@512）→ **待 owner 定是否开票**。
+
+---
+
+## 1. 组件逐项
+
+### C1 嵌入（dense 向量）
+
+- **目前选择**：`BAAI/bge-m3`（1024 维，`normalize_embeddings=True`），经 `sentence-transformers`；
+  常驻 daemon 内**唯一一份**（共享给第二消费者，`/v1/embeddings`）。`ragcore/services/local_embedding_service.py`、`embedding_provider.py`。
+- **备选**：无（**从未做过替代 embedding 的质量对照**）。
+- **证据**：无替代实验；`FlagEmbedding 1.4.0` 已在装 → 同一模型的 sparse / colbert 输出**可零新依赖取用**。
+- **决策落点**：ADR-0008 D5（索引与嵌入）、ADR-0013（单实例 daemon）、#43（端点）。
+- **备注**：换 dense 模型会抬高全链路成本（重嵌全量 + 语料指纹），且当前 not the bottleneck → 不建议动。
+
+### C2 词法路（稀疏 / 关键词）
+
+四张候选表，**当前只用第 1 张、且是 app 层手写**：
+
+| 候选 | 实现 | recall@1 | recall@5 | nDCG@10 | MRR | 状态 |
+|---|---|---|---|---|---|---|
+| **① 手写关键词加法（现状）** | `ragcore/strategies/default.py`（CJK 二元组子串匹配 + 加法增强） | **0.7074** | 0.9185 | **0.8817** | **0.8731** | **默认在用** |
+| ② tfidf sparse + store 原生 hybrid | `memory_agent/memory/sparse.py` | 0.5000 (rrf) / 0.5444 (dbsf) | 0.8556 / 0.8037 | 0.7626 / 0.7518 | 0.7254 / 0.7095 | 已实现、默认关 |
+| ③ **BM25**（fastembed `Qdrant/bm25`）+ 原生 hybrid | `memory_agent/memory/bm25.py`（#40） | 0.6407 (rrf) / **0.7111 (dbsf)** | 0.9111 / **0.9333** | 0.8385 / 0.8765 | 0.7988 / 0.8380 | 已实现、**可选后端** |
+| ④ BGE-M3 **原生 sparse**（学习词权重） | `FlagEmbedding`，实测 2026-09-16 | **0.167** | 0.400 | 0.3298 | 0.2967 | **已测 → 否决** |
+| ⑤ **ColBERT** 多向量 | `FlagEmbedding`，实测 2026-09-16 | **0.669**（full） | 0.907 | 0.8476 | 0.8241 | **已测**（见下） |
+| ⑥ ST-dense + ⑤（z-score .5/.5） | 同上 | **0.746** | 0.946 | **0.9046** | **0.8937** | **全指标超生产** |
+
+- **为什么不是"并存"**：①②③ 是**互斥路径**。默认（`hybrid=False`）走策略层手写加法（`DefaultRetrievalStrategy`）；
+  一旦集合是 `dense+sparse`（`hybrid=True`/网络化），`MemoryRetriever._recall` 就**整条绕过**策略层、
+  直接取 store 原生 hybrid（`retrieval.py:96-100`），`search_by_keywords` 返回空以避免**双重融合**（ADR-0019 D4）。
+- **关键实测（`experiments/local-lexical-40/`，同 gen-2 / 同 134 条 / 同 51 题）**：
+  - 自制 TF sparse 拖后腿（`tfidf/rrf` 0.5000，低于纯向量 0.6407）；**换 BM25 即救回**：
+    同融合下 `rrf 0.5000→0.6407`、`dbsf 0.5444→0.7111`，miss 1→0。
+    → 主因是**词法表精度**，不是"store 原生融合"本身（ADR-0019 D14）。
+  - **BM25/dbsf ≈ 生产手写**：recall@1 0.7111 vs 0.7074（+0.4pp ≈ 0.18 题）、recall@5 0.9333 vs 0.9185（+1.5pp），
+    但 nDCG@10 0.8765 < 0.8817、MRR 0.8380 < 0.8731 → **不是净胜，落在噪声带内**。
+  - **决策（owner 2026-09-16）**：默认**保持手写加法**；BM25 仅作可选后端
+    （`MEMORY_SPARSE_BACKEND=bm25` + hybrid 集合），**不切默认**（ADR-0019 D14/D15）。
+- **BGE-M3 另两种表示的实测（`experiments/bge-m3-sparse-colbert/`，2026-09-16，22 臂）**：
+  - **④ sparse 否决**：单路 **0.167**（不加 IDF，长文档 ~395 项求和 → 噪声淹没；且原始标度 max **15.4**
+    是 dense/colbert 的 7–20 倍 → **官方"不归一化加权"直接崩：`.4/.2/.4` 只得 0.189**）。
+  - **⑤ colbert 正向**：单路 **0.669 > ST dense 0.641**；与 ST-dense z-score 融合
+    **0.746 / r@3 0.935 / r@5 0.946 / nDCG 0.9046 / MRR 0.8937**（**全指标超生产**，r@1 +1.7 题）。
+  - **colbert 截断 512 ≈ full**（0.746/0.746）→ 存储 **281MB** 而非 1.02GB；官方建议的 **128 太激进**（0.602）。
+  - **闸门：未过**（要求 r@1 ≥ +3 题）→ 见 §4 U3。
+- **依赖影响**：`fastembed` 只在可选 extra `memory-agent[bm25]`，且 `store.py:42-46` **懒 import**
+  （仅 backend=bm25 时）→ 基础包零影响。约束宽松（python 3.12 → `numpy>=1.26` 无上限、`hub<2.0`、
+  `tokenizers<1.0`、`onnxruntime>=1.17`），实测**无降级**。既有 `pip check` 的 2 条冲突
+  （numba/numpy、protobuf）**与 fastembed 无关**。
+  ⚠ 运维点：fastembed 缓存落在 **`%TEMP%\fastembed_cache`**（Windows 可能清理）→ 首次用需联网下载，
+  与 **#46** 的离线主题相关。
+- **`memory_store_fusion`**：`rrf|dbsf|dense`（默认 `rrf`）。共享平面实测 **dense 单路优于 RRF/DBSF**
+  （0.6407 vs 0.5222，`experiments/networked-store-33/`）；本地 BM25 下 **dbsf 最优**。
+- **决策落点**：ADR-0019 D5/D7（各平面各用其原生）、D14/D15（BM25 落地）；ADR-0022 D4（手写加法）。
+
+### C3 融合（向量 × 词法）
+
+- **目前选择**：`score = 余弦 + β × (命中关键词数 / 关键词数)`，β = **0.05**（有界加法，只加分）。
+- **证据（`experiments/fusion-selection/`，retriever-only，pool=14）**：
+
+| 变体 | recall@1 | nDCG@10 | MRR |
+|---|---|---|---|
+| **加法增强 β=0.05（采用）** | **0.7074** | **0.8817** | **0.8731** |
+| 归一化加权 α=0.9（≈β=0.11） | 0.6630 | 0.8585 | 0.8427 |
+| 纯向量 | 0.6407 | 0.8524 | 0.8136 |
+| RRF k=1 / k=60 | 0.5741 / 0.5000 | 0.8088 / 0.7210 | 0.7853 / 0.6848 |
+| **旧默认（关键词优先）** | **0.2500** | 0.5739 | 0.4936 |
+
+  - β 平台 **[0.05, 0.08]**（β=0.04→0.6796、0.09→0.6852、≥0.10→0.6630）。
+  - RRF/等权归一化在本语料**反而 < 纯向量**：关键词路是**低精度**表（CJK 二元组一题命中 ~55 条噪声），
+    等权融合会把它抬过头 → **有界加法**是正解。
+- **与重排解耦**：rerank 开时旧/新融合候选**并集相同**，交叉编码器独立重打分 → 结果**逐位相同**。
+  即：融合只影响**默认（rerank 关）**体验（ADR-0022 D6）。
+- **决策落点**：ADR-0022 D4–D6。
+
+### C4 候选池深度
+
+- **目前选择**：`MEMORY_RETRIEVAL_POOL = 14`。
+- **证据（ADR-0022；`experiments/rerank-latency-survey/`）**：
+
+| pool | nDCG@10 | recall@1 | MRR | rerank 延迟/题 |
+|---|---|---|---|---|
+| 20（原默认） | 0.965758 | 0.859259 | 0.977778 | 13.34 s |
+| 16 | 0.965758（逐位打平） | 0.859259 | 0.977778 | 10.91 s |
+| **14** | **0.970870 (+0.53%)** | **0.881481 (+2.59%)** | **0.988889** | **9.00 s (−32.5%)** |
+| 12 | 0.963642（守门未过） | 0.881481 | 0.988889 | — |
+
+  - **非单调**：reranker 对候选独立打分 → 额外候选**既可能补召回、也可能当干扰**（q042 被干扰、q010/016/020 被挤出）→ 存在最优中间值。
+  - retriever-only 上 pool≥10 即封顶（recall@10 0.9741）。
+- **决策落点**：ADR-0022 D1–D3（含 env 回退 `MEMORY_RETRIEVAL_POOL=20`）。
+
+### C5 重排（rerank）
+
+- **目前选择**：**默认关**（`MEMORY_RERANK=0`）。两后端已实现（#35）：
+  `MEMORY_RERANK_BACKEND=torch` → m3；`=onnx` → **jina-reranker-v2 int8**（零新依赖）。
+- **证据（全 51 题，`experiments/rerank-jina-35/`）**：
+
+| 链路 | recall@1 | **recall@5** | nDCG@10 | MRR | 延迟/题 |
+|---|---|---|---|---|---|
+| 默认（无重排） | 0.7074 | 0.9185 | 0.8817 | 0.8731 | ~0.3 s |
+| + m3（torch） | **0.8815** | **0.9685** | **0.9709** | **0.9889** | 11.68 s |
+| + jina int8（onnx） | 0.8315（−5.0pp） | **0.9685（同）** | 0.9443 | 0.9426 | **2.67 s（4.4x）** |
+
+  - **头条 +17.4pp recall@1 是"只看 rank-1"的产物**；消费者口径（`memory_search` 默认 k=5）
+    两者 **recall@5 都是 0.9685** → 真实增量 **+5.0pp ≈ 2/45 题（显著性未验）**。
+  - **模型横评（#29，`experiments/rerank-model-survey/`）**：许可干净（MIT/Apache）候选**全部过不了闸门**
+    （`bge-base` −16.7pp、`gte` −8.3pp、`mxbai` −8.3pp）；唯一"守门 + 提速"是 **jina（CC-BY-NC-4.0）**。
+  - **依赖复验（#35）**：`optimum[onnxruntime]` 会把 `transformers` 5.5.4→4.57.6、`hub` 1.31→0.36（**整仓**）；
+    改为 onnxruntime 直跑 ONNX 图 → **零新依赖**。
+- **决策落点**：ADR-0022 D7（默认关）/ D8（若开用 jina int8，memory-only，接受 NC）/ D10（接缝已实现）/
+  D11（触发条件：(a) agent 实证依赖 rank-1；(b) 语料放大；(c) 许可干净且过闸门的候选；(d) ONNX 代价消除）。
+
+### C5b 送排长度上限
+
+- **目前选择**：`RERANK_MAX_SEQ_LENGTH = 512`（core 层，legal + memory 同时生效）。
+- **证据（ADR-0020；`experiments/rerank-latency-survey/maxlen_results.md`）**：
+  memory 1119 对 max = **381 token** → {8192, 1024, 512} **全部 no-op**（512 档 `run_hash` 与基线逐位一致）；
+  legal 真实池 1024/512 与 8192 的 top-8 重合 / Kendall tau = **1.000**，判拒数不变；**256 才 ~1.4x** 但有排序漂移。
+- **结论**：512 是**零质量代价的兜底**；降延迟走**裁池**而非截 token。
+- **决策落点**：ADR-0020 D1–D4。
+
+### C6 返回条数 k（消费者口径）
+
+- **目前选择**：`memory_search(query, k=5)`（`mcp_server.py:191`）与 `MemoryIndex.search(k=5)`。
+- **证据（`experiments/k-census/`，纯离线）**：
+
+| 链路 | r@1 | r@3 | r@5 | r@6 | r@8 | r@10 |
+|---|---|---|---|---|---|---|
+| 默认（rerank 关） | 0.707 | 0.869 | 0.918 | 0.952 | **0.974** | 0.974 |
+| + m3 | 0.881 | 0.944 | 0.969 | 0.974 | 0.980 | 0.980 |
+
+- **⚠ 口径纠正**：该 census 量的是"**在最终（默认链路未重排的）排序上多截几条**"，
+  **不是**「召回池上限 → 重排/阈值截断」的两阶段口径。ADR-0021 背景已记：**池内 recall@10 ≈ 0.985**
+  → **召回已近上限**，k≥8 的边际收益本质是在补 first-stage 排序的不足。
+- **决策（owner 2026-09-16）**：**k 保持 5**（不切 8）；调用方按需传 k。
+- **决策落点**：ADR-0022「#21 k census」节。
+
+### C7 分数阈值 —— **缺口**
+
+- **目前选择**：记忆读路径**没有任何阈值**（grep 全仓：只有**写**路径 `DEDUP_THRESHOLD=0.88`，
+  以及 legal 链路 `RELEVANCE_THRESHOLD=0.85`）。`memory_search` 无条件返回 top-k。
+- **相关**：#24 的 6 个无答案 query **只作描述性观察、不校阈值**（ADR-0017）。
+- **状态**：**未决**。与 C5（默认关）、C6（无阈值）合起来，构成"池有了、重排默认关、阈值没有"的中间态缺口（见 §3）。
+
+### C8 查询改写 —— **不在本轨链路**
+
+- 记忆检索链路**没有** query rewrite；只在 legal（`rag_service._rewrite_query`）。
+- `experiments/query-rewrite-optimizer/` 的结论：二元意图判断与关键词改写**结构性冲突**。
+- **归属**：不属于检索优化执行轨（owner 2026-09-16 明确）。
+
+---
+
+## 2. 参数扫描总账（已做 **6 轮**）
+
+| # | 扫描对象 | 取值 | 结论 | 落点 |
+|---|---|---|---|---|
+| 1 | 候选池 | 12 / 14 / 16 / 20 | 取 **14**（非单调） | ADR-0022 D1 |
+| 2 | 融合口径 + β | 7 变体 × β 0.04–0.11（37 变体 × 6 池） | 加法增强 **β=0.05**，平台 [0.05,0.08] | ADR-0022 D4–D6 |
+| 3 | 送排 max_seq_length | 8192 / 1024 / 512 / 256 | 取 **512**（no-op 兜底） | ADR-0020 |
+| 4 | 重排模型 | m3 / jina-torch / jina-int8 / bge-base / gte / mxbai | **不换**；jina 若开（NC） | ADR-0022 D7–D12 / #35 |
+| 5 | 稀疏 × 融合 | tfidf / bm25 × rrf / dbsf / dense | 默认**不切**；BM25 可选，dbsf 最优 | ADR-0019 D14/D15 |
+| 6 | 返回条数 k | 1–10 | **保持 5** | ADR-0022 k census 节 |
+
+（legal 路另有：池裁剪、`RELEVANCE_THRESHOLD` 标定、dedup 阈值 0.88 标定、查询改写优化器——不属本轨。）
+
+**读数**：参数级已无未测项；**「换机制」候选也已测完**（④ 否决 / ⑤ 正向未过闸门，见 C2 与 §4 U3）。
+至此检索链路每个组件的「现状 / 备选 / 证据」都已闭合。
+
+---
+
+## 3. 测量缺口（本次复核发现的）
+
+1. ~~**池上限从未被量**~~ → **已补（2026-09-16）**：`experiments/bge-m3-sparse-colbert/` 在**全 134 条**上排名，
+   实测 gold 命中位次 `top≤14 = 44–45/45`、`top≤20 = 45/45（100%）` → **池 recall 已饱和，瓶颈是排序**。
+   （同时改正：`retrieval_eval` 的 `top_k = max(max(k), ndcg_k) = 10`，评测**只量截断后的列表**。）
+2. **k census 口径**：见 C6 —— 量的是"截断"而非"两阶段"。若要把「召回→重排/阈值截断」这个正确流程量化，
+   需要重做（池上限 + 三种截断策略对照）。
+3. **主指标噪声带未定**：ADR-0021「未决」项（需自助法/样本量界定）。当前"±0.005 过没过线"本身脆弱。
+4. **6 个无答案 query 不参与**（ADR-0017），故**拒答/阈值**维度没有可校指标。
+
+---
+
+## 4. 未决 / 待架构层（不由本轨改）
+
+| # | 议题 | 现状 | 为什么要架构层定 |
+|---|---|---|---|
+| U1 | **记忆读路径缺「重排 + 分数阈值」这一级** | 池有 / 重排默认关 / **阈值没有** | 属检索链路形态（默认链路）变更，且需先定"阈值语义"（分数量纲按平面，ADR-0019 D6/D10） |
+| U2 | **本地平面是否切 store 原生 sparse** | 手写加法在用；BM25 已验证"≈现状不净胜" | ADR-0019 D5「各平面各用其原生」在本地仍是**待切**态；触发条件 = 明确收益 / first-stage 退化 |
+| U3 | **ColBERT 落地（⑤）** | **已测**：单路 0.669；+ST-dense **0.746（全指标超生产）**；**未过 +3 题闸门** | 结构性（multivector schema + 281MB@512 + 全量重建）；建议形状 = dense 召回 → colbert 重打分（非全量 first-stage）。**待 owner 决定是否开票** |
+| U3b | ~~BGE-M3 原生 sparse（④）~~ | **已否决**（0.167，且拖累任何融合） | 关闭，登记即可 |
+| U4 | 主指标噪声带 | 未定 | 影响所有后续"过没过线"的判定 |
+
+---
+
+## 5. 决策表（现状 / 备选 / 触发条件）
+
+| 组件 | 现状 | 备选（已量） | 触发条件（何时重看） |
+|---|---|---|---|
+| C1 嵌入 | BGE-M3 1024d | 未测 | 语料/语言域变化 |
+| C2 词法 | 手写加法 | tfidf(sparse) ✗；BM25 ✓ 可选；原生 sparse / ColBERT 未做 | first-stage 退化；或原生 sparse 实测净胜 |
+| C3 融合 | 加法 β=0.05 | RRF ✗；归一化 ✗ | 关键词抽取规则变化（β 需重扫） |
+| C4 池 | 14 | 12 ✗ ÷ 16/20 更慢不更好 | 语料增长（ADR-0022 已记须重跑） |
+| C5 重排 | 关 | m3（11.7s）/ jina-int8（2.7s, NC） | ADR-0022 D11 四条 |
+| C6 k | 5 | 8（+5.6pp 召回，非瓶颈） | 需要更高召回且容忍上下文 |
+| C7 阈值 | 无 | — | **U1** |
+| C8 改写 | 无 | — | 不属本轨 |
+
+---
+
+## 6. 参考文献
+
+**ADR**：`0008`（读路径/嵌入）、`0013`（单实例 daemon）、`0019`（store 端口；D4 无双重融合、D5/D7 平面形态、
+D14/D15 BM25）、`0020`（送排上限 512）、`0021`（验收指标 recall@1/MRR）、`0022`（池 14 / 融合 β=0.05 /
+rerank 默认关 / k=5）、`0017`+`0023`（拒答与阈值语义）。
+
+**实验**：`experiments/fusion-selection/`（融合 + 池，retriever-only + rerank）、
+`experiments/rerank-latency-survey/`（池延迟、送排长度）、`experiments/rerank-model-survey/`（重排横评）、
+`experiments/rerank-jina-35/`（jina int8 全量复验）、`experiments/local-lexical-40/`（BM25 vs tfidf × fusion）、
+`experiments/k-census/`（k 曲线）、`experiments/networked-store-33/`（共享平面 fusion 对照）、
+`experiments/qdrant-local-mode-capabilities/`（local mode 能力前提）。
+
+**评测基座**：`memory_agent/eval/retrieval_eval.py`、`memory_agent/eval/metrics.py`、
+`memory_agent/eval/retrieval_eval_set.json`、`memory_agent/eval/retrieval_baseline.md`。
+
+**代码接缝**：`ragcore/strategies/default.py`（C2/C3）、`memory_agent/memory/retrieval.py`（C2/C4/C5 链路）、
+`memory_agent/memory/index.py::search`（C6）、`memory_agent/memory/store.py`（C2 后端选择）、
+`memory_agent/memory/{sparse,bm25,onnx_reranker}.py`、`memory_agent/settings.py`（全部 knob）、
+`memory_agent/mcp_server.py::memory_search`（C6 默认 k）。
