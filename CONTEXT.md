@@ -167,6 +167,18 @@ _Avoid_: 每会话一份引擎、把 daemon 当可选优化
 opencode 每会话的 `local` 命令：先幂等确保 daemon 在跑，再把本会话 stdio 请求透明转发过去。是"谁的进程生命周期负责拉起 daemon"这一问题的答案（见 ADR-0013 D1）。
 _Avoid_: 把代理当第二份引擎、让 opencode 直连 remote 却不解决 daemon 启动
 
+**迭代检索（Iterative Retrieval）**：
+宿主 agent 的检索循环：据**上一跳结果**判断信息是否足够，不足则**据已有信息改写 query** 再检索，
+直到硬预算 / 无新 id / 答案出现即停（IRCoT 式）。**由宿主 LLM 执行**——本包只提供 skill 规劝与
+确定性工具信号，**无法强制或终止**；确定性 eval 测不了，只能用 LLM 在环的场景评测统计（ADR-0026）。
+_Avoid_: 与"多跳问题"混用、声称服务端能强制多跳 / 充分性 / 终止
+
+**多跳（Multi-hop）**：
+**问题属性**：答对所需证据**跨多篇文档**（如 MultiHop-RAG 的 gold evidence 跨 2–4 篇）。
+**不等于**需要迭代检索——一次性检索若已覆盖全部证据，多跳问题也无需循环；反之循环的价值
+= 首跳漏掉、且能被"据已有信息改写"的 query 补回的那部分。测量用**证据 recall@k**（确定性）。
+_Avoid_: 用"多跳"指代 agent loop 机制、把数据集的多跳标注当循环增益
+
 ---
 
 ## 查询改写优化器实验（Query Rewriting Optimizer）
