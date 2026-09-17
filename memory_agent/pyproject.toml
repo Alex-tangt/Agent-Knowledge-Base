@@ -26,6 +26,8 @@ memory-agent = "memory_agent.mcp_server:main"
 memory-agent-proxy = "memory_agent.proxy:main"
 memory-agent-build-index = "memory_agent.build_index:main"
 memory-agent-connect = "memory_agent.connect:main"
+memory-agent-ingest = "memory_agent.ingest:main"
+memory-agent-parse-worker = "memory_agent.parse_worker:main"
 
 [tool.setuptools]
 packages = [
