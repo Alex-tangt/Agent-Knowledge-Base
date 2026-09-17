@@ -20,12 +20,15 @@ memory_agent/
 ├── mcp_server.py          # MCP 服务：默认 stdio；--transport http 起共享 daemon（/health + OpenAI 兼容 /v1/embeddings）(#10-#13,#19,#43)
 ├── proxy.py               # 每会话瘦代理：幂等确保 daemon 在跑 + stdio<->HTTP 转发          (#19)
 ├── connect.py             # 一步安装第二个消费者（DeepTutor）：部署级 mcp.json + 核验 + skill 落位；共享可读写 (#41,#44)
+├── ingest.py              # CLI：PDF/DOCX -> 解析 -> 物化只读 .md -> overlay 收录（只读语料域）(#51)
+├── parse_worker.py        # 专用解析环境子进程：文档 -> 节 JSON（stdout；主环境经子进程调用）(#51)
 ├── runtime.py             # 先立 stderr 日志，再装配索引 / 写入网关单例
 ├── _bootstrap.py          # stdio 安全日志（import ragcore 前抢配 root logger 到 stderr）
 ├── settings.py            # 真相源 / 索引根 / 来源注册表 / overlay / 指针名 / 集合名 / 去重阈值 / daemon 端点
 ├── readonly_repos.json    # 本地只读来源注册表（gitignored；模板见 .example.json）(#17,#36)
 ├── overlay.json           # 显式收录清单 include/exclude（gitignored；模板见 overlay.example.json）(#36)
 ├── corpus/loader.py       # 运行时收录解析（注册表默认 ∪ overlay）+ KB/只读文档发现 + 指纹 (#10,#17,#36)
+├── parse/                 # 文档解析：DocumentParser 端口 + Docling 首装 + pypdf 兜底 + 按节切/条目化 (#50)
 ├── memory/entries.py      # frontmatter 解析 -> Entry；稳定点 id（uuid5）    (#10,#13)
 ├── memory/index.py        # 当前代视图：检索 + 增量 refresh（hash 跳过/孤儿清理）(#10,#13)
 ├── memory/retrieval.py    # 检索接缝：策略召回（向量+关键词，走 ragcore）+ 可选 rerank   (#24)
@@ -43,7 +46,7 @@ memory_agent/
 │   ├── context.py         #   请求期身份 ContextVar（工具层读取）
 │   └── audit.py           #   调用审计（JSONL；配额留钩子）
 ├── build_index.py         # CLI：从 Markdown 全量重建（新代 + 切指针）        (#10,#13)
-├── eval/                  # 运行时证据：baseline_A.md（锚点）、issue19_acceptance.md（#19）、write_path_sandbox.py + _results.md（#16）、readonly_corpus_17.py（#17 三仓库只读）、dogfood_17.md、retrieval_eval.py + metrics.py + retrieval_eval_set.json + retrieval_baseline.md（#24 确定性检索评测）、mcp_install_smoke_26.py + _results.md（#26 安装 + MCP 集成冒烟）、shared_service_41.py + _results.md（#41 第二消费者共享服务）、bge_m3_embeddings_43.py + _results.md（#43 BGE-M3 embeddings 端点）
+├── eval/                  # 运行时证据：baseline_A.md（锚点）、issue19_acceptance.md（#19）、write_path_sandbox.py + _results.md（#16）、readonly_corpus_17.py（#17 三仓库只读）、dogfood_17.md、retrieval_eval.py + metrics.py + retrieval_eval_set.json + retrieval_baseline.md（#24 确定性检索评测）、mcp_install_smoke_26.py + _results.md（#26 安装 + MCP 集成冒烟）、shared_service_41.py + _results.md（#41 第二消费者共享服务）、bge_m3_embeddings_43.py + _results.md（#43 BGE-M3 embeddings 端点）、ingest_51.py + _results.md（#51 文档上传接线端到端）
 ├── pyproject.toml         # 本包（可安装，依赖 ragcore）                       (#26)
 └── (skill)                # 见 #14：指导 agent 何时 search/read/add 及破坏性确认规则
 ```
@@ -99,6 +102,21 @@ venv\Scripts\python.exe -m memory_agent.connect --deeptutor-home <DeepTutor 运�
 #    POST http://127.0.0.1:8765/v1/embeddings   {"input": "..." | [...], "model": "BAAI/bge-m3"}
 #    → {"object":"list","data":[{"embedding":[1024 floats], ...}], "model": ...}
 #    authn 与 /mcp 同源（未配 token = 零配置直连）；仅 float 向量。
+
+# 6) 文档上传 → 只读语料（#51 / ADR-0027）：PDF/DOCX -> 解析 -> 物化 .md -> overlay 收录
+#    解析出的文档属于**只读语料域**（不写记忆 KB、不 git commit）；物化 .md 落 gitignored
+#    的 memory_agent/imports/，原件落 gitignored 的 memory_agent/uploads/（D9）。
+venv\Scripts\python.exe -m memory_agent.ingest <file.pdf|docx> --label <label> [--tags a,b]
+#    主环境未装 Docling（D7）：默认用本环境引擎（pypdf 兜底）；装好专用解析环境后：
+venv\Scripts\python.exe -m memory_agent.ingest <file> --parse-python venv-parse\Scripts\python.exe
+#    收录写 overlay（幂等）；下一次 memory_search 的惰性刷新即召回（免重启）。
+#    console script：memory-agent-ingest。
+#
+#    专用解析环境（D7，绝不装主 venv）：
+#      python -m venv venv-parse
+#      venv-parse\Scripts\python.exe -m pip install docling pypdf python-dotenv
+#    离网 / air-gapped：Docling 首次 convert 会下载模型到 HF 缓存——先在联网机预热缓存
+#    （跑一次解析），再把缓存目录带过去；缓存路径可用 HF_HOME 指定。
 ```
 
 只读来源（#17 → #36）：**注册表默认 ∪ 显式 overlay**，两者都在运行时重读，**改完免重启**。

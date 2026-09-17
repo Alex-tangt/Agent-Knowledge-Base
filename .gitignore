@@ -82,6 +82,15 @@ memory_agent/overlay.json
 #
 legal_web/uploads/
 
+# Uploaded document originals (D9) + materialized read-only corpus md (#51).
+# Truth source is the materialized Markdown; originals are gitignored attachments.
+memory_agent/uploads/
+memory_agent/imports/
+
+# Dedicated document-parsing environment (Docling + torch); NEVER the main venv
+# (ADR-0027 D7 / #51). Create with `python -m venv venv-parse`.
+venv-parse/
+
 # External benchmark dataset (MultiHop-RAG, ODC-BY) — not committed (issue #47)
 #
 experiments/agentic-rag-census/data/
