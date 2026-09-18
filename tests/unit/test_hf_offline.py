@@ -137,6 +137,41 @@ def test_explicit_off_does_not_flip_loaded_constant(monkeypatch, tmp_path):
     assert hub_constants.HF_HUB_OFFLINE is False
 
 
+# ------------------------------------------- 构造器须允许首次下载（#53）
+
+def _reload_with_offline(monkeypatch, module, hf_mod, offline):
+    import importlib
+
+    monkeypatch.setattr(hf_mod, "ensure_hf_offline", lambda *a, **k: offline)
+    importlib.reload(module)
+    return module
+
+
+def test_embedding_service_allows_download_when_model_missing(monkeypatch):
+    """回归：未缓存时 `_OFFLINE=False`，构造器才能联网下载 BGE-M3（否则新机必挂）。"""
+    from ragcore.config import hf as hf_mod
+    from ragcore.services import local_embedding_service as les
+
+    try:
+        _reload_with_offline(monkeypatch, les, hf_mod, False)
+        assert les._OFFLINE is False
+    finally:
+        importlib = __import__("importlib")
+        importlib.reload(les)
+
+
+def test_reranker_service_allows_download_when_model_missing(monkeypatch):
+    from ragcore.config import hf as hf_mod
+    from ragcore.services import reranker_service as rs
+
+    try:
+        _reload_with_offline(monkeypatch, rs, hf_mod, False)
+        assert rs._OFFLINE is False
+    finally:
+        importlib = __import__("importlib")
+        importlib.reload(rs)
+
+
 def test_patch_rewrites_loaded_module_copies(monkeypatch):
     """按实际 import 图改写：`transformers._is_offline_mode` 这类缓存副本也要覆盖。"""
     import huggingface_hub.constants as hub_constants

@@ -2,7 +2,10 @@ from ragcore.config.config import LOCAL_EMBEDDING_MODEL
 from ragcore.config.hf import ensure_hf_offline
 
 # 必须在 import sentence_transformers / HF 之前：模型已缓存则切离线，避免冷启动外呼（#18）。
-ensure_hf_offline([LOCAL_EMBEDDING_MODEL])
+# 返回值 = 是否已切离线：**缓存命中 → True**（只读本地）；**缓存缺失 → False**
+# （保持联网，让首次下载可用）。构造器必须用它决定 `local_files_only`，否则新机器永远下不到
+# 模型（#53 final test 在全新 WSL 上暴露：硬编码 True + 未缓存 = 必然失败）。
+_OFFLINE = ensure_hf_offline([LOCAL_EMBEDDING_MODEL])
 
 from sentence_transformers import SentenceTransformer  # noqa: E402
 from ragcore.utils.logger import logger  # noqa: E402
@@ -11,7 +14,7 @@ from ragcore.utils.logger import logger  # noqa: E402
 class LocalEmbeddingService:
     def __init__(self, model_name="BAAI/bge-m3"):
         try:
-            self.model = SentenceTransformer(model_name, local_files_only=True)
+            self.model = SentenceTransformer(model_name, local_files_only=_OFFLINE)
             self._dim = self.model.get_embedding_dimension()
             logger.info(f"Local embedding model {model_name} loaded successfully (dim={self._dim})")
         except Exception as e:
