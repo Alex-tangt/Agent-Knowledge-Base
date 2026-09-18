@@ -28,10 +28,22 @@ from __future__ import annotations
 import argparse
 import json
 import os
-import shutil
 import sys
-import tempfile
 
+from memory_agent.opencode_config import (  # noqa: F401  (re-export 给旧调用方)
+    DEFAULT_OPENCODE_TIMEOUT_MS,
+    OPENCODE_CONFIG_SUBDIR,
+    OPENCODE_SKILL_DIRNAME,
+    atomic_write_json,
+    build_opencode_entry,
+    default_proxy_command,
+    install_skill,
+    merge_opencode_config,
+    opencode_config_path,
+    opencode_skill_dir,
+    skill_status,
+    write_opencode_registration,
+)
 from memory_agent.settings import MCP_HTTP_HOST, MCP_HTTP_PATH, MCP_HTTP_PORT
 
 #: 第二条消费者在 DeepTutor 侧的服务名（两个消费者共用一个 daemon，但各自登记名字）。
@@ -79,12 +91,7 @@ EMBEDDING_MODEL_ID = "embedding-model-bge-m3"
 EMBEDDING_MODEL_NAME = "BAAI/bge-m3"
 EMBEDDING_DIMENSION = 1024
 
-#: opencode 全局配置 / skill 落点（与 opencode 自身的约定一致）。
-OPENCODE_CONFIG_SUBDIR = os.path.join(".config", "opencode")
-OPENCODE_SKILL_DIRNAME = "memory-agent"
-
 DEFAULT_TOOL_TIMEOUT = 30
-DEFAULT_OPENCODE_TIMEOUT_MS = 20000
 
 
 # --------------------------------------------------------------------- 路径解析
@@ -111,19 +118,6 @@ def deeptutor_model_catalog_path(home: str) -> str:
     """DeepTutor 模型目录路径（`<home>/data/user/settings/model_catalog.json`）。"""
     return os.path.join(os.path.abspath(home), DEEPTUTOR_DATA_SUBDIR,
                         DEEPTUTOR_MODEL_CATALOG_FILENAME)
-
-
-def _opencode_root(home: str | None = None) -> str:
-    base = os.path.abspath(os.path.expanduser(home)) if home else os.path.expanduser("~")
-    return os.path.join(base, OPENCODE_CONFIG_SUBDIR)
-
-
-def opencode_config_path(home: str | None = None) -> str:
-    return os.path.join(_opencode_root(home), "opencode.json")
-
-
-def opencode_skill_dir(home: str | None = None) -> str:
-    return os.path.join(_opencode_root(home), "skills", OPENCODE_SKILL_DIRNAME)
 
 
 # --------------------------------------------------------------------- 内容构造
@@ -252,36 +246,7 @@ def merge_embedding_catalog(existing: object | None, profile: dict, *,
     return catalog, changed
 
 
-def atomic_write_json(path: str, data) -> None:
-    """原子落盘（临时文件 + os.replace）——写坏会让 DeepTutor 静默丢全部服务。"""
-    os.makedirs(os.path.dirname(path), exist_ok=True)
-    fd, temp_path = tempfile.mkstemp(
-        prefix=os.path.basename(path) + ".", suffix=".tmp", dir=os.path.dirname(path)
-    )
-    try:
-        with os.fdopen(fd, "w", encoding="utf-8") as handle:
-            json.dump(data, handle, ensure_ascii=False, indent=2)
-            handle.write("\n")
-            handle.flush()
-            os.fsync(handle.fileno())
-        os.replace(temp_path, path)
-    finally:
-        if os.path.exists(temp_path):
-            os.remove(temp_path)
-
-
 # --------------------------------------------------------------------- 核验
-
-def default_proxy_command() -> list[str]:
-    """opencode 该注册的代理命令：优先本仓 `venv` 解释器 + 本仓 `proxy.py`。"""
-    here = os.path.dirname(os.path.abspath(__file__))
-    root = os.path.dirname(here)
-    for candidate in (os.path.join(root, "venv", "Scripts", "python.exe"),
-                      os.path.join(root, "venv", "bin", "python")):
-        if os.path.isfile(candidate):
-            return [candidate, os.path.join(here, "proxy.py")]
-    return [sys.executable, os.path.join(here, "proxy.py")]
-
 
 def opencode_registration(config: object | None) -> dict:
     """核验 opencode 是否已把 memory-agent 注册指向 `proxy.py`（只读，不写）。"""
@@ -301,41 +266,8 @@ def opencode_registration(config: object | None) -> dict:
         detail = "未注册 memory-agent"
     else:
         detail = f"注册存在但形状不对：{json.dumps(entry, ensure_ascii=False)}"
-    patch = {"mcp": {SERVER_NAME: {
-        "type": "local",
-        "command": default_proxy_command(),
-        "enabled": True,
-        "timeout": DEFAULT_OPENCODE_TIMEOUT_MS,
-    }}}
+    patch = {"mcp": {SERVER_NAME: build_opencode_entry()}}
     return {"ok": ok, "detail": detail, "patch": patch}
-
-
-def skill_status(skill_dir: str) -> bool:
-    return os.path.isfile(os.path.join(skill_dir, "SKILL.md"))
-
-
-def install_skill(source_dir: str, dest_dir: str, *, dry_run: bool = False) -> str:
-    """把随包发布的 skill 落位到全局 skills 目录（幂等，差分才写）。
-
-    返回 `created` / `updated` / `unchanged` / `missing-source`。
-    """
-    source_file = os.path.join(source_dir, "SKILL.md")
-    if not os.path.isfile(source_file):
-        return "missing-source"
-    dest_file = os.path.join(dest_dir, "SKILL.md")
-    if os.path.isfile(dest_file):
-        with open(source_file, "r", encoding="utf-8") as handle:
-            new_text = handle.read()
-        with open(dest_file, "r", encoding="utf-8") as handle:
-            if handle.read() == new_text:
-                return "unchanged"
-        action = "updated"
-    else:
-        action = "created"
-    if not dry_run:
-        os.makedirs(dest_dir, exist_ok=True)
-        shutil.copyfile(source_file, dest_file)
-    return action
 
 
 # --------------------------------------------------------------------- CLI

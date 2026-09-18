@@ -22,7 +22,8 @@ bm25 = ["fastembed>=0.4"]
 parse = ["docling>=2.0"]
 
 [project.scripts]
-memory-agent = "memory_agent.mcp_server:main"
+# `memory-agent install` = 一键部署；无子命令 = MCP server（向后兼容，见 cli.py / #52）。
+memory-agent = "memory_agent.cli:main"
 memory-agent-proxy = "memory_agent.proxy:main"
 memory-agent-build-index = "memory_agent.build_index:main"
 memory-agent-connect = "memory_agent.connect:main"
