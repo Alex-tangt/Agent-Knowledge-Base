@@ -66,6 +66,9 @@ bash install.sh            # Linux / WSL / macOS
 # pwsh install.ps1         # Windows（PowerShell）
 ```
 
+> **前置**：系统 Python ≥ 3.10；Debian/Ubuntu 若缺 `venv`/`ensurepip`，先
+> `sudo apt install python3-venv`（脚本检测到会明确提示并退出）。
+
 一条命令**幂等**完成：建 venv → 装 `memory_agent/deploy-requirements.txt`（与 `legal_web`
 解耦，ADR-0028 D3）→ editable 装 `ragcore` + `memory_agent` → 建派生索引（首次下载 BGE-M3
 ~2.2GB）→ **写 opencode MCP 注册**（`~/.config/opencode/opencode.json`，带备份 / 幂等 /

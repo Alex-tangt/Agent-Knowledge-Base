@@ -24,6 +24,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import shutil
 import subprocess
 import sys
 import urllib.request
@@ -99,6 +100,32 @@ def _use_cpu_torch(args: argparse.Namespace) -> bool:
 
 # --------------------------------------------------------------------- bootstrap
 
+def _pip_ok(target: str) -> bool:
+    """目标解释器是否带可用 pip（半途失败留下的 venv 可能没有）。"""
+    try:
+        proc = subprocess.run([target, "-m", "pip", "--version"],
+                              capture_output=True, text=True)
+        return proc.returncode == 0
+    except OSError:
+        return False
+
+
+def _create_venv(root: str, python: str, args: argparse.Namespace) -> int | None:
+    print(f"[deps] 创建 venv：{venv_dir(root)}")
+    try:
+        _run([python, "-m", "venv", venv_dir(root)], dry_run=args.dry_run, label="deps")
+    except subprocess.CalledProcessError:
+        print("FAIL: 创建 venv 失败。Debian/Ubuntu 需先 `sudo apt install python3-venv`。",
+              file=sys.stderr)
+        return 1
+    target = venv_python(root)
+    if not args.dry_run and not _pip_ok(target):
+        print(f"FAIL: venv 建好后 pip 不可用（{target}）；确认系统已装 python3-venv / ensurepip。",
+              file=sys.stderr)
+        return 1
+    return None
+
+
 def _bootstrap(root: str, args: argparse.Namespace) -> int | None:
     """建 venv + 装依赖（幂等）。返回非 0 表示失败，None 表示可继续。"""
     target = venv_python(root)
@@ -107,17 +134,13 @@ def _bootstrap(root: str, args: argparse.Namespace) -> int | None:
         return None
 
     python = args.python or sys.executable
-    if not os.path.isfile(target):
-        print(f"[deps] 创建 venv：{venv_dir(root)}")
-        try:
-            _run([python, "-m", "venv", venv_dir(root)], dry_run=args.dry_run, label="deps")
-        except subprocess.CalledProcessError:
-            print("FAIL: 创建 venv 失败。Debian/Ubuntu 需先 `sudo apt install python3-venv`。",
-                  file=sys.stderr)
-            return 1
-        if not args.dry_run and not os.path.isfile(target):
-            print(f"FAIL: venv 建好后仍找不到解释器：{target}", file=sys.stderr)
-            return 1
+    if not os.path.isfile(target) or not args.dry_run and not _pip_ok(target):
+        if os.path.isdir(venv_dir(root)) and not args.dry_run:
+            print("[deps] venv 不完整（pip 不可用）；重建")
+            shutil.rmtree(venv_dir(root), ignore_errors=True)
+        rc = _create_venv(root, python, args)
+        if rc:
+            return rc
 
     pip = [target, "-m", "pip"]
     _run([*pip, "install", "--upgrade", "pip"], dry_run=args.dry_run, label="deps")
