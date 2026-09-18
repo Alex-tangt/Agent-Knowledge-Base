@@ -68,6 +68,10 @@ bash install.sh            # Linux / WSL / macOS
 
 > **前置**：系统 Python ≥ 3.10；Debian/Ubuntu 若缺 `venv`/`ensurepip`，先
 > `sudo apt install python3-venv`（脚本检测到会明确提示并退出）。
+>
+> **弱网 / 中国大陆**：首次模型下载若卡在 `hf-xet`（表现为 HF 缓存长时间不增长），
+> 用 `HF_HUB_DISABLE_XET=1 bash install.sh` 走经典 HTTP；必要时再叠
+> `HF_ENDPOINT=https://hf-mirror.com`。二者都是进程环境变量，安装 / daemon 都继承。
 
 一条命令**幂等**完成：建 venv → 装 `memory_agent/deploy-requirements.txt`（与 `legal_web`
 解耦，ADR-0028 D3）→ editable 装 `ragcore` + `memory_agent` → 建派生索引（首次下载 BGE-M3
