@@ -98,6 +98,11 @@ venv/bin/python -m memory_agent.ingest <your.pdf> --label mydocs \
 - **`venv` 建失败 / `ensurepip` 缺失** → `sudo apt install python3-venv`。
 - **模型下载卡住** → 见「前置」的 `HF_HUB_DISABLE_XET=1`。
 - **端口 8765 被占** → `MEMORY_MCP_PORT` 换端口（安装与 proxy 都读）。
+- **同一台机器同时跑 Windows + WSL（或多份 clone）= 两个部署，各有一张基表**。个人模式的形状
+  就是「单 daemon + 单基表」（一个部署持一份引擎/索引/可写 KB），**不需要端口隔离**；但
+  `/health` 探测识别不出「这是哪一个部署的 daemon」，第二个部署会误连第一个（典型：WSL2
+  localhost 转发到宿主 Windows 的 8765）。**做法**：第二个部署显式设
+  `MEMORY_MCP_PORT=<另一端口>`（安装、proxy、opencode 会话都继承该环境变量）。
 - **daemon 不退** → 正常：单实例常驻；`proxy.py --stop` 手动回收，不做自动空闲卸载（ADR-0013 D2）。
 - **想撤销安装** → 删除 clone 目录；opencode 注册与 skill 在 `~/.config/opencode/`（安装时会
   自动备份旧 `opencode.json` 为 `opencode.json.bak-<时间戳>`）。

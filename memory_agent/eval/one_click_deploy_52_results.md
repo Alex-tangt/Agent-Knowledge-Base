@@ -99,8 +99,9 @@ MCP 冒烟传完整 env（SDK `StdioServerParameters` 默认过滤环境）、st
    端到端（reranker 首次下载 + 加载也由此验证）。**过滤集分数不可与基线比较**。
 3. **WSL2 与宿主 Windows daemon 串台**：WSL2 localhost 转发会让 WSL 内 `127.0.0.1:8765`
    命中**宿主 Windows** 上正在跑的 memory-agent daemon；proxy 的 `/health` 探测无法区分，
-   于是不启自己的 daemon、MCP 打到错误索引。**本轮用 `MEMORY_MCP_PORT=8766` 隔离**；
-   已开 **bug 票**（daemon 身份核验），解冻后修。
+   于是不启自己的 daemon、MCP 打到错误索引。**本轮用 `MEMORY_MCP_PORT=8766` 隔离**。
+   个人模式是「单 daemon + 单基表」，同机多部署用端口隔离即可，**非数据模型缺陷** →
+   **已降 backlog（#55）**，重启条件见该票。
 4. **`hf-xet` 弱网**：全新环境首次下载卡在 xet（缓存不增长）→ 用 `HF_HUB_DISABLE_XET=1`
    走经典 HTTP（已写入 `memory_agent/README.md` 与 `docs/deploy-quickstart.md` 的弱网说明）。
 5. **系统前置**：Debian/Ubuntu 需 `sudo apt install python3-venv`（脚本检测到会明确提示）。
