@@ -57,9 +57,42 @@ memory_agent/
 
 ## 用法
 
+### 一键部署（推荐；#52 / ADR-0028）
+
+```bash
+git clone https://github.com/Alex-tangt/Agent-Knowledge-Base.git
+cd Agent-Knowledge-Base
+bash install.sh            # Linux / WSL / macOS
+# pwsh install.ps1         # Windows（PowerShell）
+```
+
+> **前置**：系统 Python ≥ 3.10；Debian/Ubuntu 若缺 `venv`/`ensurepip`，先
+> `sudo apt install python3-venv`（脚本检测到会明确提示并退出）。
+>
+> **弱网 / 中国大陆**：首次模型下载若卡在 `hf-xet`（表现为 HF 缓存长时间不增长），
+> 用 `HF_HUB_DISABLE_XET=1 bash install.sh` 走经典 HTTP；必要时再叠
+> `HF_ENDPOINT=https://hf-mirror.com`。二者都是进程环境变量，安装 / daemon 都继承。
+
+一条命令**幂等**完成：建 venv → 装 `memory_agent/deploy-requirements.txt`（与 `legal_web`
+解耦，ADR-0028 D3）→ editable 装 `ragcore` + `memory_agent` → 建派生索引（首次下载 BGE-M3
+~2.2GB）→ **写 opencode MCP 注册**（`~/.config/opencode/opencode.json`，带备份 / 幂等 /
+`--dry-run`）→ 落位 skill → 起共享 daemon → 冒烟（`/health` · `POST /v1/embeddings` dim=1024 ·
+经 proxy 调 MCP）。Linux 上 torch 默认取 **CPU 轮子**（避免拉 CUDA 构建）。
+
+常用开关：`--dry-run`（只预览，不落盘）· `--no-index` · `--no-daemon` · `--no-smoke` ·
+`--with-tests`（额外装 pytest）· `--force-index`。已在 venv 内时等价入口：`memory-agent install`
+（同一实现；`memory-agent` 无子命令仍是 MCP server）。
+
+> **脚本只是薄壳**：`install.sh` / `install.ps1` 用系统 Python 起 `python -m memory_agent.deploy install`
+> （顶层零第三方依赖，可在 venv 建好前跑）；真正的编排全在 `memory_agent/deploy.py`。
+
+### 手动安装（一键脚本的等价展开）
+
 ```powershell
-# 0) 安装两个包（editable；#26 / ADR-0024）
-venv\Scripts\python.exe -m pip install -e ragcore -e memory_agent
+# 0) 建 venv 并装依赖（与 legal_web 解耦；#52 / ADR-0028 D3）
+python -m venv venv
+venv\Scripts\python.exe -m pip install --upgrade pip
+venv\Scripts\python.exe -m pip install -r memory_agent\deploy-requirements.txt -e ragcore -e memory_agent
 
 # 1) 建索引（会加载 BGE-M3，CPU 上 ~6 min/60 条）
 venv\Scripts\python.exe memory_agent/build_index.py

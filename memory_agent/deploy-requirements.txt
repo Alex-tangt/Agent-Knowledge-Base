@@ -1,0 +1,25 @@
+# memory_agent 独立部署运行时依赖（#52 / ADR-0028 D3）
+#
+# 本文件是 memory_agent 的**权威依赖源**，与 legal_web 解耦
+# （legal_web/requirements.txt 不再作产品依赖源；不装 fastapi / uvicorn /
+#  chromadb / flagembedding 等法律 web 专用件）。
+#
+# `ragcore` 与 `memory_agent` 由安装器以 editable 方式安装（各自 pyproject
+# 已声明核心依赖：ragcore 带 qdrant-client / sentence-transformers / langchain-*，
+# memory_agent 带 mcp / python-dotenv）。此处只补 memory_agent 运行时的**额外**
+# 依赖与跨平台关键固定版本。
+mcp>=2.2,<3
+python-dotenv
+
+# 本地平面默认词法路 = BM25（MEMORY_SPARSE_BACKEND=bm25，ADR-0019 D16）；
+# fastembed 承载 Qdrant/bm25 客户端编码，缺它默认检索链路起不来。
+fastembed>=0.4
+
+# 文档解析兜底引擎（ADR-0027 D3/D5）：主环境用 pypdf；Docling 在独立解析环境。
+pypdf>=4
+
+# BGE-M3 兼容栈（#43 定位）：sentence-transformers 5.4.1 在 transformers 5.5.x 下
+# 对 BAAI/bge-m3 的 AutoProcessor 抛 "Unrecognized processing class"，4.57.6 实测可用。
+# 显式固定，避免依赖解析把版本漂到不兼容组合。
+sentence-transformers==5.4.1
+transformers==4.57.6

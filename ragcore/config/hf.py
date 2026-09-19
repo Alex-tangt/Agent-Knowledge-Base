@@ -57,23 +57,82 @@ def hub_cache_dir() -> str:
     return os.path.join(os.path.expanduser("~"), ".cache", "huggingface", "hub")
 
 
+#: 判定 snapshot「完整」的标记文件（#53 半成品缓存回归）。
+#: HF 下载中断会留下**缺文件的 snapshot**（例如只差 tokenizer），若只判「snapshot 目录
+#: 存在」就当成已缓存 → `ensure_hf_offline` 切离线 → 永远无法自愈（final test 在全新 WSL
+#: 实测到：`AutoProcessor Unrecognized processing class`）。标记取本项目两个本地模型
+#: （BGE-M3 / BGE-reranker-v2-m3）都具备的通用文件；单文件权重。
+_WEIGHT_MARKERS = ("pytorch_model.bin", "model.safetensors", "model.onnx")
+# 注意：只认**真正的词表资产**，不认 `tokenizer_config.json`——实测中断下载留下的
+# 半成品 snapshot 恰好有它、却缺 `tokenizer.json`/`sentencepiece.bpe.model`（#53）。
+_TOKENIZER_MARKERS = (
+    "tokenizer.json", "sentencepiece.bpe.model", "spiece.model",
+    "vocab.txt", "vocab.json",
+)
+
+
+def _snapshot_complete(snapshot_dir: str) -> bool:
+    """snapshot 是否含 config + 权重 + tokenizer 三类标记（缺一判为未完成）。"""
+    try:
+        names = set(os.listdir(snapshot_dir))
+    except OSError:
+        return False
+    if "config.json" not in names:
+        return False
+    if not any(marker in names for marker in _WEIGHT_MARKERS):
+        return False
+    if not any(marker in names for marker in _TOKENIZER_MARKERS):
+        return False
+    return True
+
+
+def _main_revision(repo_dir: str) -> str | None:
+    """`refs/main` 指向的 revision（HF 默认按它解析 `main`）。"""
+    try:
+        with open(os.path.join(repo_dir, "refs", "main"), "r", encoding="utf-8") as handle:
+            return handle.read().strip() or None
+    except OSError:
+        return None
+
+
 def is_model_cached(model_name: str, cache_dir: str | None = None) -> bool:
-    """`models--<org>--<name>/snapshots/<rev>` 存在即视为已缓存。"""
+    """是否存在**可用**的缓存（目录存在 ≠ 下载完成）。
+
+    - 有 `refs/main` 时**只看它指向的 snapshot**（HF 解析 `main` 就走这条）——避免
+      「另一个完整 snapshot 存在」掩盖 main 指向半成品（#53 实测：main 指向空 snapshot）。
+    - 无 `refs/main` 时退化为「任意完整 snapshot」。
+    完整性 = 目录含 config + 权重 + tokenizer 标记；半成品一律判未缓存，让调用方保持
+    联网、可自愈。
+    """
     repo_dir = os.path.join(cache_dir or hub_cache_dir(),
                             "models--" + model_name.replace("/", "--"))
     snapshots = os.path.join(repo_dir, "snapshots")
     if not os.path.isdir(snapshots):
         return False
     try:
-        return any(
-            os.path.isdir(os.path.join(snapshots, name)) for name in os.listdir(snapshots)
-        )
+        entries = os.listdir(snapshots)
     except OSError:
         return False
 
+    revision = _main_revision(repo_dir)
+    if revision:
+        path = os.path.join(snapshots, revision)
+        return os.path.isdir(path) and _snapshot_complete(path)
 
-def _patch_loaded_hf_modules() -> list[str]:
-    """把已 import 的 HF 模块里的 offline 判定副本改成 `True`（#46 运行时兜底）。
+    for name in entries:
+        path = os.path.join(snapshots, name)
+        if os.path.isdir(path) and _snapshot_complete(path):
+            return True
+    return False
+
+
+#: 本进程是否**由我们自己**置了离线（区别于用户在环境里显式设置）。只有这样置的
+#: 才能被后续「另一模型未缓存」的调用撤销——否则会永久挡住该模型的首次下载。
+_SELF_SET = False
+
+
+def _patch_loaded_hf_modules(value: bool = True) -> list[str]:
+    """把已 import 的 HF 模块里的 offline 判定副本改成 `value`（#46 运行时兜底）。
 
     返回被改写的 `模块.属性` 列表（供日志 / 诊断）。未加载的模块跳过——它们 import 时
     会读到已置位的环境变量，无需处理。
@@ -81,26 +140,41 @@ def _patch_loaded_hf_modules() -> list[str]:
     patched = []
     for module_name, attr in _LOADED_OFFLINE_BINDINGS:
         module = sys.modules.get(module_name)
-        if module is None or getattr(module, attr, None) is True:
+        if module is None or getattr(module, attr, None) is value:
             continue
-        setattr(module, attr, True)
+        setattr(module, attr, value)
         patched.append(f"{module_name}.{attr}")
     return patched
 
 
-def ensure_hf_offline(model_names=None) -> bool:
-    """目标模型全在本地缓存时，把进程切到离线模式。
+def _clear_self_offline() -> None:
+    """撤销**我们**置的离线（用户显式设置的不动），让缺失模型能被下载（#53）。"""
+    global _SELF_SET
+    if not _SELF_SET:
+        return
+    for name in _OFFLINE_ENV_VARS:
+        os.environ.pop(name, None)
+    _patch_loaded_hf_modules(False)
+    _SELF_SET = False
 
-    设计上应在 import HF **之前**调用；但依赖链可能已经先 import 了 HF（#46），故设完
-    环境变量后再调用 `_patch_loaded_hf_modules()` 改写已加载常量，保证运行时兜底。
-    `model_names` 省略时取 ragcore 全部本地模型（embed + rerank）。返回当前是否离线。
+
+def ensure_hf_offline(model_names=None) -> bool:
+    """按目标模型是否缓存，决定/撤销进程级 HF 离线。
+
+    - 用户显式设置 `HF_HUB_OFFLINE` / `TRANSFORMERS_OFFLINE`（含 `0`）→ 一律不覆盖。
+    - `model_names` 全在本地缓存 → 置离线（+ 改写已加载常量，#46）。
+    - 有模型缺失 → **撤销我们自己置的离线**（关键：embed 已缓存会让 embed 服务先置
+      全局离线；若不撤销，稍后 reranker 未缓存时会被永久挡住下载）。返回当前是否离线。
+    `model_names` 省略时取 ragcore 全部本地模型（embed + rerank）。
     """
-    if any(name in os.environ for name in _OFFLINE_ENV_VARS):
+    global _SELF_SET
+    if any(name in os.environ for name in _OFFLINE_ENV_VARS) and not _SELF_SET:
         return any(_env_flag(name) for name in _OFFLINE_ENV_VARS)
 
     names = list(model_names or [LOCAL_EMBEDDING_MODEL, LOCAL_RERANKER_MODEL])
     missing = [n for n in names if not is_model_cached(n)]
     if missing:
+        _clear_self_offline()
         logger.warning(
             "HF hub offline mode NOT enabled: %s not cached; cold start may call "
             "huggingface.co (slow / may hang on weak network). Pre-download the model "
@@ -109,12 +183,14 @@ def ensure_hf_offline(model_names=None) -> bool:
         )
         return False
 
-    os.environ["HF_HUB_OFFLINE"] = "1"
-    os.environ["TRANSFORMERS_OFFLINE"] = "1"
-    patched = _patch_loaded_hf_modules()
-    logger.info(
-        "HF hub offline mode enabled (all models cached): %s%s",
-        ", ".join(names),
-        f"; patched already-imported: {', '.join(patched)}" if patched else "",
-    )
+    if not _SELF_SET:
+        os.environ["HF_HUB_OFFLINE"] = "1"
+        os.environ["TRANSFORMERS_OFFLINE"] = "1"
+        patched = _patch_loaded_hf_modules(True)
+        _SELF_SET = True
+        logger.info(
+            "HF hub offline mode enabled (all models cached): %s%s",
+            ", ".join(names),
+            f"; patched already-imported: {', '.join(patched)}" if patched else "",
+        )
     return True

@@ -35,8 +35,11 @@ def load_env_file(path: str | None = None) -> bool:
 
 load_env_file()  # 必须在下面读取任何 os.environ 之前执行
 
-# 可写真相源：全局 KB（条目 + frontmatter）
-KB_DIR = os.environ.get("AGENT_KB_DIR") or r"C:\Users\Tan\.config\opencode\knowledge"
+# 可写真相源：全局 KB（条目 + frontmatter）。
+# 默认 = 用户 home 下的 `~/.config/opencode/knowledge`（跨平台，与 opencode 约定一致；
+# Windows 上展开即 `C:\Users\<user>\.config\opencode\knowledge`）。`AGENT_KB_DIR` 可覆盖。
+DEFAULT_KB_DIR = os.path.join(os.path.expanduser("~"), ".config", "opencode", "knowledge")
+KB_DIR = os.environ.get("AGENT_KB_DIR") or DEFAULT_KB_DIR
 
 # 只读语料：若干**带标签的项目仓库文档**（只取 Markdown，不索引代码）。
 # 标签用于消歧义——不同仓库里同名文件（README.md / CONTEXT.md）的相对路径会撞车，

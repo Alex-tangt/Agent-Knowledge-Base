@@ -12,11 +12,15 @@ legal_web/          # 【已排除】上一版本遗留的无关产品（仅保�
   app.py  api/  frontend/  data/raw/  tests/
   ingest.py  fetch_laws.py  test_langsmith.py  view_registry.json
   requirements.txt  .env  vector_db/  uploads/
+install.sh  install.ps1   # 一键部署薄壳（#52 / ADR-0028）→ `memory-agent install`
 memory_agent/       # 记忆能力包（MCP + skill）；可安装
   __init__.py  pyproject.toml
+  cli.py  deploy.py  deploy-requirements.txt  opencode_config.py
   mcp_server.py  proxy.py  connect.py  runtime.py  _bootstrap.py  settings.py  build_index.py  ingest.py  parse_worker.py
   gateway/  corpus/  memory/  parse/  skill/  eval/  requirements.txt  vector_db/  README.md
   # gateway/ = 检索网关（#32）：/mcp 边界 authn + 工具层 authz（强制过滤注入）
+  # deploy.py = 一键部署 CLI（#52）：建 venv / 装依赖 / 建索引 / 写 opencode 注册 / 落 skill / 起 daemon / 冒烟（幂等 + --dry-run）
+  # opencode_config.py = opencode 注册 + skill 落位（零第三方依赖，bootstrap 阶段可用）；cli.py = `memory-agent install` / 无子命令=MCP server
 tests/unit/         # ragcore 核心 + memory_agent 单测（pytest）
 experiments/  docs/
 ```
@@ -44,7 +48,8 @@ pip install -e ragcore -e memory_agent   # install the two packages (ADR-0024)
 - There is **no lint, typecheck, or CI config** in this repo. Don't invent those commands.
 
 ### memory_agent (记忆能力包)
-- **可安装（#26 / ADR-0024）**：`pip install -e ragcore -e memory_agent`（Venv 段已含）。等价的模块/脚本入口：`python -m memory_agent.mcp_server`、`python -m memory_agent.build_index`，以及 console scripts `memory-agent` / `memory-agent-proxy` / `memory-agent-build-index` / `memory-agent-connect`。脚本入口（`memory_agent/*.py`）安装后从任意 CWD 均可运行。
+- **可安装（#26 / ADR-0024）**：`pip install -e ragcore -e memory_agent`（Venv 段已含）。等价的模块/脚本入口：`python -m memory_agent.mcp_server`、`python -m memory_agent.build_index`，以及 console scripts `memory-agent` / `memory-agent-proxy` / `memory-agent-build-index` / `memory-agent-connect`。脚本入口（`memory_agent/*.py`）安装后从任意 CWD 均可运行。`memory-agent` 现为统一 CLI：`memory-agent install` = 一键部署（`cli.py` → `deploy.py`），无子命令仍是 MCP server（向后兼容）。
+- **一键部署（#52 / ADR-0028）**：`git clone` 后 `bash install.sh`（Linux/WSL/macOS）或 `pwsh install.ps1`（Windows）——薄壳用系统 Python 起 `python -m memory_agent.deploy install`（顶层零第三方依赖，可在 venv 建好前跑）。编排：建 venv → 装 `memory_agent/deploy-requirements.txt`（**与 `legal_web` 解耦**，D3）→ editable 装两包 → 建索引 → **写 opencode 注册**（`~/.config/opencode/opencode.json`，幂等 + 备份 + `--dry-run`，D4）→ 落 skill → 起 daemon → 冒烟。开关：`--dry-run` / `--no-index` / `--no-daemon` / `--no-smoke` / `--with-tests` / `--force-index`；Linux 默认装 CPU 版 torch。POSIX 守护：`proxy._spawn_daemon` 在非 Windows 用 `start_new_session=True`（D1）。
 - Build the derived memory index (loads BGE-M3; ~6 min per 60 entries on CPU): `venv\Scripts\python.exe memory_agent/build_index.py` → builds a new generation `memory_agent/vector_db/gen-N/` and atomically switches the `CURRENT` pointer (issue #13; gitignored).
 - **拓扑（#19 / ADR-0013）：一个常驻 daemon + 每会话一个 stdio 代理。** 所有会话共享 daemon 里那一份 BGE-M3（~3.9GB 只付一次），代理每会话仅几十 MB。
   - 启动 daemon：`venv\Scripts\python.exe memory_agent/mcp_server.py --transport http`（默认 `127.0.0.1:8765`，默认 eager 预热；`--no-warmup` 可关）。`GET /health` 是就绪探测。
@@ -160,7 +165,7 @@ The `warmup()` function (called from `app.py` lifespan) eagerly triggers BGE-M3 
 - **Versioning**: JS/CSS files use `?v=N` cache busting. Increment when changing any JS module.
 
 ## Tests
-- **单元测试**：`tests/unit/`（pytest）——`test_document_service.py`、`test_rag_service.py`、`test_session_memory.py`、`test_memory_corpus.py`、`test_memory_index.py`、`test_memory_index_qdrant.py`、`test_memory_reindex.py`、`test_memory_writer.py`、`test_memory_lazy_warmup.py`、`test_memory_concurrency.py`、`test_memory_proxy.py`、`test_mcp_server_cli.py`、`test_config_layering.py`、`test_vector_store_clear.py`、`test_vector_store_filter.py`、`test_vector_store_locking.py`、`test_retrieval_strategy.py`、`test_memory_retrieval.py`、`test_memory_store_port.py`、`test_eval_metrics.py`、`test_reranker_service.py`、`test_gateway_authz.py`、`test_hf_offline.py`、`test_memory_selection.py`、`test_memory_admission.py`（后两个是 #36 收录 / 运行时选择）、`test_memory_onnx_reranker.py`（#35 ONNX 重排器）、`test_memory_bm25.py`（#40 BM25 稀疏接缝）、`test_connect.py`（#41 一步安装纯函数）、`test_embedding_provider.py`（#43 BGE-M3 单例）、`test_parse_sections.py` / `test_parse_engines.py` / `test_parse_materialize.py`（#50 解析端口）、`test_ingest.py`（#51 上传收录）。运行：`venv\Scripts\python.exe -m pytest tests/unit -q`（**426 passed / 3 skipped / 3 xfailed**）。
+- **单元测试**：`tests/unit/`（pytest）——`test_document_service.py`、`test_rag_service.py`、`test_session_memory.py`、`test_memory_corpus.py`、`test_memory_index.py`、`test_memory_index_qdrant.py`、`test_memory_reindex.py`、`test_memory_writer.py`、`test_memory_lazy_warmup.py`、`test_memory_concurrency.py`、`test_memory_proxy.py`、`test_mcp_server_cli.py`、`test_config_layering.py`、`test_vector_store_clear.py`、`test_vector_store_filter.py`、`test_vector_store_locking.py`、`test_retrieval_strategy.py`、`test_memory_retrieval.py`、`test_memory_store_port.py`、`test_eval_metrics.py`、`test_reranker_service.py`、`test_gateway_authz.py`、`test_hf_offline.py`、`test_memory_selection.py`、`test_memory_admission.py`（后两个是 #36 收录 / 运行时选择）、`test_memory_onnx_reranker.py`（#35 ONNX 重排器）、`test_memory_bm25.py`（#40 BM25 稀疏接缝）、`test_connect.py`（#41 一步安装纯函数）、`test_embedding_provider.py`（#43 BGE-M3 单例）、`test_parse_sections.py` / `test_parse_engines.py` / `test_parse_materialize.py`（#50 解析端口）、`test_ingest.py`（#51 上传收录）、`test_deploy.py`（#52 一键部署纯函数：opencode 注册写入 / 幂等 / 备份 / dry-run / 平台分支）。运行：`venv\Scripts\python.exe -m pytest tests/unit -q`（**457 passed / 3 skipped / 3 xfailed**）。
 - **写路径 sandbox 套件（#16，真实 KB 版，需 BGE-M3）**：`venv\Scripts\python.exe memory_agent/eval/write_path_sandbox.py`——不在 `tests/unit` 内（运行时证据），证据见 `memory_agent/eval/write_path_sandbox_results.md`。
 - **个人模式验收（#36，无需模型；Stub 嵌入）**：`venv\Scripts\python.exe memory_agent/eval/personal_mode_36.py`——外部改文件 / 改 overlay 免重启、D13 惰性追平、exclude 预览+确认不误删。证据见 `memory_agent/eval/personal_mode_36_results.md`（15/15，真实语料指纹 172 文件 / 51ms）。
 - **共享服务验收（#41，无需模型；Stub 嵌入）**：`venv\Scripts\python.exe memory_agent/eval/shared_service_41.py`——一步安装（DeepTutor 部署级 mcp.json：幂等 + dry-run + 保留其它条目）、两传输（`streamableHttp` + `proxy.py` stdio）连**同一**临时 daemon（同 `gen` / 同 top-k）、外部改已收录 `.md` 的惰性追平、**跨消费者双向写→读**、共享工具白名单（含 `add`/`supersede`/`archive`，不含维护 / 收录 DDL）、**审计归属到 agent**；配置另用 **DeepTutor 自身**（系统 Python 3.12）的 `load_mcp_config` / `validate_mcp_url` 校验。证据见 `memory_agent/eval/shared_service_41_results.md`（**37/37**）。
@@ -291,10 +296,11 @@ The `warmup()` function (called from `app.py` lifespan) eagerly triggers BGE-M3 
 - **下一阶段 = agentic RAG（agent loop 做深）**：**先量检索头寸、再谈机制 / 工具**（`ADR-0026` accepted）；✅ **#47 Phase A**（MultiHop-RAG 单次证据 census，**D4 = 有头寸**：recall@5 0.650 / @50 0.965，**排序头寸为主**；证据 `experiments/agentic-rag-census/`）→ ✅ **#48 Phase B**（三臂，N=200、`qwen3.7-flash`）：**迭代有效**（B3 答案 +10.2pp / recall@5 +9.1pp，均显著；增益主落「排序 miss」；两跳拿走大部分）；**裸改写无增益**（B2−B1 CI 含 0）；**LLM 早停 35.8%**；`ADR-0026` D5：机制证据、非产品增益。证据 `experiments/agentic-rag-census/phase_b/`。
   → ✅ **A 已落地**：`SKILL.md` 新增「迭代检索」节（**≤2 跳预算 / 迭代而非改写 / 停止 OR / 别早停 / 证据不足明说**），措辞由 Phase B 缺口决定；skill 是**规劝**、统计验证后置。**仍不碰检索默认 / 合成**。
 - **新功能线 = 文档解析与收录**（`ADR-0027` accepted；票 **#50 ✅ → #51 ✅**）：✅ **#50 已合**（`memory_agent/parse/` 端口 + Docling/pypdf + 按节切）；✅ **#51 已合**（`memory_agent/ingest.py` + `parse_worker.py`；上传 → 物化 → **overlay 只读收录**，真 Docling 14/14；426 passed）——PDF / DOCX → **物化 Markdown · 按节切**（每节一个条目）→ 复用现有 `.md` 条目管线（**保 ADR-0025**，顺带修 #47 的 6000 字截断）；引擎 = 可插拔 `DocumentParser` 端口 + **Docling 首装 / `pypdf` 兜底**；本地个人模式、**上传收录为只读语料（overlay）**；重依赖走**独立解析环境**、**不进 daemon**。调研 `experiments/document-parsing-survey/`。
-- **部署 + 跨平台**（`ADR-0028` accepted；票 **#52 → #53**，v2 **#54** backlog）：`git clone` + **一条命令**（`install.sh` / `install.ps1` → `memory-agent install` 幂等）——建 venv / 装**独立 deploy requirements（与 `legal_web` 解耦）** / 建索引 / **写 opencode MCP 注册（幂等+备份+dry-run）** / 落 skill / 起 daemon / 冒烟；**支持 WSL/Linux + Windows**（修 POSIX 守护）。**final test = 全新 WSL + 全新 opencode 端到端**。
+- ✅ **部署 + 跨平台**（`ADR-0028`；票 **#52 ✅ → #53 ✅**，v2 **#54** backlog）：`git clone` + **一条命令**（`install.sh` / `install.ps1` → `memory-agent install` 幂等）——建 venv / 装**独立 deploy requirements（与 `legal_web` 解耦）** / 建索引 / **写 opencode MCP 注册（幂等+备份+dry-run）** / 落 skill / 起 daemon / 冒烟；**支持 WSL/Linux + Windows**（修 POSIX 守护）。**final test = 全新 WSL**：Tier1 全绿、Tier2 全绿（retrieval_eval 用过滤集）、真实使用 A–G 通过、opencode `mcp list` connected；证据 `memory_agent/eval/one_click_deploy_52_results.md`、上手文档 `docs/deploy-quickstart.md`。final test 另发现并修掉 5 个真实缺陷（KB_DIR 跨平台 / `local_files_only` / `is_model_cached` 半成品 / 写去重误判 / 逐模型 HF 离线）。
+  - **遗留**：① daemon 身份核验（WSL2 localhost 会串到宿主 Windows daemon）**已降 backlog（#55）**——个人模式是「单 daemon + 单基表」，同机多部署用 `MEMORY_MCP_PORT` 隔离；② **npx 薄包装**（`npx github:Alex-tangt/Agent-Knowledge-Base`，Windows，免发布）**已开 follow-up 票**（`ADR-0028` D6 打包形态仍归 v2）。
 - **并行轨 = 检索优化**（**执行 / 实验**会话，自负验收合并）：✅ **已走完（2026-09-17）**——本地默认词法路换 **BM25 + DBSF**（`a288ada` / merge `afea427`，ADR-0019 D14/D15）；#35 / #40 已关（deferred）；**#21（伞）已收口关闭**（2026-09-17，附结论 + 原始"单向量"约束作废记录）。固定 / 已定数值不重跑。
   ⚠️ **默认已变**：本地平面默认 `MEMORY_SPARSE_BACKEND=bm25` + `STORE_FUSION=dbsf` + `LOCAL_HYBRID=1`；任何要复现旧口径的实验（如 #48 Phase B）必须**显式 pin**。
-- **冻结区 = 共享 / 云**：**#38 联邦 · #39 租户泄漏修复 · #34 隔离套件 · #33 后续 · ADR-0015 / 0018** 移出计划（**0018 标 deferred**；#39 是已定位的真实缺陷，解冻时第一件修）。
+- **冻结区 = 共享 / 云**：**#38 联邦 · #39 租户泄漏修复 · #34 隔离套件 · #33 后续 · ADR-0015 / 0018** 移出计划（**0018 标 deferred**；#39 是已定位的真实缺陷，解冻时第一件修）。**共享面方向已固化 `docs/adr/0029`（proposed，2026-09-19）**：服务端 **DB 权威** + **薄客户端**（远程 MCP，不载模型）；先个人多设备、预留多租户；**只定方向不实现**，解冻前置 = #39 → #33 → #34，#38 后延。
 - **明确排除：`legal_web`**（上一版本遗留的无关产品；仅保留代码）。
 
 ## 当前路线图（2026-08 一周冲刺）

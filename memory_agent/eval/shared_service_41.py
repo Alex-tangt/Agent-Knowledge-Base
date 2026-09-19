@@ -244,6 +244,11 @@ def _daemon_env() -> dict:
         }, ensure_ascii=False),
         "MEMORY_AUTH_REQUIRE_TOKEN": "0",
         "MEMORY_RERANK": "0",
+        # Stub 嵌入、确定性、不加载模型（含 fastembed BM25）。默认已改为本地 hybrid +
+        # BM25 + dbsf 融合，其分数尺度与余弦口径断言不一致（#53 实测 [5] 假命中）；
+        # 显式回落 dense + 策略层关键词（#30 口径）。
+        "MEMORY_LOCAL_HYBRID": "0",
+        "MEMORY_SPARSE_BACKEND": "tfidf",
     })
     env.pop("MEMORY_STORE_URL", None)
     return env
@@ -264,17 +269,34 @@ def health_ok(timeout: float = 1.0) -> bool:
 
 
 def _kill_tree(pid: int) -> None:
-    subprocess.run(["taskkill", "/PID", str(pid), "/T", "/F"], capture_output=True)
+    """跨平台停掉测试 daemon（#53：Linux/WSL 不能调 taskkill）。"""
+    if os.name == "nt":
+        subprocess.run(["taskkill", "/PID", str(pid), "/T", "/F"], capture_output=True)
+        return
+    import signal
+    try:
+        os.killpg(os.getpgid(pid), signal.SIGTERM)
+    except (ProcessLookupError, PermissionError, OSError):
+        try:
+            os.kill(pid, signal.SIGTERM)
+        except OSError:
+            pass
+
+
+def _spawn_kwargs() -> dict:
+    if os.name == "nt":
+        flags = (getattr(subprocess, "DETACHED_PROCESS", 0)
+                 | getattr(subprocess, "CREATE_NEW_PROCESS_GROUP", 0))
+        return {"creationflags": flags, "close_fds": True}
+    return {"start_new_session": True, "close_fds": True}
 
 
 def start_daemon() -> subprocess.Popen:
-    creationflags = (getattr(subprocess, "DETACHED_PROCESS", 0)
-                     | getattr(subprocess, "CREATE_NEW_PROCESS_GROUP", 0))
     log = open(LOG, "wb")
     proc = subprocess.Popen(
         [PY, WRAPPER, "--transport", "http", "--host", HOST, "--port", str(PORT)],
         stdin=subprocess.DEVNULL, stdout=log, stderr=subprocess.STDOUT, cwd=_ROOT,
-        env=_daemon_env(), creationflags=creationflags, close_fds=True,
+        env=_daemon_env(), **_spawn_kwargs(),
     )
     log.close()
     for _ in range(240):
@@ -472,7 +494,9 @@ def main() -> int:
     note("\n[2] 用 DeepTutor 自身的 load_mcp_config / validate_mcp_url 校验")
     dt = validate_with_deeptutor()
     if dt is None:
-        check("DeepTutor 侧校验", False, "未找到可 import deeptutor 的 Python")
+        # 本机没有可 import deeptutor 的 Python（如 WSL/CI 上未装 DeepTutor）→ 跳过，
+        # 不算失败；DeepTutor 侧的真实校验在装有它的机器上跑（#53 跨平台）。
+        note("  [SKIP] DeepTutor 侧校验（未找到可 import deeptutor 的 Python）")
     else:
         check("DeepTutor 读到 memory-agent 且解析为 streamableHttp",
               dt["present"] and dt["resolved_type"] == "streamableHttp",

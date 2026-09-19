@@ -393,8 +393,35 @@ class MemoryWriter:
 
     def _find_duplicates(self, title: str, body: str, threshold: float,
                          payload_filter: dict | None = None) -> list[dict]:
+        """写前去重：阈值是 **dense 余弦** 口径（ADR-0009 / #16 calibration）。
+
+        必须走纯 dense 通道取分——本地默认已是 store 原生 hybrid（BM25 + DBSF 融合），
+        融合分的量纲与余弦完全不同（实测常 >1），拿它比 0.88 会把**语义无关**的条目
+        误判为重复、拒绝写入（#53 在全新 WSL 实测：unique 新条目 candidate score=1.63）。
+        dense 通道不可用时才回退索引检索（仅测试替身会走这里）。
+        """
+        query_text = f"{title}\n\n{body}"
+        store = getattr(self._index, "store", None)
+        if store is not None and hasattr(store, "search_dense"):
+            scoped = dict(payload_filter or {})
+            scoped["writable"] = True
+            result = store.search_dense(query_text, k=5, payload_filter=scoped)
+            docs = (result.get("documents") or [[]])[0]
+            metas = (result.get("metadatas") or [[]])[0]
+            dists = (result.get("distances") or [[]])[0]
+            keys = ("entry_id", "title", "source", "status")
+            out = []
+            for _doc, meta, dist in zip(docs, metas, dists):
+                if float(dist) < threshold:
+                    continue
+                item = {key: meta.get(key) for key in keys}
+                item["id"] = meta.get("entry_id")
+                item["score"] = float(dist)
+                out.append(item)
+            return out
+
         kwargs = {"payload_filter": payload_filter} if payload_filter else {}
-        hits = self._index.search(f"{title}\n\n{body}", k=5, writable_only=True, **kwargs)
+        hits = self._index.search(query_text, k=5, writable_only=True, **kwargs)
         keys = ("id", "title", "source", "status", "score")
         return [
             {key: hit[key] for key in keys}

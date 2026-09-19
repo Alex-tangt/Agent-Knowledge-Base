@@ -212,6 +212,12 @@ def _daemon_env() -> dict:
         "MEMORY_DAEMON_LOG": LOG,
         "MEMORY_AUTH_REQUIRE_TOKEN": "0",
         "MEMORY_RERANK": "0",
+        # 本套件 = Stub 嵌入、确定性、不加载任何模型（含 fastembed BM25）。默认已改为
+        # 本地 hybrid + BM25 + dbsf 融合，其**融合分数尺度**与去重阈值（余弦 0.88）
+        # 不一致，会让 stub 断言失真（#53 实测 B1 误判 duplicate）。这里显式回落
+        # dense + 策略层关键词（#30 口径），保持确定性。
+        "MEMORY_LOCAL_HYBRID": "0",
+        "MEMORY_SPARSE_BACKEND": "tfidf",
     })
     env.pop("MEMORY_AUTH_TOKENS", None)
     env.pop("MEMORY_STORE_URL", None)
@@ -239,17 +245,34 @@ def health_ok(timeout: float = 1.0) -> bool:
 
 
 def _kill_tree(pid: int) -> None:
-    subprocess.run(["taskkill", "/PID", str(pid), "/T", "/F"], capture_output=True)
+    """跨平台停掉测试 daemon（#53：Linux/WSL 不能调 taskkill）。"""
+    if os.name == "nt":
+        subprocess.run(["taskkill", "/PID", str(pid), "/T", "/F"], capture_output=True)
+        return
+    import signal
+    try:
+        os.killpg(os.getpgid(pid), signal.SIGTERM)
+    except (ProcessLookupError, PermissionError, OSError):
+        try:
+            os.kill(pid, signal.SIGTERM)
+        except OSError:
+            pass
+
+
+def _spawn_kwargs() -> dict:
+    if os.name == "nt":
+        flags = (getattr(subprocess, "DETACHED_PROCESS", 0)
+                 | getattr(subprocess, "CREATE_NEW_PROCESS_GROUP", 0))
+        return {"creationflags": flags, "close_fds": True}
+    return {"start_new_session": True, "close_fds": True}
 
 
 def start_daemon() -> subprocess.Popen:
-    creationflags = (getattr(subprocess, "DETACHED_PROCESS", 0)
-                     | getattr(subprocess, "CREATE_NEW_PROCESS_GROUP", 0))
     log = open(LOG, "wb")
     proc = subprocess.Popen(
         [PY, WRAPPER, "--transport", "http", "--host", HOST, "--port", str(PORT)],
         stdin=subprocess.DEVNULL, stdout=log, stderr=subprocess.STDOUT, cwd=_ROOT,
-        env=_daemon_env(), creationflags=creationflags, close_fds=True,
+        env=_daemon_env(), **_spawn_kwargs(),
     )
     log.close()
     for _ in range(240):

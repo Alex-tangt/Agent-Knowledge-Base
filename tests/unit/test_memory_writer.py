@@ -487,3 +487,50 @@ def test_add_does_not_sync_refresh_the_index(tmp_path):
     assert result["index"]["ok"] is True
     assert result["index"]["refreshed"] is False
     assert result["index"]["mode"] == "lazy"
+
+
+# ------------------------------- 去重必须走 dense 余弦（#53 回归）
+
+
+class _FakeDenseStore:
+    def __init__(self, distances):
+        self._distances = distances
+        self.called = False
+
+    def search_dense(self, query, k=5, payload_filter=None):
+        self.called = True
+        count = len(self._distances)
+        metas = [[{"entry_id": "topics/other", "title": "Other",
+                   "source": "other.md", "status": "current"}] * count]
+        return {"documents": [["x"] * count], "metadatas": metas,
+                "distances": [list(self._distances)]}
+
+
+class _HybridTrapIndex:
+    """去重**不应**走 hybrid `search`（融合分与余弦量纲不同）；一旦调用就失败。"""
+
+    def __init__(self, distances):
+        self.store = _FakeDenseStore(distances)
+
+    def search(self, *args, **kwargs):  # pragma: no cover - 触发即测试失败
+        raise AssertionError("去重必须走 dense 通道，不能拿 hybrid 融合分比阈值")
+
+    def get(self, entry_id):  # pragma: no cover - 去重不读条目
+        raise KeyError(entry_id)
+
+
+def test_dedup_uses_dense_not_hybrid_fused_score(tmp_path):
+    # 融合分量纲下会 >=0.88 的无关条目；dense 余弦只有 0.30 → 不判重（可写入）。
+    index = _HybridTrapIndex([0.30])
+    writer = MemoryWriter(index, kb_dir=str(tmp_path))
+    assert writer._find_duplicates("t", "b", 0.88) == []
+    assert index.store.called is True
+
+
+def test_dedup_reports_dense_candidate_above_threshold(tmp_path):
+    index = _HybridTrapIndex([0.95])
+    writer = MemoryWriter(index, kb_dir=str(tmp_path))
+    duplicates = writer._find_duplicates("t", "b", 0.88)
+    assert len(duplicates) == 1
+    assert duplicates[0]["id"] == "topics/other"
+    assert duplicates[0]["score"] == 0.95

@@ -100,11 +100,24 @@ def _release_lock(lock_path: str, fd: int) -> None:
         pass
 
 
+def _daemon_popen_kwargs(os_name: str | None = None) -> dict:
+    """守护进程的 Popen 分离参数（跨平台）。
+
+    Windows 用 `DETACHED_PROCESS | CREATE_NEW_PROCESS_GROUP`；POSIX 用
+    `start_new_session=True`（`setsid`）——否则安装/会话退出会把 daemon 带走，
+    Linux/WSL 上生命周期不可靠（#52 / ADR-0028 D1）。`DETACHED_PROCESS` 在
+    Linux 上取不到（= 0），只靠它是空操作。
+    """
+    if (os_name or os.name) == "nt":
+        creationflags = 0
+        for flag in ("DETACHED_PROCESS", "CREATE_NEW_PROCESS_GROUP"):
+            creationflags |= getattr(subprocess, flag, 0)
+        return {"creationflags": creationflags, "close_fds": True}
+    return {"start_new_session": True, "close_fds": True}
+
+
 def _spawn_daemon(host: str, port: int, path: str, log_path: str) -> None:
     os.makedirs(os.path.dirname(log_path), exist_ok=True)
-    creationflags = 0
-    for flag in ("DETACHED_PROCESS", "CREATE_NEW_PROCESS_GROUP"):
-        creationflags |= getattr(subprocess, flag, 0)
     command = [
         sys.executable, SERVER_SCRIPT,
         "--transport", "http", "--host", host, "--port", str(port), "--path", path,
@@ -112,7 +125,7 @@ def _spawn_daemon(host: str, port: int, path: str, log_path: str) -> None:
     with open(log_path, "ab") as log:
         subprocess.Popen(
             command, stdin=subprocess.DEVNULL, stdout=log, stderr=subprocess.STDOUT,
-            cwd=_ROOT, creationflags=creationflags, close_fds=True,
+            cwd=_ROOT, **_daemon_popen_kwargs(),
         )
 
 

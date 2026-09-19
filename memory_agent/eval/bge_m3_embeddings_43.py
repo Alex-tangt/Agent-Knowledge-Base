@@ -109,16 +109,22 @@ def _daemon_env() -> dict:
     return env
 
 
+def _spawn_kwargs() -> dict:
+    if os.name == "nt":
+        flags = (getattr(subprocess, "DETACHED_PROCESS", 0)
+                 | getattr(subprocess, "CREATE_NEW_PROCESS_GROUP", 0))
+        return {"creationflags": flags, "close_fds": True}
+    return {"start_new_session": True, "close_fds": True}
+
+
 def start_daemon() -> subprocess.Popen:
     server = os.path.join(_ROOT, "memory_agent", "mcp_server.py")
-    creationflags = (getattr(subprocess, "DETACHED_PROCESS", 0)
-                     | getattr(subprocess, "CREATE_NEW_PROCESS_GROUP", 0))
     log = open(LOG, "wb")
     proc = subprocess.Popen(
         [PY, server, "--transport", "http", "--host", HOST, "--port", str(PORT),
          "--no-warmup"],
         stdin=subprocess.DEVNULL, stdout=log, stderr=subprocess.STDOUT, cwd=_ROOT,
-        env=_daemon_env(), creationflags=creationflags, close_fds=True,
+        env=_daemon_env(), **_spawn_kwargs(),
     )
     log.close()
     for _ in range(240):
@@ -131,7 +137,18 @@ def start_daemon() -> subprocess.Popen:
 
 
 def _kill_tree(pid: int) -> None:
-    subprocess.run(["taskkill", "/PID", str(pid), "/T", "/F"], capture_output=True)
+    """跨平台停掉测试 daemon（#53：Linux/WSL 不能调 taskkill）。"""
+    if os.name == "nt":
+        subprocess.run(["taskkill", "/PID", str(pid), "/T", "/F"], capture_output=True)
+        return
+    import signal
+    try:
+        os.killpg(os.getpgid(pid), signal.SIGTERM)
+    except (ProcessLookupError, PermissionError, OSError):
+        try:
+            os.kill(pid, signal.SIGTERM)
+        except OSError:
+            pass
 
 
 def setup_workspace() -> None:
@@ -273,7 +290,8 @@ def main() -> int:
         note("\n[5] 用 DeepTutor 自身 EmbeddingClient 端到端取向量")
         dt = validate_with_deeptutor()
         if dt is None:
-            check("DeepTutor 端到端取向量", False, "未找到可 import deeptutor 的 Python")
+            # 本机无 DeepTutor（如 WSL/CI）→ 跳过，不算失败（#53 跨平台）。
+            note("  [SKIP] DeepTutor 端到端（未找到可 import deeptutor 的 Python）")
         else:
             check("DeepTutor 解析为 local vllm + bge-m3（dim=1024）",
                   dt["binding"] == "vllm" and dt["provider_mode"] == "local"
