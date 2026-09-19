@@ -13,6 +13,7 @@ legal_web/          # 【已排除】上一版本遗留的无关产品（仅保�
   ingest.py  fetch_laws.py  test_langsmith.py  view_registry.json
   requirements.txt  .env  vector_db/  uploads/
 install.sh  install.ps1   # 一键部署薄壳（#52 / ADR-0028）→ `memory-agent install`
+package.json  bin/agent-kb.js   # npx 薄包装安装器（#56）：取源码 → 复用 `memory-agent install`
 memory_agent/       # 记忆能力包（MCP + skill）；可安装
   __init__.py  pyproject.toml
   cli.py  deploy.py  deploy-requirements.txt  opencode_config.py
@@ -50,6 +51,8 @@ pip install -e ragcore -e memory_agent   # install the two packages (ADR-0024)
 ### memory_agent (记忆能力包)
 - **可安装（#26 / ADR-0024）**：`pip install -e ragcore -e memory_agent`（Venv 段已含）。等价的模块/脚本入口：`python -m memory_agent.mcp_server`、`python -m memory_agent.build_index`，以及 console scripts `memory-agent` / `memory-agent-proxy` / `memory-agent-build-index` / `memory-agent-connect`。脚本入口（`memory_agent/*.py`）安装后从任意 CWD 均可运行。`memory-agent` 现为统一 CLI：`memory-agent install` = 一键部署（`cli.py` → `deploy.py`），无子命令仍是 MCP server（向后兼容）。
 - **一键部署（#52 / ADR-0028）**：`git clone` 后 `bash install.sh`（Linux/WSL/macOS）或 `pwsh install.ps1`（Windows）——薄壳用系统 Python 起 `python -m memory_agent.deploy install`（顶层零第三方依赖，可在 venv 建好前跑）。编排：建 venv → 装 `memory_agent/deploy-requirements.txt`（**与 `legal_web` 解耦**，D3）→ editable 装两包 → 建索引 → **写 opencode 注册**（`~/.config/opencode/opencode.json`，幂等 + 备份 + `--dry-run`，D4）→ 落 skill → 起 daemon → 冒烟。开关：`--dry-run` / `--no-index` / `--no-daemon` / `--no-smoke` / `--with-tests` / `--force-index`；Linux 默认装 CPU 版 torch。POSIX 守护：`proxy._spawn_daemon` 在非 Windows 用 `start_new_session=True`（D1）。
+  - **npx 薄包装（#56 / ADR-0028 D6 免发布形态）**：root `package.json` + `bin/agent-kb.js`（Node stdlib，无重依赖）→ `npx --yes github:Alex-tangt/Agent-Knowledge-Base <目录> [安装参数...]`。包装器把源码 `git clone` 到目标目录（已存在则 `fetch` + 快进，幂等），再调用**同一个** `python -m memory_agent.deploy install`（与 `install.sh`/`install.ps1` 同入口，参数透传）。包装器选项 `--dir`/`--repo-url`/`--ref`/`--force`；`--dry-run` 克隆到临时目录跑安装器 dry-run 后删除。前置 node ≥ 18 + git（记忆写入硬依赖）+ Python ≥ 3.10。证据 `memory_agent/eval/npx_install_56_results.md`。
+  - **落地验收（人的小抽查，带数据基座）**：`docs/acceptance-personal-mode.md` —— WSL 上在**全新隔离实例**（KB / 索引 / 只读语料 / 端口 / opencode `HOME` 全隔离）加载固定 seed（`memory_agent/eval/acceptance/seed/`：3 写 + 2 只读），按 `cases.md` 逐条验读/写/生命周期/取新弃旧/索引自洽。setup 助脚 `memory_agent/eval/acceptance/setup.sh`（幂等）。取代旧版裸 A–G。
 - Build the derived memory index (loads BGE-M3; ~6 min per 60 entries on CPU): `venv\Scripts\python.exe memory_agent/build_index.py` → builds a new generation `memory_agent/vector_db/gen-N/` and atomically switches the `CURRENT` pointer (issue #13; gitignored).
 - **拓扑（#19 / ADR-0013）：一个常驻 daemon + 每会话一个 stdio 代理。** 所有会话共享 daemon 里那一份 BGE-M3（~3.9GB 只付一次），代理每会话仅几十 MB。
   - 启动 daemon：`venv\Scripts\python.exe memory_agent/mcp_server.py --transport http`（默认 `127.0.0.1:8765`，默认 eager 预热；`--no-warmup` 可关）。`GET /health` 是就绪探测。
