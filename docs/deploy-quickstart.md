@@ -35,6 +35,32 @@ editable 装 `ragcore` + `memory_agent` → 建派生索引（首次下 BGE-M3 ~
 > 首次建索引在 CPU 上较慢（本机 ~3 分钟/16 条，取决于条目长度与核数）。之后重跑会
 > 检测到「索引已自洽」而跳过（`--force-index` 可强制重建）。
 
+### npx 安装（免 clone；#56）
+
+不想先 `git clone` 时，用 npx 薄包装（`npx github:` 免 npm 发布）：
+
+```powershell
+# 在干净目录：取源码到 my-kb → 跑同一个 `memory-agent install`
+npx --yes github:Alex-tangt/Agent-Knowledge-Base my-kb
+
+# 先干跑（参数原样透传）；再真装
+npx --yes github:Alex-tangt/Agent-Knowledge-Base my-kb --dry-run
+npx --yes github:Alex-tangt/Agent-Knowledge-Base my-kb --no-index --opencode-home C:\tmp\oc
+```
+
+- **薄壳**：把源码 `git clone` 到 `<目标目录>`（已存在则 `fetch` + 快进，**幂等**），再调用与
+  `install.sh` / `install.ps1` **相同**的入口 `python -m memory_agent.deploy install`；
+  不改 Python 运行时与安装语义。
+- **包装器选项**：`--dir <path>` · `--repo-url <url>` · `--ref <branch|tag>` · `--force`；
+  其余参数原样透传给安装器（`--` 之后的也一并透传）。默认目标目录 `./agent-knowledge-base`。
+- **前置**：**node ≥ 18 + git + Python ≥ 3.10**。git 是记忆写入的硬依赖（一次写入一个 commit），
+  所以不做 tarball 兜底。
+- **`--dry-run` 不落盘**：不创建目标目录、不建 venv、不写注册；它把源码克隆到**临时目录**跑
+  安装器的 dry-run，结束后删除。
+- **固定 ref**：`npx github:...#<ref>` 固定的是**包装器**；源码默认取默认分支，用 `--ref <ref>` 对齐。
+- **多份部署**：同机第二个部署要隔离端口与注册——`MEMORY_MCP_PORT=<另一端口>` +
+  `--opencode-home <目录>`（见下「常见问题」）。
+
 ## 3. 就绪探测（装完自检）
 
 ```bash
