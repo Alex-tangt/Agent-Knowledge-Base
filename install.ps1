@@ -4,11 +4,11 @@
 # `python -m memory_agent.deploy install`（真正实现：建 venv / 装依赖 / 建索引 /
 # 写 opencode 注册 / 落 skill / 起 daemon / 冒烟，全部幂等）。
 #
-# 用法：
-#   pwsh install.ps1                 # 一键部署
-#   pwsh install.ps1 --dry-run       # 只预览，不落盘
-#   pwsh install.ps1 --no-index      # 跳过建索引
-#   pwsh install.ps1 --with-tests    # 额外装 pytest
+# 用法（系统自带 Windows PowerShell 5.1 即可；装了 pwsh 也能用）：
+#   powershell -File install.ps1                 # 一键部署
+#   powershell -File install.ps1 --dry-run       # 只预览，不落盘
+#   powershell -File install.ps1 --no-index      # 跳过建索引
+#   powershell -File install.ps1 --with-tests    # 额外装 pytest
 param(
     [Parameter(ValueFromRemainingArguments = $true)]
     [string[]]$CmdArgs

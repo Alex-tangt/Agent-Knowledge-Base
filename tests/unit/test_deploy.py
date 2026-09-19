@@ -30,6 +30,8 @@ def test_use_cpu_torch_precedence(monkeypatch):
     monkeypatch.setattr(deploy.sys, "platform", "linux")
     assert deploy._use_cpu_torch(SimpleNamespace(cpu_torch=None)) is True
     monkeypatch.setattr(deploy.sys, "platform", "win32")
+    assert deploy._use_cpu_torch(SimpleNamespace(cpu_torch=None)) is True
+    monkeypatch.setattr(deploy.sys, "platform", "darwin")
     assert deploy._use_cpu_torch(SimpleNamespace(cpu_torch=None)) is False
     assert deploy._use_cpu_torch(SimpleNamespace(cpu_torch=True)) is True
     assert deploy._use_cpu_torch(SimpleNamespace(cpu_torch=False)) is False
@@ -180,3 +182,90 @@ def test_cli_install_rejects_non_repo(tmp_path):
         "--repo", str(tmp_path),
     ])
     assert rc == 2
+
+
+# --------------------------------------------------------------------- 卸载
+
+def test_remove_opencode_registration_absent(tmp_path):
+    path = str(tmp_path / "opencode.json")
+    result = oc.remove_opencode_registration(path)
+    assert result["status"] == "absent" and result["removed"] is False
+
+
+def test_remove_opencode_registration_removes_and_keeps_others(tmp_path):
+    path = str(tmp_path / "opencode.json")
+    data = {"mcp": {oc.SERVER_NAME: {"type": "local"}, "other": {"type": "remote"}},
+            "theme": "dark"}
+    with open(path, "w", encoding="utf-8") as handle:
+        json.dump(data, handle)
+
+    result = oc.remove_opencode_registration(path)
+    assert result["status"] == "removed" and result["removed"] is True
+    assert result["backup"] and os.path.isfile(result["backup"])
+    after = json.loads(open(path, encoding="utf-8").read())
+    assert oc.SERVER_NAME not in after["mcp"]
+    assert after["mcp"]["other"] == {"type": "remote"}
+    assert after["theme"] == "dark"
+    assert oc.remove_opencode_registration(path)["status"] == "absent"
+
+
+def test_remove_opencode_registration_dry_run_writes_nothing(tmp_path):
+    path = str(tmp_path / "opencode.json")
+    with open(path, "w", encoding="utf-8") as handle:
+        json.dump({"mcp": {oc.SERVER_NAME: {"type": "local"}}}, handle)
+    before = open(path, encoding="utf-8").read()
+    result = oc.remove_opencode_registration(path, dry_run=True)
+    assert result["status"] == "would-remove" and result["removed"] is False
+    assert open(path, encoding="utf-8").read() == before
+
+
+def test_remove_opencode_registration_refuses_invalid_json(tmp_path):
+    path = tmp_path / "opencode.json"
+    path.write_text("{not json", encoding="utf-8")
+    result = oc.remove_opencode_registration(str(path))
+    assert result["status"] == "parse-error" and result["removed"] is False
+    assert path.read_text(encoding="utf-8") == "{not json"
+
+
+def test_uninstall_skill_roundtrip(tmp_path):
+    dest = str(tmp_path / "skills" / "memory-agent")
+    assert oc.uninstall_skill(dest) == "absent"
+    os.makedirs(dest)
+    with open(os.path.join(dest, "SKILL.md"), "w", encoding="utf-8") as handle:
+        handle.write("x")
+    assert oc.uninstall_skill(dest, dry_run=True) == "would-remove"
+    assert os.path.isdir(dest)
+    assert oc.uninstall_skill(dest) == "removed"
+    assert not os.path.exists(dest)
+
+
+def test_cli_uninstall_removes_registration_and_skill(tmp_path):
+    home = str(tmp_path / "home")
+    assert cli.main([
+        "install", "--skip-deps", "--no-index", "--no-daemon", "--no-smoke",
+        "--opencode-home", home, "--repo", deploy.REPO_ROOT,
+    ]) == 0
+    config = os.path.join(home, ".config", "opencode", "opencode.json")
+    assert oc.SERVER_NAME in json.loads(open(config, encoding="utf-8").read())["mcp"]
+
+    assert cli.main([
+        "uninstall", "--dry-run", "--no-daemon", "--opencode-home", home,
+        "--repo", deploy.REPO_ROOT,
+    ]) == 0
+    assert oc.SERVER_NAME in json.loads(open(config, encoding="utf-8").read())["mcp"]
+
+    assert cli.main([
+        "uninstall", "--no-daemon", "--opencode-home", home, "--repo", deploy.REPO_ROOT,
+    ]) == 0
+    assert oc.SERVER_NAME not in json.loads(open(config, encoding="utf-8").read())["mcp"]
+    skill = os.path.join(home, ".config", "opencode", "skills", "memory-agent")
+    assert not os.path.exists(skill)
+
+    assert cli.main([
+        "uninstall", "--no-daemon", "--opencode-home", home, "--repo", deploy.REPO_ROOT,
+    ]) == 0
+
+
+def test_cli_uninstall_all_steps_skipped():
+    assert cli.main(["uninstall", "--dry-run", "--no-daemon",
+                     "--no-register", "--no-skill", "--repo", deploy.REPO_ROOT]) == 0

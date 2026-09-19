@@ -18,8 +18,10 @@
 git clone https://github.com/Alex-tangt/Agent-Knowledge-Base.git
 cd Agent-Knowledge-Base
 bash install.sh                 # Linux / WSL / macOS
-# pwsh install.ps1              # Windows
+# powershell -File install.ps1  # Windows（系统自带 PowerShell 5.1 即可；装了 pwsh 也行）
 ```
+
+> Windows：`powershell -File install.ps1` 与 `pwsh install.ps1` 等价，前者不要求装 PowerShell 7。
 
 一条命令**幂等**完成：
 
@@ -98,5 +100,9 @@ venv/bin/python memory_agent/proxy.py --ensure   # 幂等拉起
   localhost 转发到宿主 Windows 的 8765）。**做法**：第二个部署显式设
   `MEMORY_MCP_PORT=<另一端口>`（安装、proxy、opencode 会话都继承该环境变量）。
 - **daemon 不退** → 正常：单实例常驻；`proxy.py --stop` 手动回收，不做自动空闲卸载（ADR-0013 D2）。
-- **想撤销安装** → 删除 clone 目录；opencode 注册与 skill 在 `~/.config/opencode/`（安装时会
-  自动备份旧 `opencode.json` 为 `opencode.json.bak-<时间戳>`）。
+- **升级** → `git pull` 后**重跑** `bash install.sh`（幂等：依赖补齐、索引自洽则跳过、注册/skill 差分才写）。
+  用 npx 装的同理再跑一次 `npx --yes github:Alex-tangt/Agent-Knowledge-Base#<ref> <dir>`（会 fetch + 快进）。
+- **卸载** → `memory-agent uninstall`（`venv/bin/python -m memory_agent.deploy uninstall`）：
+  停 daemon + 移除 opencode 注册 `mcp.memory-agent` + 移除 skill（**幂等 + 备份 + `--dry-run`**）。
+  它**不删 clone**——彻底移除运行时（venv / 索引 / 本仓 KB）就再删掉 clone 目录。
+  只想撤销注册不动 skill：`--no-skill`；只想看计划：`--dry-run`。

@@ -8,7 +8,7 @@
   所以能在 venv / 依赖还没装好时先跑起来；它自己建 venv、装 deploy requirements、
   以 editable 装 `ragcore` + `memory_agent`，再继续后面的步骤。
 - **幂等**：venv / 依赖 / 注册 / skill /（已自洽的）索引都可重复跑；`--dry-run` 不落盘。
-- **跨平台**：Linux/WSL 与 Windows 同一条路径；Linux 上 torch 默认取 CPU 轮子。
+- **跨平台**：Linux/WSL 与 Windows 同一条路径；Linux/Windows 默认取 CPU 轮子。
 - **依赖解耦**：用 `memory_agent/deploy-requirements.txt`，与 `legal_web` 无关（ADR-0028 D3）。
 
 用法：
@@ -33,6 +33,8 @@ from memory_agent.opencode_config import (
     install_skill,
     opencode_config_path,
     opencode_skill_dir,
+    remove_opencode_registration,
+    uninstall_skill,
     write_opencode_registration,
 )
 
@@ -43,7 +45,7 @@ SKILL_SOURCE_DIR = os.path.join(MEMORY_AGENT_DIR, "skill")
 PROXY_SCRIPT = os.path.join(MEMORY_AGENT_DIR, "proxy.py")
 BUILD_INDEX_SCRIPT = os.path.join(MEMORY_AGENT_DIR, "build_index.py")
 
-#: Linux 上 torch 默认 PyPI 轮子是 CUDA 构建（大）。本产品模型跑 CPU，取 CPU 轮子。
+#: Linux / Windows 上 torch 默认 PyPI 轮子是 CUDA 构建（大）。本产品模型跑 CPU，取 CPU 轮子。
 TORCH_CPU_INDEX = "https://download.pytorch.org/whl/cpu"
 
 DEFAULT_HOST = os.environ.get("MEMORY_MCP_HOST", "127.0.0.1")
@@ -95,7 +97,10 @@ def _run(cmd: list, *, dry_run: bool = False, capture: bool = False,
 def _use_cpu_torch(args: argparse.Namespace) -> bool:
     if args.cpu_torch is not None:
         return args.cpu_torch
-    return sys.platform.startswith("linux")
+    # 个人模式的引擎就是 CPU 推理：Linux 与 Windows 都默认取 CPU 轮子，
+    # 免得在只有 CPU 的机器上白下 ~2.5GB 的 CUDA 版 torch。macOS 轮子本就是 CPU/MPS，
+    # 走 PyPI 默认即可。（显式 `--no-cpu-torch` 可覆盖。）
+    return sys.platform.startswith(("linux", "win"))
 
 
 # --------------------------------------------------------------------- bootstrap
@@ -430,6 +435,77 @@ def run_install(args: argparse.Namespace) -> int:
     return 0
 
 
+# --------------------------------------------------------------------- 卸载
+
+def _stop_daemon(args: argparse.Namespace) -> int:
+    target = venv_python(os.path.abspath(args.repo or REPO_ROOT))
+    if args.dry_run:
+        print(f"[daemon] 预览：将停止 {DEFAULT_HOST}:{DEFAULT_PORT}{DEFAULT_PATH} 的 daemon")
+        return 0
+    if not os.path.isfile(target):
+        print("[daemon] 目标 venv 不存在，跳过停止")
+        return 0
+    _run([target, PROXY_SCRIPT, "--stop", "--host", DEFAULT_HOST,
+          "--port", str(DEFAULT_PORT)], check=False, label="daemon")
+    return 0
+
+
+def _unregister(args: argparse.Namespace) -> int:
+    result = remove_opencode_registration(
+        opencode_config_path(args.opencode_home), dry_run=args.dry_run)
+    status = result["status"]
+    if status == "parse-error":
+        print(f"FAIL: {result['path']} 不是合法 JSON，拒绝改动；请手动删除 mcp.memory-agent。",
+              file=sys.stderr)
+        return 1
+    if status == "absent":
+        print(f"[unregister] 无注册（幂等）：{result['path']}")
+    elif status == "would-remove":
+        print("[unregister] 预览：将移除 mcp.memory-agent（--dry-run 不落盘）")
+    else:
+        print(f"[unregister] removed：{result['path']}（备份 {result['backup']}）")
+    return 0
+
+
+def _remove_skill(args: argparse.Namespace) -> int:
+    dest = opencode_skill_dir(args.opencode_home)
+    action = uninstall_skill(dest, dry_run=args.dry_run)
+    suffix = "（--dry-run 未落盘）" if args.dry_run else ""
+    print(f"[skill] {action}：{dest}{suffix}")
+    return 0
+
+
+def run_uninstall(args: argparse.Namespace) -> int:
+    root = os.path.abspath(args.repo or REPO_ROOT)
+    print("== memory-agent 卸载（注册 / skill / daemon；不删 clone）==")
+    print(f"   repo : {root}")
+    print(f"   mode : {'dry-run（不落盘）' if args.dry_run else 'uninstall'}")
+
+    steps = []
+    if args.no_daemon:
+        print("[daemon] 跳过（--no-daemon）")
+    else:
+        steps.append(lambda: _stop_daemon(args))
+    if args.no_register:
+        print("[unregister] 跳过（--no-register）")
+    else:
+        steps.append(lambda: _unregister(args))
+    if args.no_skill:
+        print("[skill] 跳过（--no-skill）")
+    else:
+        steps.append(lambda: _remove_skill(args))
+
+    for step in steps:
+        rc = step()
+        if rc:
+            return rc
+
+    print("== 完成 ==" + ("（dry-run：未落盘）" if args.dry_run else ""))
+    if not args.dry_run:
+        print(f"如需彻底移除运行时（venv / 索引 / 本仓 KB），删除该目录即可：{root}")
+    return 0
+
+
 # --------------------------------------------------------------------- CLI
 
 def _build_parser() -> argparse.ArgumentParser:
@@ -457,9 +533,25 @@ def _build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--no-smoke", action="store_true", help="不跑冒烟")
     torch_group = parser.add_mutually_exclusive_group()
     torch_group.add_argument("--cpu-torch", dest="cpu_torch", action="store_true",
-                             default=None, help="从 PyTorch CPU 索引装 torch")
+                             default=None,
+                             help="从 PyTorch CPU 索引装 torch（Linux/Windows 默认）")
     torch_group.add_argument("--no-cpu-torch", dest="cpu_torch", action="store_false",
-                             default=None, help="不特殊处理 torch（交付默认 PyPI）")
+                             default=None, help="不特殊处理 torch（走 PyPI 默认，可能是 CUDA 大包）")
+    return parser
+
+
+def _build_uninstall_parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(
+        prog="memory-agent uninstall",
+        description="卸载 memory_agent 的 opencode 注册与 skill，并停掉 daemon（不删 clone）",
+    )
+    parser.add_argument("--dry-run", action="store_true", help="只预览，不落盘")
+    parser.add_argument("--repo", default=None, help="仓库根（默认本文件所在仓库）")
+    parser.add_argument("--opencode-home", default=None,
+                        help="opencode 配置所在用户目录（默认当前用户 home；测试用）")
+    parser.add_argument("--no-register", action="store_true", help="不移除 opencode 注册")
+    parser.add_argument("--no-skill", action="store_true", help="不移除 skill")
+    parser.add_argument("--no-daemon", action="store_true", help="不停 daemon")
     return parser
 
 
@@ -467,6 +559,8 @@ def main(argv: list[str] | None = None) -> int:
     argv = list(sys.argv[1:] if argv is None else argv)
     if argv and argv[0] in _INTERNAL:
         return _INTERNAL[argv[0]](argv[1:])
+    if argv and argv[0] == "uninstall":
+        return run_uninstall(_build_uninstall_parser().parse_args(argv[1:]))
     if argv and argv[0] == "install":
         argv = argv[1:]
     args = _build_parser().parse_args(argv)
