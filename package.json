@@ -1,0 +1,37 @@
+{
+  "name": "agent-knowledge-base",
+  "version": "0.1.0",
+  "description": "npx thin installer for Agent-Knowledge-Base (memory_agent): fetch the source, then run `memory-agent install`.",
+  "bin": {
+    "agent-kb": "bin/agent-kb.js",
+    "agent-knowledge-base": "bin/agent-kb.js"
+  },
+  "files": [
+    "bin/",
+    "package.json"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "os": [
+    "win32",
+    "linux",
+    "darwin"
+  ],
+  "keywords": [
+    "agent",
+    "memory",
+    "mcp",
+    "rag",
+    "opencode",
+    "installer"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Alex-tangt/Agent-Knowledge-Base.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Alex-tangt/Agent-Knowledge-Base/issues"
+  },
+  "homepage": "https://github.com/Alex-tangt/Agent-Knowledge-Base#readme"
+}
