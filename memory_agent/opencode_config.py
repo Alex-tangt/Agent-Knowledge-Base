@@ -184,9 +184,51 @@ def install_skill(source_dir: str, dest_dir: str, *, dry_run: bool = False) -> s
     return action
 
 
+def uninstall_skill(dest_dir: str, *, dry_run: bool = False) -> str:
+    """移除落位的 skill 目录（幂等）。返回 `absent` / `would-remove` / `removed`。"""
+    if not os.path.isdir(dest_dir):
+        return "absent"
+    if dry_run:
+        return "would-remove"
+    shutil.rmtree(dest_dir, ignore_errors=True)
+    return "removed"
+
+
+# --------------------------------------------------------------------- 卸载注册
+
+def remove_opencode_registration(config_path: str, *, dry_run: bool = False) -> dict:
+    """从 opencode 配置移除 `mcp.memory-agent`（幂等 + 备份 + `--dry-run`）。
+
+    - **幂等**：文件不存在 / 没有该条目 → `status=absent`，不碰文件、不备份。
+    - **备份**：文件需改动时先写 `<path>.bak-<时间戳>` 再原子替换。
+    - **`--dry-run` 不写文件**（`status=would-remove`）。
+    - 已有文件**非法 JSON 时拒绝改动**（`status=parse-error`），绝不吞掉用户配置。
+    其它 MCP 服务与顶层键原样保留。
+    返回 `{status, removed, backup, path}`。
+    """
+    if not os.path.isfile(config_path):
+        return {"status": "absent", "removed": False, "backup": None, "path": config_path}
+    try:
+        with open(config_path, "r", encoding="utf-8") as handle:
+            existing = json.load(handle)
+    except (OSError, json.JSONDecodeError):
+        return {"status": "parse-error", "removed": False, "backup": None, "path": config_path}
+    section = existing.get("mcp") if isinstance(existing, dict) else None
+    if not isinstance(section, dict) or SERVER_NAME not in section:
+        return {"status": "absent", "removed": False, "backup": None, "path": config_path}
+    if dry_run:
+        return {"status": "would-remove", "removed": False, "backup": None, "path": config_path}
+
+    backup = _backup_file(config_path)
+    del section[SERVER_NAME]
+    atomic_write_json(config_path, existing)
+    return {"status": "removed", "removed": True, "backup": backup, "path": config_path}
+
+
 __all__ = [
     "OPENCODE_CONFIG_SUBDIR", "OPENCODE_SKILL_DIRNAME", "DEFAULT_OPENCODE_TIMEOUT_MS",
     "SERVER_NAME", "opencode_root", "opencode_config_path", "opencode_skill_dir",
     "default_proxy_command", "build_opencode_entry", "merge_opencode_config",
     "atomic_write_json", "write_opencode_registration", "skill_status", "install_skill",
+    "uninstall_skill", "remove_opencode_registration",
 ]

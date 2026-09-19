@@ -190,6 +190,15 @@ HOME="$AKB_ACCEPT_HOME" opencode debug skill   # 期望：列出 memory-agent（
 rm -rf "$ROOT"
 ```
 
+## 6.1 验收结果
+
+| 日期 | 执行人 | 环境 | 结果 |
+|---|---|---|---|
+| 2026-09-19 | owner | WSL2 Ubuntu（全新隔离实例：`AGENT_KB_DIR`/`MEMORY_INDEX_DIR`/`MEMORY_READONLY_ROOTS`/端口 8799/`HOME` 全隔离） | ✅ **通过** |
+
+- 按本手册跑通：一键装（`install.sh`）→ 冒烟全绿 → opencode `memory-agent` connected → 用例 A–G 全通过。
+- 结论一句话：**在固定数据基座上，装得起来、也用得起来**；未发现阻塞问题。
+
 ---
 
 ## 7. 故障排查
