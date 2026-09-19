@@ -76,48 +76,16 @@ venv/bin/python memory_agent/proxy.py --stop     # 回收 ~3.9GB（手动）
 venv/bin/python memory_agent/proxy.py --ensure   # 幂等拉起
 ```
 
-## 4. 在 opencode 里手工验收（A–G）
+## 4. 落地验收（人的小抽查，带数据基座）
 
-> WSL 里 opencode 原生二进制在 `~/.opencode/bin/opencode`（PATH 上的 `opencode`
-> 可能是 Windows shim）。在**装好的仓库目录**里启动 opencode 会话，即可看到
-> `memory-agent` 的 MCP 工具与 skill。
+写记忆 / 新会话召回 / supersede 取新弃旧 / 只读语料 / 索引自洽 —— 这一轮落地验收
+已独立成篇，带**固定数据基座 + 隔离 setup + 逐条判据**：
 
-**A. 写入记忆** —— 对 agent 说：
-> 「记住一条：Agent-Knowledge-Base 的一键部署命令是 `bash install.sh`（Windows 用 `install.ps1`），标签 agent-knowledge-base，写到 topics。」
-- 预期：agent 调用 `memory_add`；返回 `status=written`（写入全局 KB 并单文件 git commit）。
-- 若返回 `status=duplicate`：说明命中了近似条目 —— 换措辞，或明确要求 `allow_duplicate`。
+**→ [`docs/acceptance-personal-mode.md`](acceptance-personal-mode.md)**（WSL 流程；
+基座在 `memory_agent/eval/acceptance/`）。
 
-**B. 跨会话召回** —— **新开一个会话**：
-> 「我的一键部署命令是什么？」
-- 预期：agent 调 `memory_search`（或 `exclude_retired=true`），命中 A 写入的条目。
-
-**C. 读回全文**：
-> 「用 memory_get 把刚才那条完整读出来。」
-- 预期：返回该条目的**真实 Markdown**（含 frontmatter）。
-
-**D. 生命周期 / 取新弃旧**：
-> 「把那条部署命令改成『WSL 用 `bash install.sh --with-tests`』，用 memory_supersede 替代旧的。」
-- 预期：agent 先返回 `confirmation_required` 预览（**不落盘**）；你同意后它才以确认重试 →
-  新条目建立 + 旧条目标 `superseded`（旧文件保留）。
-- 再问部署命令：应只看到新条目（`exclude_retired` 生效）。
-
-**E. 索引状态自洽**：
-> 「调 memory_index_status 看看索引。」
-- 预期：`built=true`、`consistent=true`、`entries==points`。
-
-**F. 只读语料检索**：
-> 「按 ADR-0028，这套部署支持哪些平台？」
-- 预期：命中本仓 `docs/adr/` 的**只读**条目（`writable=false`，不可写）。
-
-**G. 文档上传收录（可选，需解析环境）**：
-```bash
-python -m venv venv-parse
-venv-parse/bin/python -m pip install docling pypdf python-dotenv
-venv/bin/python -m memory_agent.ingest <your.pdf> --label mydocs \
-  --parse-python venv-parse/bin/python
-```
-- 预期：物化 `.md` 到 `memory_agent/imports/`，写 overlay（只读语料域）；下一次
-  `memory_search` 的惰性刷新即召回（免重启）。也可让 agent 调 `memory_ingest_list` 查看收录全景。
+> 旧版的「A–G 手工清单」已被它取代（不再给没有基座、没有判据的裸步骤）。
+> 文档上传收录（需独立解析环境 `venv-parse`）作为其中的可选用例 H。
 
 ## 5. 常见问题
 
