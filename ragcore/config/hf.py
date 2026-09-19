@@ -57,19 +57,73 @@ def hub_cache_dir() -> str:
     return os.path.join(os.path.expanduser("~"), ".cache", "huggingface", "hub")
 
 
+#: 判定 snapshot「完整」的标记文件（#53 半成品缓存回归）。
+#: HF 下载中断会留下**缺文件的 snapshot**（例如只差 tokenizer），若只判「snapshot 目录
+#: 存在」就当成已缓存 → `ensure_hf_offline` 切离线 → 永远无法自愈（final test 在全新 WSL
+#: 实测到：`AutoProcessor Unrecognized processing class`）。标记取本项目两个本地模型
+#: （BGE-M3 / BGE-reranker-v2-m3）都具备的通用文件；单文件权重。
+_WEIGHT_MARKERS = ("pytorch_model.bin", "model.safetensors", "model.onnx")
+# 注意：只认**真正的词表资产**，不认 `tokenizer_config.json`——实测中断下载留下的
+# 半成品 snapshot 恰好有它、却缺 `tokenizer.json`/`sentencepiece.bpe.model`（#53）。
+_TOKENIZER_MARKERS = (
+    "tokenizer.json", "sentencepiece.bpe.model", "spiece.model",
+    "vocab.txt", "vocab.json",
+)
+
+
+def _snapshot_complete(snapshot_dir: str) -> bool:
+    """snapshot 是否含 config + 权重 + tokenizer 三类标记（缺一判为未完成）。"""
+    try:
+        names = set(os.listdir(snapshot_dir))
+    except OSError:
+        return False
+    if "config.json" not in names:
+        return False
+    if not any(marker in names for marker in _WEIGHT_MARKERS):
+        return False
+    if not any(marker in names for marker in _TOKENIZER_MARKERS):
+        return False
+    return True
+
+
+def _main_revision(repo_dir: str) -> str | None:
+    """`refs/main` 指向的 revision（HF 默认按它解析 `main`）。"""
+    try:
+        with open(os.path.join(repo_dir, "refs", "main"), "r", encoding="utf-8") as handle:
+            return handle.read().strip() or None
+    except OSError:
+        return None
+
+
 def is_model_cached(model_name: str, cache_dir: str | None = None) -> bool:
-    """`models--<org>--<name>/snapshots/<rev>` 存在即视为已缓存。"""
+    """是否存在**可用**的缓存（目录存在 ≠ 下载完成）。
+
+    - 有 `refs/main` 时**只看它指向的 snapshot**（HF 解析 `main` 就走这条）——避免
+      「另一个完整 snapshot 存在」掩盖 main 指向半成品（#53 实测：main 指向空 snapshot）。
+    - 无 `refs/main` 时退化为「任意完整 snapshot」。
+    完整性 = 目录含 config + 权重 + tokenizer 标记；半成品一律判未缓存，让调用方保持
+    联网、可自愈。
+    """
     repo_dir = os.path.join(cache_dir or hub_cache_dir(),
                             "models--" + model_name.replace("/", "--"))
     snapshots = os.path.join(repo_dir, "snapshots")
     if not os.path.isdir(snapshots):
         return False
     try:
-        return any(
-            os.path.isdir(os.path.join(snapshots, name)) for name in os.listdir(snapshots)
-        )
+        entries = os.listdir(snapshots)
     except OSError:
         return False
+
+    revision = _main_revision(repo_dir)
+    if revision:
+        path = os.path.join(snapshots, revision)
+        return os.path.isdir(path) and _snapshot_complete(path)
+
+    for name in entries:
+        path = os.path.join(snapshots, name)
+        if os.path.isdir(path) and _snapshot_complete(path):
+            return True
+    return False
 
 
 def _patch_loaded_hf_modules() -> list[str]:
