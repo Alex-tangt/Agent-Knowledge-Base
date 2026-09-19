@@ -300,7 +300,7 @@ The `warmup()` function (called from `app.py` lifespan) eagerly triggers BGE-M3 
   - **遗留**：① daemon 身份核验（WSL2 localhost 会串到宿主 Windows daemon）**已降 backlog（#55）**——个人模式是「单 daemon + 单基表」，同机多部署用 `MEMORY_MCP_PORT` 隔离；② **npx 薄包装**（`npx github:Alex-tangt/Agent-Knowledge-Base`，Windows，免发布）**已开 follow-up 票**（`ADR-0028` D6 打包形态仍归 v2）。
 - **并行轨 = 检索优化**（**执行 / 实验**会话，自负验收合并）：✅ **已走完（2026-09-17）**——本地默认词法路换 **BM25 + DBSF**（`a288ada` / merge `afea427`，ADR-0019 D14/D15）；#35 / #40 已关（deferred）；**#21（伞）已收口关闭**（2026-09-17，附结论 + 原始"单向量"约束作废记录）。固定 / 已定数值不重跑。
   ⚠️ **默认已变**：本地平面默认 `MEMORY_SPARSE_BACKEND=bm25` + `STORE_FUSION=dbsf` + `LOCAL_HYBRID=1`；任何要复现旧口径的实验（如 #48 Phase B）必须**显式 pin**。
-- **冻结区 = 共享 / 云**：**#38 联邦 · #39 租户泄漏修复 · #34 隔离套件 · #33 后续 · ADR-0015 / 0018** 移出计划（**0018 标 deferred**；#39 是已定位的真实缺陷，解冻时第一件修）。
+- **冻结区 = 共享 / 云**：**#38 联邦 · #39 租户泄漏修复 · #34 隔离套件 · #33 后续 · ADR-0015 / 0018** 移出计划（**0018 标 deferred**；#39 是已定位的真实缺陷，解冻时第一件修）。**共享面方向已固化 `docs/adr/0029`（proposed，2026-09-19）**：服务端 **DB 权威** + **薄客户端**（远程 MCP，不载模型）；先个人多设备、预留多租户；**只定方向不实现**，解冻前置 = #39 → #33 → #34，#38 后延。
 - **明确排除：`legal_web`**（上一版本遗留的无关产品；仅保留代码）。
 
 ## 当前路线图（2026-08 一周冲刺）
