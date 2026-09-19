@@ -340,8 +340,12 @@ def _cmd_mcp_smoke(argv: list[str]) -> int:
     from mcp.client.stdio import StdioServerParameters, stdio_client
 
     async def _run_smoke() -> dict:
+        # 必须显式传完整 env：MCP SDK 的 StdioServerParameters 默认只给子进程一个
+        # **过滤后的安全环境**，MEMORY_MCP_PORT / HF_* 等都不会传下去（#53 实测：
+        # 隔离端口 8766 被丢掉 → proxy 回落 8765，连到宿主 Windows 的 daemon）。
         params = StdioServerParameters(
-            command=sys.executable, args=[PROXY_SCRIPT], cwd=REPO_ROOT)
+            command=sys.executable, args=[PROXY_SCRIPT], cwd=REPO_ROOT,
+            env={**os.environ})
         async with stdio_client(params) as (read, write):
             async with ClientSession(read, write) as session:
                 await session.initialize()
