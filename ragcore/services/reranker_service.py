@@ -1,11 +1,6 @@
 from ragcore.config.config import LOCAL_RERANKER_MODEL, RERANK_MAX_SEQ_LENGTH
 from ragcore.config.hf import ensure_hf_offline
 
-# 必须在 import sentence_transformers / HF 之前：模型已缓存则切离线，避免冷启动外呼（#18）。
-# 返回值 = 是否已切离线：缓存命中 → True，缺失 → False（保持联网，首次下载可用）。
-# 用它决定 `local_files_only`，否则新机器永远下不到重排模型（同 embedding，#53）。
-_OFFLINE = ensure_hf_offline([LOCAL_RERANKER_MODEL])
-
 from sentence_transformers import CrossEncoder  # noqa: E402
 from ragcore.utils.logger import logger  # noqa: E402
 
@@ -20,7 +15,10 @@ class RerankerService:
 
     def __init__(self, model_name=None, max_seq_length=RERANK_MAX_SEQ_LENGTH):
         model_name = model_name or LOCAL_RERANKER_MODEL
-        kwargs = {"trust_remote_code": True, "local_files_only": _OFFLINE}
+        # 构造时复查：缓存命中 → 只读本地；缺失 → 允许下载（并撤销 embed 先置的全局
+        # 离线，否则重排模型在新机器上永远下不到，#53）。
+        local_only = ensure_hf_offline([model_name])
+        kwargs = {"trust_remote_code": True, "local_files_only": local_only}
         if max_seq_length is not None:
             kwargs["max_length"] = int(max_seq_length)
         try:

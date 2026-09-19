@@ -23,6 +23,9 @@ class FakeCrossEncoder:
 def spy(monkeypatch):
     FakeCrossEncoder.calls = []
     monkeypatch.setattr(reranker_module, "CrossEncoder", FakeCrossEncoder)
+    # 模型缓存/在线决策与序列长度无关：固定为「已缓存 → 只读本地」，隔离本文件用例
+    # 对全局 HF 离线状态的副作用（#53 起 local_files_only 在构造时按 model_name 决策）。
+    monkeypatch.setattr(reranker_module, "ensure_hf_offline", lambda names=None: True)
     return FakeCrossEncoder
 
 

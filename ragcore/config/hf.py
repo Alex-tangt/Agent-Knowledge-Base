@@ -126,8 +126,13 @@ def is_model_cached(model_name: str, cache_dir: str | None = None) -> bool:
     return False
 
 
-def _patch_loaded_hf_modules() -> list[str]:
-    """把已 import 的 HF 模块里的 offline 判定副本改成 `True`（#46 运行时兜底）。
+#: 本进程是否**由我们自己**置了离线（区别于用户在环境里显式设置）。只有这样置的
+#: 才能被后续「另一模型未缓存」的调用撤销——否则会永久挡住该模型的首次下载。
+_SELF_SET = False
+
+
+def _patch_loaded_hf_modules(value: bool = True) -> list[str]:
+    """把已 import 的 HF 模块里的 offline 判定副本改成 `value`（#46 运行时兜底）。
 
     返回被改写的 `模块.属性` 列表（供日志 / 诊断）。未加载的模块跳过——它们 import 时
     会读到已置位的环境变量，无需处理。
@@ -135,26 +140,41 @@ def _patch_loaded_hf_modules() -> list[str]:
     patched = []
     for module_name, attr in _LOADED_OFFLINE_BINDINGS:
         module = sys.modules.get(module_name)
-        if module is None or getattr(module, attr, None) is True:
+        if module is None or getattr(module, attr, None) is value:
             continue
-        setattr(module, attr, True)
+        setattr(module, attr, value)
         patched.append(f"{module_name}.{attr}")
     return patched
 
 
-def ensure_hf_offline(model_names=None) -> bool:
-    """目标模型全在本地缓存时，把进程切到离线模式。
+def _clear_self_offline() -> None:
+    """撤销**我们**置的离线（用户显式设置的不动），让缺失模型能被下载（#53）。"""
+    global _SELF_SET
+    if not _SELF_SET:
+        return
+    for name in _OFFLINE_ENV_VARS:
+        os.environ.pop(name, None)
+    _patch_loaded_hf_modules(False)
+    _SELF_SET = False
 
-    设计上应在 import HF **之前**调用；但依赖链可能已经先 import 了 HF（#46），故设完
-    环境变量后再调用 `_patch_loaded_hf_modules()` 改写已加载常量，保证运行时兜底。
-    `model_names` 省略时取 ragcore 全部本地模型（embed + rerank）。返回当前是否离线。
+
+def ensure_hf_offline(model_names=None) -> bool:
+    """按目标模型是否缓存，决定/撤销进程级 HF 离线。
+
+    - 用户显式设置 `HF_HUB_OFFLINE` / `TRANSFORMERS_OFFLINE`（含 `0`）→ 一律不覆盖。
+    - `model_names` 全在本地缓存 → 置离线（+ 改写已加载常量，#46）。
+    - 有模型缺失 → **撤销我们自己置的离线**（关键：embed 已缓存会让 embed 服务先置
+      全局离线；若不撤销，稍后 reranker 未缓存时会被永久挡住下载）。返回当前是否离线。
+    `model_names` 省略时取 ragcore 全部本地模型（embed + rerank）。
     """
-    if any(name in os.environ for name in _OFFLINE_ENV_VARS):
+    global _SELF_SET
+    if any(name in os.environ for name in _OFFLINE_ENV_VARS) and not _SELF_SET:
         return any(_env_flag(name) for name in _OFFLINE_ENV_VARS)
 
     names = list(model_names or [LOCAL_EMBEDDING_MODEL, LOCAL_RERANKER_MODEL])
     missing = [n for n in names if not is_model_cached(n)]
     if missing:
+        _clear_self_offline()
         logger.warning(
             "HF hub offline mode NOT enabled: %s not cached; cold start may call "
             "huggingface.co (slow / may hang on weak network). Pre-download the model "
@@ -163,12 +183,14 @@ def ensure_hf_offline(model_names=None) -> bool:
         )
         return False
 
-    os.environ["HF_HUB_OFFLINE"] = "1"
-    os.environ["TRANSFORMERS_OFFLINE"] = "1"
-    patched = _patch_loaded_hf_modules()
-    logger.info(
-        "HF hub offline mode enabled (all models cached): %s%s",
-        ", ".join(names),
-        f"; patched already-imported: {', '.join(patched)}" if patched else "",
-    )
+    if not _SELF_SET:
+        os.environ["HF_HUB_OFFLINE"] = "1"
+        os.environ["TRANSFORMERS_OFFLINE"] = "1"
+        patched = _patch_loaded_hf_modules(True)
+        _SELF_SET = True
+        logger.info(
+            "HF hub offline mode enabled (all models cached): %s%s",
+            ", ".join(names),
+            f"; patched already-imported: {', '.join(patched)}" if patched else "",
+        )
     return True

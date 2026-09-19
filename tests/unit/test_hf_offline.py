@@ -11,7 +11,18 @@ import os
 import sys
 import types
 
+import pytest
+
 from ragcore.config import hf
+
+
+@pytest.fixture(autouse=True)
+def _isolate_hf_state(monkeypatch):
+    """每个用例前清掉离线 env + 重置 `_SELF_SET`（模块级状态会跨用例泄漏）。"""
+    monkeypatch.setattr(hf, "_SELF_SET", False)
+    for name in ("HF_HUB_OFFLINE", "TRANSFORMERS_OFFLINE"):
+        monkeypatch.delenv(name, raising=False)
+    yield
 
 
 def _write(path, *names):
@@ -33,6 +44,7 @@ def _make_snapshot(cache_root, model_name, rev="abc123", *, complete=True):
 def _clear_offline(monkeypatch):
     for name in ("HF_HUB_OFFLINE", "TRANSFORMERS_OFFLINE"):
         monkeypatch.delenv(name, raising=False)
+    monkeypatch.setattr(hf, "_SELF_SET", False)
 
 
 # ------------------------------------------------------------- cache 解析
@@ -180,6 +192,36 @@ def test_runtime_fallback_when_hf_already_imported(monkeypatch, tmp_path):
     assert hub_constants.HF_HUB_OFFLINE is True
 
 
+def test_missing_model_clears_self_set_offline(monkeypatch, tmp_path):
+    """#53：embed 已缓存先置离线，随后 reranker 缺失必须能撤销离线以允许下载。"""
+    import huggingface_hub.constants as hub_constants
+
+    monkeypatch.setenv("HF_HUB_CACHE", str(tmp_path))
+    _clear_offline(monkeypatch)
+    _make_snapshot(str(tmp_path), "org/embed")
+    monkeypatch.setattr(hub_constants, "HF_HUB_OFFLINE", False)
+
+    assert hf.ensure_hf_offline(["org/embed"]) is True
+    assert os.environ["HF_HUB_OFFLINE"] == "1"
+    assert hub_constants.HF_HUB_OFFLINE is True
+
+    # 另一个模型缺失 → 撤销自置离线（env + 已加载常量都要回 False）
+    assert hf.ensure_hf_offline(["org/embed", "org/missing"]) is False
+    assert "HF_HUB_OFFLINE" not in os.environ
+    assert "TRANSFORMERS_OFFLINE" not in os.environ
+    assert hub_constants.HF_HUB_OFFLINE is False
+
+
+def test_user_set_offline_not_cleared_by_missing_model(monkeypatch, tmp_path):
+    monkeypatch.setenv("HF_HUB_CACHE", str(tmp_path))
+    monkeypatch.setenv("HF_HUB_OFFLINE", "1")
+    monkeypatch.delenv("TRANSFORMERS_OFFLINE", raising=False)
+    monkeypatch.setattr(hf, "_SELF_SET", False)
+
+    assert hf.ensure_hf_offline(["org/missing"]) is True
+    assert os.environ["HF_HUB_OFFLINE"] == "1"  # 用户设置不被撤销
+
+
 def test_missing_model_keeps_constant_online(monkeypatch, tmp_path):
     import huggingface_hub.constants as hub_constants
 
@@ -207,38 +249,52 @@ def test_explicit_off_does_not_flip_loaded_constant(monkeypatch, tmp_path):
 
 # ------------------------------------------- 构造器须允许首次下载（#53）
 
-def _reload_module_with_offline(hf_mod, module, offline):
-    """临时把 `ensure_hf_offline` 固定为 `offline` 再 reload，返回后**恢复并再 reload**。
+def _make_fake_st(seen):
+    class _FakeST:
+        def __init__(self, name, local_files_only=True):
+            seen["local_files_only"] = local_files_only
 
-    必须恢复后再 reload：否则模块级 `_OFFLINE` 会残留成测试值，污染后续用例
-    （reload 重读的是 `from ... import ensure_hf_offline` 的绑定，reload 时若仍被
-    monkeypatch 覆盖，恢复无效）。
-    """
-    import importlib
+        def get_embedding_dimension(self):
+            return 1024
 
-    original = hf_mod.ensure_hf_offline
-    hf_mod.ensure_hf_offline = lambda *a, **k: offline
-    try:
-        importlib.reload(module)
-        return module._OFFLINE
-    finally:
-        hf_mod.ensure_hf_offline = original
-        importlib.reload(module)
+    return _FakeST
 
 
-def test_embedding_service_allows_download_when_model_missing():
-    """回归：未缓存时 `_OFFLINE=False`，构造器才能联网下载 BGE-M3（否则新机必挂）。"""
-    from ragcore.config import hf as hf_mod
+def test_embedding_service_allows_download_when_model_missing(monkeypatch):
+    """回归：未缓存时构造器传 `local_files_only=False`，新机才能下 BGE-M3。"""
     from ragcore.services import local_embedding_service as les
 
-    assert _reload_module_with_offline(hf_mod, les, False) is False
+    seen = {}
+    monkeypatch.setattr(les, "SentenceTransformer", _make_fake_st(seen))
+    monkeypatch.setattr(les, "ensure_hf_offline", lambda names=None: False)
+    les.LocalEmbeddingService("BAAI/bge-m3")
+    assert seen == {"local_files_only": False}
 
 
-def test_reranker_service_allows_download_when_model_missing():
-    from ragcore.config import hf as hf_mod
+def test_embedding_service_reads_locally_when_cached(monkeypatch):
+    from ragcore.services import local_embedding_service as les
+
+    seen = {}
+    monkeypatch.setattr(les, "SentenceTransformer", _make_fake_st(seen))
+    monkeypatch.setattr(les, "ensure_hf_offline", lambda names=None: True)
+    les.LocalEmbeddingService("BAAI/bge-m3")
+    assert seen == {"local_files_only": True}
+
+
+def test_reranker_service_allows_download_when_model_missing(monkeypatch):
     from ragcore.services import reranker_service as rs
 
-    assert _reload_module_with_offline(hf_mod, rs, False) is False
+    seen = {}
+
+    class _FakeCE:
+        def __init__(self, name, **kwargs):
+            seen.update(kwargs)
+            self.max_seq_length = kwargs.get("max_length", 8192)
+
+    monkeypatch.setattr(rs, "CrossEncoder", _FakeCE)
+    monkeypatch.setattr(rs, "ensure_hf_offline", lambda names=None: False)
+    rs.RerankerService("BAAI/bge-reranker-v2-m3", max_seq_length=512)
+    assert seen["local_files_only"] is False
 
 
 def test_patch_rewrites_loaded_module_copies(monkeypatch):
