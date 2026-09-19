@@ -38,6 +38,7 @@
 | 6 | 已有 clone 的 origin 不匹配 | `--dir <非本仓库非空目录>` | ✅ 明确报错，exit 1 |
 | 7 | 退出码透传 | 传非法安装参数 `--not-a-real-flag` | ✅ 安装器 argparse 报错，exit 2 |
 | 8 | `--ref` | `--ref master` | ✅ 检出 master |
+| 9 | 全量安装（index + daemon + smoke） | 同 4 去掉 `--no-*`，`MEMORY_MCP_PORT=8799` | ✅ 见下「全量安装」 |
 
 ## 关键观察（真装产物）
 
@@ -50,14 +51,33 @@
   走 PyPI 的 CUDA 轮子**——`deploy.py::_use_cpu_torch` 只在 `sys.platform.startswith("linux")`
   时为真。若希望 Windows 个人模式也默认 CPU，是 `#52` 范围的小改进（另议），本票不动。
 
-## 未在本会话跑的一段（gate）
+## 全量安装（index + daemon + smoke）
 
-- **索引 + daemon + 冒烟**（`--no-index --no-daemon --no-smoke` 之外的重活）**未跑**：
-  需要再加载一份 BGE-M3（~3.9GB）+ 在 CPU 上重建约 188 条条目的索引（分钟级），
-  且本机已有主树 daemon（8765）在服务当前 opencode 会话（`#55` 串台场景）。
-  #52 的 WSL final test（`one_click_deploy_52_results.md`）已验证该段；包装器只负责
-  「取源码 + 同一入口」，对该段是透明的。**是否在本机补跑全量 npx 安装 → 待 owner 放行**
-  （建议 `MEMORY_MCP_PORT=8766` + 独立 `--opencode-home` 隔离）。
+经 npx 在 `my-kb`（复用已装 venv/deps）补跑模型重活：
+
+- **索引**：`gen-1`，**145 条**（28 可写 KB + 117 只读 = 该 clone 自身的 `.md`），
+  `index_dir` / `kb_dir` 都指向本部署，`readonly_complete=true`。
+- **daemon**：`proxy --ensure --port 8799` —— 日志为 **`starting daemon`**（不是 `already up`），
+  随后 `/health` ok。
+- **冒烟 3/3 PASS**：`/health status=200` · `POST /v1/embeddings dim=1024` ·
+  经 proxy 调 MCP `{"ok": true, "tools": 10, "gen": "gen-1", "hits": 3}`。
+- **归属核验**：`daemon-8799.pid = 10164`，`netstat` 显示 `127.0.0.1:8799 LISTENING`（同一 PID）
+  → 确为**本部署**的 Windows daemon；`proxy --stop` 后 health DOWN、端口关闭、PID 文件移除。
+
+### ⚠️ 踩到 #55 串台（真实命中）
+
+第一次全量跑用建议端口 **8766**，安装器报 **`daemon already up at 127.0.0.1:8766`**，
+但 `--stop` 报 **PID 文件缺失**、`netstat` 里 8766 **没有 Windows LISTENING**（只有 client 侧
+`ESTABLISHED`）——查明是 **WSL2 `Ubuntu-22.04` 里残留的 daemon**（上一会话 #53 final test 留下），
+经 WSL localhost 转发被 Windows 的 `127.0.0.1:8766` 命中。**该次 daemon/冒烟结果不可信，已作废**；
+换 8799（先验证无监听）后重跑才是本部署。这正是 `#55`（daemon 身份核验，已 backlog）活生生的
+复现：`/health` 识别不出「这是哪一个部署的 daemon」。**本票不动 #55**，仅记录。
+
+## 未做 / 边界
+
+- Windows 默认（不显式 `--cpu-torch`）会装 PyPI 的 **CUDA** torch（`deploy.py::_use_cpu_torch`
+  仅 Linux 默认 CPU）。个人模式其实只需 CPU；是否把 Windows 也默认 CPU 属 `#52` 范围的小改进，另议。
+- WSL 无原生 node（`npx` 是 Windows shim），本票平台 = Windows（ticket 已界定）。
 
 ## 复现命令（Windows）
 
@@ -65,7 +85,8 @@
 # 1) 干跑（不落盘）
 npx --yes github:Alex-tangt/Agent-Knowledge-Base#<ref> <dir> --dry-run
 
-# 2) 真装（注册/端口都隔离，避免污染日常 opencode 与串台主树 daemon）
-$env:MEMORY_MCP_PORT="8766"
+# 2) 真装（注册/端口都隔离，避免污染日常 opencode 与串台其它 daemon）
+#    选端口前先确认无监听（netstat -ano | findstr :<port>；注意 WSL2 转发也会占 localhost）
+$env:MEMORY_MCP_PORT="8799"
 npx --yes github:Alex-tangt/Agent-Knowledge-Base#<ref> <dir> --opencode-home C:\tmp\oc
 ```
