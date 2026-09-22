@@ -11,6 +11,11 @@
 - `merge_opencode_config` + `write_opencode_registration`：**幂等 + 备份 + `--dry-run`**
   地写 `mcp.memory-agent`（ADR-0028 D4）；已有文件非法 JSON 时拒绝覆盖。
 - `install_skill` / `skill_status`：把随包的 `skill/SKILL.md` 落位到全局 skills。
+- `install_agent` / `uninstall_agent`：把随包的 `agent/*.md`（如 `memory-research`）
+  落位到全局 agents（#60 / ADR-0026 D10）。
+- `install_plugin` / `uninstall_plugin` + `write_package_dependency`：把随包的
+  `plugin/*.js`（如 `memory-research`）落位到全局 plugins，并把 `@opencode-ai/plugin`
+  依赖合并进 `~/.config/opencode/package.json`（#61 / ADR-0026 追加·形态 B）。
 
 `connect.py`（第二消费者安装器）复用本模块，保留同名属性以免破坏现有调用。
 """
@@ -27,6 +32,13 @@ import time
 OPENCODE_CONFIG_SUBDIR = os.path.join(".config", "opencode")
 #: skill 落位目录名（ADR-0012）。
 OPENCODE_SKILL_DIRNAME = "memory-agent"
+#: agent 落位目录名（#60 / ADR-0026 D10；opencode `~/.config/opencode/agents/`）。
+OPENCODE_AGENT_DIRNAME = "agents"
+#: plugin 落位目录名（#61 / 形态 B；opencode `~/.config/opencode/plugins/`）。
+OPENCODE_PLUGIN_DIRNAME = "plugins"
+#: 插件运行所需依赖（写进 `~/.config/opencode/package.json`；opencode 启动 bun install）。
+PLUGIN_DEP_NAME = "@opencode-ai/plugin"
+PLUGIN_DEP_RANGE = "^1.18.0"
 #: opencode `local` MCP 的调用超时（毫秒）。
 DEFAULT_OPENCODE_TIMEOUT_MS = 20000
 
@@ -47,6 +59,21 @@ def opencode_config_path(home: str | None = None) -> str:
 
 def opencode_skill_dir(home: str | None = None) -> str:
     return os.path.join(opencode_root(home), "skills", OPENCODE_SKILL_DIRNAME)
+
+
+def opencode_agent_dir(home: str | None = None) -> str:
+    """opencode 全局 agents 目录（#60）：`~/.config/opencode/agents`。"""
+    return os.path.join(opencode_root(home), OPENCODE_AGENT_DIRNAME)
+
+
+def opencode_plugin_dir(home: str | None = None) -> str:
+    """opencode 全局 plugins 目录（#61）：`~/.config/opencode/plugins`。"""
+    return os.path.join(opencode_root(home), OPENCODE_PLUGIN_DIRNAME)
+
+
+def opencode_package_json(home: str | None = None) -> str:
+    """opencode 配置目录的 `package.json`（插件依赖：`~/.config/opencode/package.json`）。"""
+    return os.path.join(opencode_root(home), "package.json")
 
 
 def default_proxy_command() -> list[str]:
@@ -194,6 +221,133 @@ def uninstall_skill(dest_dir: str, *, dry_run: bool = False) -> str:
     return "removed"
 
 
+# --------------------------------------------------------------------- agent
+
+def agent_status(dest_file: str) -> bool:
+    return os.path.isfile(dest_file)
+
+
+def install_agent(source_file: str, dest_file: str, *, dry_run: bool = False) -> str:
+    """把随包的 agent 定义落位到全局 agents（#60 / ADR-0026 D10；幂等，差分才写）。
+
+    返回 `created` / `updated` / `unchanged` / `missing-source`。
+    """
+    if not os.path.isfile(source_file):
+        return "missing-source"
+    if os.path.isfile(dest_file):
+        with open(source_file, "r", encoding="utf-8") as handle:
+            new_text = handle.read()
+        with open(dest_file, "r", encoding="utf-8") as handle:
+            if handle.read() == new_text:
+                return "unchanged"
+        action = "updated"
+    else:
+        action = "created"
+    if not dry_run:
+        os.makedirs(os.path.dirname(dest_file), exist_ok=True)
+        shutil.copyfile(source_file, dest_file)
+    return action
+
+
+def uninstall_agent(dest_file: str, *, dry_run: bool = False) -> str:
+    """移除落位的 agent 定义（幂等）。返回 `absent` / `would-remove` / `removed`。"""
+    if not os.path.isfile(dest_file):
+        return "absent"
+    if dry_run:
+        return "would-remove"
+    os.remove(dest_file)
+    return "removed"
+
+
+# --------------------------------------------------------------------- plugin
+
+def plugin_status(dest_file: str) -> bool:
+    return os.path.isfile(dest_file)
+
+
+def install_plugin(source_file: str, dest_file: str, *, dry_run: bool = False) -> str:
+    """把随包的插件落位到全局 plugins（#61；幂等，差分才写）。
+
+    返回 `created` / `updated` / `unchanged` / `missing-source`。
+    """
+    if not os.path.isfile(source_file):
+        return "missing-source"
+    if os.path.isfile(dest_file):
+        with open(source_file, "r", encoding="utf-8") as handle:
+            new_text = handle.read()
+        with open(dest_file, "r", encoding="utf-8") as handle:
+            if handle.read() == new_text:
+                return "unchanged"
+        action = "updated"
+    else:
+        action = "created"
+    if not dry_run:
+        os.makedirs(os.path.dirname(dest_file), exist_ok=True)
+        shutil.copyfile(source_file, dest_file)
+    return action
+
+
+def uninstall_plugin(dest_file: str, *, dry_run: bool = False) -> str:
+    """移除落位的插件（幂等）。返回 `absent` / `would-remove` / `removed`。"""
+    if not os.path.isfile(dest_file):
+        return "absent"
+    if dry_run:
+        return "would-remove"
+    os.remove(dest_file)
+    return "removed"
+
+
+# --------------------------------------------------- plugin deps (package.json)
+
+def merge_package_dependency(existing: object | None, name: str,
+                             spec: str) -> tuple[dict, bool]:
+    """把依赖 `name: spec` 合并进 `{"dependencies": {...}}`（保留其它键与依赖）。
+
+    **已存在则不覆盖**（保留用户 / 他工具的既有约束）；仅在缺失时补上。
+    返回 `(新配置, changed)`——`changed=False` 表示磁盘无需改动（幂等）。
+    """
+    config = dict(existing) if isinstance(existing, dict) else {}
+    deps = config.get("dependencies")
+    deps = dict(deps) if isinstance(deps, dict) else {}
+    if name in deps:
+        return config, False
+    deps[name] = spec
+    config["dependencies"] = deps
+    return config, True
+
+
+def _read_json(path: str) -> tuple[object | None, str | None]:
+    """读 JSON；不存在 → `(None, None)`；非法 → `(None, 'parse-error')`。"""
+    if not os.path.isfile(path):
+        return None, None
+    try:
+        with open(path, "r", encoding="utf-8") as handle:
+            return json.load(handle), None
+    except (OSError, json.JSONDecodeError):
+        return None, "parse-error"
+
+
+def write_package_dependency(path: str, name: str, spec: str, *,
+                             dry_run: bool = False) -> dict:
+    """把插件依赖写进 opencode 的 `package.json`（幂等 + 备份 + `--dry-run`）。
+
+    非法 JSON 时**拒绝覆盖**（`status=parse-error`），绝不吞掉用户配置。
+    返回 `{status, written, backup, path}`。
+    """
+    existing, error = _read_json(path)
+    if error:
+        return {"status": "parse-error", "written": False, "backup": None, "path": path}
+    config, changed = merge_package_dependency(existing, name, spec)
+    if not changed:
+        return {"status": "unchanged", "written": False, "backup": None, "path": path}
+    if dry_run:
+        return {"status": "would-write", "written": False, "backup": None, "path": path}
+    backup = _backup_file(path) if os.path.isfile(path) else None
+    atomic_write_json(path, config)
+    return {"status": "created" if existing is None else "updated",
+            "written": True, "backup": backup, "path": path}
+
+
 # --------------------------------------------------------------------- 卸载注册
 
 def remove_opencode_registration(config_path: str, *, dry_run: bool = False) -> dict:
@@ -226,9 +380,16 @@ def remove_opencode_registration(config_path: str, *, dry_run: bool = False) -> 
 
 
 __all__ = [
-    "OPENCODE_CONFIG_SUBDIR", "OPENCODE_SKILL_DIRNAME", "DEFAULT_OPENCODE_TIMEOUT_MS",
+    "OPENCODE_CONFIG_SUBDIR", "OPENCODE_SKILL_DIRNAME", "OPENCODE_AGENT_DIRNAME",
+    "OPENCODE_PLUGIN_DIRNAME", "PLUGIN_DEP_NAME", "PLUGIN_DEP_RANGE",
+    "DEFAULT_OPENCODE_TIMEOUT_MS",
     "SERVER_NAME", "opencode_root", "opencode_config_path", "opencode_skill_dir",
-    "default_proxy_command", "build_opencode_entry", "merge_opencode_config",
-    "atomic_write_json", "write_opencode_registration", "skill_status", "install_skill",
-    "uninstall_skill", "remove_opencode_registration",
+    "opencode_agent_dir", "opencode_plugin_dir", "opencode_package_json",
+    "default_proxy_command", "build_opencode_entry",
+    "merge_opencode_config", "atomic_write_json", "write_opencode_registration",
+    "skill_status", "install_skill", "uninstall_skill",
+    "agent_status", "install_agent", "uninstall_agent",
+    "plugin_status", "install_plugin", "uninstall_plugin",
+    "merge_package_dependency", "write_package_dependency",
+    "remove_opencode_registration",
 ]

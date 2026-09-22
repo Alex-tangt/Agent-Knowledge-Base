@@ -48,7 +48,9 @@ memory_agent/
 ├── build_index.py         # CLI：从 Markdown 全量重建（新代 + 切指针）        (#10,#13)
 ├── eval/                  # 运行时证据：baseline_A.md（锚点）、issue19_acceptance.md（#19）、write_path_sandbox.py + _results.md（#16）、readonly_corpus_17.py（#17 三仓库只读）、dogfood_17.md、retrieval_eval.py + metrics.py + retrieval_eval_set.json + retrieval_baseline.md（#24 确定性检索评测）、mcp_install_smoke_26.py + _results.md（#26 安装 + MCP 集成冒烟）、shared_service_41.py + _results.md（#41 第二消费者共享服务）、bge_m3_embeddings_43.py + _results.md（#43 BGE-M3 embeddings 端点）、ingest_51.py + _results.md（#51 文档上传接线端到端）
 ├── pyproject.toml         # 本包（可安装，依赖 ragcore）                       (#26)
-└── (skill)                # 见 #14：指导 agent 何时 search/read/add 及破坏性确认规则
+├── agent/                 # 随包交付的 opencode subagent：memory-research（多跳检索在独立子会话；默认继承模型）(#60)
+├── plugin/                # 随包交付的 opencode 插件：memory-research → 工具 memory_research（形态 B；全局 plugins/ + package.json 依赖）(#61)
+└── skill/                 # 见 #14：agent 何时 search/read/add 及破坏性确认；含「委派子代理」节 (#60/#61)
 ```
 
 写入**只落真相源**（不再同步刷索引，D13）；索引由下一次 `memory_search` 前的**廉价指纹检查**
@@ -76,11 +78,11 @@ bash install.sh            # Linux / WSL / macOS
 一条命令**幂等**完成：建 venv → 装 `memory_agent/deploy-requirements.txt`（与 `legal_web`
 解耦，ADR-0028 D3）→ editable 装 `ragcore` + `memory_agent` → 建派生索引（首次下载 BGE-M3
 ~2.2GB）→ **写 opencode MCP 注册**（`~/.config/opencode/opencode.json`，带备份 / 幂等 /
-`--dry-run`）→ 落位 skill → 起共享 daemon → 冒烟（`/health` · `POST /v1/embeddings` dim=1024 ·
+`--dry-run`）→ 落位 skill + `memory-research` subagent + `memory_research` 插件 → 起共享 daemon → 冒烟（`/health` · `POST /v1/embeddings` dim=1024 ·
 经 proxy 调 MCP）。Linux 上 torch 默认取 **CPU 轮子**（避免拉 CUDA 构建）。
 
 常用开关：`--dry-run`（只预览，不落盘）· `--no-index` · `--no-daemon` · `--no-smoke` ·
-`--with-tests`（额外装 pytest）· `--force-index`。已在 venv 内时等价入口：`memory-agent install`
+`--no-agent` · `--no-plugin` · `--with-tests`（额外装 pytest）· `--force-index`。已在 venv 内时等价入口：`memory-agent install`
 （同一实现；`memory-agent` 无子命令仍是 MCP server）。
 
 > **脚本只是薄壳**：`install.sh` / `install.ps1` 用系统 Python 起 `python -m memory_agent.deploy install`

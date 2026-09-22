@@ -135,6 +135,12 @@ def test_paths_under_home(tmp_path):
         home, ".config", "opencode", "opencode.json")
     assert oc.opencode_skill_dir(home) == os.path.join(
         home, ".config", "opencode", "skills", "memory-agent")
+    assert oc.opencode_agent_dir(home) == os.path.join(
+        home, ".config", "opencode", "agents")
+    assert oc.opencode_plugin_dir(home) == os.path.join(
+        home, ".config", "opencode", "plugins")
+    assert oc.opencode_package_json(home) == os.path.join(
+        home, ".config", "opencode", "package.json")
 
 
 def test_skill_install_roundtrip(tmp_path):
@@ -147,6 +153,124 @@ def test_skill_install_roundtrip(tmp_path):
     assert oc.install_skill(str(source), dest) == "created"
     assert oc.skill_status(dest) is True
     assert oc.install_skill(str(source), dest) == "unchanged"
+
+
+# --------------------------------------------------------------------- agent (#60)
+
+def test_install_agent_roundtrip(tmp_path):
+    source = tmp_path / "memory-research.md"
+    source.write_text("---\nmode: subagent\n---\nhi", encoding="utf-8")
+    dest = str(tmp_path / "agents" / "memory-research.md")
+    assert oc.install_agent(str(source), dest, dry_run=True) == "created"
+    assert not os.path.exists(dest)
+    assert oc.install_agent(str(source), dest) == "created"
+    assert oc.agent_status(dest) is True
+    assert oc.install_agent(str(source), dest) == "unchanged"
+    source.write_text("changed", encoding="utf-8")
+    assert oc.install_agent(str(source), dest) == "updated"
+    assert open(dest, encoding="utf-8").read() == "changed"
+
+
+def test_install_agent_missing_source(tmp_path):
+    assert oc.install_agent(
+        str(tmp_path / "nope.md"), str(tmp_path / "dest.md")) == "missing-source"
+
+
+def test_uninstall_agent_roundtrip(tmp_path):
+    dest = str(tmp_path / "agents" / "memory-research.md")
+    assert oc.uninstall_agent(dest) == "absent"
+    os.makedirs(os.path.dirname(dest))
+    with open(dest, "w", encoding="utf-8") as handle:
+        handle.write("x")
+    assert oc.uninstall_agent(dest, dry_run=True) == "would-remove"
+    assert os.path.isfile(dest)
+    assert oc.uninstall_agent(dest) == "removed"
+    assert not os.path.exists(dest)
+
+
+# --------------------------------------------------------------------- plugin (#61)
+
+def test_install_plugin_roundtrip(tmp_path):
+    source = tmp_path / "memory-research.js"
+    source.write_text("export const P = async () => ({ tool: {} })", encoding="utf-8")
+    dest = str(tmp_path / "plugins" / "memory-research.js")
+    assert oc.install_plugin(str(source), dest, dry_run=True) == "created"
+    assert not os.path.exists(dest)
+    assert oc.install_plugin(str(source), dest) == "created"
+    assert oc.plugin_status(dest) is True
+    assert oc.install_plugin(str(source), dest) == "unchanged"
+    source.write_text("changed", encoding="utf-8")
+    assert oc.install_plugin(str(source), dest) == "updated"
+    assert open(dest, encoding="utf-8").read() == "changed"
+
+
+def test_install_plugin_missing_source(tmp_path):
+    assert oc.install_plugin(
+        str(tmp_path / "nope.js"), str(tmp_path / "dest.js")) == "missing-source"
+
+
+def test_uninstall_plugin_roundtrip(tmp_path):
+    dest = str(tmp_path / "plugins" / "memory-research.js")
+    assert oc.uninstall_plugin(dest) == "absent"
+    os.makedirs(os.path.dirname(dest))
+    with open(dest, "w", encoding="utf-8") as handle:
+        handle.write("x")
+    assert oc.uninstall_plugin(dest, dry_run=True) == "would-remove"
+    assert os.path.isfile(dest)
+    assert oc.uninstall_plugin(dest) == "removed"
+    assert not os.path.exists(dest)
+
+
+def test_merge_package_dependency_adds_but_never_overwrites():
+    existing = {"dependencies": {"zod": "^3"}, "name": "opencode-config"}
+    merged, changed = oc.merge_package_dependency(existing, oc.PLUGIN_DEP_NAME, "^1.18.0")
+    assert changed is True
+    assert merged["name"] == "opencode-config"
+    assert merged["dependencies"]["zod"] == "^3"
+    assert merged["dependencies"][oc.PLUGIN_DEP_NAME] == "^1.18.0"
+    # 已存在（哪怕版本不同）→ 不覆盖、视为无需改动
+    theirs = {"dependencies": {oc.PLUGIN_DEP_NAME: "1.17.18"}}
+    kept, changed2 = oc.merge_package_dependency(theirs, oc.PLUGIN_DEP_NAME, "^1.18.0")
+    assert changed2 is False
+    assert kept["dependencies"][oc.PLUGIN_DEP_NAME] == "1.17.18"
+    # 同 spec 重复合并 → 幂等
+    again, changed_again = oc.merge_package_dependency(merged, oc.PLUGIN_DEP_NAME, "^1.18.0")
+    assert changed_again is False
+    assert again == merged
+
+
+def test_write_package_dependency_creates_then_keeps_existing(tmp_path):
+    path = str(tmp_path / "package.json")
+    result = oc.write_package_dependency(path, oc.PLUGIN_DEP_NAME, "^1.18.0")
+    assert result["status"] == "created" and result["written"] is True
+    data = json.loads(open(path, encoding="utf-8").read())
+    assert data["dependencies"][oc.PLUGIN_DEP_NAME] == "^1.18.0"
+    # 再写（不同 spec）→ 不覆盖、unchanged
+    result2 = oc.write_package_dependency(path, oc.PLUGIN_DEP_NAME, "^2.0.0")
+    assert result2["status"] == "unchanged" and result2["written"] is False
+    assert json.loads(open(path, encoding="utf-8").read())[
+        "dependencies"][oc.PLUGIN_DEP_NAME] == "^1.18.0"
+    # 预存别的依赖 + 缺本依赖 → updated（补上、并备份）
+    other = tmp_path / "other.json"
+    with open(other, "w", encoding="utf-8") as handle:
+        json.dump({"dependencies": {"zod": "^3"}}, handle)
+    result3 = oc.write_package_dependency(str(other), oc.PLUGIN_DEP_NAME, "^1.18.0")
+    assert result3["status"] == "updated" and result3["backup"]
+    data3 = json.loads(open(other, encoding="utf-8").read())
+    assert data3["dependencies"]["zod"] == "^3"
+    assert data3["dependencies"][oc.PLUGIN_DEP_NAME] == "^1.18.0"
+
+
+def test_write_package_dependency_dry_run_and_parse_error(tmp_path):
+    path = str(tmp_path / "package.json")
+    assert oc.write_package_dependency(
+        path, oc.PLUGIN_DEP_NAME, "^1.18.0", dry_run=True)["status"] == "would-write"
+    assert not os.path.exists(path)
+    bad = tmp_path / "bad.json"
+    bad.write_text("{not json", encoding="utf-8")
+    assert oc.write_package_dependency(
+        str(bad), oc.PLUGIN_DEP_NAME, "^1.18.0")["status"] == "parse-error"
+    assert bad.read_text(encoding="utf-8") == "{not json"
 
 
 # --------------------------------------------------------------------- install 编排
@@ -173,6 +297,78 @@ def test_cli_install_writes_opencode_and_skill(tmp_path):
     assert data["mcp"][oc.SERVER_NAME]["type"] == "local"
     skill = os.path.join(home, ".config", "opencode", "skills", "memory-agent", "SKILL.md")
     assert os.path.isfile(skill)
+
+
+def test_cli_install_writes_agent(tmp_path):
+    home = str(tmp_path / "home")
+    rc = cli.main([
+        "install", "--skip-deps", "--no-index", "--no-daemon",
+        "--no-smoke", "--opencode-home", home, "--repo", deploy.REPO_ROOT,
+    ])
+    assert rc == 0
+    agent = os.path.join(home, ".config", "opencode", "agents", "memory-research.md")
+    assert os.path.isfile(agent)
+    text = open(agent, encoding="utf-8").read()
+    assert "mode: subagent" in text
+    assert "model:" not in text  # 默认继承：不写 model
+
+
+def test_cli_install_no_agent_flag(tmp_path):
+    home = str(tmp_path / "home")
+    rc = cli.main([
+        "install", "--skip-deps", "--no-index", "--no-daemon", "--no-smoke",
+        "--no-agent", "--opencode-home", home, "--repo", deploy.REPO_ROOT,
+    ])
+    assert rc == 0
+    assert not os.path.exists(
+        os.path.join(home, ".config", "opencode", "agents", "memory-research.md"))
+
+
+def test_cli_install_writes_plugin_and_dep(tmp_path):
+    home = str(tmp_path / "home")
+    rc = cli.main([
+        "install", "--skip-deps", "--no-index", "--no-daemon",
+        "--no-smoke", "--opencode-home", home, "--repo", deploy.REPO_ROOT,
+    ])
+    assert rc == 0
+    plugin = os.path.join(home, ".config", "opencode", "plugins", "memory-research.js")
+    assert os.path.isfile(plugin)
+    assert "memory_research" in open(plugin, encoding="utf-8").read()
+    pkg = json.loads(open(os.path.join(home, ".config", "opencode", "package.json"),
+                          encoding="utf-8").read())
+    assert oc.PLUGIN_DEP_NAME in pkg["dependencies"]
+
+
+def test_cli_install_no_plugin_flag(tmp_path):
+    home = str(tmp_path / "home")
+    rc = cli.main([
+        "install", "--skip-deps", "--no-index", "--no-daemon", "--no-smoke",
+        "--no-plugin", "--opencode-home", home, "--repo", deploy.REPO_ROOT,
+    ])
+    assert rc == 0
+    assert not os.path.exists(
+        os.path.join(home, ".config", "opencode", "plugins", "memory-research.js"))
+    assert not os.path.exists(
+        os.path.join(home, ".config", "opencode", "package.json"))
+
+
+def test_cli_uninstall_removes_plugin_keeps_shared_dep(tmp_path):
+    home = str(tmp_path / "home")
+    assert cli.main([
+        "install", "--skip-deps", "--no-index", "--no-daemon", "--no-smoke",
+        "--opencode-home", home, "--repo", deploy.REPO_ROOT,
+    ]) == 0
+    plugin = os.path.join(home, ".config", "opencode", "plugins", "memory-research.js")
+    pkg = os.path.join(home, ".config", "opencode", "package.json")
+    assert os.path.isfile(plugin) and os.path.isfile(pkg)
+    assert cli.main([
+        "uninstall", "--no-daemon", "--opencode-home", home, "--repo", deploy.REPO_ROOT,
+    ]) == 0
+    assert not os.path.exists(plugin)
+    # 依赖是共享的：卸载保留、且内容不变
+    assert os.path.isfile(pkg)
+    assert oc.PLUGIN_DEP_NAME in json.loads(
+        open(pkg, encoding="utf-8").read())["dependencies"]
 
 
 def test_cli_install_rejects_non_repo(tmp_path):
@@ -264,6 +460,27 @@ def test_cli_uninstall_removes_registration_and_skill(tmp_path):
     assert cli.main([
         "uninstall", "--no-daemon", "--opencode-home", home, "--repo", deploy.REPO_ROOT,
     ]) == 0
+
+
+def test_cli_uninstall_removes_agent(tmp_path):
+    home = str(tmp_path / "home")
+    assert cli.main([
+        "install", "--skip-deps", "--no-index", "--no-daemon", "--no-smoke",
+        "--opencode-home", home, "--repo", deploy.REPO_ROOT,
+    ]) == 0
+    agent = os.path.join(home, ".config", "opencode", "agents", "memory-research.md")
+    assert os.path.isfile(agent)
+
+    assert cli.main([
+        "uninstall", "--dry-run", "--no-daemon", "--opencode-home", home,
+        "--repo", deploy.REPO_ROOT,
+    ]) == 0
+    assert os.path.isfile(agent)
+
+    assert cli.main([
+        "uninstall", "--no-daemon", "--opencode-home", home, "--repo", deploy.REPO_ROOT,
+    ]) == 0
+    assert not os.path.exists(agent)
 
 
 def test_cli_uninstall_all_steps_skipped():
