@@ -30,18 +30,31 @@ import sys
 import urllib.request
 
 from memory_agent.opencode_config import (
+    PLUGIN_DEP_NAME,
+    PLUGIN_DEP_RANGE,
+    install_agent,
+    install_plugin,
     install_skill,
+    opencode_agent_dir,
     opencode_config_path,
+    opencode_package_json,
+    opencode_plugin_dir,
     opencode_skill_dir,
     remove_opencode_registration,
+    uninstall_agent,
+    uninstall_plugin,
     uninstall_skill,
     write_opencode_registration,
+    write_package_dependency,
 )
 
 MEMORY_AGENT_DIR = os.path.dirname(os.path.abspath(__file__))
 REPO_ROOT = os.path.dirname(MEMORY_AGENT_DIR)
 DEPLOY_REQUIREMENTS = os.path.join(MEMORY_AGENT_DIR, "deploy-requirements.txt")
 SKILL_SOURCE_DIR = os.path.join(MEMORY_AGENT_DIR, "skill")
+AGENT_NAME = "memory-research"
+AGENT_SOURCE_FILE = os.path.join(MEMORY_AGENT_DIR, "agent", f"{AGENT_NAME}.md")
+PLUGIN_SOURCE_FILE = os.path.join(MEMORY_AGENT_DIR, "plugin", f"{AGENT_NAME}.js")
 PROXY_SCRIPT = os.path.join(MEMORY_AGENT_DIR, "proxy.py")
 BUILD_INDEX_SCRIPT = os.path.join(MEMORY_AGENT_DIR, "build_index.py")
 
@@ -196,6 +209,43 @@ def _skill(args: argparse.Namespace) -> int:
         return 1
     suffix = "（--dry-run 未落盘）" if args.dry_run else ""
     print(f"[skill] {action}：{dest}{suffix}")
+    return 0
+
+
+def _agent(args: argparse.Namespace) -> int:
+    dest = os.path.join(opencode_agent_dir(args.opencode_home), f"{AGENT_NAME}.md")
+    action = install_agent(AGENT_SOURCE_FILE, dest, dry_run=args.dry_run)
+    if action == "missing-source":
+        print(f"FAIL: 找不到 agent 源：{AGENT_SOURCE_FILE}", file=sys.stderr)
+        return 1
+    suffix = "（--dry-run 未落盘）" if args.dry_run else ""
+    print(f"[agent] {action}：{dest}{suffix}")
+    return 0
+
+
+def _plugin(args: argparse.Namespace) -> int:
+    dest = os.path.join(opencode_plugin_dir(args.opencode_home), f"{AGENT_NAME}.js")
+    action = install_plugin(PLUGIN_SOURCE_FILE, dest, dry_run=args.dry_run)
+    if action == "missing-source":
+        print(f"FAIL: 找不到 plugin 源：{PLUGIN_SOURCE_FILE}", file=sys.stderr)
+        return 1
+    suffix = "（--dry-run 未落盘）" if args.dry_run else ""
+    print(f"[plugin] {action}：{dest}{suffix}")
+
+    dep = write_package_dependency(
+        opencode_package_json(args.opencode_home), PLUGIN_DEP_NAME, PLUGIN_DEP_RANGE,
+        dry_run=args.dry_run)
+    if dep["status"] == "parse-error":
+        print(f"FAIL: {dep['path']} 不是合法 JSON，拒绝覆盖；请手动加依赖 {PLUGIN_DEP_NAME}。",
+              file=sys.stderr)
+        return 1
+    if dep["status"] == "would-write":
+        print(f"[plugin] 预览：将写入依赖 {PLUGIN_DEP_NAME} → {dep['path']}（--dry-run 不落盘）")
+    elif dep["status"] == "unchanged":
+        print(f"[plugin] 依赖已是最新：{dep['path']}")
+    else:
+        backup = f"（备份 {dep['backup']}）" if dep["backup"] else ""
+        print(f"[plugin] 依赖 {dep['status']}：{dep['path']}{backup}")
     return 0
 
 
@@ -413,6 +463,14 @@ def run_install(args: argparse.Namespace) -> int:
         print("[skill] 跳过（--no-skill）")
     else:
         steps.append(lambda: _skill(args))
+    if args.no_agent:
+        print("[agent] 跳过（--no-agent）")
+    else:
+        steps.append(lambda: _agent(args))
+    if args.no_plugin:
+        print("[plugin] 跳过（--no-plugin）")
+    else:
+        steps.append(lambda: _plugin(args))
     if args.no_index:
         print("[index] 跳过（--no-index）")
     else:
@@ -475,6 +533,26 @@ def _remove_skill(args: argparse.Namespace) -> int:
     return 0
 
 
+def _remove_agent(args: argparse.Namespace) -> int:
+    dest = os.path.join(opencode_agent_dir(args.opencode_home), f"{AGENT_NAME}.md")
+    action = uninstall_agent(dest, dry_run=args.dry_run)
+    suffix = "（--dry-run 未落盘）" if args.dry_run else ""
+    print(f"[agent] {action}：{dest}{suffix}")
+    return 0
+
+
+def _remove_plugin(args: argparse.Namespace) -> int:
+    dest = os.path.join(opencode_plugin_dir(args.opencode_home), f"{AGENT_NAME}.js")
+    action = uninstall_plugin(dest, dry_run=args.dry_run)
+    suffix = "（--dry-run 未落盘）" if args.dry_run else ""
+    print(f"[plugin] {action}：{dest}{suffix}")
+    # 依赖 `@opencode-ai/plugin` 是**共享**的（他工具也可能装）：卸载**不动**它，
+    # 免得误伤；留着无害（opencode 只按需 bun install）。
+    print(f"[plugin] 依赖 {PLUGIN_DEP_NAME} 保留（共享，卸载不移除）："
+          f"{opencode_package_json(args.opencode_home)}")
+    return 0
+
+
 def run_uninstall(args: argparse.Namespace) -> int:
     root = os.path.abspath(args.repo or REPO_ROOT)
     print("== memory-agent 卸载（注册 / skill / daemon；不删 clone）==")
@@ -494,6 +572,14 @@ def run_uninstall(args: argparse.Namespace) -> int:
         print("[skill] 跳过（--no-skill）")
     else:
         steps.append(lambda: _remove_skill(args))
+    if args.no_agent:
+        print("[agent] 跳过（--no-agent）")
+    else:
+        steps.append(lambda: _remove_agent(args))
+    if args.no_plugin:
+        print("[plugin] 跳过（--no-plugin）")
+    else:
+        steps.append(lambda: _remove_plugin(args))
 
     for step in steps:
         rc = step()
@@ -528,6 +614,10 @@ def _build_parser() -> argparse.ArgumentParser:
                         help="即使已有自洽索引也重建")
     parser.add_argument("--no-register", action="store_true", help="不写 opencode 注册")
     parser.add_argument("--no-skill", action="store_true", help="不落位 skill")
+    parser.add_argument("--no-agent", action="store_true",
+                        help="不落位 memory-research subagent（#60）")
+    parser.add_argument("--no-plugin", action="store_true",
+                        help="不落位 memory_research 插件（#61）")
     parser.add_argument("--no-index", action="store_true", help="不建 / 重建索引")
     parser.add_argument("--no-daemon", action="store_true", help="不拉起 daemon")
     parser.add_argument("--no-smoke", action="store_true", help="不跑冒烟")
@@ -551,6 +641,8 @@ def _build_uninstall_parser() -> argparse.ArgumentParser:
                         help="opencode 配置所在用户目录（默认当前用户 home；测试用）")
     parser.add_argument("--no-register", action="store_true", help="不移除 opencode 注册")
     parser.add_argument("--no-skill", action="store_true", help="不移除 skill")
+    parser.add_argument("--no-agent", action="store_true", help="不移除 agent（#60）")
+    parser.add_argument("--no-plugin", action="store_true", help="不移除 plugin（#61）")
     parser.add_argument("--no-daemon", action="store_true", help="不停 daemon")
     return parser
 

@@ -69,3 +69,64 @@ D7 暂缓的 **A（SKILL.md 显式化循环规则）** 已按 **Phase B 的机�
 
 执行结果（#47 D4 有头寸 / #48 三臂）见 `experiments/agentic-rag-census/`。
 **skill 是规劝、非强制**；统计验证（场景评测）后置。
+
+## 追加（2026-09-20）：宿主能力核实 + "不污染主对话"的落地形态
+
+背景：主对话里跑迭代检索会把 hop / 召回块 / judge 输出灌进主上下文（Phase B 证据上限
+20 篇 × 6000 字 ≈ 120k）。曾讨论两种"把循环挪出主对话"的方案：① MCP sampling 驱动的
+服务端 loop；② 宿主侧隔离 subagent。核实（一手源码 + 官方文档）后拍板：
+
+- **D9 服务端 loop（sampling）在本宿主不可行，本阶段不做**。opencode 的 MCP 客户端
+  （`packages/opencode/src/mcp/index.ts`）`capabilities` **只声明 `roots`**；`sampling` /
+  `elicitation` / `tasks` 均被注释掉（跟踪 issue #11948 / #23066 / #28567）。未声明
+  capability → server 发 `sampling/createMessage` 不可用。**换宿主**（支持 sampling 的
+  客户端）才重开此路。
+- **D10 "不污染主对话"用 opencode 原生 subagent 落地**（`mode: subagent` + Task 工具 →
+  独立子会话；`docs/agents`）。交付形态 = 随包的 `memory-research` agent 定义 + 落位
+  （随 skill 一起，沿 ADR-0028 D4 的幂等 / 备份 / `--dry-run` 纪律）。**不新增服务端 LLM、
+  不动 daemon 确定性、不改检索合成。**
+- **D11 模型默认继承；Task 无按次 model 参数**（`tool/task.ts`：`model = next.model ??
+  调用方 model`）。要"实验里用指定模型" → 用**第二个 agent 变体**（写死 `model`），主 agent
+  靠 `subagent_type` 选，等价于"派发时指定"。**默认交付的 agent 不写 `model`**（继承）。
+- **D12 subagent 工具面用白名单**：`permission` 评估为 `findLast`（最后匹配胜出）+ 配置
+  插入序（`permission/index.ts`）→ 写法是 **`"*": deny` 在前、具体 `allow` 在后**；只放
+  **只读**记忆工具（`memory_search` / `memory_get` / `memory_index_status`）+ `skill`。
+  写工具一律不放（写需用户在主机确认，不属该子代理职责）。
+
+**仍不解决的**（如实标注）：subagent 只做**上下文隔离**与**成本上限**（agent `steps`，
+部署建议、不由包强制）；**不修早停**，也不构成对 skill 行为的验证——那仍需 in-package
+harness + in-domain 多跳集（D1 层 2 的剩余部分，另立票）。**D8 不变**：宿主 enforcer
+仍是部署决定、非包能力；`steps` 只是写进 agent 定义的建议值。
+
+## 追加（2026-09-21）：D10 补充——插件工具内驱动子会话（形态 B）
+
+结论（**PASS**，限重入 / 控流）：在 opencode **插件工具**的 `execute` 调用栈里回调
+`client.session.create({ parentID })` + `client.session.prompt({ agent })` **不重入、不死锁**；
+子会话结果经**工具返回值**回到主会话；`session.children(parentID)` 可核到该 child。
+即"**委派 + 代码控流 + 返回**"在插件层可行。**据此采纳形态 B**（实现见 **#61**）。
+
+- 证据：`experiments/opencode-plugin-subagent/`（worktree `wk-60-plugin`，opencode **1.18.31**，
+  `@opencode-ai/plugin` 1.18.31，模型 `deepseek/deepseek-flash`）；P0–P4 原始观测见 `results.md`。
+- 与 **D10（形态 A：随包 agent `.md` + Task）** 的关系：**采纳形态 B（插件工具内驱动子会话）**
+  为交付形态（`memory_agent/plugin/memory-research.js`，工具 `memory_research`）；
+  **形态 A 保留为无插件环境下的 fallback**（同一子代理定义 `.md` 两用）。
+  - 接口：**只返回文本**（消费方是主 LLM；无固定格式 / 成分需求；结构化输出还会撞 provider
+    的 `tool_choice` 限制，见边界 1）。`id` 依据沿用提示词里的**纯文本约定**，不上升为 schema。
+  - 控流：**hop 预算由插件控**（插件循环调子会话，用 `NEXT_QUERY:` 文本协议续跳）；
+    单跳内部的策略仍是子代理提示词。
+  - 执行语义：**与原生 subagent 的默认前台模式一致——阻塞**（`execute` 内 `await
+    session.prompt`；父会话在 await 期间挂起，返回后把文本作为 tool result 才继续本轮）。
+    **不支持后台模式**：插件 `ToolContext` 无 background 原语，Task 的可选 `background: true`
+    不适用于本工具。长调用以 `metadata()` 报进度、受 hop 预算与**超时**约束、可 `abort`。
+  - 相比 skill 的规劝，B 是**代码契约**（委派与预算由我们的代码定）；代价是**插件随包分发**，
+    且插件**运行在宿主进程内、信任级高于外部 MCP daemon**（owner 2026-09-21 采纳）。
+- 边界（如实标注）：
+  1. `format: json_schema` 结构化输出在当前模型**不可用**——provider 返回 400
+     `Thinking mode does not support this tool_choice`（`info.error`，`structured_output=null`）；
+     需换支持该 tool_choice 的模型，**与重入无关**（同一调用正常返回并带回错误）。
+  2. 本 spike 只用一次性 `session.prompt` 返回，**未验证**流式 / 中途事件。
+  3. 仍只解决**隔离与控流**，不修早停、不构成对 skill 行为的验证（同 D10 与 #60 后置）。
+  4. **隔离未被独立验证**：探针只回传子会话最终文本，主会话结构性看不到召回块——**设计使然**，
+     未对父会话消息列表做断言（H2 记为"未验证"）；#61 的宿主 E2E 须补此断言。
+  5. P2 的记忆检索结论受工具 `-32001` 超时污染，**不作为检索质量证据**引用。
+- **D8 不变**：宿主 enforcer / 插件随包分发仍是部署决定，非包能力。
