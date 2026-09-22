@@ -56,3 +56,20 @@ venv\Scripts\python.exe memory_agent/eval/retrieval_eval.py --mode hybrid
 > 融合对照 / 池曲线 / rerank 交互见 `experiments/fusion-selection/`。
 
 `--out` 里的 `meta.run_hash` 是逐题结果的 sha256 截断；**两次运行同 hash = 确定性成立**。
+
+## 检索 agent 评测 harness（#62 / ADR-0030）
+
+**评测与运行时分离**：运行时（`memory_agent/agent_loop/`）只**写** `trace`（契约
+`memory_agent/trace.py`）；本 harness 只**消费** trace + 评测集。运行时**不 import 评测**
+（守卫 `tests/unit/test_agent_loop_isolation.py`）。
+
+| 文件 | 作用 |
+|---|---|
+| `harness/runner.py` | in-process 驱动 `AgentLoop` 跑场景，产出/落盘 trace |
+| `harness/scorer.py` | trace × 评测集 → **按 stop 分类的答案正确率** + gold 覆盖筛查（`gold_unreached`） |
+| `harness/stats.py` | bootstrap CI（纯计算） |
+| `harness/replay.py` | 确定性 replay（回放录下的 `model_output`，不调模型） |
+
+**口径（ADR-0030 D7）**：答案正确率**优先**；gold 覆盖只作**筛查**（"早停率"是**上界**，
+不作危害证据）。**测试/评测固定 qwen 口径**（`openai-compat`，temp=0/seed）；生产默认
+`opencode-server`（借主对话模型分配）。见 `tests/unit/test_agent_loop*.py`。

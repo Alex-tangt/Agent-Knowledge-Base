@@ -143,7 +143,8 @@ class AgentLoop:
         return Trace(
             id=trace_id, query=question, rounds=rounds, stop=stop,
             final={"answer": answer, "evidence_ids": [hit["id"] for hit in evidence]},
-            meta={"k": self.k, "max_hops": self.budget.max_hops},
+            meta={"k": self.k, "max_hops": self.budget.max_hops,
+                  "max_evidence": self.budget.max_evidence},
         )
 
     def _messages(self, question: str, evidence: list[dict[str, Any]],
