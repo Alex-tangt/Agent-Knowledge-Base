@@ -64,8 +64,10 @@ Effect 内部 `promptOps`，插件走 SDK 客户端，可能阻塞同一事件�
 
 - **P1 无死锁**：插件工具 `execute` 内 `session.create({parentID}) + session.prompt({agent})` **正常返回**
   （子会话 2.9s；三轮检索 138s），主进程不阻塞。
-- **隔离成立**：主会话只见工具结果；子会话召回块 / hop 不入主上下文（P2 确认无召回块；
-  P4 Task 对照同款隔离）。
+- **隔离的准确口径（H2 降级）**：`plugin_spawn_probe` **只回传子会话最终文本**，故主会话
+  结构上不会看到召回块——这是**探针设计所致**，**不是**对「宿主不会把子会话消息注入父上下文」
+  的独立验证。P2 的"main 无召回块"是肉眼观察主对话，**未对主会话消息列表做断言**。
+  P4（Task 对照）同理。→ **H2 记为「未被独立验证」**，不作为本 spike 的通过项。
 - **parent 挂接成立**：`session.children(parentID)` 含该 child（P1/P2/P3 均验证）。
 - **H3 结构化受限**：`format: json_schema` 在当前模型 400 `Thinking mode does not support this tool_choice`
   → `structured_output=null`、`parts=[]`；**属模型/provider 限制，非重入失败**（同一调用正常返回并带回错误）。
@@ -76,6 +78,9 @@ Effect 内部 `promptOps`，插件走 SDK 客户端，可能阻塞同一事件�
 代价是插件需随包分发（部署面变化）。对 #60：形态 A（agent `.md` + Task，D10）仍有效；本实验给出**形态 B**
 （插件工具内驱动）备选。
 
-**收尾（owner 2026-09-21 决定）**：形态 A 不变、**不采用**形态 B、**不改 #60**；
-ADR-0026 追加节先落成待 apply 片段 `adr-0026-append.md`（主树当时被 #60 会话改动，避免双写者），
-等主树干净后再 apply。本分支**暂不合并**。
+**收尾（owner 2026-09-21，本对话内定）**：**采纳形态 B（插件工具内驱动子会话）**——
+接口**只返回文本**（无固定格式 / 成分需求），**hop 预算由插件控**，**执行语义与原生 subagent
+默认前台一致（阻塞）**（`execute` 内 `await session.prompt`；父会话挂起→返回后作 tool result 继续；
+不支持后台模式），长调用用 `metadata()` 报进度 + 超时 + `abort`；形态 A（agent `.md` + Task）
+保留为**无插件环境下的 fallback**。ADR-0026 追加节先落成待 apply 片段 `adr-0026-append.md`
+（主树当时被 #60 会话改动，避免双写者），等主树干净后再 apply。本分支**暂不合并**。
