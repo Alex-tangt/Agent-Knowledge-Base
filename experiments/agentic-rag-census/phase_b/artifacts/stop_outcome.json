@@ -1,0 +1,87 @@
+{
+  "by_category": {
+    "complete": {
+      "n": 70,
+      "answer_correct_rate": 0.885714,
+      "gold_unreached_rate": 0.071429
+    },
+    "premature": {
+      "n": 63,
+      "answer_correct_rate": 0.952381,
+      "gold_unreached_rate": 0.095238
+    },
+    "stall": {
+      "n": 29,
+      "answer_correct_rate": 0.448276,
+      "gold_unreached_rate": 0.103448
+    },
+    "budget": {
+      "n": 14,
+      "answer_correct_rate": 0.642857,
+      "gold_unreached_rate": 0.214286
+    }
+  },
+  "by_question_type": {
+    "comparison_query": {
+      "complete": {
+        "n": 37,
+        "answer_correct_rate": 0.891892,
+        "gold_unreached_rate": 0.027027
+      },
+      "premature": {
+        "n": 10,
+        "answer_correct_rate": 0.8,
+        "gold_unreached_rate": 0.2
+      },
+      "stall": {
+        "n": 10,
+        "answer_correct_rate": 0.6,
+        "gold_unreached_rate": 0.2
+      },
+      "budget": {
+        "n": 10,
+        "answer_correct_rate": 0.6,
+        "gold_unreached_rate": 0.3
+      }
+    },
+    "inference_query": {
+      "complete": {
+        "n": 17,
+        "answer_correct_rate": 1.0,
+        "gold_unreached_rate": 0.117647
+      },
+      "premature": {
+        "n": 43,
+        "answer_correct_rate": 1.0,
+        "gold_unreached_rate": 0.093023
+      },
+      "stall": {
+        "n": 3,
+        "answer_correct_rate": 1.0,
+        "gold_unreached_rate": 0.0
+      }
+    },
+    "temporal_query": {
+      "complete": {
+        "n": 16,
+        "answer_correct_rate": 0.75,
+        "gold_unreached_rate": 0.125
+      },
+      "premature": {
+        "n": 10,
+        "answer_correct_rate": 0.9,
+        "gold_unreached_rate": 0.0
+      },
+      "stall": {
+        "n": 16,
+        "answer_correct_rate": 0.25,
+        "gold_unreached_rate": 0.0625
+      },
+      "budget": {
+        "n": 4,
+        "answer_correct_rate": 0.75,
+        "gold_unreached_rate": 0.0
+      }
+    }
+  }
+}

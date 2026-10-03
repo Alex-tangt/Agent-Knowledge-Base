@@ -1,0 +1,163 @@
+{
+  "schema_version": 1,
+  "note": "确定性场景评测集（#62 验收②）。零网络、零模型权重：stub_evidence 交给 StubTools 回放，脚本 LLM 回放脚本输出。口径（ADR-0030 D7 / CONTEXT.md）：迭代检索 = 据上一跳结果改写 query 再检索，硬预算 / 无新 id / 充分性信号即停。留出规则：任何调参 / 人眼观察只在 dev；对外报数是 holdout。",
+  "defaults": {
+    "k": 5,
+    "max_hops": 3,
+    "max_evidence": 3
+  },
+  "scenarios": [
+    {
+      "id": "s01-answer-first-hop",
+      "query": "BM25 与向量融合时为什么要先归一化？",
+      "split": "dev",
+      "kind": "answer",
+      "relevant": ["g-bm25-norm"],
+      "gold_answer": "不归一化时 BM25 原始分会压住向量的权重",
+      "stub_evidence": {
+        "BM25 与向量融合时为什么要先归一化？": ["g-bm25-norm", "g-fusion-dbsf"]
+      },
+      "script": ["ANSWER: 不归一化时 BM25 原始分会压住向量的权重"],
+      "expect": {"stop": "answer"}
+    },
+    {
+      "id": "s02-multihop-second-hop",
+      "query": "留存目标只召回 65% 时，该用哪套机制去补？",
+      "split": "dev",
+      "kind": "answer",
+      "relevant": ["g-census-r5", "g-agentic-loop"],
+      "gold_answer": "迭代检索",
+      "stub_evidence": {
+        "留存目标只召回 65% 时，该用哪套机制去补？": ["g-census-r5"],
+        "多跳问题所需证据跨多篇文档时如何补齐": ["g-agentic-loop"]
+      },
+      "script": [
+        "NEXT_QUERY: 多跳问题所需证据跨多篇文档时如何补齐",
+        "ANSWER: 迭代检索"
+      ],
+      "expect": {"stop": "answer"}
+    },
+    {
+      "id": "s03-multihop-two-extra-hops",
+      "query": "in-package harness 的评测对象是什么？",
+      "split": "dev",
+      "kind": "answer",
+      "relevant": ["g-trace-contract", "g-eval-runtime-seam", "g-bootstrap-ci"],
+      "gold_answer": "trace 契约",
+      "stub_evidence": {
+        "in-package harness 的评测对象是什么？": ["g-trace-contract"],
+        "评测侧只读契约如何解耦运行时": ["g-eval-runtime-seam"],
+        "统计结论用哪种置信区间": ["g-bootstrap-ci"]
+      },
+      "script": [
+        "NEXT_QUERY: 评测侧只读契约如何解耦运行时",
+        "NEXT_QUERY: 统计结论用哪种置信区间",
+        "ANSWER: trace 契约"
+      ],
+      "expect": {"stop": "answer"}
+    },
+    {
+      "id": "s04-budget-stop-partial",
+      "query": "多跳问题的证据在首跳漏掉时，为什么需要迭代检索？",
+      "split": "holdout",
+      "kind": "answer",
+      "relevant": ["g-census-r5", "g-agentic-loop"],
+      "gold_answer": "首跳漏掉的证据只能靠据已有信息改写 query 补回",
+      "max_hops": 2,
+      "stub_evidence": {
+        "多跳问题的证据在首跳漏掉时，为什么需要迭代检索？": ["g-census-r5"],
+        "首跳漏证据时改写的 query 该聚焦什么": ["g-agentic-loop"],
+        "改写后仍然只覆盖一半证据": ["g-tail-noise"]
+      },
+      "script": [
+        "NEXT_QUERY: 首跳漏证据时改写的 query 该聚焦什么",
+        "NEXT_QUERY: 改写后仍然只覆盖一半证据"
+      ],
+      "expect": {"stop": "budget"}
+    },
+    {
+      "id": "s05-budget-stop-no-answer",
+      "query": "这台机器的物理机房编号是多少？",
+      "split": "holdout",
+      "kind": "no_answer",
+      "relevant": [],
+      "max_hops": 2,
+      "stub_evidence": {
+        "这台机器的物理机房编号是多少？": ["d-ops-runbook"],
+        "机房编号是否记在运维手册里": ["d-ops-runbook-2"],
+        "运维手册里没有机房编号时怎么办": ["d-ops-runbook-3"]
+      },
+      "script": [
+        "NEXT_QUERY: 机房编号是否记在运维手册里",
+        "NEXT_QUERY: 运维手册里没有机房编号时怎么办"
+      ],
+      "expect": {"stop": "budget"}
+    },
+    {
+      "id": "s06-no-new-ids-stop",
+      "query": "项目里那条从未实现的停止触发词是哪一个？",
+      "split": "holdout",
+      "kind": "no_answer",
+      "relevant": [],
+      "stub_evidence": {
+        "项目里那条从未实现的停止触发词是哪一个？": ["g-trace-contract", "g-stop-catalog"],
+        "停止触发词一览是否列了未实现项": ["g-trace-contract", "g-stop-catalog"]
+      },
+      "script": [
+        "NEXT_QUERY: 停止触发词一览是否列了未实现项"
+      ],
+      "expect": {"stop": "no_new_ids"}
+    },
+    {
+      "id": "s07-fallback-stop",
+      "query": "留出集和 dev 集的分工是什么？",
+      "split": "holdout",
+      "kind": "answer",
+      "relevant": ["g-holdout-rule"],
+      "gold_answer": "调参只在 dev，对外报数只用 holdout",
+      "stub_evidence": {
+        "留出集和 dev 集的分工是什么？": ["g-holdout-rule"]
+      },
+      "script": ["我觉得差不多够了，直接给结论吧"],
+      "expect": {"stop": "fallback"}
+    },
+    {
+      "id": "s08-insufficient-must-not-answer",
+      "query": "哪个仓库的私有部署密钥轮换周期是多久？",
+      "split": "holdout",
+      "kind": "no_answer",
+      "relevant": [],
+      "stub_evidence": {
+        "哪个仓库的私有部署密钥轮换周期是多久？": ["d-secret-rotation"]
+      },
+      "script": ["INSUFFICIENT"],
+      "expect": {"stop": "insufficient"}
+    },
+    {
+      "id": "s09-gold-unreached-max-evidence",
+      "query": "多跳场景里 gold 覆盖只作筛查，那什么才算危害证据？",
+      "split": "holdout",
+      "kind": "answer",
+      "relevant": ["g-gold-screening", "g-stop-fallback-hazard"],
+      "gold_answer": "fallback 停",
+      "stub_evidence": {
+        "多跳场景里 gold 覆盖只作筛查，那什么才算危害证据？": ["g-gold-screening", "g-noise-1", "g-noise-2", "g-stop-fallback-hazard"]
+      },
+      "script": ["ANSWER: fallback 停"],
+      "expect": {"stop": "answer"}
+    },
+    {
+      "id": "s10-gold-unreached-screening",
+      "query": "首跳只召回噪声时，多跳问题还能答对吗？",
+      "split": "holdout",
+      "kind": "answer",
+      "relevant": ["g-agentic-loop", "g-noise-1"],
+      "gold_answer": "不能，首跳漏证据就没有可改写的依据",
+      "stub_evidence": {
+        "首跳只召回噪声时，多跳问题还能答对吗？": ["g-noise-1", "g-noise-2"]
+      },
+      "script": ["ANSWER: 不能，首跳漏证据就没有可改写的依据"],
+      "expect": {"stop": "answer"}
+    }
+  ]
+}

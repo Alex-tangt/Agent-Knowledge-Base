@@ -1,6 +1,7 @@
 # 0030 检索 agent 做深：in-package harness/runtime + 三轴深度（H→A→B→C）
 
-Status: **proposed**（2026-09-22 owner 选定路线 E+ 与首票 H，待接受/改）。
+Status: **proposed**（2026-09-22 owner 选定路线 E+ 与首票 H；2026-10-03 补 **D7**（评测 ⊥ 运行时 +
+trace 契约）待接受/改——H 单元 1–2 已按 D7 落地，故该节是"补记既有实现的口径"而非新开方向）。
 
 Relates: **ADR-0026**（agentic RAG 测量协议；本 ADR 修订其"循环在宿主、机制不可及"的约束前提）、
 **ADR-0025**（基表 = 文件 + git；生命周期；唯一可写全局 KB）、**ADR-0019 / 0018**（存储端口 / 治理）、
@@ -38,6 +39,25 @@ ADR-0026 的约束前提——"循环跑在宿主 agent、本包只交付 skill 
   要用**本 KB** 证明任何增益（含 C / D），必须先建**本语料的多跳 / 冲突评测集**（分层 gold evidence）。
   该集是独立票（E），**C / D 均 blocked by 它**。
 - **D6 外部语料只作机制证据**：H/A/B/C 的外部语料结论**不得当产品增益引用**（沿 D5）。
+- **D7 评测 ⊥ 运行时 + trace 契约**（H 的边界与锚点；2026-10-03 补，评审发现代码已引用本
+  编号而 ADR 缺该节——先有实现后补决策属倒置，此处补正）：
+  - **D7.1 唯一契约**：`memory_agent/trace.py`（Trace JSONL）。运行时（`agent_loop/`）只**写**、
+    评测（`eval/harness/`）只**读**，**运行时不得 import 评测**（静态 + 运行时双检守卫）。
+  - **D7.2 确定性锚点 = `run_hash`**：轨迹**内容**哈希（不含随机 `id`、不含自指的
+    `meta.run_hash`）；同一输入两次运行得同一 hash；`replay` 逐位复现且 hash 相同。
+  - **D7.3 停止口径**：由**代码**判定——**确定性** = `budget` / `no_new_ids`；**非确定性** =
+    充分性信号（默认 = 模型给出终结回复；`SufficiencyChecker` 是可替换接缝，**不得**把模型
+    自报当确定性判据）。评测**按 stop 分类**报答案正确率；gold 覆盖只作**筛查**
+    （`gold_unreached`），不当危害证据。
+  - **D7.4 证据语义**：`evidence_ids` = **真正展示给模型**的条目（受 `max_evidence` 上限）；
+    本轮命中记录仍完整保留在轮次里。**只有一个来源**，不允许"上报一套、展示另一套"。
+  - **D7.5 H 与 E 的分工**：H 只交付"**能跑通评测通路的确定性桩场景集**"（stub LLM / stub 工具、
+    dev / holdout 切分、bootstrap CI）；**in-domain 多跳/冲突评测集归 E**。H 的桩集数字是
+    **通路证明**，**不得当本 KB 的产品增益**（沿 D5 / D6）。
+  - **D7.6 工具面**：循环只做"**只读工具 + 代码控循环**"，模型可见的工具目录来自
+    `ToolRegistry.list_tools()`；工具派发不得引入写路径，**不碰检索默认 / 合成**（沿 D3）。
+  - **D7.7 regret（反事实续跳）**：离线、可选、只在"停了 ∧ 错"子集上抽样；**本阶段不实现**，
+    属 H 的后续扩展。
 
 ## 理由
 
@@ -62,4 +82,8 @@ Considered options：
 - H 落地后，**A/B/C 的验收锚点**分别为：agentic search 显著优于一次性检索（bootstrap CI）；
   引用精确/召回 + 无支撑 claim 率 + 拒答正确；冲突检出率 / 取新弃旧正确率 / 不可裁决**不自动择一**。
 - 本 ADR **修订 ADR-0026 的前提**（循环不再只在宿主）——**不改其 D5/D6 的谨慎口径**（外部语料只反证）。
+- **H 落地进度（2026-10-03）**：运行时 + trace 契约 + harness（单元 1–2）之后，**单元 3 = 契约收口**
+  已落 `feat/62-agent-loop-harness`：`run_hash` 确定性锚点、证据单一语义、工具派发、真实
+  `opencode serve` 接入冒烟（6/6，证据 `memory_agent/eval/opencode_server_smoke_62_results.md`）。
+  H 的场景集按 **D7.5** 是**确定性桩集**（通路证明）；in-domain 集仍归 E。
 - 调研页 `experiments/retrieval-agent-depth/`（本 ADR 的依据，含外部一手来源清单）。
