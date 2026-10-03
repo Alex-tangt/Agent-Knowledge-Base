@@ -291,3 +291,24 @@ def warmup_on_start() -> bool:
     需要低延迟的场景可设 `MEMORY_WARMUP=1` 换回预热。
     """
     return os.environ.get("MEMORY_WARMUP", "0").strip().lower() in {"1", "true", "yes", "on"}
+
+
+# ---- 检索 agent 运行时：LLM provider（#62 / ADR-0030 D7）----
+# 本段是这些 knob 的**登记表**：值一律在**调用时**读 env（不是 import 时定死），
+# 于是测试可以 monkeypatch、且 provider 覆盖优先级（调用参数 > env > 默认）成立。
+# 凭据纪律：`api_key` 只从进程环境 / gitignored `.env` 读，**绝不落盘 / 落日志 / 回显**（#25）。
+LLM_ENV_NAMES = {
+    "provider": "MEMORY_AGENT_LLM_PROVIDER",
+    "base_url": "MEMORY_AGENT_LLM_BASE_URL",
+    "model": "MEMORY_AGENT_LLM_MODEL",
+    "api_key": "MEMORY_AGENT_LLM_API_KEY",
+    "temperature": "MEMORY_AGENT_LLM_TEMPERATURE",
+    "seed": "MEMORY_AGENT_LLM_SEED",
+}
+
+
+def llm_env(name: str) -> str | None:
+    """按登记名读 env（**调用时**读取；空串视同未设置）。"""
+    key = LLM_ENV_NAMES[name]
+    value = os.environ.get(key)
+    return value if value and value.strip() else None

@@ -33,7 +33,10 @@ memory-agent-parse-worker = "memory_agent.parse_worker:main"
 [tool.setuptools]
 packages = [
     "memory_agent",
+    "memory_agent.agent_loop",
     "memory_agent.corpus",
+    "memory_agent.eval",
+    "memory_agent.eval.harness",
     "memory_agent.gateway",
     "memory_agent.memory",
     "memory_agent.parse",
