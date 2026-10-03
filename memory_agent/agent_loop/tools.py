@@ -53,3 +53,21 @@ class MemoryToolRegistry:
         if name == GET_TOOL:
             return self._index.get(args["entry_id"])
         raise KeyError(f"未知工具：{name}")
+
+
+def describe_tools(registry) -> str:
+    """把注册表渲染成给模型看的工具目录（ACI：名称 + 参数 + 描述）。
+
+    参数名后带 `*` = 必填。`AgentLoop` 每轮把它放进 prompt——注册的工具因此**可达**
+    （此前 `list_tools` / `memory_get` 无人调用）。
+    """
+    lines: list[str] = []
+    for tool in registry.list_tools():
+        schema = tool.get("parameters") or {}
+        properties = schema.get("properties") or {}
+        required = set(schema.get("required") or [])
+        signature = ", ".join(
+            f"{name}{'*' if name in required else ''}" for name in properties
+        )
+        lines.append(f"- {tool.get('name')}({signature})：{tool.get('description', '')}")
+    return "\n".join(lines) or "- (无)"
