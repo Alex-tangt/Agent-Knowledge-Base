@@ -8,7 +8,9 @@ from __future__ import annotations
 
 from typing import Any
 
-from memory_agent.agent_loop import AgentLoop, Budget
+from memory_agent.agent_loop import AgentLoop
+from memory_agent.agent_loop.budget import Budget
+from memory_agent.eval.harness.stubs import make_budget
 from memory_agent.trace import Trace
 
 
@@ -25,9 +27,15 @@ class ReplayLLM:
 
 
 def budget_from_trace(trace: Trace) -> Budget:
+    """从 `trace.meta` 复原预算。
+
+    预算键由 `max_hops` 更名为 `max_rounds`（并行会话的契约改动），这里**两者都认**，
+    新键优先——因此本模块在改名前后都正确，不需要跟着改两次。
+    """
     meta = trace.meta or {}
-    return Budget(max_hops=int(meta.get("max_hops", 3)),
-                  max_evidence=int(meta.get("max_evidence", 20)))
+    max_rounds = meta.get("max_rounds", meta.get("max_hops", 3))
+    return make_budget(max_rounds=int(max_rounds),
+                       max_evidence=int(meta.get("max_evidence", 20)))
 
 
 def replay(trace: Trace, tools: Any) -> Trace:

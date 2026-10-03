@@ -9,6 +9,7 @@ import re
 from collections import defaultdict
 from typing import Any
 
+from memory_agent.eval.metrics import _mean
 from memory_agent.trace import Trace
 
 _WS = re.compile(r"\s+")
@@ -50,12 +51,19 @@ def score_trace(trace: Trace, gold: dict[str, Any]) -> dict[str, Any]:
     }
 
 
-def _mean(values: list[float]) -> float | None:
-    return round(sum(values) / len(values), 6) if values else None
-
-
 def _rate(flags: list[bool]) -> float | None:
     return round(sum(1 for f in flags if f) / len(flags), 6) if flags else None
+
+
+def _mean_or_none(values: list[float]) -> float | None:
+    """**复用** `eval/metrics.py` 的 `_mean`（不另写一份求和/除）。
+
+    只在「无样本」处保留 harness 自己的口径：`metrics._mean([]) == 0.0`，而这里
+    「没有可计分的题」必须区分于「都得了 0 分」，所以空表回 `None`。
+    """
+    if not values:
+        return None
+    return round(_mean(values), 9)
 
 
 def _aggregate(rows: list[dict[str, Any]]) -> dict[str, Any]:
@@ -64,7 +72,7 @@ def _aggregate(rows: list[dict[str, Any]]) -> dict[str, Any]:
     unreached = [r["gold_unreached"] for r in rows if r["evidence_recall"] is not None]
     return {
         "n": len(rows),
-        "mean_evidence_recall": _mean(recalls),
+        "mean_evidence_recall": _mean_or_none(recalls),
         "answer_correct_rate": _rate(correct),
         "gold_unreached_rate": _rate(unreached),
     }
