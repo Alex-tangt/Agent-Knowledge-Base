@@ -57,7 +57,7 @@ venv\Scripts\python.exe memory_agent/eval/retrieval_eval.py --mode hybrid
 
 `--out` 里的 `meta.run_hash` 是逐题结果的 sha256 截断；**两次运行同 hash = 确定性成立**。
 
-## 检索 agent 评测 harness（#62 / ADR-0030）
+## 检索 agent 评测 harness（#62 / ADR-0030 D7）
 
 **评测与运行时分离**：运行时（`memory_agent/agent_loop/`）只**写** `trace`（契约
 `memory_agent/trace.py`）；本 harness 只**消费** trace + 评测集。运行时**不 import 评测**
@@ -65,11 +65,29 @@ venv\Scripts\python.exe memory_agent/eval/retrieval_eval.py --mode hybrid
 
 | 文件 | 作用 |
 |---|---|
+| `harness/scenarios.json` | **确定性场景集**（10 条：dev 3 / holdout 7；纯数据，改场景不动逻辑） |
+| `harness/scenarios.py` | 加载 + 全量 schema 校验 + 显式 `split` 留出规则（`ScenarioSetError`） |
+| `harness/stubs.py` | `ScriptedLLM` + `StubTools`（回放脚本 → 零网络、零权重、逐位可复现） |
 | `harness/runner.py` | in-process 驱动 `AgentLoop` 跑场景，产出/落盘 trace |
 | `harness/scorer.py` | trace × 评测集 → **按 stop 分类的答案正确率** + gold 覆盖筛查（`gold_unreached`） |
-| `harness/stats.py` | bootstrap CI（纯计算） |
+| `harness/stats.py` | bootstrap CI + paired 差值（纯计算） |
 | `harness/replay.py` | 确定性 replay（回放录下的 `model_output`，不调模型） |
+| `harness/__main__.py` | 命令入口：跑场景集 → 报告（JSON / MD），stdout 与 `--out` 同字节 |
+
+### 跑（验收②）
+
+```powershell
+venv\Scripts\python.exe -m memory_agent.eval.harness            # 打印报告
+venv\Scripts\python.exe -m memory_agent.eval.harness --out memory_agent/eval/agent_harness_62_report.json
+```
+
+**确定性锚点**：同一命令两次 → stdout 与 `--out` **逐字节相同**（回放、无采样、无时钟、无路径；
+2026-10-03 实测 sha256 `0363106c…2d6569` / 5384 字节）。报告含 **holdout** 的答案正确率 + bootstrap CI、
+「不作答题不编造」率、gold 覆盖达标率、dev↔holdout paired 差值（题号无交集时 `n=0` 并明说无结论）。
+区间宽度为 0 的指标标 `degenerate=true`，**不当作显著**。
 
 **口径（ADR-0030 D7）**：答案正确率**优先**；gold 覆盖只作**筛查**（"早停率"是**上界**，
-不作危害证据）。**测试/评测固定 qwen 口径**（`openai-compat`，temp=0/seed）；生产默认
-`opencode-server`（借主对话模型分配）。见 `tests/unit/test_agent_loop*.py`。
+不作危害证据）。**报告里的数是 harness / 打分链路自证**——脚本 LLM 是人写的，
+**不是检索质量**；本 KB 的检索增益要等 **#65（E）的 in-domain 集 + 真模型**（ADR-0030 D5/D6）。
+**测试/评测固定 qwen 口径**（`openai-compat`，temp=0/seed）；生产默认 `opencode-server`（借主对话
+模型分配，接入契约与真实冒烟见 `opencode_server_smoke_62_results.md`）。
