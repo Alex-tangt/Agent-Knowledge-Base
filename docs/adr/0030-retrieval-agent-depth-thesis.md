@@ -1,7 +1,8 @@
 # 0030 检索 agent 做深：in-package harness/runtime + 三轴深度（H→A→B→C）
 
-Status: **proposed**（2026-09-22 owner 选定路线 E+ 与首票 H；2026-10-03 补 **D7**（评测 ⊥ 运行时 +
-trace 契约）待接受/改——H 单元 1–2 已按 D7 落地，故该节是"补记既有实现的口径"而非新开方向）。
+Status: **accepted**（2026-09-22 owner 选定路线 E+ 与首票 H；2026-10-03 补 **D7**（评测 ⊥ 运行时 +
+trace 契约）；**2026-10-06 owner 接受 D7**——H 单元 1–3 已按 D7 落地。**H/A/B/C 的归属由
+ADR-0031 调整为 `retrieval_agent` 项目**（本 ADR 的路线与验收锚点不变）。
 
 Relates: **ADR-0026**（agentic RAG 测量协议；本 ADR 修订其"循环在宿主、机制不可及"的约束前提）、
 **ADR-0025**（基表 = 文件 + git；生命周期；唯一可写全局 KB）、**ADR-0019 / 0018**（存储端口 / 治理）、
