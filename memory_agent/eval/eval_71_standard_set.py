@@ -13,7 +13,7 @@ HF `BeIR/scifact` + `BeIR/scifact-qrels`，**cc-by-sa-4.0**）——英文、**�
 跑法：
 
     $py = "D:\\...\\venv\\Scripts\\python.exe"
-    $env:PYTHONPATH = "D:\\...\\wk-71-eval"
+    $env:PYTHONPATH = "D:\...\<worktree>"
     & $py memory_agent/eval/eval_71_standard_set.py --census
     & $py memory_agent/eval/eval_71_standard_set.py --run --docs 1500        # ≤2k 规模锚点档
     & $py memory_agent/eval/eval_71_standard_set.py --run --docs 0          # 全量 5,183（外部可比档）
