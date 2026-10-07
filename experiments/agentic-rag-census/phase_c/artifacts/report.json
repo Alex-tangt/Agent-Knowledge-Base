@@ -1,0 +1,284 @@
+{
+ "meta": {
+  "dataset": "yixuantt/MultiHopRAG",
+  "license": "ODC-BY",
+  "source_repo": "https://github.com/yixuantt/MultiHop-RAG",
+  "evidence_file": "../artifacts/per_query_ids.json",
+  "provenance": "复用 #47 Phase A 不可变证据（per_query_ids.json）；**未重跑**检索（纪律：已定数值不重跑）",
+  "unit": "entry-level（一篇文章 = 一个条目 multihop:<i:04d>）",
+  "ks": [
+   1,
+   5,
+   10,
+   14,
+   20,
+   50
+  ],
+  "display_k": [
+   "k5",
+   "k14"
+  ],
+  "contract": "memory_agent/trace.py（Trace JSONL）",
+  "harness": "memory_agent.eval.harness.scorer.evaluate + stats.bootstrap_ci",
+  "trace_dir": "C:\\Users\\Tan\\AppData\\Local\\Temp\\eval71-phase-c\\trace",
+  "sample_traces": "artifacts/sample_traces.jsonl",
+  "published_tolerance": 0.001,
+  "boundary": "外部语料只作机制证据，不声称本库增益（ADR-0026 D5/D6）"
+ },
+ "runs": {
+  "base:hybrid": {
+   "run": "base:hybrid",
+   "rows": 2556,
+   "answerable": 2255,
+   "null_query": 301,
+   "recall": {
+    "1": 0.252587,
+    "5": 0.65037,
+    "10": 0.783296,
+    "14": 0.847044,
+    "20": 0.899778,
+    "50": 0.964523
+   },
+   "recall_ci": {
+    "1": {
+     "n": 2255,
+     "mean": 0.252587,
+     "lo": 0.243422,
+     "hi": 0.261752,
+     "significant": true
+    },
+    "5": {
+     "n": 2255,
+     "mean": 0.65037,
+     "lo": 0.637546,
+     "hi": 0.66286,
+     "significant": true
+    },
+    "10": {
+     "n": 2255,
+     "mean": 0.783296,
+     "lo": 0.772579,
+     "hi": 0.793865,
+     "significant": true
+    },
+    "14": {
+     "n": 2255,
+     "mean": 0.847044,
+     "lo": 0.837583,
+     "hi": 0.856467,
+     "significant": true
+    },
+    "20": {
+     "n": 2255,
+     "mean": 0.899778,
+     "lo": 0.891685,
+     "hi": 0.907797,
+     "significant": true
+    },
+    "50": {
+     "n": 2255,
+     "mean": 0.964523,
+     "lo": 0.959017,
+     "hi": 0.969734,
+     "significant": true
+    }
+   },
+   "consistency_with_phase_a": {
+    "1": {
+     "computed": 0.252587,
+     "published": 0.2526,
+     "match": true
+    },
+    "5": {
+     "computed": 0.65037,
+     "published": 0.6504,
+     "match": true
+    },
+    "10": {
+     "computed": 0.783296,
+     "published": 0.7833,
+     "match": true
+    },
+    "14": {
+     "computed": 0.847044,
+     "published": 0.847,
+     "match": true
+    },
+    "20": {
+     "computed": 0.899778,
+     "published": 0.8998,
+     "match": true
+    },
+    "50": {
+     "computed": 0.964523,
+     "published": 0.9645,
+     "match": true
+    }
+   },
+   "consistency_all_match": true,
+   "arms": {
+    "k5": {
+     "display_k": 5,
+     "traces": 2556,
+     "run_hash": "c685e97779fa4e69",
+     "harness": {
+      "overall": {
+       "n": 2556,
+       "mean_evidence_recall": 0.650369549,
+       "answer_correct_rate": 1.0,
+       "gold_unreached_rate": 0.632816
+      },
+      "by_stop": {
+       "budget": {
+        "n": 2556,
+        "mean_evidence_recall": 0.650369549,
+        "answer_correct_rate": 1.0,
+        "gold_unreached_rate": 0.632816
+       }
+      }
+     },
+     "harness_note": "answer_correct 不适用（one-shot 不产答案，gold_answer=None）"
+    },
+    "k14": {
+     "display_k": 14,
+     "traces": 2556,
+     "run_hash": "86323cbcfe20cc0b",
+     "harness": {
+      "overall": {
+       "n": 2556,
+       "mean_evidence_recall": 0.847043607,
+       "answer_correct_rate": 1.0,
+       "gold_unreached_rate": 0.355211
+      },
+      "by_stop": {
+       "budget": {
+        "n": 2556,
+        "mean_evidence_recall": 0.847043607,
+        "answer_correct_rate": 1.0,
+        "gold_unreached_rate": 0.355211
+       }
+      }
+     },
+     "harness_note": "answer_correct 不适用（one-shot 不产答案，gold_answer=None）"
+    }
+   }
+  },
+  "base:vector": {
+   "run": "base:vector",
+   "rows": 2556,
+   "answerable": 2255,
+   "null_query": 301,
+   "recall": {
+    "1": 0.245861,
+    "5": 0.632409,
+    "10": 0.771988,
+    "14": 0.836401,
+    "20": 0.892239,
+    "50": 0.964523
+   },
+   "recall_ci": {
+    "1": {
+     "n": 2255,
+     "mean": 0.245861,
+     "lo": 0.23677,
+     "hi": 0.255026,
+     "significant": true
+    },
+    "5": {
+     "n": 2255,
+     "mean": 0.632409,
+     "lo": 0.61918,
+     "hi": 0.645713,
+     "significant": true
+    },
+    "10": {
+     "n": 2255,
+     "mean": 0.771988,
+     "lo": 0.760865,
+     "hi": 0.783186,
+     "significant": true
+    },
+    "14": {
+     "n": 2255,
+     "mean": 0.836401,
+     "lo": 0.826644,
+     "hi": 0.846231,
+     "significant": true
+    },
+    "20": {
+     "n": 2255,
+     "mean": 0.892239,
+     "lo": 0.883703,
+     "hi": 0.900628,
+     "significant": true
+    },
+    "50": {
+     "n": 2255,
+     "mean": 0.964523,
+     "lo": 0.959017,
+     "hi": 0.969734,
+     "significant": true
+    }
+   },
+   "consistency_with_phase_a": {
+    "5": {
+     "computed": 0.632409,
+     "published": 0.632,
+     "match": true
+    },
+    "50": {
+     "computed": 0.964523,
+     "published": 0.9645,
+     "match": true
+    }
+   },
+   "consistency_all_match": true,
+   "arms": {
+    "k5": {
+     "display_k": 5,
+     "traces": 2556,
+     "run_hash": "efcfa86fab5e9410",
+     "harness": {
+      "overall": {
+       "n": 2556,
+       "mean_evidence_recall": 0.63240946,
+       "answer_correct_rate": 1.0,
+       "gold_unreached_rate": 0.64878
+      },
+      "by_stop": {
+       "budget": {
+        "n": 2556,
+        "mean_evidence_recall": 0.63240946,
+        "answer_correct_rate": 1.0,
+        "gold_unreached_rate": 0.64878
+       }
+      }
+     },
+     "harness_note": "answer_correct 不适用（one-shot 不产答案，gold_answer=None）"
+    },
+    "k14": {
+     "display_k": 14,
+     "traces": 2556,
+     "run_hash": "6d71a1f92ddbd416",
+     "harness": {
+      "overall": {
+       "n": 2556,
+       "mean_evidence_recall": 0.836400591,
+       "answer_correct_rate": 1.0,
+       "gold_unreached_rate": 0.371175
+      },
+      "by_stop": {
+       "budget": {
+        "n": 2556,
+        "mean_evidence_recall": 0.836400591,
+        "answer_correct_rate": 1.0,
+        "gold_unreached_rate": 0.371175
+       }
+      }
+     },
+     "harness_note": "answer_correct 不适用（one-shot 不产答案，gold_answer=None）"
+    }
+   }
+  }
+ }
+}
