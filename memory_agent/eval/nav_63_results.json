@@ -1,0 +1,901 @@
+{
+ "mode": "nav-63",
+ "probes_total": 28,
+ "addressable": 19,
+ "entry_missing": [],
+ "baseline": {
+  "source": "eval_71_nav_baseline.json",
+  "k": 14,
+  "recall": {
+   "1": 0.526316,
+   "5": 0.684211,
+   "10": 0.736842,
+   "14": 0.736842
+  },
+  "mrr": 0.614035,
+  "run_hash": "8bf6a5c553c20541"
+ },
+ "index": {
+  "prod_index": "D:/python_work/work2026-4/Agent-Knowledge-Base\\memory_agent\\vector_db",
+  "prod_gen": "gen-4",
+  "index_dir": "C:\\Users\\Tan\\AppData\\Local\\Temp\\eval63-nav\\index",
+  "reused_copy": true,
+  "config": "C:\\Users\\Tan\\AppData\\Local\\Temp\\eval63-nav\\index\\readonly_repos_71.json",
+  "overlay": "C:\\Users\\Tan\\AppData\\Local\\Temp\\eval63-nav\\index\\overlay_63.json",
+  "main_root": "D:/python_work/work2026-4/Agent-Knowledge-Base",
+  "entries": 277,
+  "refresh": {
+   "ran": true,
+   "seconds": 28.6,
+   "entries_before": 276,
+   "entries_after": 277
+  }
+ },
+ "env_pins": {
+  "MEMORY_LOCAL_HYBRID": "1",
+  "MEMORY_SPARSE_BACKEND": "bm25",
+  "MEMORY_STORE_FUSION": "dbsf",
+  "MEMORY_RERANK": "0",
+  "MEMORY_RETRIEVAL_POOL": "14",
+  "MEMORY_WARMUP": "0"
+ },
+ "scripted": {
+  "reach": {
+   "n": 19,
+   "hits": 19,
+   "misses": [],
+   "rows": [
+    {
+     "id": "nav-071-g01",
+     "face": "grep",
+     "scope": "corpus",
+     "difficulty": "easy",
+     "target": "repo:agent-knowledge-base/experiments/agentic-rag-census/README.md",
+     "usable": true,
+     "tool_calls": [
+      {
+       "tool": "memory_grep",
+       "args": {
+        "pattern": "c1c1287aa60a94acf9c4d20c891c9cd611a0f6e8",
+        "glob": [
+         "**/*.md"
+        ],
+        "limit": 50
+       }
+      }
+     ],
+     "hit": true,
+     "reason": "span_and_entry",
+     "recorded_window_shifted": false,
+     "anchor_actual_line": null
+    },
+    {
+     "id": "nav-071-g02",
+     "face": "grep",
+     "scope": "corpus",
+     "difficulty": "hard",
+     "target": "repo:agent-knowledge-base/docs/adr/0030-retrieval-agent-depth-thesis.md",
+     "usable": true,
+     "tool_calls": [
+      {
+       "tool": "memory_grep",
+       "args": {
+        "pattern": "D7.7 regret",
+        "glob": [
+         "docs/**/*.md"
+        ],
+        "limit": 50
+       }
+      }
+     ],
+     "hit": true,
+     "reason": "span_and_entry",
+     "recorded_window_shifted": false,
+     "anchor_actual_line": null
+    },
+    {
+     "id": "nav-071-g03",
+     "face": "grep",
+     "scope": "corpus",
+     "difficulty": "medium",
+     "target": "repo:agent-knowledge-base/AGENTS.md",
+     "usable": true,
+     "tool_calls": [
+      {
+       "tool": "memory_grep",
+       "args": {
+        "pattern": "EXCLUDE_DIR_NAMES",
+        "glob": [
+         "**/*.md"
+        ],
+        "limit": 50
+       }
+      }
+     ],
+     "hit": true,
+     "reason": "span_and_entry",
+     "recorded_window_shifted": false,
+     "anchor_actual_line": null
+    },
+    {
+     "id": "nav-071-g04",
+     "face": "grep",
+     "scope": "corpus",
+     "difficulty": "medium",
+     "target": "repo:agent-knowledge-base/AGENTS.md",
+     "usable": true,
+     "tool_calls": [
+      {
+       "tool": "memory_grep",
+       "args": {
+        "pattern": "MEMORY_DEDUP_THRESHOLD",
+        "glob": [
+         "**/*.md"
+        ],
+        "limit": 50
+       }
+      }
+     ],
+     "hit": true,
+     "reason": "span_and_entry",
+     "recorded_window_shifted": false,
+     "anchor_actual_line": null
+    },
+    {
+     "id": "nav-071-g05",
+     "face": "grep",
+     "scope": "corpus",
+     "difficulty": "medium",
+     "target": "repo:agent-knowledge-base/memory_agent/eval/README.md",
+     "usable": true,
+     "tool_calls": [
+      {
+       "tool": "memory_grep",
+       "args": {
+        "pattern": "degenerate=true",
+        "glob": [
+         "memory_agent/eval/**/*.md"
+        ],
+        "limit": 50
+       }
+      }
+     ],
+     "hit": true,
+     "reason": "span_and_entry",
+     "recorded_window_shifted": false,
+     "anchor_actual_line": null
+    },
+    {
+     "id": "nav-071-g06",
+     "face": "grep",
+     "scope": "corpus",
+     "difficulty": "hard",
+     "target": "repo:agent-knowledge-base/docs/adr/0019-memory-store-port-residency-classification.md",
+     "usable": true,
+     "tool_calls": [
+      {
+       "tool": "memory_grep",
+       "args": {
+        "pattern": "D16.3",
+        "glob": [
+         "docs/**/*.md"
+        ],
+        "limit": 50
+       }
+      }
+     ],
+     "hit": true,
+     "reason": "span_and_entry",
+     "recorded_window_shifted": false,
+     "anchor_actual_line": null
+    },
+    {
+     "id": "nav-071-g07",
+     "face": "grep",
+     "scope": "corpus",
+     "difficulty": "easy",
+     "target": "repo:agent-knowledge-base/AGENTS.md",
+     "usable": true,
+     "tool_calls": [
+      {
+       "tool": "memory_grep",
+       "args": {
+        "pattern": "2.67s",
+        "glob": [
+         "**/*.md"
+        ],
+        "limit": 50
+       }
+      }
+     ],
+     "hit": true,
+     "reason": "span_and_entry",
+     "recorded_window_shifted": false,
+     "anchor_actual_line": null
+    },
+    {
+     "id": "nav-071-g08",
+     "face": "grep",
+     "scope": "kb",
+     "difficulty": "medium",
+     "target": "topics/qdrant-local-mode-semantics",
+     "usable": true,
+     "tool_calls": [
+      {
+       "tool": "memory_grep",
+       "args": {
+        "pattern": "counted before seeding",
+        "glob": [
+         "**/*.md"
+        ],
+        "limit": 50
+       }
+      }
+     ],
+     "hit": true,
+     "reason": "span_and_entry",
+     "recorded_window_shifted": false,
+     "anchor_actual_line": null
+    },
+    {
+     "id": "nav-071-r01",
+     "face": "read",
+     "scope": "corpus",
+     "difficulty": "hard",
+     "target": "repo:agent-knowledge-base/docs/adr/0030-retrieval-agent-depth-thesis.md",
+     "usable": true,
+     "tool_calls": [
+      {
+       "tool": "memory_read",
+       "args": {
+        "entry_id": "repo:agent-knowledge-base/docs/adr/0030-retrieval-agent-depth-thesis.md",
+        "start_line": 56,
+        "end_line": 82
+       }
+      }
+     ],
+     "hit": true,
+     "reason": "span_in_window",
+     "recorded_window_shifted": false,
+     "anchor_actual_line": 66
+    },
+    {
+     "id": "nav-071-r02",
+     "face": "read",
+     "scope": "corpus",
+     "difficulty": "medium",
+     "target": "repo:agent-knowledge-base/docs/adr/0026-agentic-loop-measurement-protocol.md",
+     "usable": true,
+     "tool_calls": [
+      {
+       "tool": "memory_read",
+       "args": {
+        "entry_id": "repo:agent-knowledge-base/docs/adr/0026-agentic-loop-measurement-protocol.md",
+        "start_line": 14,
+        "end_line": 40
+       }
+      }
+     ],
+     "hit": true,
+     "reason": "span_in_window",
+     "recorded_window_shifted": false,
+     "anchor_actual_line": 24
+    },
+    {
+     "id": "nav-071-r03",
+     "face": "read",
+     "scope": "corpus",
+     "difficulty": "medium",
+     "target": "repo:agent-knowledge-base/memory_agent/eval/README.md",
+     "usable": true,
+     "tool_calls": [
+      {
+       "tool": "memory_read",
+       "args": {
+        "entry_id": "repo:agent-knowledge-base/memory_agent/eval/README.md",
+        "start_line": 77,
+        "end_line": 106
+       }
+      }
+     ],
+     "hit": true,
+     "reason": "span_in_window",
+     "recorded_window_shifted": false,
+     "anchor_actual_line": 87
+    },
+    {
+     "id": "nav-071-r04",
+     "face": "read",
+     "scope": "corpus",
+     "difficulty": "medium",
+     "target": "repo:agent-knowledge-base/AGENTS.md",
+     "usable": true,
+     "tool_calls": [
+      {
+       "tool": "memory_read",
+       "args": {
+        "entry_id": "repo:agent-knowledge-base/AGENTS.md",
+        "start_line": 212,
+        "end_line": 234
+       }
+      }
+     ],
+     "hit": true,
+     "reason": "span_in_window",
+     "recorded_window_shifted": true,
+     "anchor_actual_line": 227
+    },
+    {
+     "id": "nav-071-r05",
+     "face": "read",
+     "scope": "corpus",
+     "difficulty": "hard",
+     "target": "repo:agent-knowledge-base/experiments/agentic-rag-census/README.md",
+     "usable": true,
+     "tool_calls": [
+      {
+       "tool": "memory_read",
+       "args": {
+        "entry_id": "repo:agent-knowledge-base/experiments/agentic-rag-census/README.md",
+        "start_line": 95,
+        "end_line": 122
+       }
+      }
+     ],
+     "hit": true,
+     "reason": "span_in_window",
+     "recorded_window_shifted": false,
+     "anchor_actual_line": 105
+    },
+    {
+     "id": "nav-071-r06",
+     "face": "read",
+     "scope": "kb",
+     "difficulty": "medium",
+     "target": "decisions/KB-0002-growth-control-and-retrieval-ladder",
+     "usable": true,
+     "tool_calls": [
+      {
+       "tool": "memory_read",
+       "args": {
+        "entry_id": "decisions/KB-0002-growth-control-and-retrieval-ladder",
+        "start_line": 45,
+        "end_line": 71
+       }
+      }
+     ],
+     "hit": true,
+     "reason": "span_in_window",
+     "recorded_window_shifted": false,
+     "anchor_actual_line": 55
+    },
+    {
+     "id": "nav-071-o01",
+     "face": "outline",
+     "scope": "corpus",
+     "difficulty": "easy",
+     "target": "repo:agent-knowledge-base/docs/adr/0030-retrieval-agent-depth-thesis.md",
+     "usable": true,
+     "tool_calls": [
+      {
+       "tool": "memory_outline",
+       "args": {
+        "entry_id": "repo:agent-knowledge-base/docs/adr/0030-retrieval-agent-depth-thesis.md"
+       }
+      }
+     ],
+     "hit": true,
+     "reason": "heading_found",
+     "recorded_window_shifted": false,
+     "anchor_actual_line": null
+    },
+    {
+     "id": "nav-071-o02",
+     "face": "outline",
+     "scope": "corpus",
+     "difficulty": "medium",
+     "target": "repo:agent-knowledge-base/docs/agent-capability-rubric.md",
+     "usable": true,
+     "tool_calls": [
+      {
+       "tool": "memory_outline",
+       "args": {
+        "entry_id": "repo:agent-knowledge-base/docs/agent-capability-rubric.md"
+       }
+      }
+     ],
+     "hit": true,
+     "reason": "heading_found",
+     "recorded_window_shifted": false,
+     "anchor_actual_line": null
+    },
+    {
+     "id": "nav-071-o03",
+     "face": "outline",
+     "scope": "corpus",
+     "difficulty": "easy",
+     "target": "repo:agent-knowledge-base/CONTEXT.md",
+     "usable": true,
+     "tool_calls": [
+      {
+       "tool": "memory_outline",
+       "args": {
+        "entry_id": "repo:agent-knowledge-base/CONTEXT.md"
+       }
+      }
+     ],
+     "hit": true,
+     "reason": "heading_found",
+     "recorded_window_shifted": false,
+     "anchor_actual_line": null
+    },
+    {
+     "id": "nav-071-o04",
+     "face": "outline",
+     "scope": "corpus",
+     "difficulty": "medium",
+     "target": "repo:agent-knowledge-base/experiments/agentic-rag-census/phase_b/README.md",
+     "usable": true,
+     "tool_calls": [
+      {
+       "tool": "memory_outline",
+       "args": {
+        "entry_id": "repo:agent-knowledge-base/experiments/agentic-rag-census/phase_b/README.md"
+       }
+      }
+     ],
+     "hit": true,
+     "reason": "heading_found",
+     "recorded_window_shifted": false,
+     "anchor_actual_line": null
+    },
+    {
+     "id": "nav-071-o05",
+     "face": "outline",
+     "scope": "kb",
+     "difficulty": "medium",
+     "target": "topics/qdrant-local-mode-semantics",
+     "usable": true,
+     "tool_calls": [
+      {
+       "tool": "memory_outline",
+       "args": {
+        "entry_id": "topics/qdrant-local-mode-semantics"
+       }
+      }
+     ],
+     "hit": true,
+     "reason": "heading_found",
+     "recorded_window_shifted": false,
+     "anchor_actual_line": null
+    }
+   ]
+  },
+  "replay": {
+   "rows": [
+    {
+     "id": "nav-071-g01",
+     "face": "grep",
+     "tools_called": [
+      "memory_search",
+      "memory_grep"
+     ],
+     "expected_tools": [
+      "memory_grep"
+     ],
+     "dispatched": true,
+     "target_in_evidence": true,
+     "search_stubbed": true,
+     "deterministic": true,
+     "run_hash": "50e4768449cd85e98f86b9e3138075e103f2ca3693014eb47fbb2292836f264f"
+    },
+    {
+     "id": "nav-071-g02",
+     "face": "grep",
+     "tools_called": [
+      "memory_search",
+      "memory_grep"
+     ],
+     "expected_tools": [
+      "memory_grep"
+     ],
+     "dispatched": true,
+     "target_in_evidence": true,
+     "search_stubbed": true,
+     "deterministic": true,
+     "run_hash": "4e29954fa7765d5648e073b3b83a9467d581e9d023beda8dfad2f8fb851a3223"
+    },
+    {
+     "id": "nav-071-g03",
+     "face": "grep",
+     "tools_called": [
+      "memory_search",
+      "memory_grep"
+     ],
+     "expected_tools": [
+      "memory_grep"
+     ],
+     "dispatched": true,
+     "target_in_evidence": true,
+     "search_stubbed": true,
+     "deterministic": true,
+     "run_hash": "ba1cfbf31412da7c7c925066900190ac79f06505b9bc51a3d397c6006b84380f"
+    },
+    {
+     "id": "nav-071-g04",
+     "face": "grep",
+     "tools_called": [
+      "memory_search",
+      "memory_grep"
+     ],
+     "expected_tools": [
+      "memory_grep"
+     ],
+     "dispatched": true,
+     "target_in_evidence": true,
+     "search_stubbed": true,
+     "deterministic": true,
+     "run_hash": "60d66d3a8ac1ceac956573aad1476500eee98083b7e250604130ac24cf8a50a6"
+    },
+    {
+     "id": "nav-071-g05",
+     "face": "grep",
+     "tools_called": [
+      "memory_search",
+      "memory_grep"
+     ],
+     "expected_tools": [
+      "memory_grep"
+     ],
+     "dispatched": true,
+     "target_in_evidence": true,
+     "search_stubbed": true,
+     "deterministic": true,
+     "run_hash": "0eaacb32a11717bbc02e29cb559b206d9e7efdb4b6b9608637668bc67c266c2e"
+    },
+    {
+     "id": "nav-071-g06",
+     "face": "grep",
+     "tools_called": [
+      "memory_search",
+      "memory_grep"
+     ],
+     "expected_tools": [
+      "memory_grep"
+     ],
+     "dispatched": true,
+     "target_in_evidence": true,
+     "search_stubbed": true,
+     "deterministic": true,
+     "run_hash": "26a0a975f8d6ab37b7c9fd992041b21249533fac29142dac969d19be59d9af7f"
+    },
+    {
+     "id": "nav-071-g07",
+     "face": "grep",
+     "tools_called": [
+      "memory_search",
+      "memory_grep"
+     ],
+     "expected_tools": [
+      "memory_grep"
+     ],
+     "dispatched": true,
+     "target_in_evidence": true,
+     "search_stubbed": true,
+     "deterministic": true,
+     "run_hash": "55a2f056b11882137eaf782f87163384dfffba39687ae7b093ceb468c06fcc44"
+    },
+    {
+     "id": "nav-071-g08",
+     "face": "grep",
+     "tools_called": [
+      "memory_search",
+      "memory_grep"
+     ],
+     "expected_tools": [
+      "memory_grep"
+     ],
+     "dispatched": true,
+     "target_in_evidence": true,
+     "search_stubbed": true,
+     "deterministic": true,
+     "run_hash": "8b5d40d806cfd179f05e0c7b953c7e13c52324c94d556d7612205fa4a8bec27f"
+    },
+    {
+     "id": "nav-071-r01",
+     "face": "read",
+     "tools_called": [
+      "memory_search",
+      "memory_read"
+     ],
+     "expected_tools": [
+      "memory_read"
+     ],
+     "dispatched": true,
+     "target_in_evidence": true,
+     "search_stubbed": true,
+     "deterministic": true,
+     "run_hash": "cde43c65c586b7a24f2d33bbad6a67b65566c59d808ab1b87ba1c156c57da6aa"
+    },
+    {
+     "id": "nav-071-r02",
+     "face": "read",
+     "tools_called": [
+      "memory_search",
+      "memory_read"
+     ],
+     "expected_tools": [
+      "memory_read"
+     ],
+     "dispatched": true,
+     "target_in_evidence": true,
+     "search_stubbed": true,
+     "deterministic": true,
+     "run_hash": "2295dc201c5e753be4bc735b2b9609bb701de16c7c8b6cd0101439287fcdd8fc"
+    },
+    {
+     "id": "nav-071-r03",
+     "face": "read",
+     "tools_called": [
+      "memory_search",
+      "memory_read"
+     ],
+     "expected_tools": [
+      "memory_read"
+     ],
+     "dispatched": true,
+     "target_in_evidence": true,
+     "search_stubbed": true,
+     "deterministic": true,
+     "run_hash": "29269c135672ca79701fa7c86a8f2dbbb78b07f85db8673c715093b31f1dc8d0"
+    },
+    {
+     "id": "nav-071-r04",
+     "face": "read",
+     "tools_called": [
+      "memory_search",
+      "memory_read"
+     ],
+     "expected_tools": [
+      "memory_read"
+     ],
+     "dispatched": true,
+     "target_in_evidence": true,
+     "search_stubbed": true,
+     "deterministic": true,
+     "run_hash": "fef12d0c14859e989c9cc2493ad5edc1b6e5142d9ad848a45e7aac8ec348debb"
+    },
+    {
+     "id": "nav-071-r05",
+     "face": "read",
+     "tools_called": [
+      "memory_search",
+      "memory_read"
+     ],
+     "expected_tools": [
+      "memory_read"
+     ],
+     "dispatched": true,
+     "target_in_evidence": true,
+     "search_stubbed": true,
+     "deterministic": true,
+     "run_hash": "5329076bc653b0c6d2b2ce40a3a17e1cd7a68665ee4ebd9471f15c4c51abe519"
+    },
+    {
+     "id": "nav-071-r06",
+     "face": "read",
+     "tools_called": [
+      "memory_search",
+      "memory_read"
+     ],
+     "expected_tools": [
+      "memory_read"
+     ],
+     "dispatched": true,
+     "target_in_evidence": true,
+     "search_stubbed": true,
+     "deterministic": true,
+     "run_hash": "f111482f5849dce2083bf18cd9b7877eac4d527afe76a8a2ace89b0cbbf70df3"
+    },
+    {
+     "id": "nav-071-o01",
+     "face": "outline",
+     "tools_called": [
+      "memory_search",
+      "memory_outline"
+     ],
+     "expected_tools": [
+      "memory_outline"
+     ],
+     "dispatched": true,
+     "target_in_evidence": true,
+     "search_stubbed": true,
+     "deterministic": true,
+     "run_hash": "cc991afe7ea041cb1a93352484bdf1a3893185dc24ea2d2fe7c64d2a410b02a4"
+    },
+    {
+     "id": "nav-071-o02",
+     "face": "outline",
+     "tools_called": [
+      "memory_search",
+      "memory_outline"
+     ],
+     "expected_tools": [
+      "memory_outline"
+     ],
+     "dispatched": true,
+     "target_in_evidence": true,
+     "search_stubbed": true,
+     "deterministic": true,
+     "run_hash": "1b41de56893c494cd032291441851e666b0f70cd8514a4bd7457f0d06cd0a504"
+    },
+    {
+     "id": "nav-071-o03",
+     "face": "outline",
+     "tools_called": [
+      "memory_search",
+      "memory_outline"
+     ],
+     "expected_tools": [
+      "memory_outline"
+     ],
+     "dispatched": true,
+     "target_in_evidence": true,
+     "search_stubbed": true,
+     "deterministic": true,
+     "run_hash": "7b5d154fbb71756c66e56f164054410556e276d044e3b2dd1b9764454bd1a8d1"
+    },
+    {
+     "id": "nav-071-o04",
+     "face": "outline",
+     "tools_called": [
+      "memory_search",
+      "memory_outline"
+     ],
+     "expected_tools": [
+      "memory_outline"
+     ],
+     "dispatched": true,
+     "target_in_evidence": true,
+     "search_stubbed": true,
+     "deterministic": true,
+     "run_hash": "e650ab9d394a0265db2936e22ad550b95f24e84ff2bb5f1fa56907816aca1c40"
+    },
+    {
+     "id": "nav-071-o05",
+     "face": "outline",
+     "tools_called": [
+      "memory_search",
+      "memory_outline"
+     ],
+     "expected_tools": [
+      "memory_outline"
+     ],
+     "dispatched": true,
+     "target_in_evidence": true,
+     "search_stubbed": true,
+     "deterministic": true,
+     "run_hash": "4144a06051a11245d2f723c79ad11a633c3db82d23953a17d719398ec150283e"
+    }
+   ],
+   "run_hash": "ac6860b154f7e900",
+   "all_dispatched": true,
+   "all_deterministic": true
+  },
+  "paired": {
+   "n": 19,
+   "excluded": [],
+   "tool_hit_rate": 1.0,
+   "retrieval_hit_rate": 0.736842,
+   "delta": 0.263158,
+   "ci": {
+    "lo": 0.105263,
+    "hi": 0.473684
+   },
+   "significant": true,
+   "by_face": {
+    "grep": {
+     "n": 8,
+     "tool_hit": 1.0,
+     "retrieval_hit": 0.625
+    },
+    "read": {
+     "n": 6,
+     "tool_hit": 1.0,
+     "retrieval_hit": 0.833333
+    },
+    "outline": {
+     "n": 5,
+     "tool_hit": 1.0,
+     "retrieval_hit": 0.8
+    }
+   },
+   "caution": "scripted decisions (reference actions) -> delta measures the face + tool execution upper bound, NOT LLM-agent significance (#71 same caveat)"
+  }
+ },
+ "history_face": {
+  "rows": [
+   {
+    "id": "nav-071-h01",
+    "reachable": false,
+    "reason": "not_in_base_table: read-only corpus indexes .md only"
+   },
+   {
+    "id": "nav-071-h02",
+    "reachable": true,
+    "entry_id": "repo:agent-knowledge-base/docs/adr/0030-retrieval-agent-depth-thesis.md",
+    "op": "log",
+    "count": 1,
+    "commit_found": true,
+    "reason": null
+   },
+   {
+    "id": "nav-071-h03",
+    "reachable": true,
+    "entry_id": "repo:agent-knowledge-base/docs/adr/0030-retrieval-agent-depth-thesis.md",
+    "op": "log",
+    "count": 1,
+    "commit_found": true,
+    "reason": null
+   },
+   {
+    "id": "nav-071-h04",
+    "reachable": true,
+    "entry_id": "repo:agent-knowledge-base/AGENTS.md",
+    "op": "log",
+    "count": 1,
+    "commit_found": true,
+    "reason": null
+   },
+   {
+    "id": "nav-071-h05",
+    "reachable": false,
+    "reason": "not_in_base_table: read-only corpus indexes .md only"
+   },
+   {
+    "id": "nav-071-h06",
+    "reachable": true,
+    "entry_id": "repo:agent-knowledge-base/docs/adr/0019-memory-store-port-residency-classification.md",
+    "op": "log",
+    "count": 1,
+    "commit_found": true,
+    "reason": null
+   }
+  ],
+  "reachable": 4,
+  "total": 6
+ },
+ "boundary_face": [
+  {
+   "id": "nav-071-b01",
+   "file": "memory_agent/trace.py",
+   "hits": 0,
+   "reachable": false,
+   "note": "code files are not in the index base table (#71 boundary layer)"
+  },
+  {
+   "id": "nav-071-b02",
+   "file": "memory_agent/eval/harness/stats.py",
+   "hits": 0,
+   "reachable": false,
+   "note": "code files are not in the index base table (#71 boundary layer)"
+  },
+  {
+   "id": "nav-071-b03",
+   "file": "memory_agent/trace.py",
+   "hits": 0,
+   "reachable": false,
+   "note": "code files are not in the index base table (#71 boundary layer)"
+  }
+ ],
+ "end_to_end_significance": {
+  "verified": false,
+  "reason": "no LLM on this host (no opencode serve on :4096 + no openai-compat key) -> agent arm not run; the scripted arm's delta is a face/tool upper bound"
+ },
+ "isolation_proof": {
+  "prod_index_dir": "D:/python_work/work2026-4/Agent-Knowledge-Base\\memory_agent\\vector_db",
+  "sig_before": "8c330b95c09bd586",
+  "sig_after": "8c330b95c09bd586",
+  "prod_index_unchanged": true
+ }
+}
