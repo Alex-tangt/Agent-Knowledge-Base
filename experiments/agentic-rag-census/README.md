@@ -61,6 +61,20 @@ cd experiments/agentic-rag-census
 （整篇送嵌）→ `run_census.py --runs full:hybrid`。它把 `base` 的 6000 字截断去掉，
 用于**因果**确认"截断表征"的贡献。
 
+## 资产与复原（2026-10-07 补；**本目录的 `data/` 与 `store/` 不许清理**）
+
+owner 规则（`AGENTS.md`「测量基座不许清」）：常用测试集与派生索引**留在项目内、一律不清理**——
+gitignored 只影响"不进提交"，不影响"必须留着"。
+
+| 资产 | 位置 | 复原方式 | 现状（2026-10-07 核对） |
+|---|---|---|---|
+| 数据集（ODC-BY） | `data/corpus.json` + `data/MultiHopRAG.json` | 从 HF 缓存**秒级**复制（无需联网）：`~/.cache/huggingface/hub/datasets--yixuantt--MultiHopRAG/snapshots/71ac0d0bd1f951d2d6b70311f7d2ae404e1ffa82/`（HF refs/main = 该 revision） | ✅ **已复原**：`corpus.json` 6,785,567 B sha256 `20B61B5AB84DE84A…` · `MultiHopRAG.json` 5,171,312 B sha256 `03CFB4926461F868…` |
+| 派生索引（store） | `store/<variant>/qdrant` | **只能重建**：`venv\Scripts\python.exe experiments/agentic-rag-census/build_index.py --variant base --force`（**≈47 min CPU**，609 篇长文；`--variant full` 另算） | 2026-10-07 重建中（历史：曾不存在，脚本与 `artifacts/` 仍在，**索引本体丢失过**） |
+| 逐题证据（不可变） | `artifacts/per_query_ids.json` 等 | 已提交，git 可复原 | ✅ 在库 |
+
+**为什么写这一节**：索引被清过一次（git 不跟踪 gitignored 路径 → 无法证明谁/何时删的，也没有清理日志），
+代价是重付 ~47 min 嵌入。此后：`data/` / `store/` **不进健康闸门的"垃圾"清单**；要动先问"这是垃圾还是基座"。
+
 ## 复用开源基线（纪律：先调研 → 复用基线）
 
 - 代码/评测：`github.com/yixuantt/MultiHop-RAG`（COLM 2024），

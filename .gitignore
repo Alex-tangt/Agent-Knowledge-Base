@@ -1,4 +1,4 @@
-﻿# Python
+# Python
 #
 *.py[cod]
 *$py.class
@@ -93,6 +93,9 @@ venv-parse/
 
 # External benchmark dataset (MultiHop-RAG, ODC-BY) — not committed (issue #47)
 #
+# **保留在本地、不清理**（AGENTS.md「测量基座不许清」，owner 2026-10-07）：不提交 ≠ 可删。
+# 数据集可从 HF 缓存秒级复原，但 store 索引只能重建（~47min CPU）；
+# 复原路径 / sha256 见 experiments/agentic-rag-census/README.md「资产与复原」。
 experiments/agentic-rag-census/data/
 experiments/agentic-rag-census/store/
 experiments/agentic-rag-census/artifacts/eval_set.json

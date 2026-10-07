@@ -254,6 +254,17 @@ The `warmup()` function (called from `app.py` lifespan) eagerly triggers BGE-M3 
 ### 实验留痕
 实验只进 `experiments/<name>/`。每个实验目录必须含 `README.md`（问题 → 假设 → 设置 → 数据 → 结论）。无结论的实验不算完成。
 
+### 测量基座不许清（2026-10-07 owner 定）
+
+**常用测试集与它们的派生索引，留在项目内、一律不清理**——`experiments/<name>/data/`（原始语料）与
+`experiments/<name>/store/`（派生索引，如 Qdrant local）**gitignored 只影响"不进提交"，不影响"必须留着"**。
+
+- 清理前先分类：这是**垃圾**，还是**可复用的测量基座**？删掉它 = 下次"重跑贵运行"重付一遍成本。
+  实测代价（2026-10-07 实测，MultiHop-RAG）：数据集从 HF 缓存复原 ≈**1 秒**；派生索引**只能重建**，
+  `--variant base` **≈47 min CPU**（609 篇长文）。
+- 健康闸门的「无垃圾文件」**不覆盖**这两类目录：日志 / 临时产物 / 迭代残留 = 垃圾；`data/` / `store/` = 基座。
+- 复原路径与指纹（sha256）记在该实验的 `README.md`「资产与复原」节（可核"被动了没有"）。
+
 ### 复用开源基线优先（先调研，再优化 / 适配）
 
 **复杂任务先找可复用的开源基线**（数据集 / 模型 / 参考实现 / 评测脚本），**跑通它、看清它的指标与边界**，
@@ -290,7 +301,7 @@ The `warmup()` function (called from `app.py` lifespan) eagerly triggers BGE-M3 
 ### 健康闸门（收工前必跑）
 1. `git status` 干净——无未提交工作（那批 CRLF-only 的 ` M` 假脏除外：`git diff --numstat` 应为空）。
 2. 本文件与实际目录树一致。
-3. 无垃圾文件（日志、临时产物、迭代残留如 `post_refactor*`、`nul`）。
+3. 无垃圾文件（日志、临时产物、迭代残留如 `post_refactor*`、`nul`、`harness_report.json`）。**例外**：`experiments/*/data/` 与 `experiments/*/store/` 是**测量基座**，不算垃圾（见「测量基座不许清」）。
 4. 每个实验目录有结论文件。
 5. 改动有决策路径落点（`docs/adr/` 或 `experiments/` 记录）。
 6. 每个功能过可解释性闸门：一句话讲不清 = 不该进基线。
