@@ -16,9 +16,10 @@
 - 只读来源用**临时生成的绝对路径 config**（label 与生产一致），避免 `ROOT_DIR` 相对路径
   落到 worktree（那会让 entry id 全变、触发整库重建）。
 
-    $py = "D:\\...\\venv\\Scripts\\python.exe"
-    $env:PYTHONPATH = "D:\\...\\wk-71-eval"
+    $py = "D:\\<repo>\\venv\\Scripts\\python.exe"      # venv 在主树（worktree 里没有）
+    $env:PYTHONPATH = "D:\\<repo-or-worktree>"          # 跑哪个 checkout 就指哪个
     & $py memory_agent/eval/eval_71_nav.py --verify
+    & $py memory_agent/eval/eval_71_nav.py --refresh    # 文档位移后修位置元数据（幂等）
     & $py memory_agent/eval/eval_71_nav.py --baseline --out memory_agent/eval/eval_71_nav_baseline.json
 """
 from __future__ import annotations
@@ -58,15 +59,27 @@ _EXCLUDE_WALK_DIRS = frozenset({
     "vector_db", ".cache", ".mypy_cache", ".ruff_cache",
 })
 
-# 本票自己的产物（探针集 / 规格 / 结果 / 实验记录）**不进测量语料**：
-# 它们不是冻结快照里的基表内容，却天然含全部探针 token——留在语料里会
-# ① 让 grep 唯一性失真，② 在每条 query 上霸占 top-k，把对照基线污染成"检索我自己的题面"。
-# 因此 verify 与 baseline 都排除这些前缀（baseline 用 overlay `exclude` 落地，语义同源）。
+# 自产证据的**排除表**（判据见 `standard_sets/nav_probes_71.spec.md` §7）：
+# 凡「本批 Agent-Teams 自己产出的评测/压测/验收证据」都不进测量语料。两条判据：
+#  (1) 答案泄漏 —— 文件含探针锚 / 探针 id / 命中结论，留在语料里等于"拿自己的题面与答案当语料"；
+#      实测泄漏源：`eval_71_results.md`(6 锚) / `nav_probes_71.spec.md`(4 锚) /
+#      `phase_c/report.md`(1) / `experiments/nav-probes-71/README.md`(1) / `nav_63_results.md`(全部探针 id + 命中表)。
+#  (2) 语料漂移 —— 同批其它票的证据不是冻结快照的基表内容，却会改变语料规模与 BM25 统计
+#      （`perf_70*` / `isolation_bypass_*` 等），让"基线"随同批产出漂移。
+# verify 与 baseline 共用本表（baseline 用 overlay `exclude` 落地，语义同源）。
+# 注意：**只排除自产证据**——`memory_agent/eval/README.md`（g05/r03 的目标）、
+# `experiments/agentic-rag-census/report.md`（#47 不可变证据）等**仍在语料内**。
 SELF_EXCLUDE_PREFIXES = (
+    # #71 自己的产物（题面 / 规格 / 结果 / 实验记录）
     "memory_agent/eval/standard_sets/",
     "memory_agent/eval/eval_71",
     "experiments/nav-probes-71/",
     "experiments/agentic-rag-census/phase_c/",
+    # 同批其它票的自产证据（判据 1 + 2）
+    "memory_agent/eval/nav_63",
+    "memory_agent/eval/perf_70",
+    "memory_agent/eval/isolation_bypass_",
+    "experiments/nav-tools-63/",
 )
 
 
@@ -292,6 +305,15 @@ def judge(probe: dict, obs: dict, tolerance: int) -> dict:
             occ = next((o for o in obs["occurrences"] if o["line"] == actual), None)
             if occ and _sha1(occ["text"]) != expected["span_sha1"]:
                 flags.append("content_changed")
+        # 锚短语在**目标文件内**出现多次 = 潜在歧义。只在**真会误导 refresh** 时告警：
+        # 存在离记录行超过 tolerance 的另一处（refresh 的「就近取用」可能跳到别的段落；
+        # 2026-10-07 实测命中过 r04：L229 vs L343）。窗口内紧邻的重复（如 b03 的
+        # `STOP_FALLBACK` 定义行 + 元组引用行）无害，不告警。
+        if anchor_ok and len(obs["occurrences"]) > 1:
+            far = [o["line"] for o in obs["occurrences"]
+                   if recorded is None or abs(o["line"] - recorded) > tolerance]
+            if far:
+                flags.append(f"anchor_ambiguous(in_file={len(obs['occurrences'])},far={far[:3]})")
         if face == "grep" and expected.get("unique"):
             total = len(obs.get("scope_occurrences") or obs["occurrences"])
             if total != 1:
@@ -373,6 +395,10 @@ def refresh(probes_doc: dict, *, repo_root: str = REPO_ROOT, tolerance: int | No
             off = expected["span_offset"]
             width = expected.get("line_width", hi - lo)
             expected["line_range"] = [actual - off, actual - off + width]
+        if face == "read" and isinstance(probe.get("action"), dict) \
+                and "line_range" in probe["action"]:
+            # 参考动作与期望保持同一条行窗（同为**位置元数据**；否则读起来自相矛盾）
+            probe["action"]["line_range"] = list(expected["line_range"])
         probe["refreshed_at"] = head
         updated.append({"id": probe["id"], "file": expected["file"],
                         "line": f"{before} -> {actual}",

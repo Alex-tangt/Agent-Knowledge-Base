@@ -24,7 +24,7 @@
 
 ```powershell
 $py   = "D:\python_work\work2026-4\Agent-Knowledge-Base\venv\Scripts\python.exe"
-$root = "D:\python_work\work2026-4\wk-71-eval"
+$root = "D:\python_work\work2026-4\Agent-Knowledge-Base"   # 合并后就在主树跑；并行期用你自己的 worktree 路径
 $env:PYTHONPATH = $root
 
 # §2 探针自证（无模型，秒级；三段判定：文件存在 / 锚短语仍在 / 位置 ±10）
@@ -131,6 +131,87 @@ $env:PYTHONPATH = $root
 > `g03 / g04 / g07 / r04 / o03`——只有逐题**排名指纹**变）。
 > 口径全文见 `standard_sets/nav_probes_71.spec.md` §4（三段判定 + `--refresh`）。
 
+### 2.3 #63 收口后的探针刷新与排除表（task-6，2026-10-07 晚）
+
+`#63`（导航工具集）合并 + Lead 地图同步后做的**评测卫生**收口。三件事：
+
+**(a) 自产证据排除表扩容**（`eval_71_nav.py::SELF_EXCLUDE_PREFIXES`）
+
+判据两条（全文见 `nav_probes_71.spec.md` **§7**）：①**答案泄漏**——文件含探针锚 / 探针 id / 命中结论；
+②**语料漂移**——本批其它票的评测/压测证据不是冻结快照的基表内容，却会改 BM25 统计。
+实测泄漏源（`--leak-scan`：对每条探针的 query / 锚（≥5 字）扫全语料，列非目标文件）：
+
+| 泄漏源 | 泄漏内容 |
+|---|---|
+| `eval_71_results.md` | **6 个锚**（g02/g03/g04/g07/r01/r04） |
+| `standard_sets/nav_probes_71.spec.md` | **4 个锚**（g02/g03/g07/r01） |
+| `experiments/agentic-rag-census/phase_c/report.md` | 1 个锚（g01） |
+| `experiments/nav-probes-71/README.md` | 1 个锚（g07） |
+| `memory_agent/eval/nav_63_results.md` | **全部 19 条探针 id + 逐题 ✅/❌ 命中表**（无锚，但等于答案卡） |
+
+排除表（8 条前缀）：`standard_sets/` · `eval_71` · `experiments/nav-probes-71/` ·
+`agentic-rag-census/phase_c/`（#71 自身）+ `nav_63` · `perf_70` · `isolation_bypass_` ·
+`experiments/nav-tools-63/`（同批）。**刻意不排除**：`memory_agent/eval/README.md`（g05/r03 的目标）、
+`experiments/agentic-rag-census/report.md`（#47 不可变证据）、`docs/**` / `AGENTS.md` / `CONTEXT.md`（探针的基表）。
+排除表只是**评测进程内的语料视图**（脚本自生成 overlay `exclude`），`corpus/loader.py` 与真实索引/daemon 不受影响。
+
+**(b) `r04` 收口——不只位移，还抓到一个真缺陷**
+
+`r04` 带 `window_shifted` 告警。收口时发现：锚 `退役条目 = 0` 在 AGENTS.md **出现两次**
+（L229 裁决参照 / L343 前沿票），refresh 的「就近取用」把它锚在了 **L229**——与 query 语义
+（"全索引 260 条中退役条目 = 0，据此不投资 C"）不符。处置：**锚加长为** query 原句
+`全索引 260 条中退役条目 = 0`（唯一解析到 L343）、行窗 → `[343,345]`，并**新增
+`anchor_ambiguous(in_file=K,far=[...])` 告警**防复发（只在"另一处离记录行超 tolerance"时报；
+`b03` 那种窗口内紧邻重复不报）。另修：`--refresh` 现在同步 read 的**参考动作行窗**（原来动作说 `[334,336]`、
+期望说 `[222,224]`，自相矛盾）。
+
+**结果：`--verify` 28/28 且 `flags=[]`（零告警）。**
+
+**(c) 基线重跑（排除表变了 ⇒ 语料变了 ⇒ `run_hash` 必变）**
+
+> ⚠️ **语料是移动靶**：并行会话仍在往仓库加文档，**别把下面这个数当常量**——
+> 它是**本次运行快照**。
+
+- **本次快照**：`272 → 274` 条（run 内 +6 embed / **−2 由新排除表删除**；`refresh_s=109.4s`）。
+- **`run_hash` `8bf6a5c553c20541` → `40902add5e1d1974`**（只有逐题排名指纹变）。
+- **聚合指标逐位不变**：`recall@1/5/10/14` = **0.526316 / 0.684211 / 0.736842 / 0.736842**、
+  `MRR 0.614035`（CI [0.412, 0.798]）；**miss 集合不变** = `g03 / g04 / g07 / r04 / o03`；
+  `by_face` 不变（grep @5 0.500 / read 0.833 / outline 0.800）；paired Δ(top-5) **+0.316 [0.105, 0.526]**、
+  (top-14) **+0.263 [0.105, 0.474]**；结构性不可达仍 9 条；`prod_index_unchanged=True`。
+  → 结论：**排除表让语料更干净，但没有改变任何结论**（这正是它该有的性质——卫生措施不应"制造"效果）。
+
+复跑命令：
+
+```powershell
+$py = "D:\python_work\work2026-4\Agent-Knowledge-Base\venv\Scripts\python.exe"
+$env:PYTHONPATH = "D:\python_work\work2026-4\wk-71b-eval"
+& $py memory_agent/eval/eval_71_nav.py --refresh     # 只改位置元数据（幂等）
+& $py memory_agent/eval/eval_71_nav.py --verify      # 期望 28/28 且 flags=[]
+& $py memory_agent/eval/eval_71_nav.py --baseline --out memory_agent/eval/eval_71_nav_baseline.json   # 别加 2>&1
+```
+
+泄漏扫描（判据 1 的复现，无模型）：
+
+```powershell
+& $py -c @"
+import json, os, sys
+sys.path.insert(0, r'D:\python_work\work2026-4\wk-71b-eval')
+from memory_agent.corpus.loader import _iter_markdown
+R = r'D:\python_work\work2026-4\wk-71b-eval'
+doc = json.load(open(os.path.join(R,'memory_agent','eval','standard_sets','nav_probes_71.json'), encoding='utf-8'))
+texts = {rel: open(os.path.join(R, rel.replace('/', os.sep)), encoding='utf-8', errors='replace').read()
+         for _f, rel, _m, _s in _iter_markdown(R)}
+for p in doc['probes']:
+    exp = p['expected']; needles = [p['query']] + ([exp['span']] if exp.get('span') else [])
+    hits = [rel for n in needles if len(n) >= 5 for rel, t in texts.items()
+            if rel != exp['file'] and n in t]
+    if hits: print(p['id'], sorted(set(hits)))
+"@
+```
+
+<!-- 注意：脚本自身的产物（standard_sets/**、eval_71*）在 `_iter_markdown` 之上由
+     `_is_self_artifact` 过滤；上面这段用裸 `_iter_markdown`，会看到它们自己 —— 属预期。 -->
+
 ## 3. MultiHop-RAG → H harness（trace 契约）适配
 
 **不重跑检索**（纪律「已定数值不重跑」）：数据源是 #47 Phase A 的**不可变证据**
@@ -230,10 +311,14 @@ DBSF；`MEMORY_RERANK=0`），`k=100`；条目级指标（`memory_agent.eval.met
    #4 是外部标准集。本 KB 的 in-domain 正证归 **#65（E）**（ADR-0030 D5/D6/D7.5）。
 2. **导航臂 1.0 的上限**：参考动作由 Python 复刻，不测 LLM 在环；#63 必须自己跑真 agent 才能声称"显著优于"。
 3. **探针位置元数据绑定"刷新时的提交"**：3 条 `scope=kb` 依赖本机 `AGENT_KB_DIR`；
-   文档一改：**位移** ⇒ `--refresh` 可修（±tolerance，默认 ±10），**锚短语消失** ⇒ verify 报**真失效**
-   （不是假通过、也不是必然失败）。2026-10-07 已实测一次（见 §2.2）。
-4. **临时索引会随语料漂移**：`gen-4` 副本 + 惰性追平 → 260→271→**272** 条（master 增长）；
-   `run_hash` **只反映"同一语料 + 同一 query 集"的逐题排名指纹**，跨语料版本不可比
-   （§2.2 的 `365b1880…` → `8bf6a5c5…` 就是语料 +1 条 + 一条 query 改写造成的）。
+   文档一改：**位移** ⇒ `--refresh` 可修（±tolerance，默认 ±10），**锚短语消失** ⇒ verify 报**真失效**，
+   **锚歧义**（同一短语在目标文件多处且另一处超 tolerance）⇒ `anchor_ambiguous` 告警、**必须人工消歧**
+   （refresh 只有"就近"规则，没有语义）。2026-10-07 已实测前面两类（§2.2）与第三类（§2.3b）。
+4. **语料是移动靶**：`gen-4` 副本 + 惰性追平 → 历史快照 `260 → 271 → 272 → 274`（master 与并行会话
+   一直在加文档）。**引用时务必写"本次运行快照"**，别把某个数当常量；`run_hash` **只反映
+   "同一语料 + 同一 query 集"的逐题排名指纹**，跨语料版本不可比
+   （§2.2/§2.3 的三次 `run_hash` 变化就是这么来的）。
+   评测语料还叠了一层**自产证据排除表**（§2.3a / spec §7）——它只减少"自我验证"与"同批漂移"，
+   **不改变任何结论**（§2.3c 实测：排除表生效后聚合指标逐位不变）。
 5. 未决（要不要做，属规划层）：把 §2 基线升为 CI 门（#69 已有 CI 骨架）；把 `read` 的行窗口径
    与 #63 的**真工具**对齐后重跑一次 paired（那时 Δ 才含 agent 行为）。

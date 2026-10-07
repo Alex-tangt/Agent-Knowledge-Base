@@ -61,9 +61,14 @@
 - **`unique=true` 降级为告警**（`unique_mismatch(scope=N)`）：仓库合法地多出一处同名 token 不该判负；
   每条仍记录 scope 内命中数供人工判断。
 - `content_changed`（行内容变但锚短语还在）也是**告警**，不是失败——它提示"这条锚的事实可能过期"。
+- `anchor_ambiguous(in_file=K,far=[...])`：锚短语在**目标文件内**出现多次，且**存在离记录行超 tolerance
+  的另一处**（= refresh 的「就近取用」可能跳到别的段落）。只在**真会误导**时报；窗口内紧邻的重复
+  （如 `memory_agent/trace.py` 的 `STOP_FALLBACK` 定义行 + 元组引用行）不报。
+  → 处置：把锚**加长到该段落唯一**（2026-10-07 实测命中过 `r04`，见 §4.2）。
 - 逐 face 的参考动作与作用于 §2 的 scope 定义一致：`grep` 字面匹配 + globs；`read` 读 `[lo,hi]`；
   `outline` 解析标题树（**跳过 fenced code block**）；`history` 用 `git log --diff-filter=A` /
-  `git log -S`。
+  `git log -S`。`--refresh` 会同时把 read 的**参考动作 `action.line_range`** 与期望行窗对齐
+  （两者同为位置元数据，不应自相矛盾）。
 
 **B. paired 基线层（一次性检索够不够）**——`--baseline` 模式：
 
@@ -97,11 +102,23 @@ Lead 在合并后同步了地图（#69 CI + 计划段 + ADR 收窄）→ `--veri
 刷新以 `json.dump(indent=2)` 规范化写回 → 嵌套单行对象被展开（**一次性重排**，此后刷新是最小 diff）。
 `nav-071-g07` 的 query 变了 ⇒ paired 基线**重跑一次**（见 `eval_71_results.md` §2.2）。
 
+### 4.2 2026-10-07 task-6 收口（#63 合并后）
+
+`#63` 合并 + 地图同步后，`--verify` 仍是 **28/28** 但 `nav-071-r04` 带 `window_shifted` 告警
+（记录行窗 `[222,224]`，实际锚行 227→229）。**收口时发现一个真缺陷（不只是位移）**：
+
+| 探针 | 现象 | 处置 |
+|---|---|---|
+| `nav-071-r04`（read，AGENTS.md「退役条目 = 0」段） | 锚短语 `退役条目 = 0` 在 AGENTS.md 出现**两次**（L229 裁决参照 / L343 前沿票）；refresh 的「就近取用」把它锚到了 **L229**——与 query 语义（"全索引 260 条中退役条目 = 0，据此不投资 C"）不符 | ① 锚**加长为** `全索引 260 条中退役条目 = 0`（query 原句、全库唯一解析到 L343）；② 行窗 → **`[343,345]`**；③ 新增 `anchor_ambiguous` 告警防复发（只在"另一处离记录行超 tolerance"时报） |
+
+结果：`--verify` **28/28 且 `flags=[]`**（零告警）。这是**锚歧义**这一类问题的首个实例：
+**位移可 refresh，歧义必须人工消歧**（refresh 没有语义，只有就近规则）。
+
 ## 5. 谁来执行 / 怎么复跑
 
 ```powershell
 $py = "D:\python_work\work2026-4\Agent-Knowledge-Base\venv\Scripts\python.exe"
-$env:PYTHONPATH = "D:\python_work\work2026-4\wk-71-eval"
+$env:PYTHONPATH = "D:\python_work\work2026-4\Agent-Knowledge-Base"   # 合并后主树；并行期用你的 worktree
 
 # A. 只读校验（无模型、秒级）：三段判定能不能过全部 28 条
 & $py memory_agent/eval/eval_71_nav.py --verify
@@ -125,3 +142,47 @@ $env:PYTHONPATH = "D:\python_work\work2026-4\wk-71-eval"
    不证明 #63 的工具体验（那是 #63 自己的验收）。
 5. **一次性检索的对照只有条目级粒度**：导航命中行窗，检索只能到条目——这个**粒度差本身就是被测结论**，
    不能被当成"参数没调好"。
+
+## 7. 自产证据排除表（`SELF_EXCLUDE_PREFIXES`）的判据
+
+**问题**：本批（Agent Teams）自己的评测/压测/验收证据会被只读语料索引（语料只排除代码，`.md` 一律收）。
+于是"跑评测"和"出题/记答案的文件"落在同一张基表里 → **自我验证**（answer leakage）+ **语料漂移**
+（基线随同批其它票的产出变化）。
+
+**判据（两条，命中任一即排除）**：
+
+| # | 判据 | 说明 |
+|---|---|---|
+| 1 | **答案泄漏** | 文件含探针**锚短语 / 探针 id / 命中结论**。实测（`--leak-scan`，见下）：`eval_71_results.md` **6 锚**、`nav_probes_71.spec.md` **4 锚**、`phase_c/report.md` **1**、`experiments/nav-probes-71/README.md` **1**、`nav_63_results.md` **全部 19 条探针 id + 逐题 ✅/❌ 命中表**（`o01` 的 2 字标题命中过 60+ 文件 = 噪声，已用 ≥5 字过滤） |
+| 2 | **语料漂移** | 文件是**本批**的评测/压测/验收证据（`perf_70*`、`isolation_bypass_*`），不是冻结快照的基表内容，却会改语料规模与 BM25 统计 → 让"基线"随同批产出漂移 |
+
+**当前排除表**（`eval_71_nav.py`）：
+
+```
+memory_agent/eval/standard_sets/        # #71 题面 / 规格 / 结果
+memory_agent/eval/eval_71                # #71 结果 + 脚本 + 基线
+experiments/nav-probes-71/              # #71 实验记录
+experiments/agentic-rag-census/phase_c/ # #71 适配器与报告
+memory_agent/eval/nav_63                # #63 证据（探针 id + 命中表）
+memory_agent/eval/perf_70               # #70 压测证据（判据 2）
+memory_agent/eval/isolation_bypass_     # #34/#39 证据（判据 2）
+experiments/nav-tools-63/               # #63 实验记录
+```
+
+**刻意不排除**（防误伤）：
+
+- `memory_agent/eval/README.md` —— 是 `g05` / `r03` 的**目标条目**；
+- `experiments/agentic-rag-census/report.md`（含 `r05` 的锚）—— **#47 的不可变证据**，属基表历史内容；
+- `docs/adr/0030-…md`（含 `r04` 的旧短锚）—— 合法 ADR；
+- 任何 `docs/**` / `AGENTS.md` / `CONTEXT.md` —— 它们**就是**探针要检索的基表。
+
+**验证方式**（复现泄漏扫描）：
+
+```powershell
+# 对每条探针的 query / 锚（≥5 字）扫全语料，列『非目标文件』的命中
+# 判据 1 的直接证据；2026-10-07 结果见上表
+& $py -c "<见 eval_71_results.md §2.3 的内联脚本>"
+```
+
+**边界**：排除表是**评测语料的视图**，不是产品收录规则——`memory_agent/corpus/loader.py` 与真实
+索引/daemon **不受影响**（探针脚本自己生成 overlay `exclude`，只在评测进程内生效）。
