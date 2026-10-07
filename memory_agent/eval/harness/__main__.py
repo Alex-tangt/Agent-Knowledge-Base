@@ -34,6 +34,7 @@ from dataclasses import asdict, dataclass, field
 from pathlib import Path
 from typing import Any, Iterable
 
+from memory_agent._bootstrap import configure_utf8_stdio
 from memory_agent.eval.harness import scenarios as scenario_set
 from memory_agent.eval.harness.runner import Runner
 from memory_agent.eval.harness.scorer import evaluate
@@ -338,6 +339,7 @@ def _build_parser() -> argparse.ArgumentParser:
 
 
 def main(argv: list[str] | None = None) -> int:
+    configure_utf8_stdio()
     args = _build_parser().parse_args(argv)
     try:
         report = build_report(args.scenarios)

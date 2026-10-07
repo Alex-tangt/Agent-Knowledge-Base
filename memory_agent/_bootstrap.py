@@ -35,3 +35,21 @@ def configure_hf_offline() -> bool:
     from ragcore.config.hf import ensure_hf_offline
 
     return ensure_hf_offline()
+
+
+def configure_utf8_stdio() -> None:
+    """让 stdout / stderr 用 UTF-8（#69 CI 实测的跨平台缺陷）。
+
+    为什么需要：Windows 上 Python 的 stdio 默认按**本地代码页**（cp1252 / cp936）编码，
+    而本仓的 CLI 报告与诊断信息**是中文**——在 cp1252 环境（GitHub `windows-latest` 就是）
+    写一条中文就 `UnicodeEncodeError: 'charmap' codec can't encode ...`，进程直接崩在
+    输出那一步（不是报告内容错，是根本写不出来）。落盘文件一直是显式 `encoding="utf-8"`，
+    stdio 必须与它一致，否则「stdout 与 --out 逐字节相同」这条确定性锚点也站不住。
+
+    非 TextIOWrapper（被 pytest capsys / 重定向替换）时静默跳过。
+    """
+    for stream in (sys.stdout, sys.stderr):
+        try:
+            stream.reconfigure(encoding="utf-8")
+        except (AttributeError, ValueError):  # 不是 TextIOWrapper / 已关闭
+            continue

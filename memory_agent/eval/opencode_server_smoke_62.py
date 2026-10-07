@@ -26,6 +26,8 @@ import json
 import os
 import sys
 
+from memory_agent._bootstrap import configure_utf8_stdio
+
 DEFAULT_BASE_URL = "http://127.0.0.1:4096"
 
 # httpx 无法解析的 NO_PROXY 条目形态：带方括号的 IPv6 字面量。
@@ -140,6 +142,7 @@ def run_checks(base_url: str) -> list[Check]:
 
 
 def main(argv: list[str] | None = None) -> int:
+    configure_utf8_stdio()
     parser = argparse.ArgumentParser(description="H 接入冒烟（#62）")
     parser.add_argument("--base-url", default=os.environ.get("MEMORY_AGENT_LLM_BASE_URL")
                         or DEFAULT_BASE_URL)
