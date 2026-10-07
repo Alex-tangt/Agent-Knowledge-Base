@@ -49,6 +49,14 @@ jobs:
       - name: 装两个本地包（editable）
         run: python -m pip install -e ragcore -e memory_agent
 
+      # 本地平面默认词法路 = BM25（ADR-0019 D16），部分 store 单测会**真的**构造
+      # `Qdrant/bm25` 编码器。预热只下这一个几 MB 的 BM25 资产——**不是** BGE-M3 的 3.9GB 权重。
+      # 为什么必须预热：`ensure_hf_offline()` 在模型全缓存时会置 `HF_HUB_OFFLINE=1`，
+      # 而 fastembed 读同一个开关（`model_management.py`）→ 模型不在缓存就直接
+      # `ValueError: Could not load model Qdrant/bm25 from any source.`（CI 首跑实测）。
+      - name: 预热 BM25 词法编码器
+        run: python -c "from memory_agent.settings import SPARSE_BM25_CACHE_DIR; from fastembed.sparse import SparseTextEmbedding; SparseTextEmbedding('Qdrant/bm25', cache_dir=SPARSE_BM25_CACHE_DIR); print('bm25 model ready')"
+
       # 本地基线：579 passed / 3 skipped / 3 xfailed（AGENTS.md「Tests」节）。
       - name: 单元测试（回归闸门）
         run: python -m pytest tests/unit -q
