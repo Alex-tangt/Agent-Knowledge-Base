@@ -3,19 +3,19 @@
 > 实测时间：2026-10-07；来源：HF `api/datasets/<id>`（许可 / 标签）+ `datasets-server/info`（规模）+ `/parquet`（SciFact 三件套字段核对）。
 > 判据：**语言 / 规模（≤~2k 条目锚点）/ 许可 / 是否必须重嵌 / 任务形态**。
 
-| 候选集 | 语言 | corpus 条目 | test query | test qrels 形态 | 许可（HF 卡） | 必须重嵌 | 判定 |
+| 候选集 | 语言 | corpus 条目 | query（HF queries split 总数） | test qrels 形态 | 许可（HF 卡） | 必须重嵌 | 判定 |
 |---|---|---|---|---|---|---|---|
-| `BeIR/scifact` | en | 5183 | 300 | 339 对 / 300 query / 283 金标篇（二值） | cc-by-sa-4.0 | 是（新语料，需重嵌 dense + sparse） | **采用** |
-| `BeIR/nfcorpus` | en | 3633 | 3237 | 分级稠密（每 query 多篇相关） | cc-by-sa-4.0 | 是 | 备选：qrels 分级 + 相关篇数多 → recall@k 语义更钝 |
-| `BeIR/arguana` | en | 8674 | 1406 | 1 篇/题 | cc-by-sa-4.0 | 是 | 不采：任务形态是反论点检索（非证据检索） |
-| `BeIR/fiqa` | en | 57638 | 6648 | 有 | cc-by-sa-4.0 | 是 | 不采：语料 5.7 万，超规模锚点 |
-| `BeIR/scidocs` | en | 25657 | 1000 | 有 | cc-by-sa-4.0 | 是 | 不采：语料 2.6 万（引用推荐任务） |
-| `BeIR/trec-covid` | en | 171332 | 50 | 有 | cc-by-sa-4.0 | 是 | 不采：语料 17 万 / 仅 50 query |
-| `mteb/T2Retrieval` | zh | 118605 | 22812 | 有 | apache-2.0 | 是 | 不采：中文但语料 11.9 万，≫2k |
-| `C-MTEB/T2Retrieval` | zh | 118605 | 22812 | 有 | 卡缺 license | 是 | 不采：同规模 + 许可不清 |
-| `mteb/DuRetrieval` | zh | 100001 | 2000 | 有 | 卡缺 license | 是 | 不采：语料 10 万 + 许可不清 |
-| `C-MTEB/CmedqaRetrieval` | zh | 100001 | 3999 | 有 | 卡缺 license | 是 | 不采：语料 10 万 + 许可不清 |
-| `mteb/MMarcoRetrieval` | zh | 106813 | 6980 | 有 | 卡缺 license | 是 | 不采：语料 10.7 万 + 许可不清 |
+| `BeIR/scifact` | en | 5183 | 1109 | **test 300 query / 339 对 / 283 金标篇（二值，p50 1 篇/题）** | cc-by-sa-4.0 | 是（新语料，需重嵌 dense + sparse） | **采用** |
+| `BeIR/nfcorpus` | en | 3633 | 3237 | 分级（graded）；每 query 相关篇数多（未核 test 明细） | cc-by-sa-4.0 | 是 | 备选：qrels 分级 + 相关篇数多 → recall@k 语义更钝 |
+| `BeIR/arguana` | en | 8674 | 1406 | 1 篇/题（未核 test 明细） | cc-by-sa-4.0 | 是 | 不采：任务形态是反论点检索（非证据检索） |
+| `BeIR/fiqa` | en | 57638 | 6648 | 未核 | cc-by-sa-4.0 | 是 | 不采：语料 5.7 万，超规模锚点 |
+| `BeIR/scidocs` | en | 25657 | 1000 | 未核 | cc-by-sa-4.0 | 是 | 不采：语料 2.6 万（引用推荐任务） |
+| `BeIR/trec-covid` | en | 171332 | 50 | 未核 | cc-by-sa-4.0 | 是 | 不采：语料 17 万 / 仅 50 query |
+| `mteb/T2Retrieval` | zh | 118605 | 22812 | 未核 | apache-2.0 | 是 | 不采：中文但语料 11.9 万，≫2k |
+| `C-MTEB/T2Retrieval` | zh | 118605 | 22812 | 未核 | 卡缺 license | 是 | 不采：同规模 + 许可不清 |
+| `mteb/DuRetrieval` | zh | 100001 | 2000 | 未核 | 卡缺 license | 是 | 不采：语料 10 万 + 许可不清 |
+| `C-MTEB/CmedqaRetrieval` | zh | 100001 | 3999 | 未核 | 卡缺 license | 是 | 不采：语料 10 万 + 许可不清 |
+| `mteb/MMarcoRetrieval` | zh | 106813 | 6980 | 未核 | 卡缺 license | 是 | 不采：语料 10.7 万 + 许可不清 |
 | `CRUD-RAG` | zh | — | — | — | HF 卡取不到（401） | — | 不采：HF 无数据集卡，数据在 GitHub；且它是**生成**导向基准（检索是子任务） |
 
 ## 选型结论

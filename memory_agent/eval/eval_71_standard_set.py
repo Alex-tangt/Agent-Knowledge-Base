@@ -58,38 +58,40 @@ SETS = {
 # 分钟级 census（2026-10-07 由 HF API `/datasets/<id>` + `/info` + `/parquet` 实测；
 # `--census --refresh` 可重测）。规模 = corpus 条目数 / 有 qrels 的 test query 数。
 CENSUS = [
-    {"set": "BeIR/scifact", "lang": "en", "corpus": 5183, "queries": 300,
-     "test_qrels": "339 对 / 300 query / 283 金标篇（二值）", "license": "cc-by-sa-4.0",
+    {"set": "BeIR/scifact", "lang": "en", "corpus": 5183, "queries": 1109,
+     "test_qrels": "**test 300 query / 339 对 / 283 金标篇（二值，p50 1 篇/题）**",
+     "license": "cc-by-sa-4.0",
      "reembed": "是（新语料，需重嵌 dense + sparse）", "verdict": "**采用**"},
     {"set": "BeIR/nfcorpus", "lang": "en", "corpus": 3633, "queries": 3237,
-     "test_qrels": "分级稠密（每 query 多篇相关）", "license": "cc-by-sa-4.0",
+     "test_qrels": "分级（graded）；每 query 相关篇数多（未核 test 明细）",
+     "license": "cc-by-sa-4.0",
      "reembed": "是", "verdict": "备选：qrels 分级 + 相关篇数多 → recall@k 语义更钝"},
     {"set": "BeIR/arguana", "lang": "en", "corpus": 8674, "queries": 1406,
-     "test_qrels": "1 篇/题", "license": "cc-by-sa-4.0", "reembed": "是",
+     "test_qrels": "1 篇/题（未核 test 明细）", "license": "cc-by-sa-4.0", "reembed": "是",
      "verdict": "不采：任务形态是反论点检索（非证据检索）"},
     {"set": "BeIR/fiqa", "lang": "en", "corpus": 57638, "queries": 6648,
-     "test_qrels": "有", "license": "cc-by-sa-4.0", "reembed": "是",
+     "test_qrels": "未核", "license": "cc-by-sa-4.0", "reembed": "是",
      "verdict": "不采：语料 5.7 万，超规模锚点"},
     {"set": "BeIR/scidocs", "lang": "en", "corpus": 25657, "queries": 1000,
-     "test_qrels": "有", "license": "cc-by-sa-4.0", "reembed": "是",
+     "test_qrels": "未核", "license": "cc-by-sa-4.0", "reembed": "是",
      "verdict": "不采：语料 2.6 万（引用推荐任务）"},
     {"set": "BeIR/trec-covid", "lang": "en", "corpus": 171332, "queries": 50,
-     "test_qrels": "有", "license": "cc-by-sa-4.0", "reembed": "是",
+     "test_qrels": "未核", "license": "cc-by-sa-4.0", "reembed": "是",
      "verdict": "不采：语料 17 万 / 仅 50 query"},
     {"set": "mteb/T2Retrieval", "lang": "zh", "corpus": 118605, "queries": 22812,
-     "test_qrels": "有", "license": "apache-2.0", "reembed": "是",
+     "test_qrels": "未核", "license": "apache-2.0", "reembed": "是",
      "verdict": "不采：中文但语料 11.9 万，≫2k"},
     {"set": "C-MTEB/T2Retrieval", "lang": "zh", "corpus": 118605, "queries": 22812,
-     "test_qrels": "有", "license": "卡缺 license", "reembed": "是",
+     "test_qrels": "未核", "license": "卡缺 license", "reembed": "是",
      "verdict": "不采：同规模 + 许可不清"},
     {"set": "mteb/DuRetrieval", "lang": "zh", "corpus": 100001, "queries": 2000,
-     "test_qrels": "有", "license": "卡缺 license", "reembed": "是",
+     "test_qrels": "未核", "license": "卡缺 license", "reembed": "是",
      "verdict": "不采：语料 10 万 + 许可不清"},
     {"set": "C-MTEB/CmedqaRetrieval", "lang": "zh", "corpus": 100001, "queries": 3999,
-     "test_qrels": "有", "license": "卡缺 license", "reembed": "是",
+     "test_qrels": "未核", "license": "卡缺 license", "reembed": "是",
      "verdict": "不采：语料 10 万 + 许可不清"},
     {"set": "mteb/MMarcoRetrieval", "lang": "zh", "corpus": 106813, "queries": 6980,
-     "test_qrels": "有", "license": "卡缺 license", "reembed": "是",
+     "test_qrels": "未核", "license": "卡缺 license", "reembed": "是",
      "verdict": "不采：语料 10.7 万 + 许可不清"},
     {"set": "CRUD-RAG", "lang": "zh", "corpus": None, "queries": None,
      "test_qrels": "—", "license": "HF 卡取不到（401）", "reembed": "—",
@@ -105,7 +107,7 @@ def census_markdown(rows: list[dict], measured_at: str) -> str:
         f"> 实测时间：{measured_at}；来源：HF `api/datasets/<id>`（许可 / 标签）+ "
         "`datasets-server/info`（规模）+ `/parquet`（SciFact 三件套字段核对）。",
         "> 判据：**语言 / 规模（≤~2k 条目锚点）/ 许可 / 是否必须重嵌 / 任务形态**。", "",
-        "| 候选集 | 语言 | corpus 条目 | test query | test qrels 形态 | 许可（HF 卡） | 必须重嵌 | 判定 |",
+        "| 候选集 | 语言 | corpus 条目 | query（HF queries split 总数） | test qrels 形态 | 许可（HF 卡） | 必须重嵌 | 判定 |",
         "|---|---|---|---|---|---|---|---|",
     ]
     for row in rows:
@@ -225,9 +227,28 @@ def metrics_for(ranked: list[str], gold: set[str]) -> dict:
 
     return {
         "recall": {str(k): round(recall_at_k(ranked, sorted(gold), k), 6) for k in KS},
+        "recall@5": round(recall_at_k(ranked, sorted(gold), 5), 6),
         "nDCG@10": round(ndcg_at_k(ranked, sorted(gold), 10), 6),
         "mrr": round(reciprocal_rank(ranked, sorted(gold)), 6),
     }
+
+
+class DenseOnlyRetriever:
+    """paired 对照臂：只用 store 的 `dense` 具名向量（不做 BM25/DBSF 融合）。
+
+    生产默认是 dense+sparse 原生 hybrid；这一臂回答「词法通道在这套语料上值多少」。
+    """
+
+    def __init__(self, store, pool_size: int = PROD_POOL):
+        self.store = store
+        self.pool_size = pool_size
+
+    def retrieve(self, query: str, *, k: int = 5, payload_filter=None):
+        result = self.store.search_dense(query, k=k, payload_filter=payload_filter)
+        docs = result["documents"][0] if result.get("documents") else []
+        metas = result["metadatas"][0] if result.get("metadatas") else []
+        dists = result["distances"][0] if result.get("distances") else []
+        return [(float(d), doc, meta or {}) for doc, meta, d in zip(docs, metas, dists)][:k]
 
 
 def mean(values) -> float | None:
@@ -239,7 +260,8 @@ def mean(values) -> float | None:
 
 def run(name: str, *, docs: int, data_dir: str, index_dir: str,
         out_path: str | None, kmax: int = KMAX, pool: int = PROD_POOL,
-        rerank: bool = False, limit_queries: int | None = None) -> dict:
+        rerank: bool = False, limit_queries: int | None = None,
+        reuse_index: bool = False, paired_dense: bool = False) -> dict:
     # env pin：显式路径模式（不用指针），并把只读语料置空 → 绝不触碰生产索引 / 真实 KB。
     os.environ["MEMORY_INDEX_DIR"] = index_dir
     os.environ.setdefault("MEMORY_SPARSE_BACKEND", "bm25")
@@ -248,7 +270,7 @@ def run(name: str, *, docs: int, data_dir: str, index_dir: str,
     os.environ["MEMORY_RERANK"] = "1" if rerank else "0"
     os.environ["MEMORY_WARMUP"] = "0"
 
-    from memory_agent.eval.harness.stats import bootstrap_ci
+    from memory_agent.eval.harness.stats import bootstrap_ci, paired_diffs
     from memory_agent.memory.index import MemoryIndex
     from memory_agent.memory.retrieval import MemoryRetriever
     from memory_agent.memory.store import open_store
@@ -263,8 +285,16 @@ def run(name: str, *, docs: int, data_dir: str, index_dir: str,
 
     t0 = time.time()
     store = open_store(db_path=db_path, collection_name=COLLECTION, hybrid=True)
-    index = MemoryIndex(store=store, manifest_path=manifest_path)
-    built = index.rebuild(entries)
+    reused = bool(reuse_index and os.path.isfile(manifest_path))
+    if reused:
+        # 复用已建索引（对照臂 / 复跑用）：不重嵌，只重新评测。
+        index = MemoryIndex(store=store, manifest_path=manifest_path)
+        built = {"entries": len(index.known_ids()), "reused": True,
+                 "writable": 0, "readonly": len(index.known_ids())}
+    else:
+        index = MemoryIndex(store=store, manifest_path=manifest_path)
+        built = index.rebuild(entries)
+        built = {**built, "reused": False}
     build_s = round(time.time() - t0, 2)
 
     retriever = MemoryRetriever(store, pool_size=max(pool, kmax))
@@ -291,6 +321,38 @@ def run(name: str, *, docs: int, data_dir: str, index_dir: str,
                      **metrics_for(ranked, gold)})
     eval_s = round(time.time() - t1, 2)
 
+    dense_rows: list[dict] = []
+    paired: dict | None = None
+    if paired_dense:
+        dense_index = MemoryIndex(
+            store=store, manifest_path=manifest_path,
+            retriever_factory=lambda _s: DenseOnlyRetriever(_s, pool_size=max(pool, kmax)))
+        t2 = time.time()
+        for qid in eval_queries:
+            hits = dense_index.search(qrows[qid], k=kmax)
+            ranked = [h["id"] for h in hits]
+            gold = gold_by_query[qid]
+            dense_rows.append({"query_id": qid, "gold": sorted(gold), "ranked": ranked,
+                               **metrics_for(ranked, gold)})
+        dense_s = round(time.time() - t2, 2)
+        paired = {
+            "arm_a": "hybrid（dense + BM25 sparse + store 原生 DBSF；生产默认）",
+            "arm_b": "dense-only（只用 `dense` 具名向量）",
+            "dense_eval_elapsed_s": dense_s,
+            "dense_aggregate": {
+                "recall": {str(k): mean(r["recall"][str(k)] for r in dense_rows) for k in KS},
+                "nDCG@10": mean(r["nDCG@10"] for r in dense_rows),
+                "mrr": mean(r["mrr"] for r in dense_rows),
+            },
+            "delta_a_minus_b": {
+                key: bootstrap_ci(paired_diffs(
+                    [{"id": r["query_id"], "v": r[key]} for r in rows],
+                    [{"id": r["query_id"], "v": r[key]} for r in dense_rows], "v"))
+                for key in ("recall@5", "nDCG@10", "mrr")
+            },
+            "note": "paired 差值 = hybrid − dense-only，按 query 配对；**不显著也照实报**",
+        }
+
     aggregate = {
         "queries": len(rows),
         "recall": {str(k): mean(r["recall"][str(k)] for r in rows) for k in KS},
@@ -311,12 +373,16 @@ def run(name: str, *, docs: int, data_dir: str, index_dir: str,
         "corpus_available": int(len(corpus_all)), "corpus_used": int(len(corpus)),
         "subset_rule": ("全量" if docs <= 0 else
                         f"gold-complete：全部金标篇 + seed=0 随机干扰项到 {docs} 篇"),
+        "subset_boundary": ("子集 ⇒ **只作内部 paired 对照**（与 #63 的 agentic search 配对），"
+                            "**不与论文/BEIR 排行榜数字同轴**（干扰项密度低于全量 → 偏乐观）；"
+                            "沿 ADR-0026 D5/D6：外部集只作机制证据、不声称本库增益"),
         "queries_total_with_qrels": len(gold_by_query), "queries_evaluated": len(rows),
         "chain": (f"MemoryIndex.search（native hybrid dense+BM25+DBSF, rerank="
                   f"{'on' if rerank else 'off'}）；pool={max(pool, kmax)}；条目级整篇送嵌"),
         "ks": list(KS), "build": {**built, "elapsed_s": build_s,
                                   "s_per_doc": round(build_s / max(1, len(entries)), 4)},
         "eval_elapsed_s": eval_s,
+        "paired": paired,
         "run_hash": signature,
         "aggregate": aggregate,
         "index_dir": db_path,
@@ -341,6 +407,10 @@ def main(argv=None) -> int:
     parser.add_argument("--kmax", type=int, default=KMAX)
     parser.add_argument("--pool", type=int, default=PROD_POOL)
     parser.add_argument("--rerank", action="store_true")
+    parser.add_argument("--reuse-index", action="store_true",
+                        help="manifest 已存在则不重嵌（复跑 / 加对照臂用）")
+    parser.add_argument("--paired-dense", action="store_true",
+                        help="加一条 dense-only 对照臂并报 paired Δ + bootstrap CI")
     parser.add_argument("--limit-queries", type=int, default=None)
     parser.add_argument("--data-dir", default=DEFAULT_DATA_DIR)
     parser.add_argument("--index-dir", default=DEFAULT_INDEX_DIR)
@@ -358,13 +428,17 @@ def main(argv=None) -> int:
         result = run(args.set, docs=args.docs, data_dir=args.data_dir,
                      index_dir=args.index_dir, out_path=args.out, kmax=args.kmax,
                      pool=args.pool, rerank=args.rerank,
-                     limit_queries=args.limit_queries)
+                     limit_queries=args.limit_queries,
+                     reuse_index=args.reuse_index, paired_dense=args.paired_dense)
         agg = result["aggregate"]
         print(f"[run] {result['variant']} corpus={result['corpus_used']} "
               f"queries={result['queries_evaluated']} build={result['build']['elapsed_s']}s "
-              f"({result['build']['s_per_doc']}s/doc)")
+              f"({result['build']['s_per_doc']}s/doc, reused={result['build']['reused']})")
         print(f"  recall={agg['recall']}")
         print(f"  nDCG@10={agg['nDCG@10']} MRR={agg['mrr']} run_hash={result['run_hash']}")
+        if result.get("paired"):
+            for key, ci in result["paired"]["delta_a_minus_b"].items():
+                print(f"  paired Δ(hybrid-dense) {key}: {ci}")
     if not args.census and not args.run:
         parser.error("至少要给 --census 或 --run")
     return 0
