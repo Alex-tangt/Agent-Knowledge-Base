@@ -381,8 +381,8 @@ def _mrr(ranked: list[str], target: str) -> float:
 
 def baseline(probes_doc: dict, *, prod_index: str, index_dir: str,
              out_path: str | None, k: int = PROD_POOL, limit: int | None = None) -> dict:
-    from memory_agent.eval.harness.stats import bootstrap_ci, paired_diffs
-
+    # 顺序关键：`memory_agent.settings` 在 **import 时**读 env，所以先把索引根 / 语料
+    # 配置 pin 好，再 import 任何 memory_agent 模块。
     copy_info = _prepare_temp_index(prod_index, index_dir)
     main_root = main_worktree()
     prod_config = os.path.join(main_root, "memory_agent", "readonly_repos.json")
@@ -399,6 +399,8 @@ def baseline(probes_doc: dict, *, prod_index: str, index_dir: str,
     os.environ["MEMORY_OVERLAY_CONFIG"] = overlay_path
     for key, value in EVAL_ENV_PINS.items():
         os.environ[key] = value
+
+    from memory_agent.eval.harness.stats import bootstrap_ci, paired_diffs
 
     MemoryIndex = _import_runtime()
     before = _dir_signature(prod_index)
@@ -472,7 +474,7 @@ def baseline(probes_doc: dict, *, prod_index: str, index_dir: str,
                   "entries_before": stats_before.get("entries"),
                   "entries_after": stats_after.get("entries"),
                   "refresh_s": refresh_s,
-                  "gen": stats_after.get("gen")},
+                  "gen": copy_info["prod_gen"]},
         "recall": recall,
         "recall_ci": ci,
         "mrr": round(sum(r["mrr"] for r in usable) / len(usable), 6) if usable else None,
@@ -525,16 +527,8 @@ def main(argv=None) -> int:
 
     probes_doc = load_probes(args.probes)
     rc = 0
-    if args.verify:
-        result = verify(probes_doc)
-        print(f"[verify] {result['ok']}/{result['n']} 条通过；by_face={result['by_face']}")
-        for row in result["failed"]:
-            print(f"  FAIL {row['id']} ({row['face']}): {row['notes']}")
-        if args.out:
-            with open(args.out, "w", encoding="utf-8") as handle:
-                json.dump(result, handle, ensure_ascii=False, indent=1)
-        rc = 0 if result["ok"] == result["n"] else 1
-
+    # 先 baseline 后 verify：`verify` 会 import `memory_agent.settings`（冻结 INDEX_DIR），
+    # 而 baseline 必须在那之前 pin 临时索引根。两者同时给时顺序不能反。
     if args.baseline:
         prod_index = args.prod_index or os.path.join(
             main_worktree(), "memory_agent", "vector_db")
@@ -550,6 +544,17 @@ def main(argv=None) -> int:
         print(f"  prod_index_unchanged={result['isolation']['prod_index_unchanged']} "
               f"refresh_s={result['index']['refresh_s']} "
               f"entries {result['index']['entries_before']}->{result['index']['entries_after']}")
+
+    if args.verify:
+        result = verify(probes_doc)
+        print(f"[verify] {result['ok']}/{result['n']} 条通过；by_face={result['by_face']}")
+        for row in result["failed"]:
+            print(f"  FAIL {row['id']} ({row['face']}): {row['notes']}")
+        if args.out:
+            with open(args.out, "w", encoding="utf-8") as handle:
+                json.dump(result, handle, ensure_ascii=False, indent=1)
+        rc = 0 if result["ok"] == result["n"] else 1
+
     return rc
 
 
