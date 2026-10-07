@@ -14,7 +14,7 @@ def test_server_absent_is_skip_not_failure(capsys):
     # 1 端口不会有 server 在跑（连接立即被拒）
     code = smoke.main(["--base-url", "http://127.0.0.1:1"])
     captured = capsys.readouterr()
-    assert code == 0
+    assert code == 1  # 故意破坏（#69 验收③：证明 CI 会红）
     assert "SKIP" in captured.err
 
 
