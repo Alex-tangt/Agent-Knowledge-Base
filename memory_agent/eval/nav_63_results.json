@@ -26,8 +26,8 @@
   "entries": 277,
   "refresh": {
    "ran": true,
-   "seconds": 28.6,
-   "entries_before": 276,
+   "seconds": 19.07,
+   "entries_before": 277,
    "entries_after": 277
   }
  },
@@ -38,6 +38,9 @@
   "MEMORY_RERANK": "0",
   "MEMORY_RETRIEVAL_POOL": "14",
   "MEMORY_WARMUP": "0"
+ },
+ "proxy_env_sanitized": {
+  "NO_PROXY": "localhost,127.0.0.1,volces.com,volcengine.com"
  },
  "scripted": {
   "reach": {
@@ -889,8 +892,566 @@
   }
  ],
  "end_to_end_significance": {
-  "verified": false,
-  "reason": "no LLM on this host (no opencode serve on :4096 + no openai-compat key) -> agent arm not run; the scripted arm's delta is a face/tool upper bound"
+  "verified": true,
+  "reason": "real LLM in the loop (provider=openai-compat); model picks tools"
+ },
+ "agent": {
+  "rows": [
+   {
+    "id": "nav-071-g01",
+    "face": "grep",
+    "target": "repo:agent-knowledge-base/experiments/agentic-rag-census/README.md",
+    "hit": true,
+    "evidence_ids": [
+     "repo:agent-knowledge-base/experiments/agentic-rag-census/README.md",
+     "repo:agent-knowledge-base/experiments/agentic-rag-loop/02-agentic-rag-mechanisms.md",
+     "repo:agent-knowledge-base/experiments/agentic-rag-census/report.md",
+     "repo:agent-knowledge-base/docs/adr/0026-agentic-loop-measurement-protocol.md",
+     "repo:kg-triplet-sft/docs/research/round-2-evaluation-benchmarks.md",
+     "repo:agent-knowledge-base/docs/test_report.md"
+    ],
+    "tools_called": [
+     "memory_search",
+     "memory_search",
+     "memory_grep"
+    ],
+    "nav_calls": [
+     "memory_grep"
+    ],
+    "used_nav_tool": true,
+    "stop": "no_new_ids",
+    "run_hash": "bfa3a7693b9e8af08d5ac3c27bd5e2c3c5469f6e853bd6e85b5343955d5baa59",
+    "elapsed_s": 47.841,
+    "answer": null
+   },
+   {
+    "id": "nav-071-g02",
+    "face": "grep",
+    "target": "repo:agent-knowledge-base/docs/adr/0030-retrieval-agent-depth-thesis.md",
+    "hit": true,
+    "evidence_ids": [
+     "repo:agent-knowledge-base/docs/adr/0030-retrieval-agent-depth-thesis.md",
+     "repo:agent-knowledge-base/docs/adr/0023-narrow-adr-0017-keep-gate-soften-wording.md",
+     "repo:agent-knowledge-base/experiments/agentic-rag-census/phase_b/README.md",
+     "repo:agent-knowledge-base/experiments/agentic-rag-census/phase_b/report.md",
+     "repo:agent-knowledge-base/docs/adr/0026-agentic-loop-measurement-protocol.md"
+    ],
+    "tools_called": [
+     "memory_search",
+     "memory_grep",
+     "memory_read",
+     "memory_grep"
+    ],
+    "nav_calls": [
+     "memory_grep",
+     "memory_read",
+     "memory_grep"
+    ],
+    "used_nav_tool": true,
+    "stop": "budget",
+    "run_hash": "3c7941ac783785b10f681cf53637a6fc13284283654c59af0942c20cc5872cbc",
+    "elapsed_s": 74.358,
+    "answer": null
+   },
+   {
+    "id": "nav-071-g03",
+    "face": "grep",
+    "target": "repo:agent-knowledge-base/AGENTS.md",
+    "hit": false,
+    "evidence_ids": [
+     "repo:agent-knowledge-base/memory_agent/eval/readonly_corpus_17_results.md",
+     "repo:agent-knowledge-base/docs/adr/0014-readonly-corpus-labeled-repos.md",
+     "repo:agent-knowledge-base/memory_agent/eval/ingest_51_results.md",
+     "repo:agent-infra/AGENTS.md",
+     "repo:agent-infra/docs/research/04-assembler-skill-capabilities.md",
+     "projects/agent-infra/overview",
+     "repo:agent-knowledge-base/docs/chunking_strategies_research.md",
+     "repo:agent-knowledge-base/docs/exp2-review.md",
+     "repo:agent-knowledge-base/docs/rag_testing_research.md",
+     "repo:agent-knowledge-base/experiments/bge-m3-sparse-colbert/README.md",
+     "repo:kg-triplet-sft/docs/adr/0003-graphrag-extraction.md",
+     "repo:kg-triplet-sft/docs/adr/0004-deployment-interface-and-student-prompt.md",
+     "repo:kg-triplet-sft/docs/adr/0009-consumer-e2e-and-base-baseline.md",
+     "repo:kg-triplet-sft/docs/research/llm-label-quality-audit.md",
+     "repo:kg-triplet-sft/docs/research/multi-agent-label-audit.md",
+     "topics/qdrant-local-mode-semantics"
+    ],
+    "tools_called": [
+     "memory_search",
+     "memory_grep",
+     "memory_read",
+     "memory_grep"
+    ],
+    "nav_calls": [
+     "memory_grep",
+     "memory_read",
+     "memory_grep"
+    ],
+    "used_nav_tool": true,
+    "stop": "budget",
+    "run_hash": "822aa4122bdb21f1ca0a8ac82fea375b8190a96af871b40cdb4d5b7a69288c4c",
+    "elapsed_s": 64.289,
+    "answer": null
+   },
+   {
+    "id": "nav-071-g04",
+    "face": "grep",
+    "target": "repo:agent-knowledge-base/AGENTS.md",
+    "hit": false,
+    "evidence_ids": [
+     "repo:agent-knowledge-base/docs/adr/0020-rerank-max-seq-length-default.md",
+     "repo:agent-knowledge-base/experiments/rerank-latency-survey/maxlen_results.md",
+     "repo:agent-knowledge-base/experiments/dedup-threshold-calibration/README.md",
+     "repo:agent-knowledge-base/docs/adr/0009-write-gateway-commit-scope-and-dedup.md",
+     "repo:kg-triplet-sft/finetune/kaggle/README_inference.md",
+     "repo:agent-knowledge-base/docs/rag_testing_research.md",
+     "repo:agent-knowledge-base/memory_agent/eval/personal_mode_36_results.md"
+    ],
+    "tools_called": [
+     "memory_search",
+     "memory_search"
+    ],
+    "nav_calls": [],
+    "used_nav_tool": false,
+    "stop": "fallback",
+    "run_hash": "0280a93e8f6dfa63263c1435bb2c7b2aa19e943a7e6ef7753ec31f1fbea4ca5e",
+    "elapsed_s": 33.921,
+    "answer": null
+   },
+   {
+    "id": "nav-071-g05",
+    "face": "grep",
+    "target": "repo:agent-knowledge-base/memory_agent/eval/README.md",
+    "hit": true,
+    "evidence_ids": [
+     "repo:agent-knowledge-base/memory_agent/eval/README.md",
+     "repo:kg-triplet-sft/docs/audit-2026-09-12.md",
+     "repo:kg-triplet-sft/THIRD_PARTY.md",
+     "repo:kg-triplet-sft/docs/research/round-2-related-work-and-baselines.md",
+     "repo:kg-triplet-sft/docs/evidence/base-baseline.md",
+     "repo:agent-knowledge-base/experiments/agentic-rag-census/phase_b/report.md",
+     "repo:agent-knowledge-base/experiments/rerank-latency-survey/maxlen_results.md",
+     "repo:agent-knowledge-base/experiments/bge-m3-sparse-colbert/results_qd.md",
+     "projects/kg-triplet-sft/results",
+     "projects/kg-triplet-sft/evaluation"
+    ],
+    "tools_called": [
+     "memory_search",
+     "memory_search",
+     "memory_search",
+     "memory_grep"
+    ],
+    "nav_calls": [
+     "memory_grep"
+    ],
+    "used_nav_tool": true,
+    "stop": "budget",
+    "run_hash": "c3bc0cf8efa9bffa8316398c664f1f3f898c726115e6e965ef238199a7c8c691",
+    "elapsed_s": 74.332,
+    "answer": null
+   },
+   {
+    "id": "nav-071-g06",
+    "face": "grep",
+    "target": "repo:agent-knowledge-base/docs/adr/0019-memory-store-port-residency-classification.md",
+    "hit": false,
+    "evidence_ids": [
+     "repo:agent-knowledge-base/experiments/local-lexical-40/README.md",
+     "repo:agent-knowledge-base/docs/adr/0022-memory-retrieval-pool-default.md",
+     "repo:agent-knowledge-base/docs/retrieval_optimization_report.md",
+     "repo:agent-knowledge-base/experiments/networked-store-33/README.md",
+     "topics/memory-runtime"
+    ],
+    "tools_called": [
+     "memory_search",
+     "memory_grep"
+    ],
+    "nav_calls": [
+     "memory_grep"
+    ],
+    "used_nav_tool": true,
+    "stop": "no_new_ids",
+    "run_hash": "68b36fbfefa58284349987ece7e2afd993f00aee9f18c5f743c6416732895fda",
+    "elapsed_s": 42.524,
+    "answer": null
+   },
+   {
+    "id": "nav-071-g07",
+    "face": "grep",
+    "target": "repo:agent-knowledge-base/AGENTS.md",
+    "hit": false,
+    "evidence_ids": [
+     "repo:agent-knowledge-base/experiments/rerank-jina-35/README.md",
+     "repo:agent-knowledge-base/experiments/rerank-model-survey/README.md",
+     "repo:agent-knowledge-base/experiments/rerank-latency-survey/README.md",
+     "repo:agent-knowledge-base/docs/retrieval_optimization_research_report.md",
+     "repo:agent-knowledge-base/experiments/bge-m3-sparse-colbert/DESIGN-distill.md"
+    ],
+    "tools_called": [
+     "memory_search",
+     "memory_grep",
+     "memory_grep",
+     "memory_grep"
+    ],
+    "nav_calls": [
+     "memory_grep",
+     "memory_grep",
+     "memory_grep"
+    ],
+    "used_nav_tool": true,
+    "stop": "budget",
+    "run_hash": "0fd49c54f96b51122bc85659645ee1598d595b7ba1065e45143515ec5edcc08a",
+    "elapsed_s": 72.809,
+    "answer": null
+   },
+   {
+    "id": "nav-071-g08",
+    "face": "grep",
+    "target": "topics/qdrant-local-mode-semantics",
+    "hit": true,
+    "evidence_ids": [
+     "topics/qdrant-local-mode-semantics",
+     "repo:agent-knowledge-base/experiments/qdrant-local-mode-capabilities/README.md",
+     "repo:agent-knowledge-base/memory_agent/eval/perf_70_results.md",
+     "repo:agent-knowledge-base/docs/adr/0019-memory-store-port-residency-classification.md",
+     "repo:agent-knowledge-base/experiments/networked-store-33/README.md",
+     "repo:agent-knowledge-base/experiments/local-lexical-40/README.md"
+    ],
+    "tools_called": [
+     "memory_search",
+     "memory_search",
+     "memory_search",
+     "memory_grep"
+    ],
+    "nav_calls": [
+     "memory_grep"
+    ],
+    "used_nav_tool": true,
+    "stop": "budget",
+    "run_hash": "b1a1fffcc906d3e891378df9ac77547bd164237f89f164ec06adc4913578c0ba",
+    "elapsed_s": 29.039,
+    "answer": null
+   },
+   {
+    "id": "nav-071-r01",
+    "face": "read",
+    "target": "repo:agent-knowledge-base/docs/adr/0030-retrieval-agent-depth-thesis.md",
+    "hit": true,
+    "evidence_ids": [
+     "repo:agent-knowledge-base/docs/adr/0030-retrieval-agent-depth-thesis.md",
+     "repo:agent-knowledge-base/docs/adr/0031-monorepo-dual-product-kb-and-retrieval-agent.md",
+     "repo:agent-knowledge-base/experiments/agentic-rag-census/phase_b/report.md",
+     "repo:agent-knowledge-base/experiments/agentic-rag-census/phase_b/README.md",
+     "repo:agent-knowledge-base/docs/adr/0014-readonly-corpus-labeled-repos.md"
+    ],
+    "tools_called": [
+     "memory_search",
+     "memory_get",
+     "memory_grep"
+    ],
+    "nav_calls": [
+     "memory_get",
+     "memory_grep"
+    ],
+    "used_nav_tool": true,
+    "stop": "answer",
+    "run_hash": "4151812e35abbc5cb928ab0a456f87fb66cf78be054a536a5f94c872bc81e9ae",
+    "elapsed_s": 65.571,
+    "answer": ""
+   },
+   {
+    "id": "nav-071-r02",
+    "face": "read",
+    "target": "repo:agent-knowledge-base/docs/adr/0026-agentic-loop-measurement-protocol.md",
+    "hit": true,
+    "evidence_ids": [
+     "repo:agent-knowledge-base/experiments/agentic-rag-census/README.md",
+     "repo:agent-knowledge-base/docs/adr/0026-agentic-loop-measurement-protocol.md",
+     "repo:agent-knowledge-base/docs/adr/0030-retrieval-agent-depth-thesis.md",
+     "repo:agent-knowledge-base/docs/adr/0001-personal-rag-tool-target.md",
+     "repo:agent-knowledge-base/experiments/agentic-rag-census/phase_b/README.md"
+    ],
+    "tools_called": [
+     "memory_search",
+     "memory_grep",
+     "memory_grep",
+     "memory_read"
+    ],
+    "nav_calls": [
+     "memory_grep",
+     "memory_grep",
+     "memory_read"
+    ],
+    "used_nav_tool": true,
+    "stop": "budget",
+    "run_hash": "2fd325def9bc281d17861da1a43f12466a526e68fe44f6a259104c1d9b58ef8e",
+    "elapsed_s": 74.155,
+    "answer": null
+   },
+   {
+    "id": "nav-071-r03",
+    "face": "read",
+    "target": "repo:agent-knowledge-base/memory_agent/eval/README.md",
+    "hit": true,
+    "evidence_ids": [
+     "repo:agent-knowledge-base/memory_agent/eval/README.md",
+     "repo:agent-knowledge-base/memory_agent/eval/retrieval_baseline.md",
+     "repo:agent-knowledge-base/experiments/rerank-latency-survey/maxlen_results.md",
+     "repo:agent-knowledge-base/memory_agent/eval/memory_research_plugin_61_results.md",
+     "repo:agent-knowledge-base/docs/adr/0021-memory-retrieval-acceptance-metrics.md"
+    ],
+    "tools_called": [
+     "memory_search",
+     "memory_grep",
+     "memory_read"
+    ],
+    "nav_calls": [
+     "memory_grep",
+     "memory_read"
+    ],
+    "used_nav_tool": true,
+    "stop": "answer",
+    "run_hash": "76b94a8c885bfb57dd63282bd35c322902b02293a3f47b1d1864c60fd1e80e02",
+    "elapsed_s": 38.289,
+    "answer": "该段落位于 `memory_agent/eval/README.md` 的“跑（验收②）”指令下方（约第 70–93 行）。原文在同一自然段中连续提及：“**确定性锚点**：同一命令两次 → stdout 与 `--out` **逐字节相同**……报告含 **holdout** 的答案正确率 + bootstrap CI……区间宽度为 0 的指标标 `degenerate=true`，**不当作显著**。”"
+   },
+   {
+    "id": "nav-071-r04",
+    "face": "read",
+    "target": "repo:agent-knowledge-base/AGENTS.md",
+    "hit": false,
+    "evidence_ids": [
+     "repo:agent-knowledge-base/docs/adr/0030-retrieval-agent-depth-thesis.md",
+     "repo:agent-knowledge-base/CONTEXT.md",
+     "repo:agent-knowledge-base/memory_agent/skill/SKILL.md",
+     "repo:agent-knowledge-base/memory_agent/eval/agent_loop_42_results.md",
+     "repo:agent-knowledge-base/experiments/retrieval-agent-depth/README.md"
+    ],
+    "tools_called": [
+     "memory_search"
+    ],
+    "nav_calls": [],
+    "used_nav_tool": false,
+    "stop": "fallback",
+    "run_hash": "4f90a36d02a0afb8b48c0e64e342adadbe7efb0d5a2009a13421c17f64a6ef01",
+    "elapsed_s": 4.952,
+    "answer": null
+   },
+   {
+    "id": "nav-071-r05",
+    "face": "read",
+    "target": "repo:agent-knowledge-base/experiments/agentic-rag-census/README.md",
+    "hit": true,
+    "evidence_ids": [
+     "repo:agent-knowledge-base/experiments/agentic-rag-census/README.md",
+     "repo:agent-knowledge-base/experiments/rerank-latency-survey/maxlen_results.md",
+     "repo:agent-knowledge-base/experiments/agentic-rag-census/report.md",
+     "repo:agent-knowledge-base/docs/adr/0030-retrieval-agent-depth-thesis.md",
+     "repo:kg-triplet-sft/docs/audit-2026-09-12.md"
+    ],
+    "tools_called": [
+     "memory_search",
+     "memory_grep"
+    ],
+    "nav_calls": [
+     "memory_grep"
+    ],
+    "used_nav_tool": true,
+    "stop": "no_new_ids",
+    "run_hash": "73fdb2ddc1e83f6c061b04986b64a62c7f2b2f5f379c5df0ef959bbd62360f3a",
+    "elapsed_s": 52.986,
+    "answer": null
+   },
+   {
+    "id": "nav-071-r06",
+    "face": "read",
+    "target": "decisions/KB-0002-growth-control-and-retrieval-ladder",
+    "hit": true,
+    "evidence_ids": [
+     "decisions/KB-0003-open-l3-embeddings-for-memory-package",
+     "decisions/KB-0002-growth-control-and-retrieval-ladder",
+     "decisions/KB-0001-knowledge-base-architecture",
+     "repo:agent-knowledge-base/memory_agent/eval/write_path_sandbox_results.md",
+     "repo:agent-knowledge-base/memory_agent/eval/one_click_deploy_52_results.md"
+    ],
+    "tools_called": [
+     "memory_search",
+     "memory_get",
+     "memory_read",
+     "memory_read"
+    ],
+    "nav_calls": [
+     "memory_get",
+     "memory_read",
+     "memory_read"
+    ],
+    "used_nav_tool": true,
+    "stop": "budget",
+    "run_hash": "372dd257e26278df98c4235ad2e172e8823caed803d57d03ff1004b6e9c20029",
+    "elapsed_s": 68.696,
+    "answer": null
+   },
+   {
+    "id": "nav-071-o01",
+    "face": "outline",
+    "target": "repo:agent-knowledge-base/docs/adr/0030-retrieval-agent-depth-thesis.md",
+    "hit": true,
+    "evidence_ids": [
+     "repo:agent-knowledge-base/docs/adr/0030-retrieval-agent-depth-thesis.md",
+     "repo:agent-knowledge-base/docs/jd-baseline.md",
+     "repo:agent-knowledge-base/docs/adr/0025-personal-mode-knowledge-database-model.md",
+     "repo:agent-knowledge-base/docs/adr/0026-agentic-loop-measurement-protocol.md",
+     "repo:agent-knowledge-base/memory_agent/eval/README.md"
+    ],
+    "tools_called": [
+     "memory_search",
+     "memory_outline"
+    ],
+    "nav_calls": [
+     "memory_outline"
+    ],
+    "used_nav_tool": true,
+    "stop": "answer",
+    "run_hash": "50403412d403e7e21970e04e52c09af3eb7e485c15b7586e2386c19daf3e36f6",
+    "elapsed_s": 37.462,
+    "answer": "“决策”即为该节的二级标题，位于第 28 行。"
+   },
+   {
+    "id": "nav-071-o02",
+    "face": "outline",
+    "target": "repo:agent-knowledge-base/docs/agent-capability-rubric.md",
+    "hit": true,
+    "evidence_ids": [
+     "repo:agent-knowledge-base/docs/agent-capability-rubric.md",
+     "repo:agent-knowledge-base/docs/jd-baseline.md",
+     "repo:agent-knowledge-base/docs/adr/0017-no-forced-refusal-soft-refusal.md",
+     "repo:kg-triplet-sft/docs/project-brief.md",
+     "repo:agent-knowledge-base/experiments/agentic-rag-census/phase_b/README.md"
+    ],
+    "tools_called": [
+     "memory_search"
+    ],
+    "nav_calls": [],
+    "used_nav_tool": false,
+    "stop": "fallback",
+    "run_hash": "2eb8e45ef8a6629115d1d0589c4b2d44d844b71fc18a011634d75935b35b9079",
+    "elapsed_s": 4.954,
+    "answer": null
+   },
+   {
+    "id": "nav-071-o03",
+    "face": "outline",
+    "target": "repo:agent-knowledge-base/CONTEXT.md",
+    "hit": false,
+    "evidence_ids": [
+     "repo:agent-infra/docs/agents/domain.md",
+     "repo:agent-knowledge-base/docs/agents/domain.md",
+     "repo:kg-triplet-sft/docs/agents/domain.md",
+     "repo:agent-knowledge-base/experiments/view-naming-37/README.md",
+     "repo:agent-knowledge-base/experiments/agentic-rag-loop/02-agentic-rag-mechanisms.md"
+    ],
+    "tools_called": [
+     "memory_search"
+    ],
+    "nav_calls": [],
+    "used_nav_tool": false,
+    "stop": "fallback",
+    "run_hash": "fd97c52a24409ce402f36d124d77a6f249476328055352923cae0db477579fd9",
+    "elapsed_s": 6.836,
+    "answer": null
+   },
+   {
+    "id": "nav-071-o04",
+    "face": "outline",
+    "target": "repo:agent-knowledge-base/experiments/agentic-rag-census/phase_b/README.md",
+    "hit": true,
+    "evidence_ids": [
+     "repo:agent-knowledge-base/experiments/agentic-rag-census/phase_b/README.md",
+     "repo:kg-triplet-sft/docs/evidence/README.md",
+     "repo:agent-knowledge-base/experiments/agentic-rag-loop/01-deep-research-systems.md",
+     "repo:kg-triplet-sft/README.zh-CN.md",
+     "repo:agent-knowledge-base/memory_agent/skill/SKILL.md"
+    ],
+    "tools_called": [
+     "memory_search"
+    ],
+    "nav_calls": [],
+    "used_nav_tool": false,
+    "stop": "fallback",
+    "run_hash": "fe9e065900f2a7d699a30b016b6bd696e6c9985a4b16bec273bb4cde96c3664b",
+    "elapsed_s": 29.325,
+    "answer": null
+   },
+   {
+    "id": "nav-071-o05",
+    "face": "outline",
+    "target": "topics/qdrant-local-mode-semantics",
+    "hit": true,
+    "evidence_ids": [
+     "repo:agent-knowledge-base/experiments/qdrant-local-mode-capabilities/README.md",
+     "topics/qdrant-local-mode-semantics",
+     "repo:agent-knowledge-base/docs/adr/0019-memory-store-port-residency-classification.md",
+     "repo:agent-knowledge-base/experiments/networked-store-33/README.md",
+     "repo:agent-knowledge-base/docs/adr/0011-index-consistency-generations-and-refresh.md"
+    ],
+    "tools_called": [
+     "memory_search",
+     "memory_outline"
+    ],
+    "nav_calls": [
+     "memory_outline"
+    ],
+    "used_nav_tool": true,
+    "stop": "answer",
+    "run_hash": "5fe82e8914ba9d2f3c529af89ea930dacaa339458fe6e7232b33d281dd0614ba",
+    "elapsed_s": 39.616,
+    "answer": "Trap 2 — clearing a collection is silent when done by dropping it"
+   }
+  ],
+  "provider": "openai-compat",
+  "base_url": "https://dashscope.aliyuncs.com/compatible-mode/v1",
+  "model": "qwen3.7-flash",
+  "temperature": 0.0,
+  "seed": 42,
+  "n": 19,
+  "elapsed_total_s": 862.0,
+  "nav_tool_use_rate": 0.736842,
+  "paired": {
+   "n": 19,
+   "excluded": [],
+   "tool_hit_rate": 0.684211,
+   "retrieval_hit_rate": 0.736842,
+   "delta": -0.052632,
+   "ci": {
+    "lo": -0.157895,
+    "hi": 0.0
+   },
+   "significant": false,
+   "by_face": {
+    "grep": {
+     "n": 8,
+     "tool_hit": 0.5,
+     "retrieval_hit": 0.625
+    },
+    "read": {
+     "n": 6,
+     "tool_hit": 0.833333,
+     "retrieval_hit": 0.833333
+    },
+    "outline": {
+     "n": 5,
+     "tool_hit": 0.8,
+     "retrieval_hit": 0.8
+    }
+   },
+   "caution": "real LLM in the loop (model picks the tools; temperature=0, seed=42). LLM is NOT byte-deterministic -> this is one observed run, not a reproducibility claim; n is small so the CI is wide."
+  },
+  "end_to_end_significance": {
+   "verified": true,
+   "reason": "real LLM in the loop (provider=openai-compat); model picks tools"
+  },
+  "max_rounds": 3,
+  "k": 5
  },
  "isolation_proof": {
   "prod_index_dir": "D:/python_work/work2026-4/Agent-Knowledge-Base\\memory_agent\\vector_db",

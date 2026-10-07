@@ -413,7 +413,7 @@ def paired_stats(rows: list[dict], baseline_rows: list[dict], *,
 # ------------------------------------------------------------------ agent 臂
 
 def run_agent(registry, probes: list[dict], *, provider, base_url, model,
-              rounds: int, limit: int | None) -> dict:
+              rounds: int, limit: int | None, k: int = 5) -> dict:
     """真 LLM 臂：模型自己决定工具。**本机无 LLM 时不会跑到这里**。"""
     from memory_agent.agent_loop import AgentLoop, Budget
     from memory_agent.agent_loop.llm import (
@@ -428,7 +428,7 @@ def run_agent(registry, probes: list[dict], *, provider, base_url, model,
     chosen = probes[:limit] if limit else probes
     rows = []
     for probe in chosen:
-        loop = AgentLoop(llm, registry, budget=Budget(max_rounds=max(1, rounds + 1)))
+        loop = AgentLoop(llm, registry, budget=Budget(max_rounds=max(1, rounds + 1)), k=k)
         t0 = time.time()
         trace = loop.run(probe["query"], trace_id=probe["id"])
         elapsed = round(time.time() - t0, 3)
@@ -448,6 +448,7 @@ def run_agent(registry, probes: list[dict], *, provider, base_url, model,
         })
     return {"rows": rows, "provider": spec.provider, "base_url": spec.base_url,
             "model": spec.model, "temperature": spec.temperature, "seed": spec.seed,
+            "max_rounds": max(1, rounds + 1), "k": k,
             "n": len(rows), "elapsed_total_s": round(sum(r["elapsed_s"] for r in rows), 1),
             "nav_tool_use_rate": round(
                 sum(1 for row in rows if row["used_nav_tool"]) / len(rows), 6) if rows else None}
@@ -483,6 +484,8 @@ def main(argv=None) -> int:
                         help="opencode-server needs <providerID>/<modelID>")
     parser.add_argument("--port", type=int, default=None, help="shorthand for opencode-server URL")
     parser.add_argument("--rounds", type=int, default=2, help="extra rounds (total = rounds + 1)")
+    parser.add_argument("--k", type=int, default=5,
+                        help="loop search k (production default 5; #71 baseline is top-14)")
     parser.add_argument("--limit", type=int, default=None)
     parser.add_argument("--no-refresh", action="store_true",
                         help="skip the lazy refresh that brings the temp copy to corpus parity")
@@ -572,7 +575,7 @@ def main(argv=None) -> int:
         if base_url is None and args.port:
             base_url = f"http://127.0.0.1:{args.port}"
         agent = run_agent(registry, addressable, provider=args.provider, base_url=base_url,
-                          model=args.model, rounds=args.rounds, limit=args.limit)
+                          model=args.model, rounds=args.rounds, limit=args.limit, k=args.k)
         agent["paired"] = paired_stats(
             [{"id": row["id"], "face": row["face"], "target": row["target"],
               "hit": row["hit"], "usable": True} for row in agent["rows"]],
@@ -585,6 +588,8 @@ def main(argv=None) -> int:
             "reason": f"real LLM in the loop (provider={agent['provider']}); model picks tools",
         }
         result["agent"] = agent
+        # 顶层口径以**真跑的臂**为准（§B 跑过之后就不能再声称"未验"）。
+        result["end_to_end_significance"] = agent["end_to_end_significance"]
 
     after = _dir_signature(prod_index)
     result["isolation_proof"] = {
