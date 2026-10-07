@@ -167,6 +167,20 @@ def glob_match(rel: str, pattern: str) -> bool:
     return fnmatch.fnmatch(rel, pattern)
 
 
+def source_paths(meta: dict) -> list[str]:
+    """条目可用于 glob / 前缀匹配的路径候选。
+
+    只读语料的 `source` 是 `<label>/<rel>`（标签只用于**跨来源消歧义**），所以同时给出
+    **去掉标签**的 doc 相对路径——否则用户/agent 写 `docs/**/*.md` 会匹配不上。
+    可写 KB 的 `source` 本身就是相对路径。
+    """
+    source = str(meta.get("source") or "")
+    out = [source] if source else []
+    if source and not meta.get("writable") and "/" in source:
+        out.append(source.split("/", 1)[1])
+    return out
+
+
 # ------------------------------------------------------------------ 只读 git
 
 def default_git_runner(args: list[str]) -> dict[str, Any]:
@@ -524,14 +538,16 @@ class MemoryNavToolRegistry(MemoryToolRegistry):
         if status and meta.get("status") != status:
             return False
         source = str(meta.get("source") or "")
+        paths = source_paths(meta)
         prefix = args.get("source_prefix")
-        if prefix and not source.startswith(str(prefix)):
+        if prefix and not any(path.startswith(str(prefix)) for path in paths):
             return False
         writable = args.get("writable")
         if writable is not None and bool(meta.get("writable")) != bool(writable):
             return False
         globs = _as_list(args.get("glob"))
-        if globs and not any(glob_match(source, pattern) for pattern in globs):
+        if globs and not any(glob_match(path, pattern)
+                             for path in paths for pattern in globs):
             return False
         return True
 
@@ -602,7 +618,8 @@ class MemoryNavToolRegistry(MemoryToolRegistry):
         hits: list[dict[str, Any]] = []
         for entry_id, meta in self._iter_entries():
             source = str(meta.get("source") or "")
-            if globs and not any(glob_match(source, item) for item in globs):
+            if globs and not any(glob_match(path, item)
+                                 for path in source_paths(meta) for item in globs):
                 continue
             content = meta.get("content")
             if not isinstance(content, str):

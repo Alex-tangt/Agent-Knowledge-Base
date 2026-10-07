@@ -306,6 +306,19 @@ class TestGrep:
         assert registry.call(GREP_TOOL, {"pattern": "needle", "regex": True,
                                          "ignore_case": False}) == []
 
+    def test_glob_matches_doc_path_without_source_label(self):
+        """只读语料 source = `<label>/<rel>`；glob 应按 **doc 相对路径**匹配。"""
+        entries = {
+            "repo:kb-label/docs/a.md": _meta("repo:kb-label/docs/a.md", DOC,
+                                             source="kb-label/docs/a.md", writable=False),
+            "repo:kb-label/other/b.md": _meta("repo:kb-label/other/b.md", DOC,
+                                              source="kb-label/other/b.md", writable=False),
+        }
+        registry = MemoryNavToolRegistry(FakeIndex(entries))
+        hits = registry.call(GREP_TOOL, {"pattern": "NEEDLE", "glob": "docs/**/*.md"})
+        assert [hit["id"] for hit in hits] == ["repo:kb-label/docs/a.md"]
+        assert registry.call(LIST_TOOL, {"glob": "docs/**/*.md"})["total"] == 1
+
 
 # -------------------------------------------------------------------- 读回
 
