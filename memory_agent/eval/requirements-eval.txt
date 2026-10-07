@@ -1,0 +1,13 @@
+# eval 脚本的**额外**依赖（2026-10-07 / #71）——**不进**产品运行时依赖集。
+#
+# 为什么单独一个文件：`memory_agent/deploy-requirements.txt` 是产品运行时的**权威依赖源**
+# （ADR-0028 D3，「一键部署」装的就是它）。这里的 pandas / pyarrow 只被**评测脚本**用到，
+# 塞进 deploy 集合会让每个用户的运行时装一堆与本产品无关的包，也会让 D3.1 的
+# 「独立部署 = 依赖集最小」验收失真。
+#
+# 谁需要它：`memory_agent/eval/eval_71_standard_set.py`（标准 RAG 集 census / BEIR 取数 /
+# 独立索引基线）。脚本对这些包是**惰性 import**，缺依赖时给的是可操作报错而不是 ImportError 噪音。
+#
+# 安装：venv\Scripts\python.exe -m pip install -r memory_agent/eval/requirements-eval.txt
+pandas>=2.0
+pyarrow>=14
