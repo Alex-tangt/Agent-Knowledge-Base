@@ -1,7 +1,8 @@
 """#23 VectorStore 端口 + 条目 classification/residency + provenance。
 
-锁外部可观察行为：端口形状（`isinstance` 协议核对）、tenant 收窄不可放宽、
-payload 镜像字段默认值 / 解析 / 检索命中带 provenance。用 Stub 嵌入，不加载 BGE-M3。
+锁外部可观察行为：端口形状（`isinstance` 协议核对）、tenant **求交**（绑定租户 ∩ 调用方请求；
+不相交 → 空，见 ADR-0019 D3.1）、payload 镜像字段默认值 / 解析 / 检索命中带 provenance。
+用 Stub 嵌入，不加载 BGE-M3。
 """
 import os
 
@@ -87,9 +88,41 @@ def test_search_filters_by_bound_tenant_and_cannot_be_widened(tmp_path):
     hits = store.search("doc", k=5)
     assert [m["entry_id"] for m in hits["metadatas"][0]] == ["a"]
 
-    # 调用方试图用 payload_filter 放宽租户 → 仍被绑定租户收窄（ADR-0018 D2）
+    # 交集非空：绑定 org-a + filter tenant=org-a → 正常返回 org-a 条目（求交 ≠ 一律拒绝）。
+    within = store.search("doc", k=5, payload_filter={"tenant": "org-a"})
+    assert [m["entry_id"] for m in within["metadatas"][0]] == ["a"]
+
+    # 旧断言 = store 绑定**覆盖**调用方 tenant 的「覆盖语义」（#39 F2 的缺陷口径：org-b
+    # 请求拿到 org-a 数据 → 跨租户泄漏）。新断言 = **求交**（ADR-0019 D3.1）：
+    # 交集为空 → 返回空；任一端都不许退化为全量。
     widened = store.search("doc", k=5, payload_filter={"tenant": "org-b"})
-    assert [m["entry_id"] for m in widened["metadatas"][0]] == ["a"]
+    assert widened["metadatas"][0] == []
+    assert widened["documents"][0] == []
+
+    # `tenant=` 参数是另一个来源，同样求交（不覆盖、也不放宽）。
+    by_param = store.search("doc", k=5, tenant="org-b")
+    assert by_param["metadatas"][0] == []
+
+
+def test_keyword_and_dense_channels_intersect_bound_tenant(tmp_path):
+    """#39 F1/D3.2：keyword 与 dense 通道也必须过同一套租户裁决。"""
+    store = QdrantLocalStore(db_path=str(tmp_path / "q"), embeddings=StubEmbeddings(),
+                             tenant="org-a")
+    store.add(
+        ["alpha doc", "beta doc"],
+        metadata_list=[{"entry_id": "a", "tenant": "org-a"},
+                       {"entry_id": "b", "tenant": "org-b"}],
+        ids=[point_id_for("a"), point_id_for("b")],
+    )
+
+    # keyword 通道：绑定租户收窄，绑定租户自己的条目仍能召回。
+    matches = store.search_by_keywords(["doc"])
+    assert [m["metadata"]["entry_id"] for m in matches] == ["a"]
+
+    # dense 通道（去重口径）：不相交 → 空；相交 → 只给绑定租户。
+    assert store.search_dense("doc", k=5, payload_filter={"tenant": "org-b"})["metadatas"][0] == []
+    within = store.search_dense("doc", k=5, payload_filter={"tenant": "org-a"})
+    assert [m["entry_id"] for m in within["metadatas"][0]] == ["a"]
 
 
 def test_search_tenant_parameter_used_when_unbound(tmp_path):
