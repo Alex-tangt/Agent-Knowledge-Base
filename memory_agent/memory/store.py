@@ -33,6 +33,71 @@ from memory_agent.settings import (
 from ragcore.services.vector_store_service import VectorStoreService
 
 
+def _empty_result() -> dict:
+    """端口契约下的**空**召回结果（`search` 的 dict 形）。
+
+    交集为空时必须显式返回空，**绝不**退化成调用方请求或 store 绑定的任一端全量
+    （#39 / ADR-0018 D2 + ADR-0019 D3）。
+    """
+    return {"documents": [[]], "metadatas": [[]], "distances": [[]]}
+
+
+def _tenant_set(value) -> set | None:
+    """把一端的 tenant 约束归一成集合；`None` = 该端**未**对此维度提出约束。"""
+    if value is None:
+        return None
+    if isinstance(value, (list, tuple, set, frozenset)):
+        return set(value)
+    return {value}
+
+
+def narrow_tenant(bound: str | None, requests: Sequence[Any]) -> tuple[Any, bool]:
+    """绑定租户 ∩ 调用方（网关注入）请求：**只可收窄，不相交 = 空**。
+
+    两端来源（store 构造期绑定，ADR-0019 D3；网关注入的 `payload_filter` / `tenant`，
+    ADR-0018 D2）在 store 层**求交**：任一端缺失 = 该端不限制；交集为空 → 返回
+    `possible=False`，调用方必须返回空结果，不得回退到任一端全量（这正是 #39 的 F2：
+    旧实现用绑定租户**覆盖**请求，等于把 org-a 数据交给 org-b 身份）。
+
+    返回 `(clause, possible)`：`clause` 为 `None`（该维度不产生子句）/ `str` / `list[str]`
+    （多值，端口下沉为 `MatchAny`）。
+    """
+    sets: list[set] = []
+    for value in requests:
+        values = _tenant_set(value)
+        if values is None:
+            continue
+        if not values:
+            # 显式空集 = 「谁都不该看到」→ 空，而不是放开。
+            return None, False
+        sets.append(values)
+    if bound is not None:
+        sets.append({bound})
+    if not sets:
+        return None, True
+    allowed = set.intersection(*sets)
+    if not allowed:
+        return None, False
+    if len(allowed) == 1:
+        return next(iter(allowed)), True
+    return sorted(allowed), True
+
+
+def _scope_filter(bound: str | None, payload_filter, tenant=None) -> tuple[dict | None, bool]:
+    """把 `payload_filter` 里的 tenant、`tenant` 参数与 store 绑定**求交**。
+
+    返回 `(scoped_filter, possible)`；`possible=False` 时调用方返回 `_empty_result()`。
+    `payload_filter` 的其它键原样透传（它们只用于进一步收窄）。
+    """
+    scoped = dict(payload_filter or {})
+    clause, possible = narrow_tenant(bound, [scoped.pop("tenant", None), tenant])
+    if not possible:
+        return None, False
+    if clause is not None:
+        scoped["tenant"] = clause
+    return scoped or None, True
+
+
 def _resolve_sparse_encoders(backend, model_name, sparse_encoder):
     """返回 `(doc_encoder, query_encoder)`（#40）。
 
@@ -103,21 +168,23 @@ class QdrantLocalStore:
     def search(self, query: str, k: int = 3,
                payload_filter: Mapping[str, Any] | None = None,
                tenant: str | None = None) -> dict:
-        """向量召回。绑定 tenant 的 store 不允许被调用方放宽（ADR-0018 D2）。
+        """向量召回。绑定 tenant 与调用方请求**求交**：只可收窄，不相交 = 返回空。
+
+        #39：旧实现用 `self.tenant` **覆盖**调用方（网关注入）的 tenant → org-b 身份
+        拿到 org-a 数据（F2）。现为交集（`narrow_tenant`），任一端不外溢。
 
         `native_hybrid` 时走 store 原生 hybrid（可按 `fusion` 选 RRF/DBSF），否则纯 dense。
         """
-        scoped = dict(payload_filter or {})
-        effective_tenant = self.tenant if self.tenant is not None else tenant
-        if effective_tenant is not None:
-            scoped["tenant"] = effective_tenant
+        scoped, possible = _scope_filter(self.tenant, payload_filter, tenant)
+        if not possible:
+            return _empty_result()
         if self.native_hybrid:
             if self.fusion == "dense":
                 return self._service.search_dense_documents(
-                    query, k=k, payload_filter=scoped or None)
+                    query, k=k, payload_filter=scoped)
             return self._service.search_hybrid_documents(
-                query, k=k, payload_filter=scoped or None, fusion=self.fusion)
-        return self._service.search_dense_documents(query, k=k, payload_filter=scoped or None)
+                query, k=k, payload_filter=scoped, fusion=self.fusion)
+        return self._service.search_dense_documents(query, k=k, payload_filter=scoped)
 
     def search_documents(self, query: str, k: int = 3,
                          payload_filter: Mapping[str, Any] | None = None) -> dict:
@@ -126,16 +193,28 @@ class QdrantLocalStore:
 
     def search_by_keywords(self, keywords: Sequence[str],
                            source_filter: str | None = None) -> list[dict]:
-        return self._service.search_by_keywords(keywords, source_filter=source_filter)
+        """关键词通道**也必须**认 store 绑定租户（#39 的 F1）。
+
+        #39 前这里原样透传 `VectorStoreService.search_by_keywords` 的**全量** scroll，
+        不带 tenant → 绑定 org-a 的 store 会把 org-b 条目交给无 tenant 的身份
+        （策略层后置过滤只在 `payload_filter` 非空时才跑，兜不住）。
+
+        端口契约（ADR-0019 D3）是「绑定租户只可收窄」：绑定存在时按绑定租户收窄；
+        **无绑定**时不在此处收窄（策略层仍按 `payload_filter` 后置过滤）。
+        """
+        matches = self._service.search_by_keywords(keywords, source_filter=source_filter)
+        if self.tenant is None:
+            return matches
+        return [m for m in matches
+                if (m.get("metadata") or {}).get("tenant") == self.tenant]
 
     def search_dense(self, query: str, k: int = 3,
                      payload_filter: Mapping[str, Any] | None = None) -> dict:
-        """纯 dense（余弦）通道；供按阈值操作与双后端消融（#33）。"""
-        scoped = dict(payload_filter or {})
-        effective_tenant = self.tenant if self.tenant is not None else None
-        if effective_tenant is not None:
-            scoped["tenant"] = effective_tenant
-        return self._service.search_dense_documents(query, k=k, payload_filter=scoped or None)
+        """纯 dense（余弦）通道；供按阈值操作与双后端消融（#33）。求交同 `search`。"""
+        scoped, possible = _scope_filter(self.tenant, payload_filter)
+        if not possible:
+            return _empty_result()
+        return self._service.search_dense_documents(query, k=k, payload_filter=scoped)
 
     def fetch(self, ids: Sequence[str]) -> list[dict]:
         return self._service.retrieve_documents(ids)
@@ -203,15 +282,14 @@ class QdrantNetworkStore:
     def search(self, query: str, k: int = 3,
                payload_filter: Mapping[str, Any] | None = None,
                tenant: str | None = None) -> dict:
-        """store 原生 hybrid 召回；绑定 tenant 只可收窄不可放宽（ADR-0018 D2）。"""
-        scoped = dict(payload_filter or {})
-        effective_tenant = self.tenant if self.tenant is not None else tenant
-        if effective_tenant is not None:
-            scoped["tenant"] = effective_tenant
+        """store 原生 hybrid 召回；绑定 tenant 与调用方请求**求交**：只可收窄，不相交 = 空。"""
+        scoped, possible = _scope_filter(self.tenant, payload_filter, tenant)
+        if not possible:
+            return _empty_result()
         if self.fusion == "dense":
-            return self._service.search_dense_documents(query, k=k, payload_filter=scoped or None)
+            return self._service.search_dense_documents(query, k=k, payload_filter=scoped)
         return self._service.search_hybrid_documents(
-            query, k=k, payload_filter=scoped or None, fusion=self.fusion)
+            query, k=k, payload_filter=scoped, fusion=self.fusion)
 
     def search_documents(self, query: str, k: int = 3,
                          payload_filter: Mapping[str, Any] | None = None) -> dict:
@@ -228,23 +306,21 @@ class QdrantNetworkStore:
 
     def search_dense(self, query: str, k: int = 3,
                      payload_filter: Mapping[str, Any] | None = None) -> dict:
-        """纯 dense（余弦）通道：分数量纲与本地平面一致，供按阈值操作（去重）使用。"""
-        scoped = dict(payload_filter or {})
-        effective_tenant = self.tenant if self.tenant is not None else None
-        if effective_tenant is not None:
-            scoped["tenant"] = effective_tenant
-        return self._service.search_dense_documents(query, k=k, payload_filter=scoped or None)
+        """纯 dense（余弦）通道：分数量纲与本地平面一致，供按阈值操作（去重）使用。求交同 `search`。"""
+        scoped, possible = _scope_filter(self.tenant, payload_filter)
+        if not possible:
+            return _empty_result()
+        return self._service.search_dense_documents(query, k=k, payload_filter=scoped)
 
     def search_hybrid(self, query: str, k: int = 3,
                       payload_filter: Mapping[str, Any] | None = None,
                       fusion: str = "rrf") -> dict:
-        """store 原生 hybrid，显式选融合方式（`rrf` / `dbsf`）——供按平面选型（D6）。"""
-        scoped = dict(payload_filter or {})
-        effective_tenant = self.tenant if self.tenant is not None else None
-        if effective_tenant is not None:
-            scoped["tenant"] = effective_tenant
+        """store 原生 hybrid，显式选融合方式（`rrf` / `dbsf`）——供按平面选型（D6）。求交同 `search`。"""
+        scoped, possible = _scope_filter(self.tenant, payload_filter)
+        if not possible:
+            return _empty_result()
         return self._service.search_hybrid_documents(
-            query, k=k, payload_filter=scoped or None, fusion=fusion)
+            query, k=k, payload_filter=scoped, fusion=fusion)
 
     def fetch(self, ids: Sequence[str]) -> list[dict]:
         """按点 id 取回 payload（共享平面无文件，读回靠 DB）。"""
