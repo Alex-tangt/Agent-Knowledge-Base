@@ -1,0 +1,127 @@
+{
+ "measured_at": "2026-10-07",
+ "rows": [
+  {
+   "set": "BeIR/scifact",
+   "lang": "en",
+   "corpus": 5183,
+   "queries": 300,
+   "test_qrels": "339 对 / 300 query / 283 金标篇（二值）",
+   "license": "cc-by-sa-4.0",
+   "reembed": "是（新语料，需重嵌 dense + sparse）",
+   "verdict": "**采用**"
+  },
+  {
+   "set": "BeIR/nfcorpus",
+   "lang": "en",
+   "corpus": 3633,
+   "queries": 3237,
+   "test_qrels": "分级稠密（每 query 多篇相关）",
+   "license": "cc-by-sa-4.0",
+   "reembed": "是",
+   "verdict": "备选：qrels 分级 + 相关篇数多 → recall@k 语义更钝"
+  },
+  {
+   "set": "BeIR/arguana",
+   "lang": "en",
+   "corpus": 8674,
+   "queries": 1406,
+   "test_qrels": "1 篇/题",
+   "license": "cc-by-sa-4.0",
+   "reembed": "是",
+   "verdict": "不采：任务形态是反论点检索（非证据检索）"
+  },
+  {
+   "set": "BeIR/fiqa",
+   "lang": "en",
+   "corpus": 57638,
+   "queries": 6648,
+   "test_qrels": "有",
+   "license": "cc-by-sa-4.0",
+   "reembed": "是",
+   "verdict": "不采：语料 5.7 万，超规模锚点"
+  },
+  {
+   "set": "BeIR/scidocs",
+   "lang": "en",
+   "corpus": 25657,
+   "queries": 1000,
+   "test_qrels": "有",
+   "license": "cc-by-sa-4.0",
+   "reembed": "是",
+   "verdict": "不采：语料 2.6 万（引用推荐任务）"
+  },
+  {
+   "set": "BeIR/trec-covid",
+   "lang": "en",
+   "corpus": 171332,
+   "queries": 50,
+   "test_qrels": "有",
+   "license": "cc-by-sa-4.0",
+   "reembed": "是",
+   "verdict": "不采：语料 17 万 / 仅 50 query"
+  },
+  {
+   "set": "mteb/T2Retrieval",
+   "lang": "zh",
+   "corpus": 118605,
+   "queries": 22812,
+   "test_qrels": "有",
+   "license": "apache-2.0",
+   "reembed": "是",
+   "verdict": "不采：中文但语料 11.9 万，≫2k"
+  },
+  {
+   "set": "C-MTEB/T2Retrieval",
+   "lang": "zh",
+   "corpus": 118605,
+   "queries": 22812,
+   "test_qrels": "有",
+   "license": "卡缺 license",
+   "reembed": "是",
+   "verdict": "不采：同规模 + 许可不清"
+  },
+  {
+   "set": "mteb/DuRetrieval",
+   "lang": "zh",
+   "corpus": 100001,
+   "queries": 2000,
+   "test_qrels": "有",
+   "license": "卡缺 license",
+   "reembed": "是",
+   "verdict": "不采：语料 10 万 + 许可不清"
+  },
+  {
+   "set": "C-MTEB/CmedqaRetrieval",
+   "lang": "zh",
+   "corpus": 100001,
+   "queries": 3999,
+   "test_qrels": "有",
+   "license": "卡缺 license",
+   "reembed": "是",
+   "verdict": "不采：语料 10 万 + 许可不清"
+  },
+  {
+   "set": "mteb/MMarcoRetrieval",
+   "lang": "zh",
+   "corpus": 106813,
+   "queries": 6980,
+   "test_qrels": "有",
+   "license": "卡缺 license",
+   "reembed": "是",
+   "verdict": "不采：语料 10.7 万 + 许可不清"
+  },
+  {
+   "set": "CRUD-RAG",
+   "lang": "zh",
+   "corpus": null,
+   "queries": null,
+   "test_qrels": "—",
+   "license": "HF 卡取不到（401）",
+   "reembed": "—",
+   "verdict": "不采：HF 无数据集卡，数据在 GitHub；且它是**生成**导向基准（检索是子任务）"
+  }
+ ],
+ "selected": "scifact",
+ "selection_reason_ref": "census.md §选型结论"
+}
