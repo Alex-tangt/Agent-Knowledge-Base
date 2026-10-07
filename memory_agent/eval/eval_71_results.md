@@ -48,6 +48,10 @@ $env:PYTHONPATH = $root
 > 运维备注：跑 `--baseline` 时**不要**把 stderr 合进管道（别写 `2>&1`）——模型加载 / tqdm 的 stderr
 > 会被 pwsh 当错误记录、**包装进程退出码变 1**（脚本自身退出码是 0，实测 `LASTEXITCODE=0`）。
 > 建议 `2>$null` 或用 `--out` 落盘后再读 JSON。
+>
+> 依赖备注：`eval_71_standard_set.py` 需要 **`pandas` + `pyarrow`**（读 HF parquet）。
+> 二者**未在 `requirements*.txt` 声明**（venv 里已装、实测可用）；该脚本**不在 CI 内**，
+> 故不影响门禁。**要不要声明成依赖归 Lead 定**（跨域文件，teammate 不改）。
 
 ## 2. 导航探针 + 一次性检索 paired 基线（#63 的对照）
 
