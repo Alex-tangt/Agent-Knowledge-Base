@@ -29,10 +29,11 @@ jobs:
         python-version: ["3.11"]
     steps:
       - name: 取源码
-        uses: actions/checkout@v4
+        # v5 / v6 = Node 24 运行时（v4 / v5 会被 runner 强制升到 Node 24 并打 deprecation 警告）
+        uses: actions/checkout@v5
 
       - name: 装 Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: ${{ matrix.python-version }}
 
