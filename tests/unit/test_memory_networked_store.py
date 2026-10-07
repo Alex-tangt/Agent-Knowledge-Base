@@ -271,8 +271,13 @@ def test_network_store_satisfies_port_contract():
 
         hits = store.search("doc", k=5)
         assert [m["entry_id"] for m in hits["metadatas"][0]] == ["a"]  # 绑定租户收窄
+        # 交集非空：绑定 org-a + 请求 org-a → 仍返回 org-a 条目（求交 ≠ 一律拒绝）。
+        same = store.search("doc", k=5, payload_filter={"tenant": "org-a"})
+        assert [m["entry_id"] for m in same["metadatas"][0]] == ["a"]
+        # 旧断言 = store 绑定**覆盖**调用方 tenant 的「覆盖语义」（#39 F2 缺陷口径：
+        # org-b 请求拿到 org-a 数据）。新断言 = **求交**（ADR-0019 D3.1）：不相交 → 返回空。
         widened = store.search("doc", k=5, payload_filter={"tenant": "org-b"})
-        assert [m["entry_id"] for m in widened["metadatas"][0]] == ["a"]
+        assert widened["metadatas"][0] == []
 
         store.delete([point_id_for("a")])
         assert store.count() == 1
