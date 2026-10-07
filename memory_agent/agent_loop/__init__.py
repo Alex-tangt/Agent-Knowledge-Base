@@ -15,14 +15,20 @@ from memory_agent.agent_loop.llm import (
 )
 from memory_agent.agent_loop.loop import AgentLoop, Decision, ModelDeclaredSufficiency, parse_decision
 from memory_agent.agent_loop.ports import LLMClient, SufficiencyChecker, ToolRegistry
-from memory_agent.agent_loop.tools import MemoryToolRegistry
+from memory_agent.agent_loop.tools import (
+    NAV_TOOLS,
+    MemoryNavToolRegistry,
+    MemoryToolRegistry,
+)
 
 __all__ = [
     "AgentLoop",
     "Budget",
     "Decision",
     "LLMClient",
+    "MemoryNavToolRegistry",
     "MemoryToolRegistry",
+    "NAV_TOOLS",
     "ModelDeclaredSufficiency",
     "OpenAICompatClient",
     "OpencodeServerClient",
