@@ -10,7 +10,7 @@
 |---|---|
 | `memory_agent/eval/standard_sets/nav_probes_71.json` | **28 条导航机制探针**（grep/read/outline/history） |
 | `memory_agent/eval/standard_sets/nav_probes_71.spec.md` | 判命中口径 / 作用域 / 边界 |
-| `memory_agent/eval/eval_71_nav.py` | 探针校验器（`--verify`）+ 一次性检索 paired 基线（`--baseline`） |
+| `memory_agent/eval/eval_71_nav.py` | 探针校验器（`--verify` 三段判定）+ 位置刷新（`--refresh`）+ 一次性检索 paired 基线（`--baseline`） |
 | `memory_agent/eval/eval_71_nav_baseline.json` | 基线逐题明细（排名/命中/CI/隔离快照） |
 | `experiments/nav-probes-71/README.md` | 实验记录（问题→假设→设置→数据→结论） |
 | `experiments/agentic-rag-census/phase_c/multihop_trace.py` | MultiHop-RAG → H harness 的 **trace 契约适配器** |
@@ -27,8 +27,11 @@ $py   = "D:\python_work\work2026-4\Agent-Knowledge-Base\venv\Scripts\python.exe"
 $root = "D:\python_work\work2026-4\wk-71-eval"
 $env:PYTHONPATH = $root
 
-# §2 探针自证（无模型，秒级）
+# §2 探针自证（无模型，秒级；三段判定：文件存在 / 锚短语仍在 / 位置 ±10）
 & $py memory_agent/eval/eval_71_nav.py --verify
+
+# §2 文档位移后刷新位置元数据（不改 query；锚消失的会进 UNREFRESHABLE，需人工换锚）
+& $py memory_agent/eval/eval_71_nav.py --refresh
 
 # §2 paired 基线（需 BGE-M3；索引跑在 %TEMP% 副本上，生产零写入）
 & $py memory_agent/eval/eval_71_nav.py --baseline `
@@ -37,10 +40,12 @@ $env:PYTHONPATH = $root
 # §3 MultiHop-RAG → trace 契约（无模型；复用 #47 不可变证据，不重跑检索）
 & $py experiments/agentic-rag-census/phase_c/multihop_trace.py
 
-# §4 标准 RAG 集（census 无模型；索引消融需 BGE-M3）
+# §4 标准 RAG 集（census 无模型；--run 需 pandas/pyarrow + BGE-M3）
 & $py memory_agent/eval/eval_71_standard_set.py --census
-& $py memory_agent/eval/eval_71_standard_set.py --build --set scifact --limit 1500
-& $py memory_agent/eval/eval_71_standard_set.py --eval   --set scifact
+& $py memory_agent/eval/eval_71_standard_set.py --run --docs 1500 `
+    --out memory_agent/eval/standard_sets/standard_rag_set_71_results.json
+& $py memory_agent/eval/eval_71_standard_set.py --run --docs 1500 --reuse-index --paired-dense `
+    --out memory_agent/eval/standard_sets/standard_rag_set_71_results.json
 ```
 
 工作树里的 venv 是主树的（`venv/` gitignored）——**一律用主树绝对路径**。
@@ -49,9 +54,10 @@ $env:PYTHONPATH = $root
 > 会被 pwsh 当错误记录、**包装进程退出码变 1**（脚本自身退出码是 0，实测 `LASTEXITCODE=0`）。
 > 建议 `2>$null` 或用 `--out` 落盘后再读 JSON。
 >
-> 依赖备注：`eval_71_standard_set.py` 需要 **`pandas` + `pyarrow`**（读 HF parquet）。
-> 二者**未在 `requirements*.txt` 声明**（venv 里已装、实测可用）；该脚本**不在 CI 内**，
-> 故不影响门禁。**要不要声明成依赖归 Lead 定**（跨域文件，teammate 不改）。
+> 依赖备注：`eval_71_standard_set.py` 需要 **`pandas` + `pyarrow`**（读 HF parquet）——
+> 已改为**惰性 import**，缺依赖时报可操作错误（`pip install -r memory_agent/eval/requirements-eval.txt`）。
+> 该清单**刻意不进** `deploy-requirements.txt`（ADR-0028 D3：产品运行时权威依赖不污染）；
+> `requirements-eval.txt` 由 Lead 加（跨域文件）。
 
 ## 2. 导航探针 + 一次性检索 paired 基线（#63 的对照）
 
@@ -110,7 +116,20 @@ $env:PYTHONPATH = $root
 > 所以这个 Δ 度量的是「**面**（能问到什么）」的差，**不是**「#63 的工具体验」的差——后者要 #63 自己的验收。
 > n=19 → CI 宽（±0.21）；本集是机制探针，**不做分布推断**。
 
-确定性：`run_hash = 365b1880db1a6019`（逐题排名指纹；同一临时索引复跑应得同值）。
+确定性：`run_hash = 8bf6a5c553c20541`（逐题排名指纹；同一临时索引复跑应得同值）。
+
+> **2026-10-07 收尾重同步（#69 地图同步导致的探针刷新）**：Lead 在合并后同步地图（#69 CI + 计划段 +
+> ADR 收窄）→ `--verify` 在 master 上 **26/28**。处置：`r01`（read，ADR-0030 D7.5–D7.7 行窗）是
+> **纯位移**（锚 `D7.7 regret` 60 → 66）→ `--refresh` 行窗 `[55,61]` → **`[61,67]`**；
+> `g07`（grep）是**真失效**（原锚 `579 passed` 随单测数变成 `584 passed`）→ **就地换锚**为冻结数字
+> **`2.67s`**（#35 ONNX 重排器，AGENTS.md:88，全 scope 唯一），query 同步改写。
+> `--refresh` 更新 22 条 / 不动 6 条 history / `unrefreshable 0` → `--verify` 回到 **28/28**；
+> 再次 refresh 幂等（diff 哈希不变）。**因 g07 的 query 变了，本节基线重跑一次**：
+> 语料随 master 增长 `271 → 272` 条 →
+> **`run_hash` `365b1880db1a6019` → `8bf6a5c553c20541`**；
+> **聚合指标逐位不变**（`recall@1/5/10/14` 与 `MRR` 完全相同，miss 集合同为
+> `g03 / g04 / g07 / r04 / o03`——只有逐题**排名指纹**变）。
+> 口径全文见 `standard_sets/nav_probes_71.spec.md` §4（三段判定 + `--refresh`）。
 
 ## 3. MultiHop-RAG → H harness（trace 契约）适配
 
@@ -190,8 +209,10 @@ DBSF；`MEMORY_RERANK=0`），`k=100`；条目级指标（`memory_agent.eval.met
 - 探针档 = **283 篇**（gold-complete 的下限就是 283 篇金标，**50 篇探针不可得**）：
   **315s 含模型加载（17s）+ 落盘** → **1.11 s/doc**。
 - 主力档 = **1,500 篇**：**1420.8s** → **0.947 s/doc**（模型加载被摊薄）。
-- 外推**全量 5,183 篇** ≈ 17s + 5183 × 0.94 ≈ **82 min**（**<2h 红线内**，但会长时间占 CPU；
-  本轮**未跑**，留作可点单档 `--run --docs 0`）。
+- 外推**全量 5,183 篇** ≈ 17s + 5183 × 0.94 ≈ **82 min**（<2h 红线内）。
+  **决策（Lead 2026-10-07）：不跑**——边际价值只是把"子集 18.9% 金标"的乐观偏差去掉，而该集
+  **只作机制证据、已声明不与论文同轴**；按「廉价测量优先 / 已定数值不重跑」不投资。
+  需要时仍可一行点单：`--run --docs 0`。
 - 宿主负载：重嵌期间 CPU avg **65%** / 空闲 **9,823MB**；跑完 CPU avg **21%** / 空闲 **12,831MB**
   （总 28,357MB；与 `perf-bench` 同机并行）。
 - **索引复用 = 确定性**：第二次 `--reuse-index --paired-dense` 复用同一索引（build 0.23s，不重嵌），
@@ -208,8 +229,11 @@ DBSF；`MEMORY_RERANK=0`），`k=100`；条目级指标（`memory_agent.eval.met
 1. **本文件的数字都不是"本库检索质量增益"**：#2 是机制探针（自造、n=19），#3 是外部语料复用，
    #4 是外部标准集。本 KB 的 in-domain 正证归 **#65（E）**（ADR-0030 D5/D6/D7.5）。
 2. **导航臂 1.0 的上限**：参考动作由 Python 复刻，不测 LLM 在环；#63 必须自己跑真 agent 才能声称"显著优于"。
-3. **探针是机器本地 + 冻结行号**：3 条 `scope=kb` 依赖本机 `AGENT_KB_DIR`；行窗/标题行号随文档漂移，
-   `--verify` 会如实报 stale（这是设计）。
-4. **临时索引会随语料漂移**：`gen-4` 副本 + 惰性追平 → 260→271 条；`run_hash` 只在同一份临时索引内可比。
+3. **探针位置元数据绑定"刷新时的提交"**：3 条 `scope=kb` 依赖本机 `AGENT_KB_DIR`；
+   文档一改：**位移** ⇒ `--refresh` 可修（±tolerance，默认 ±10），**锚短语消失** ⇒ verify 报**真失效**
+   （不是假通过、也不是必然失败）。2026-10-07 已实测一次（见 §2.2）。
+4. **临时索引会随语料漂移**：`gen-4` 副本 + 惰性追平 → 260→271→**272** 条（master 增长）；
+   `run_hash` **只反映"同一语料 + 同一 query 集"的逐题排名指纹**，跨语料版本不可比
+   （§2.2 的 `365b1880…` → `8bf6a5c5…` 就是语料 +1 条 + 一条 query 改写造成的）。
 5. 未决（要不要做，属规划层）：把 §2 基线升为 CI 门（#69 已有 CI 骨架）；把 `read` 的行窗口径
    与 #63 的**真工具**对齐后重跑一次 paired（那时 Δ 才含 agent 行为）。

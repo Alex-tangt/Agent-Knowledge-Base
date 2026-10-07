@@ -9,7 +9,12 @@
     "repo": "整个仓库工作树（含代码文件）——只读语料**不索引代码**，故这一档对一次性检索结构性不可达"
   },
   "readonly_label": "agent-knowledge-base",
-  "faces": ["grep", "read", "outline", "history"],
+  "faces": [
+    "grep",
+    "read",
+    "outline",
+    "history"
+  ],
   "baseline": {
     "arm": "one-shot retrieval",
     "chain": "MemoryIndex.search（生产记忆检索链：BGE-M3 dense + BM25 sparse + store 原生 DBSF 融合，rerank 关，pool=14）",
@@ -23,12 +28,27 @@
       "scope": "corpus",
       "difficulty": "easy",
       "query": "MultiHop-RAG 参考实现固定到哪个 commit？census 里记录的那个 40 位 sha 在哪份文档哪一行？",
-      "action": {"tool": "grep", "pattern": "c1c1287aa60a94acf9c4d20c891c9cd611a0f6e8", "literal": true, "globs": ["**/*.md"]},
-      "expected": {"file": "experiments/agentic-rag-census/README.md", "anchor_line": 67, "span": "c1c1287aa60a94acf9c4d20c891c9cd611a0f6e8", "unique": true},
+      "action": {
+        "tool": "grep",
+        "pattern": "c1c1287aa60a94acf9c4d20c891c9cd611a0f6e8",
+        "literal": true,
+        "globs": [
+          "**/*.md"
+        ]
+      },
+      "expected": {
+        "file": "experiments/agentic-rag-census/README.md",
+        "anchor_line": 67,
+        "span": "c1c1287aa60a94acf9c4d20c891c9cd611a0f6e8",
+        "unique": true,
+        "span_line": 67,
+        "span_sha1": "b2845980eaea"
+      },
       "in_corpus": true,
       "baseline_entry_id": "repo:agent-knowledge-base/experiments/agentic-rag-census/README.md",
       "min_tool_calls": 1,
-      "why": "词法精搜：40 位 commit sha 无法靠语义检索定位（向量/BM25 对十六进制串无区分度），必须精确匹配。"
+      "why": "词法精搜：40 位 commit sha 无法靠语义检索定位（向量/BM25 对十六进制串无区分度），必须精确匹配。",
+      "refreshed_at": "f4729577fa0ad44a37f992053662072d6a6538ac"
     },
     {
       "id": "nav-071-g02",
@@ -36,12 +56,27 @@
       "scope": "corpus",
       "difficulty": "hard",
       "query": "ADR-0030 里哪条子决策讲「反事实续跳」且明确本阶段不实现？把那条编号和原文所在行找出来。",
-      "action": {"tool": "grep", "pattern": "D7.7 regret", "literal": true, "globs": ["docs/**/*.md"]},
-      "expected": {"file": "docs/adr/0030-retrieval-agent-depth-thesis.md", "anchor_line": 60, "span": "D7.7 regret", "unique": true},
+      "action": {
+        "tool": "grep",
+        "pattern": "D7.7 regret",
+        "literal": true,
+        "globs": [
+          "docs/**/*.md"
+        ]
+      },
+      "expected": {
+        "file": "docs/adr/0030-retrieval-agent-depth-thesis.md",
+        "anchor_line": 66,
+        "span": "D7.7 regret",
+        "unique": true,
+        "span_line": 66,
+        "span_sha1": "2050152724fc"
+      },
       "in_corpus": true,
       "baseline_entry_id": "repo:agent-knowledge-base/docs/adr/0030-retrieval-agent-depth-thesis.md",
       "min_tool_calls": 1,
-      "why": "编号 + 英文术语的混合 token：语义检索只会回到 D7 整节（同一文件），但只有词法精搜能直接给出 D7.7 那一行。"
+      "why": "编号 + 英文术语的混合 token：语义检索只会回到 D7 整节（同一文件），但只有词法精搜能直接给出 D7.7 那一行。",
+      "refreshed_at": "f4729577fa0ad44a37f992053662072d6a6538ac"
     },
     {
       "id": "nav-071-g03",
@@ -49,12 +84,27 @@
       "scope": "corpus",
       "difficulty": "medium",
       "query": "「只索引 .md」的噪声目录排除表在代码里叫什么名字？AGENTS.md 哪一行点了它？",
-      "action": {"tool": "grep", "pattern": "EXCLUDE_DIR_NAMES", "literal": true, "globs": ["**/*.md"]},
-      "expected": {"file": "AGENTS.md", "anchor_line": 85, "span": "EXCLUDE_DIR_NAMES", "unique": true},
+      "action": {
+        "tool": "grep",
+        "pattern": "EXCLUDE_DIR_NAMES",
+        "literal": true,
+        "globs": [
+          "**/*.md"
+        ]
+      },
+      "expected": {
+        "file": "AGENTS.md",
+        "anchor_line": 85,
+        "span": "EXCLUDE_DIR_NAMES",
+        "unique": true,
+        "span_line": 85,
+        "span_sha1": "472e81b1ed5c"
+      },
       "in_corpus": true,
       "baseline_entry_id": "repo:agent-knowledge-base/AGENTS.md",
       "min_tool_calls": 1,
-      "why": "SCREAMING_SNAKE 标识符是词典外 token（BGE-M3 会被分词成子词），考词法面的精确符号召回。"
+      "why": "SCREAMING_SNAKE 标识符是词典外 token（BGE-M3 会被分词成子词），考词法面的精确符号召回。",
+      "refreshed_at": "f4729577fa0ad44a37f992053662072d6a6538ac"
     },
     {
       "id": "nav-071-g04",
@@ -62,12 +112,27 @@
       "scope": "corpus",
       "difficulty": "medium",
       "query": "去重阈值那个 env knob 叫什么？默认值是多少、写在哪一行？",
-      "action": {"tool": "grep", "pattern": "MEMORY_DEDUP_THRESHOLD", "literal": true, "globs": ["**/*.md"]},
-      "expected": {"file": "AGENTS.md", "anchor_line": 86, "span": "MEMORY_DEDUP_THRESHOLD", "unique": true},
+      "action": {
+        "tool": "grep",
+        "pattern": "MEMORY_DEDUP_THRESHOLD",
+        "literal": true,
+        "globs": [
+          "**/*.md"
+        ]
+      },
+      "expected": {
+        "file": "AGENTS.md",
+        "anchor_line": 86,
+        "span": "MEMORY_DEDUP_THRESHOLD",
+        "unique": true,
+        "span_line": 86,
+        "span_sha1": "7ac7f749efdb"
+      },
       "in_corpus": true,
       "baseline_entry_id": "repo:agent-knowledge-base/AGENTS.md",
       "min_tool_calls": 1,
-      "why": "env 变量名 + 默认值 0.88 的联合定位；语义检索会回到一堆讲去重的条目，词法面能直接到行。"
+      "why": "env 变量名 + 默认值 0.88 的联合定位；语义检索会回到一堆讲去重的条目，词法面能直接到行。",
+      "refreshed_at": "f4729577fa0ad44a37f992053662072d6a6538ac"
     },
     {
       "id": "nav-071-g05",
@@ -75,12 +140,27 @@
       "scope": "corpus",
       "difficulty": "medium",
       "query": "harness 报告里「区间宽度为 0 的指标」被标成什么？这条口径写在哪一行？",
-      "action": {"tool": "grep", "pattern": "degenerate=true", "literal": true, "globs": ["memory_agent/eval/**/*.md"]},
-      "expected": {"file": "memory_agent/eval/README.md", "anchor_line": 87, "span": "degenerate=true", "unique": true},
+      "action": {
+        "tool": "grep",
+        "pattern": "degenerate=true",
+        "literal": true,
+        "globs": [
+          "memory_agent/eval/**/*.md"
+        ]
+      },
+      "expected": {
+        "file": "memory_agent/eval/README.md",
+        "anchor_line": 87,
+        "span": "degenerate=true",
+        "unique": true,
+        "span_line": 87,
+        "span_sha1": "f149434f56eb"
+      },
       "in_corpus": true,
       "baseline_entry_id": "repo:agent-knowledge-base/memory_agent/eval/README.md",
       "min_tool_calls": 1,
-      "why": "代码字面量（= 号 + 英文小写）在中文文档里，语义检索难定位；且这条约束决定「什么不算显著」。"
+      "why": "代码字面量（= 号 + 英文小写）在中文文档里，语义检索难定位；且这条约束决定「什么不算显著」。",
+      "refreshed_at": "f4729577fa0ad44a37f992053662072d6a6538ac"
     },
     {
       "id": "nav-071-g06",
@@ -88,25 +168,55 @@
       "scope": "corpus",
       "difficulty": "hard",
       "query": "ADR-0019 里「默认融合 = dbsf」那条子决策的编号是什么，写在哪一行？",
-      "action": {"tool": "grep", "pattern": "D16.3", "literal": true, "globs": ["docs/**/*.md"]},
-      "expected": {"file": "docs/adr/0019-memory-store-port-residency-classification.md", "anchor_line": 202, "span": "D16.3", "unique": true},
+      "action": {
+        "tool": "grep",
+        "pattern": "D16.3",
+        "literal": true,
+        "globs": [
+          "docs/**/*.md"
+        ]
+      },
+      "expected": {
+        "file": "docs/adr/0019-memory-store-port-residency-classification.md",
+        "anchor_line": 202,
+        "span": "D16.3",
+        "unique": true,
+        "span_line": 202,
+        "span_sha1": "45e196cfaf50"
+      },
       "in_corpus": true,
       "baseline_entry_id": "repo:agent-knowledge-base/docs/adr/0019-memory-store-port-residency-classification.md",
       "min_tool_calls": 1,
-      "why": "同一 ADR 有 D1–D16 十几个编号，语义检索只会回到整篇；编号级定位是词法面的专属能力。"
+      "why": "同一 ADR 有 D1–D16 十几个编号，语义检索只会回到整篇；编号级定位是词法面的专属能力。",
+      "refreshed_at": "f4729577fa0ad44a37f992053662072d6a6538ac"
     },
     {
       "id": "nav-071-g07",
       "face": "grep",
       "scope": "corpus",
       "difficulty": "easy",
-      "query": "单测通过数「579 passed」写在哪一行？（它标定了当时的回归锚点）",
-      "action": {"tool": "grep", "pattern": "579 passed", "literal": true, "globs": ["**/*.md"]},
-      "expected": {"file": "AGENTS.md", "anchor_line": 181, "span": "579 passed", "unique": true},
+      "query": "那个「ONNX 重排器实测单题耗时」的数字（带单位）记在哪一行？",
+      "action": {
+        "tool": "grep",
+        "pattern": "2.67s",
+        "literal": true,
+        "globs": [
+          "**/*.md"
+        ]
+      },
+      "expected": {
+        "file": "AGENTS.md",
+        "anchor_line": 88,
+        "span": "2.67s",
+        "unique": true,
+        "span_line": 88,
+        "span_sha1": "3d4ab94e7f3d"
+      },
       "in_corpus": true,
       "baseline_entry_id": "repo:agent-knowledge-base/AGENTS.md",
       "min_tool_calls": 1,
-      "why": "数字锚点：语义检索对「579」与「passed」都不敏感，数字类事实是 grep 的强项。"
+      "why": "数字 + 单位混合 token：语义检索对数值不敏感，词法精搜是唯一稳定解法。**2026-10-07 收尾改锚**：原锚 `579 passed` 是**易变锚**（单测数每次提交都变，#69 把它改成了 584）→ 属「期望真失效」，换成冻结的实测数字 `2.67s`（#35 ONNX 重排器）。",
+      "refreshed_at": "f4729577fa0ad44a37f992053662072d6a6538ac"
     },
     {
       "id": "nav-071-g08",
@@ -114,12 +224,27 @@
       "scope": "kb",
       "difficulty": "medium",
       "query": "可写 KB 里哪条记录了我踩过的 Qdrant local mode 探针 bug（计数早于写入）？",
-      "action": {"tool": "grep", "pattern": "counted before seeding", "literal": true, "globs": ["**/*.md"]},
-      "expected": {"file": "topics/qdrant-local-mode-semantics.md", "anchor_line": 83, "span": "counted before seeding", "unique": true},
+      "action": {
+        "tool": "grep",
+        "pattern": "counted before seeding",
+        "literal": true,
+        "globs": [
+          "**/*.md"
+        ]
+      },
+      "expected": {
+        "file": "topics/qdrant-local-mode-semantics.md",
+        "anchor_line": 83,
+        "span": "counted before seeding",
+        "unique": true,
+        "span_line": 83,
+        "span_sha1": "d8b39a6857a3"
+      },
       "in_corpus": true,
       "baseline_entry_id": "topics/qdrant-local-mode-semantics",
       "min_tool_calls": 1,
-      "why": "可写 KB（≈40 条）也属基表：这条自省记录只有精确短语能一击命中，且它的 id 就是 frontmatter id（与只读条目的 repo: 前缀不同）。"
+      "why": "可写 KB（≈40 条）也属基表：这条自省记录只有精确短语能一击命中，且它的 id 就是 frontmatter id（与只读条目的 repo: 前缀不同）。",
+      "refreshed_at": "f4729577fa0ad44a37f992053662072d6a6538ac"
     },
     {
       "id": "nav-071-r01",
@@ -127,12 +252,32 @@
       "scope": "corpus",
       "difficulty": "hard",
       "query": "把 ADR-0030 里 D7.5 到 D7.7 三条子决策的原文整段读回来。",
-      "action": {"tool": "read", "file": "docs/adr/0030-retrieval-agent-depth-thesis.md", "line_range": [55, 61]},
-      "expected": {"file": "docs/adr/0030-retrieval-agent-depth-thesis.md", "line_range": [55, 61], "span": "D7.7 regret"},
+      "action": {
+        "tool": "read",
+        "file": "docs/adr/0030-retrieval-agent-depth-thesis.md",
+        "line_range": [
+          55,
+          61
+        ]
+      },
+      "expected": {
+        "file": "docs/adr/0030-retrieval-agent-depth-thesis.md",
+        "line_range": [
+          61,
+          67
+        ],
+        "line_width": 6,
+        "span_offset": 5,
+        "span": "D7.7 regret",
+        "span_line": 66,
+        "anchor_line": 66,
+        "span_sha1": "2050152724fc"
+      },
       "in_corpus": true,
       "baseline_entry_id": "repo:agent-knowledge-base/docs/adr/0030-retrieval-agent-depth-thesis.md",
       "min_tool_calls": 1,
-      "why": "按行范围读回：命中要求**精确行窗**（55–61）含 D7.7——一次性检索只能给整条，不能给行窗，这是 read 面的核心价值（省 token + 可指认）。"
+      "why": "按行范围读回：命中要求**精确行窗**（55–61）含 D7.7——一次性检索只能给整条，不能给行窗，这是 read 面的核心价值（省 token + 可指认）。",
+      "refreshed_at": "f4729577fa0ad44a37f992053662072d6a6538ac"
     },
     {
       "id": "nav-071-r02",
@@ -140,12 +285,32 @@
       "scope": "corpus",
       "difficulty": "medium",
       "query": "ADR-0026 里「层 1 语料为什么选 MultiHop-RAG」那段决策原文（D2）在哪几行？读回来。",
-      "action": {"tool": "read", "file": "docs/adr/0026-agentic-loop-measurement-protocol.md", "line_range": [24, 30]},
-      "expected": {"file": "docs/adr/0026-agentic-loop-measurement-protocol.md", "line_range": [24, 30], "span": "2556 query / 609 篇"},
+      "action": {
+        "tool": "read",
+        "file": "docs/adr/0026-agentic-loop-measurement-protocol.md",
+        "line_range": [
+          24,
+          30
+        ]
+      },
+      "expected": {
+        "file": "docs/adr/0026-agentic-loop-measurement-protocol.md",
+        "line_range": [
+          24,
+          30
+        ],
+        "line_width": 6,
+        "span_offset": 0,
+        "span": "2556 query / 609 篇",
+        "span_line": 24,
+        "anchor_line": 24,
+        "span_sha1": "be13b3894d26"
+      },
       "in_corpus": true,
       "baseline_entry_id": "repo:agent-knowledge-base/docs/adr/0026-agentic-loop-measurement-protocol.md",
       "min_tool_calls": 1,
-      "why": "同文件的 D2–D5 四条连读；考「定位到节再读窗」的组合，而不是整篇返回。"
+      "why": "同文件的 D2–D5 四条连读；考「定位到节再读窗」的组合，而不是整篇返回。",
+      "refreshed_at": "f4729577fa0ad44a37f992053662072d6a6538ac"
     },
     {
       "id": "nav-071-r03",
@@ -153,12 +318,32 @@
       "scope": "corpus",
       "difficulty": "medium",
       "query": "memory_agent/eval/README.md 里讲确定性锚点与「区间宽度为 0 不算显著」的那一段在哪？",
-      "action": {"tool": "read", "file": "memory_agent/eval/README.md", "line_range": [84, 93]},
-      "expected": {"file": "memory_agent/eval/README.md", "line_range": [84, 93], "span": "degenerate=true"},
+      "action": {
+        "tool": "read",
+        "file": "memory_agent/eval/README.md",
+        "line_range": [
+          84,
+          93
+        ]
+      },
+      "expected": {
+        "file": "memory_agent/eval/README.md",
+        "line_range": [
+          84,
+          93
+        ],
+        "line_width": 9,
+        "span_offset": 3,
+        "span": "degenerate=true",
+        "span_line": 87,
+        "anchor_line": 87,
+        "span_sha1": "f149434f56eb"
+      },
       "in_corpus": true,
       "baseline_entry_id": "repo:agent-knowledge-base/memory_agent/eval/README.md",
       "min_tool_calls": 1,
-      "why": "读窗落在文档末尾的「口径」段：这类段落标题泛化（## 跑），语义检索容易把它排在后面，行窗读取不受影响。"
+      "why": "读窗落在文档末尾的「口径」段：这类段落标题泛化（## 跑），语义检索容易把它排在后面，行窗读取不受影响。",
+      "refreshed_at": "f4729577fa0ad44a37f992053662072d6a6538ac"
     },
     {
       "id": "nav-071-r04",
@@ -166,12 +351,32 @@
       "scope": "corpus",
       "difficulty": "medium",
       "query": "AGENTS.md 里「全索引 260 条中退役条目 = 0，据此不投资 C」那段在哪几行？",
-      "action": {"tool": "read", "file": "AGENTS.md", "line_range": [334, 336]},
-      "expected": {"file": "AGENTS.md", "line_range": [334, 336], "span": "退役条目 = 0"},
+      "action": {
+        "tool": "read",
+        "file": "AGENTS.md",
+        "line_range": [
+          334,
+          336
+        ]
+      },
+      "expected": {
+        "file": "AGENTS.md",
+        "line_range": [
+          222,
+          224
+        ],
+        "line_width": 2,
+        "span_offset": 0,
+        "span": "退役条目 = 0",
+        "span_line": 222,
+        "anchor_line": 222,
+        "span_sha1": "76219a21cf3d"
+      },
       "in_corpus": true,
       "baseline_entry_id": "repo:agent-knowledge-base/AGENTS.md",
       "min_tool_calls": 1,
-      "why": "AGENTS.md 是一条超大条目（400+ 行）：一次性检索把它当**一个**条目，read 面能定位到 4 行——正是 #63 要证明的边界。"
+      "why": "AGENTS.md 是一条超大条目（400+ 行）：一次性检索把它当**一个**条目，read 面能定位到 4 行——正是 #63 要证明的边界。",
+      "refreshed_at": "f4729577fa0ad44a37f992053662072d6a6538ac"
     },
     {
       "id": "nav-071-r05",
@@ -179,12 +384,32 @@
       "scope": "corpus",
       "difficulty": "hard",
       "query": "census 结论的确定性一节（两个 run_hash）在哪几行？读回来核 sha。",
-      "action": {"tool": "read", "file": "experiments/agentic-rag-census/README.md", "line_range": [100, 107]},
-      "expected": {"file": "experiments/agentic-rag-census/README.md", "line_range": [100, 107], "span": "48503510bedd9655"},
+      "action": {
+        "tool": "read",
+        "file": "experiments/agentic-rag-census/README.md",
+        "line_range": [
+          100,
+          107
+        ]
+      },
+      "expected": {
+        "file": "experiments/agentic-rag-census/README.md",
+        "line_range": [
+          100,
+          107
+        ],
+        "line_width": 7,
+        "span_offset": 5,
+        "span": "48503510bedd9655",
+        "span_line": 105,
+        "anchor_line": 105,
+        "span_sha1": "1594a21bbb5c"
+      },
       "in_corpus": true,
       "baseline_entry_id": "repo:agent-knowledge-base/experiments/agentic-rag-census/README.md",
       "min_tool_calls": 1,
-      "why": "「确定性/复现」类事实必须逐字核对 hash——行窗读取 + 精确串比对，不能靠语义相似。"
+      "why": "「确定性/复现」类事实必须逐字核对 hash——行窗读取 + 精确串比对，不能靠语义相似。",
+      "refreshed_at": "f4729577fa0ad44a37f992053662072d6a6538ac"
     },
     {
       "id": "nav-071-r06",
@@ -192,12 +417,32 @@
       "scope": "kb",
       "difficulty": "medium",
       "query": "KB-0002 的 update windows 表在哪几行？L2 的触发条件原文是什么？",
-      "action": {"tool": "read", "file": "decisions/KB-0002-growth-control-and-retrieval-ladder.md", "line_range": [50, 56]},
-      "expected": {"file": "decisions/KB-0002-growth-control-and-retrieval-ladder.md", "line_range": [50, 56], "span": "L2 SQLite FTS5"},
+      "action": {
+        "tool": "read",
+        "file": "decisions/KB-0002-growth-control-and-retrieval-ladder.md",
+        "line_range": [
+          50,
+          56
+        ]
+      },
+      "expected": {
+        "file": "decisions/KB-0002-growth-control-and-retrieval-ladder.md",
+        "line_range": [
+          50,
+          56
+        ],
+        "line_width": 6,
+        "span_offset": 5,
+        "span": "L2 SQLite FTS5",
+        "span_line": 55,
+        "anchor_line": 55,
+        "span_sha1": "7600587269b0"
+      },
       "in_corpus": true,
       "baseline_entry_id": "decisions/KB-0002-growth-control-and-retrieval-ladder",
       "min_tool_calls": 1,
-      "why": "可写 KB 的表格行：触发条件是条件式措辞（if/then），语义检索会把整条决策返回，行窗直接给条件本身。"
+      "why": "可写 KB 的表格行：触发条件是条件式措辞（if/then），语义检索会把整条决策返回，行窗直接给条件本身。",
+      "refreshed_at": "f4729577fa0ad44a37f992053662072d6a6538ac"
     },
     {
       "id": "nav-071-o01",
@@ -205,12 +450,23 @@
       "scope": "corpus",
       "difficulty": "easy",
       "query": "ADR-0030 的标题结构里，决策那一节的二级标题叫什么？它在第几行？",
-      "action": {"tool": "outline", "file": "docs/adr/0030-retrieval-agent-depth-thesis.md"},
-      "expected": {"file": "docs/adr/0030-retrieval-agent-depth-thesis.md", "heading": "决策", "level": 2, "anchor_line": 26},
+      "action": {
+        "tool": "outline",
+        "file": "docs/adr/0030-retrieval-agent-depth-thesis.md"
+      },
+      "expected": {
+        "file": "docs/adr/0030-retrieval-agent-depth-thesis.md",
+        "heading": "决策",
+        "level": 2,
+        "anchor_line": 28,
+        "span_line": 28,
+        "span_sha1": "22cf4d30bd3d"
+      },
       "in_corpus": true,
       "baseline_entry_id": "repo:agent-knowledge-base/docs/adr/0030-retrieval-agent-depth-thesis.md",
       "min_tool_calls": 1,
-      "why": "outline 面 = 只读标题树，不读正文；一次性检索没有标题结构这一层，只能回到整条。"
+      "why": "outline 面 = 只读标题树，不读正文；一次性检索没有标题结构这一层，只能回到整条。",
+      "refreshed_at": "f4729577fa0ad44a37f992053662072d6a6538ac"
     },
     {
       "id": "nav-071-o02",
@@ -218,12 +474,23 @@
       "scope": "corpus",
       "difficulty": "medium",
       "query": "能力评判 rubric 里「L0 前置闸门」这个三级标题的原文和所在行？",
-      "action": {"tool": "outline", "file": "docs/agent-capability-rubric.md"},
-      "expected": {"file": "docs/agent-capability-rubric.md", "heading": "L0 前置闸门（Gate，不打分 —— 不通则其余不计分）", "level": 3, "anchor_line": 26},
+      "action": {
+        "tool": "outline",
+        "file": "docs/agent-capability-rubric.md"
+      },
+      "expected": {
+        "file": "docs/agent-capability-rubric.md",
+        "heading": "L0 前置闸门（Gate，不打分 —— 不通则其余不计分）",
+        "level": 3,
+        "anchor_line": 26,
+        "span_line": 26,
+        "span_sha1": "24204a1d6137"
+      },
       "in_corpus": true,
       "baseline_entry_id": "repo:agent-knowledge-base/docs/agent-capability-rubric.md",
       "min_tool_calls": 1,
-      "why": "三级标题级定位（一级是文档名、二级是「1. 模型」）——考 outline 的层级导航，而不是扁平的语义相似。"
+      "why": "三级标题级定位（一级是文档名、二级是「1. 模型」）——考 outline 的层级导航，而不是扁平的语义相似。",
+      "refreshed_at": "f4729577fa0ad44a37f992053662072d6a6538ac"
     },
     {
       "id": "nav-071-o03",
@@ -231,12 +498,23 @@
       "scope": "corpus",
       "difficulty": "easy",
       "query": "CONTEXT.md 里术语表那一节的标题是什么、在第几行？",
-      "action": {"tool": "outline", "file": "CONTEXT.md"},
-      "expected": {"file": "CONTEXT.md", "heading": "Glossary", "level": 2, "anchor_line": 190},
+      "action": {
+        "tool": "outline",
+        "file": "CONTEXT.md"
+      },
+      "expected": {
+        "file": "CONTEXT.md",
+        "heading": "Glossary",
+        "level": 2,
+        "anchor_line": 190,
+        "span_line": 190,
+        "span_sha1": "d307ad95cd81"
+      },
       "in_corpus": true,
       "baseline_entry_id": "repo:agent-knowledge-base/CONTEXT.md",
       "min_tool_calls": 1,
-      "why": "最小的导航动作：一次 outline 就够；对 #63 是「单调用即可答」的对照点。"
+      "why": "最小的导航动作：一次 outline 就够；对 #63 是「单调用即可答」的对照点。",
+      "refreshed_at": "f4729577fa0ad44a37f992053662072d6a6538ac"
     },
     {
       "id": "nav-071-o04",
@@ -244,12 +522,23 @@
       "scope": "corpus",
       "difficulty": "medium",
       "query": "phase_b README 的结论节标题（含反引号路径的那个）在哪一行？",
-      "action": {"tool": "outline", "file": "experiments/agentic-rag-census/phase_b/README.md"},
-      "expected": {"file": "experiments/agentic-rag-census/phase_b/README.md", "heading": "结论（`report.md` / `artifacts/report.json` 为证据）", "level": 2, "anchor_line": 90},
+      "action": {
+        "tool": "outline",
+        "file": "experiments/agentic-rag-census/phase_b/README.md"
+      },
+      "expected": {
+        "file": "experiments/agentic-rag-census/phase_b/README.md",
+        "heading": "结论（`report.md` / `artifacts/report.json` 为证据）",
+        "level": 2,
+        "anchor_line": 90,
+        "span_line": 90,
+        "span_sha1": "55bcf841d8b7"
+      },
       "in_corpus": true,
       "baseline_entry_id": "repo:agent-knowledge-base/experiments/agentic-rag-census/phase_b/README.md",
       "min_tool_calls": 1,
-      "why": "标题里含反引号与斜杠路径——outline 必须原样保留标点；语义检索会把这些符号当噪声丢掉。"
+      "why": "标题里含反引号与斜杠路径——outline 必须原样保留标点；语义检索会把这些符号当噪声丢掉。",
+      "refreshed_at": "f4729577fa0ad44a37f992053662072d6a6538ac"
     },
     {
       "id": "nav-071-o05",
@@ -257,12 +546,23 @@
       "scope": "kb",
       "difficulty": "medium",
       "query": "Qdrant local mode 那条 KB 里，讲「删集合静默复活」的小节标题是什么？",
-      "action": {"tool": "outline", "file": "topics/qdrant-local-mode-semantics.md"},
-      "expected": {"file": "topics/qdrant-local-mode-semantics.md", "heading": "Trap 2 — clearing a collection is silent when done by dropping it", "level": 2, "anchor_line": 54},
+      "action": {
+        "tool": "outline",
+        "file": "topics/qdrant-local-mode-semantics.md"
+      },
+      "expected": {
+        "file": "topics/qdrant-local-mode-semantics.md",
+        "heading": "Trap 2 — clearing a collection is silent when done by dropping it",
+        "level": 2,
+        "anchor_line": 54,
+        "span_line": 54,
+        "span_sha1": "9e6c82bba4a2"
+      },
       "in_corpus": true,
       "baseline_entry_id": "topics/qdrant-local-mode-semantics",
       "min_tool_calls": 1,
-      "why": "英文长标题 + em dash：考 outline 的原文保真（TL;DR 里的 \"resurrects the old points\" 与标题措辞不同，语义检索可能抓到前者）。"
+      "why": "英文长标题 + em dash：考 outline 的原文保真（TL;DR 里的 \"resurrects the old points\" 与标题措辞不同，语义检索可能抓到前者）。",
+      "refreshed_at": "f4729577fa0ad44a37f992053662072d6a6538ac"
     },
     {
       "id": "nav-071-h01",
@@ -270,8 +570,16 @@
       "scope": "corpus",
       "difficulty": "medium",
       "query": "trace 契约（memory_agent/trace.py）是哪个提交首次加进来的？给出完整 sha。",
-      "action": {"tool": "history", "op": "log_added", "path": "memory_agent/trace.py"},
-      "expected": {"commit": "7f4753b58662b8cb9b3ae7e4fdbe777a6dbc24d9", "file": "memory_agent/trace.py", "date": "2026-09-22"},
+      "action": {
+        "tool": "history",
+        "op": "log_added",
+        "path": "memory_agent/trace.py"
+      },
+      "expected": {
+        "commit": "7f4753b58662b8cb9b3ae7e4fdbe777a6dbc24d9",
+        "file": "memory_agent/trace.py",
+        "date": "2026-09-22"
+      },
       "in_corpus": false,
       "baseline_entry_id": null,
       "baseline_note": "一次性检索无提交维度（结构性不可达）",
@@ -284,8 +592,16 @@
       "scope": "corpus",
       "difficulty": "medium",
       "query": "ADR-0030 是哪个提交创建的？给出完整 sha。",
-      "action": {"tool": "history", "op": "log_added", "path": "docs/adr/0030-retrieval-agent-depth-thesis.md"},
-      "expected": {"commit": "c1078536ffaf4ecd018fcd286e1a64866dd8646b", "file": "docs/adr/0030-retrieval-agent-depth-thesis.md", "date": "2026-09-22"},
+      "action": {
+        "tool": "history",
+        "op": "log_added",
+        "path": "docs/adr/0030-retrieval-agent-depth-thesis.md"
+      },
+      "expected": {
+        "commit": "c1078536ffaf4ecd018fcd286e1a64866dd8646b",
+        "file": "docs/adr/0030-retrieval-agent-depth-thesis.md",
+        "date": "2026-09-22"
+      },
       "in_corpus": false,
       "baseline_entry_id": null,
       "baseline_note": "一次性检索无提交维度（结构性不可达）",
@@ -298,8 +614,17 @@
       "scope": "corpus",
       "difficulty": "hard",
       "query": "ADR-0030 里 D7.7（regret）这句话是哪个提交补进去的？给出完整 sha。",
-      "action": {"tool": "history", "op": "log_pickaxe", "pattern": "D7.7 regret", "path": "docs/adr/0030-retrieval-agent-depth-thesis.md"},
-      "expected": {"commit": "4c609d06ebc9bbf320bb234170cdf7977cd1b934", "file": "docs/adr/0030-retrieval-agent-depth-thesis.md", "date": "2026-10-03"},
+      "action": {
+        "tool": "history",
+        "op": "log_pickaxe",
+        "pattern": "D7.7 regret",
+        "path": "docs/adr/0030-retrieval-agent-depth-thesis.md"
+      },
+      "expected": {
+        "commit": "4c609d06ebc9bbf320bb234170cdf7977cd1b934",
+        "file": "docs/adr/0030-retrieval-agent-depth-thesis.md",
+        "date": "2026-10-03"
+      },
       "in_corpus": false,
       "baseline_entry_id": null,
       "baseline_note": "一次性检索无提交维度（结构性不可达）",
@@ -312,8 +637,17 @@
       "scope": "corpus",
       "difficulty": "medium",
       "query": "AGENTS.md 里「智能体团队并行」这节是哪个提交加的？给出完整 sha。",
-      "action": {"tool": "history", "op": "log_pickaxe", "pattern": "智能体团队并行", "path": "AGENTS.md"},
-      "expected": {"commit": "6e3181c4a5e4f331e005e8b62f7bd6d369003b9b", "file": "AGENTS.md", "date": "2026-10-07"},
+      "action": {
+        "tool": "history",
+        "op": "log_pickaxe",
+        "pattern": "智能体团队并行",
+        "path": "AGENTS.md"
+      },
+      "expected": {
+        "commit": "6e3181c4a5e4f331e005e8b62f7bd6d369003b9b",
+        "file": "AGENTS.md",
+        "date": "2026-10-07"
+      },
       "in_corpus": false,
       "baseline_entry_id": null,
       "baseline_note": "一次性检索无提交维度（结构性不可达）",
@@ -326,8 +660,16 @@
       "scope": "corpus",
       "difficulty": "medium",
       "query": "memory_research 插件（形态 B）是哪个提交引入的？给出完整 sha。",
-      "action": {"tool": "history", "op": "log_added", "path": "memory_agent/plugin/memory-research.js"},
-      "expected": {"commit": "1425699da9aeeb823e64016c0e04bbb9d901db67", "file": "memory_agent/plugin/memory-research.js", "date": "2026-09-22"},
+      "action": {
+        "tool": "history",
+        "op": "log_added",
+        "path": "memory_agent/plugin/memory-research.js"
+      },
+      "expected": {
+        "commit": "1425699da9aeeb823e64016c0e04bbb9d901db67",
+        "file": "memory_agent/plugin/memory-research.js",
+        "date": "2026-09-22"
+      },
       "in_corpus": false,
       "baseline_entry_id": null,
       "baseline_note": "一次性检索无提交维度（结构性不可达）",
@@ -340,8 +682,17 @@
       "scope": "corpus",
       "difficulty": "hard",
       "query": "ADR-0019 的 D16（本地默认词法路 = BM25）是哪个提交落进 ADR 的？给出完整 sha。",
-      "action": {"tool": "history", "op": "log_pickaxe", "pattern": "D16.3", "path": "docs/adr/0019-memory-store-port-residency-classification.md"},
-      "expected": {"commit": "2a2de24ca0fc9e71ef808dd2f2bf5db686c4d3f0", "file": "docs/adr/0019-memory-store-port-residency-classification.md", "date": "2026-09-17"},
+      "action": {
+        "tool": "history",
+        "op": "log_pickaxe",
+        "pattern": "D16.3",
+        "path": "docs/adr/0019-memory-store-port-residency-classification.md"
+      },
+      "expected": {
+        "commit": "2a2de24ca0fc9e71ef808dd2f2bf5db686c4d3f0",
+        "file": "docs/adr/0019-memory-store-port-residency-classification.md",
+        "date": "2026-09-17"
+      },
       "in_corpus": false,
       "baseline_entry_id": null,
       "baseline_note": "一次性检索无提交维度（结构性不可达）",
@@ -354,13 +705,27 @@
       "scope": "repo",
       "difficulty": "easy",
       "query": "代码里停止触发词的常量表叫什么？它在哪个文件、第几行？",
-      "action": {"tool": "grep", "pattern": "STOP_TRIGGERS", "literal": true, "globs": ["**/*.py"]},
-      "expected": {"file": "memory_agent/trace.py", "anchor_line": 27, "span": "STOP_TRIGGERS = ("},
+      "action": {
+        "tool": "grep",
+        "pattern": "STOP_TRIGGERS",
+        "literal": true,
+        "globs": [
+          "**/*.py"
+        ]
+      },
+      "expected": {
+        "file": "memory_agent/trace.py",
+        "anchor_line": 27,
+        "span": "STOP_TRIGGERS = (",
+        "span_line": 27,
+        "span_sha1": "0e42a09d70a9"
+      },
       "in_corpus": false,
       "baseline_entry_id": null,
       "baseline_note": "只读语料只索引 .md，代码文件系统性缺席（结构性不可达）",
       "min_tool_calls": 1,
-      "why": "导航边界探针：基表 = 文件 + git，但**索引**只装 .md。代码问题必须走文件面 grep，一次性检索不可能命中。"
+      "why": "导航边界探针：基表 = 文件 + git，但**索引**只装 .md。代码问题必须走文件面 grep，一次性检索不可能命中。",
+      "refreshed_at": "f4729577fa0ad44a37f992053662072d6a6538ac"
     },
     {
       "id": "nav-071-b02",
@@ -368,13 +733,27 @@
       "scope": "repo",
       "difficulty": "medium",
       "query": "harness 的 bootstrap 置信区间函数定义在哪？（函数名 + 文件 + 行）",
-      "action": {"tool": "grep", "pattern": "def bootstrap_ci", "literal": true, "globs": ["**/*.py"]},
-      "expected": {"file": "memory_agent/eval/harness/stats.py", "anchor_line": 24, "span": "def bootstrap_ci"},
+      "action": {
+        "tool": "grep",
+        "pattern": "def bootstrap_ci",
+        "literal": true,
+        "globs": [
+          "**/*.py"
+        ]
+      },
+      "expected": {
+        "file": "memory_agent/eval/harness/stats.py",
+        "anchor_line": 24,
+        "span": "def bootstrap_ci",
+        "span_line": 24,
+        "span_sha1": "06e5fe151ffc"
+      },
       "in_corpus": false,
       "baseline_entry_id": null,
       "baseline_note": "只读语料只索引 .md，代码文件系统性缺席（结构性不可达）",
       "min_tool_calls": 1,
-      "why": "同上，且是「实现细节」类问题——文档只讲口径，函数签名只在代码里。"
+      "why": "同上，且是「实现细节」类问题——文档只讲口径，函数签名只在代码里。",
+      "refreshed_at": "f4729577fa0ad44a37f992053662072d6a6538ac"
     },
     {
       "id": "nav-071-b03",
@@ -382,13 +761,38 @@
       "scope": "repo",
       "difficulty": "medium",
       "query": "把 trace.py 里停止触发词常量那一段（20–30 行）读回来。",
-      "action": {"tool": "read", "file": "memory_agent/trace.py", "line_range": [20, 30]},
-      "expected": {"file": "memory_agent/trace.py", "line_range": [20, 30], "span": "STOP_FALLBACK"},
+      "action": {
+        "tool": "read",
+        "file": "memory_agent/trace.py",
+        "line_range": [
+          20,
+          30
+        ]
+      },
+      "expected": {
+        "file": "memory_agent/trace.py",
+        "line_range": [
+          20,
+          30
+        ],
+        "span": "STOP_FALLBACK",
+        "span_line": 25,
+        "anchor_line": 25,
+        "span_sha1": "f7dc3611c91d"
+      },
       "in_corpus": false,
       "baseline_entry_id": null,
       "baseline_note": "只读语料只索引 .md，代码文件系统性缺席（结构性不可达）",
       "min_tool_calls": 1,
-      "why": "行窗读取 + 代码文件：一次性检索在这里连「条目」都不存在。"
+      "why": "行窗读取 + 代码文件：一次性检索在这里连「条目」都不存在。",
+      "refreshed_at": "f4729577fa0ad44a37f992053662072d6a6538ac"
     }
-  ]
+  ],
+  "refresh": {
+    "tolerance": 10,
+    "recorded_at": "2026-10-07",
+    "recorded_at_commit": "f4729577fa0ad44a37f992053662072d6a6538ac",
+    "semantics": "① 文件存在 ② 锚短语仍在 ③ 位置在记录值 ±tolerance（文档位移 ⇒ --refresh 可修；锚短语消失 ⇒ 真失效，必须改探针）"
+  },
+  "tolerance": 10
 }

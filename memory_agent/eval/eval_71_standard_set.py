@@ -41,6 +41,21 @@ KS = (1, 5, 10, 20, 50, 100)
 PROD_POOL = 14
 KMAX = 100
 ENTRY_PREFIX = "scifact:"
+# eval 专用依赖清单（**不进** deploy-requirements：ADR-0028 D3 的运行时权威依赖不污染）
+EVAL_REQUIREMENTS = "memory_agent/eval/requirements-eval.txt"
+
+
+def _require_pandas():
+    """读 HF parquet 的**惰性**依赖：缺了给可操作报错（不静默、不污染产品依赖）。"""
+    try:
+        import pandas as pd
+    except ImportError as exc:  # pragma: no cover - 只在缺依赖时走到
+        raise SystemExit(
+            "此脚本需要 pandas + pyarrow（读 HF parquet，仅 --run 路径需要）：\n"
+            f"  \"{sys.executable}\" -m pip install -r {EVAL_REQUIREMENTS}\n"
+            "注：eval 依赖刻意**不进** `deploy-requirements.txt`（ADR-0028 D3）。"
+        ) from exc
+    return pd
 
 SETS = {
     "scifact": {
@@ -167,8 +182,8 @@ def _parquet_url(dataset: str, config: str, split: str) -> str:
 
 
 def _cached_parquet(dataset: str, config: str, split: str, data_dir: str):
-    """下载并缓存一份 parquet（离线可复用）。"""
-    import pandas as pd
+    """下载并缓存一份 parquet（离线可复用）。pandas/pyarrow 惰性 import。"""
+    pd = _require_pandas()
 
     os.makedirs(data_dir, exist_ok=True)
     cache = os.path.join(data_dir, f"{dataset.replace('/', '_')}__{config}__{split}.parquet")

@@ -158,89 +158,250 @@ def _scope_files(probe: dict, roots: dict) -> list[tuple[str, str]]:
     return files
 
 
-# ------------------------------------------------------------------ verify
-
-def _verify_grep(probe: dict, roots: dict) -> dict:
-    pattern = probe["action"]["pattern"]
-    globs = probe["action"].get("globs") or ["**/*"]
-    expected = probe["expected"]
-    hits: list[tuple[str, int]] = []
-    for full, rel in _scope_files(probe, roots):
-        if not any(glob_match(rel, g) for g in globs):
-            continue
-        for lineno, line in enumerate(read_lines(full), start=1):
-            if pattern in line:
-                hits.append((rel, lineno))
-    in_expected = any(rel == expected["file"] for rel, _lineno in hits)
-    ok = in_expected
-    notes = []
-    if expected.get("unique") and len(hits) != 1:
-        ok = False
-        notes.append(f"期望唯一命中，实测 {len(hits)} 处：{hits[:5]}")
-    return {"ok": ok, "occurrences": [{"file": rel, "line": lineno} for rel, lineno in hits][:8],
-            "occurrence_count": len(hits), "notes": notes}
+# -------------------------------------------------- 观测 / 三段判定 / 刷新
+#
+# 口径（#71 收尾，Lead 复核后修订）：
+#   ① 目标文件存在
+#   ② **锚短语仍在**（语义；锚 = `expected.span` / `expected.heading` / 历史提交）
+#   ③ 位置在**记录值 ± tolerance**（默认 10）内；历史面无位置轴
+# 文档位移（①②通过、③超差）→ `--refresh` 可修；**② 失败 = 真失效**（锚短语被删改）→ 必须改探针，
+# `--refresh` 不会自动改语义，只把它列进 `unrefreshable`。
+# `unique`（grep）降级为**告警**：仓库合法地多出一处同名 token 不该判负（记录在 flags）。
 
 
-def _verify_read(probe: dict, roots: dict) -> dict:
-    expected = probe["expected"]
-    lo, hi = expected["line_range"]
+def _sha1(text: str) -> str:
+    return hashlib.sha1(text.strip().encode("utf-8")).hexdigest()[:12]
+
+
+def _roots(repo_root: str) -> dict:
+    import memory_agent.settings as settings
+
+    return {"corpus": repo_root, "repo": repo_root, "kb": os.path.abspath(settings.KB_DIR)}
+
+
+def _probe_path(probe: dict, roots: dict) -> str:
     root = roots[probe.get("scope", "corpus")]
-    path = os.path.join(root, *expected["file"].split("/"))
-    if not os.path.isfile(path):
-        return {"ok": False, "notes": [f"文件不存在：{expected['file']}"]}
-    lines = read_lines(path)
-    window = "\n".join(lines[lo - 1:hi])
-    ok = expected["span"] in window
-    notes = []
-    if not ok:
-        actual = [i for i, line in enumerate(lines, start=1) if expected["span"] in line]
-        notes.append(f"行窗 [{lo},{hi}] 不含 span；该 span 实际在行 {actual[:5]}")
-    return {"ok": ok, "notes": notes}
+    return os.path.join(root, *probe["expected"]["file"].split("/"))
 
 
-def _verify_outline(probe: dict, roots: dict) -> dict:
+def observe(probe: dict, roots: dict) -> dict:
+    """一次观测（不做判定）：文件存在性 / 锚短语位置 / 标题 / 历史提交。"""
+    face = probe["face"]
     expected = probe["expected"]
-    root = roots[probe.get("scope", "corpus")]
-    path = os.path.join(root, *expected["file"].split("/"))
-    if not os.path.isfile(path):
-        return {"ok": False, "notes": [f"文件不存在：{expected['file']}"]}
-    with open(path, "r", encoding="utf-8", errors="replace") as handle:
-        found = headings(handle.read())
-    matches = [(lvl, txt, lineno) for lvl, txt, lineno in found if txt == expected["heading"]]
-    ok = any(lvl == expected["level"] for lvl, _t, _l in matches)
-    notes = []
-    if not matches:
-        notes.append(f"标题不存在：{expected['heading']!r}")
-    elif not ok:
-        notes.append(f"标题存在但层级不符：{matches}")
-    elif matches[0][2] != expected.get("anchor_line"):
-        notes.append(f"行号漂移：期望 {expected.get('anchor_line')} 实际 {matches[0][2]}（不判负）")
-    return {"ok": bool(ok), "found_line": matches[0][2] if matches else None, "notes": notes}
-
-
-def _verify_history(probe: dict, roots: dict) -> dict:
     action = probe["action"]
-    root = roots["repo"]
-    if action["op"] == "log_added":
-        args = ["log", "--diff-filter=A", "--format=%H", "--", action["path"]]
-    elif action["op"] == "log_pickaxe":
-        args = ["log", "-S", action["pattern"], "--format=%H", "--", action["path"]]
-    else:
-        return {"ok": False, "notes": [f"未知历史动作：{action['op']}"]}
-    shas = _git(root, args)
-    ok = probe["expected"]["commit"] in shas
-    notes = [] if ok else [f"期望提交不在结果里；实测 {shas[:4]}"]
-    return {"ok": ok, "commits": shas[:4], "notes": notes}
+    obs = {"exists": False, "file": expected["file"], "occurrences": [], "scope_occurrences": [],
+           "heading": None, "level": None, "heading_line": None, "heading_text": None,
+           "commits": None, "error": None}
+
+    if face == "history":
+        obs["exists"] = os.path.isfile(os.path.join(roots["repo"], *action["path"].split("/")))
+        if action["op"] == "log_added":
+            args = ["log", "--diff-filter=A", "--format=%H", "--", action["path"]]
+        elif action["op"] == "log_pickaxe":
+            args = ["log", "-S", action["pattern"], "--format=%H", "--", action["path"]]
+        else:
+            obs["error"] = f"未知历史动作：{action['op']}"
+            return obs
+        obs["commits"] = _git(roots["repo"], args)
+        return obs
+
+    path = _probe_path(probe, roots)
+    obs["exists"] = os.path.isfile(path)
+    if not obs["exists"]:
+        return obs
+    lines = read_lines(path)
+    if face == "outline":
+        found = headings("\n".join(lines))
+        matches = [(lvl, txt, ln) for lvl, txt, ln in found if txt == expected["heading"]]
+        obs["heading_matches"] = matches
+        if matches:
+            obs["level"], obs["heading"], obs["heading_line"] = matches[0][0], matches[0][1], matches[0][2]
+            obs["heading_text"] = lines[matches[0][2] - 1]
+        return obs
+
+    span = expected["span"]
+    obs["occurrences"] = [{"file": expected["file"], "line": i, "text": line}
+                          for i, line in enumerate(lines, start=1) if span in line]
+    if face == "grep":  # scope 级命中：只供唯一性告警
+        for full, rel in _scope_files(probe, roots):
+            if not any(glob_match(rel, g) for g in (action.get("globs") or ["**/*"])):
+                continue
+            for i, line in enumerate(read_lines(full), start=1):
+                if span in line:
+                    obs["scope_occurrences"].append({"file": rel, "line": i})
+    return obs
 
 
-def verify(probes_doc: dict, *, repo_root: str = REPO_ROOT) -> dict:
-    import memory_agent.settings as settings  # 需要 KD_DIR；无模型
+def _pick(occurrences: list[dict], recorded: int | None) -> int | None:
+    """多命中时取**离记录行最近**的那个（判定与刷新用同一规则）。"""
+    lines = [o["line"] for o in occurrences]
+    if not lines:
+        return None
+    if not recorded:
+        return lines[0]
+    return min(lines, key=lambda x: (abs(x - recorded), x))
 
-    roots = {
-        "corpus": repo_root,
-        "repo": repo_root,
-        "kb": os.path.abspath(settings.KB_DIR),
+
+def judge(probe: dict, obs: dict, tolerance: int) -> dict:
+    """三段判定：① 文件存在 ② 锚仍在（语义）③ 位置在记录值 ±tolerance。"""
+    face = probe["face"]
+    expected = probe["expected"]
+    notes: list[str] = []
+    flags: list[str] = []
+    recorded = expected.get("span_line") or expected.get("anchor_line")
+
+    if obs.get("error"):
+        return {"ok": False, "checks": {"exists": obs["exists"], "anchor": False, "position": False},
+                "actual_line": None, "notes": [obs["error"]], "flags": []}
+
+    exists_ok = bool(obs["exists"])
+    actual = None
+    if face == "history":
+        anchor_ok = expected["commit"] in (obs.get("commits") or [])
+        position_ok = True
+        if not anchor_ok:
+            notes.append(f"期望提交不在 git 结果里；实测 {(obs.get('commits') or [])[:4]}")
+    elif face == "outline":
+        anchor_ok = (obs.get("heading") == expected["heading"]
+                     and obs.get("level") == expected["level"])
+        actual = obs.get("heading_line")
+        position_ok = True
+        if obs.get("heading") is None:
+            notes.append(f"标题不存在：{expected['heading']!r}（期望 level={expected['level']}）")
+        elif not anchor_ok:
+            notes.append(f"标题层级不符：实测 {obs.get('heading_matches')}")
+        elif recorded and actual is not None:
+            position_ok = abs(actual - recorded) <= tolerance
+            if not position_ok:
+                notes.append(f"标题位移 {recorded} → {actual}（超 ±{tolerance}）：请 --refresh")
+        if anchor_ok and expected.get("span_sha1") and obs.get("heading_text") \
+                and _sha1(obs["heading_text"]) != expected["span_sha1"]:
+            flags.append("content_changed")
+    else:  # grep / read
+        anchor_ok = bool(obs["occurrences"])
+        if not anchor_ok:
+            notes.append(f"锚短语已不在目标文件：{expected['span']!r}"
+                         "（**真失效**：改探针 / 换锚；--refresh 不会自动救）")
+        actual = _pick(obs["occurrences"], recorded)
+        position_ok = True
+        if anchor_ok and recorded and actual is not None:
+            position_ok = abs(actual - recorded) <= tolerance
+            if not position_ok:
+                notes.append(f"锚短语位移 {recorded} → {actual}（超 ±{tolerance}）：请 --refresh")
+        if anchor_ok and expected.get("span_sha1") and actual is not None:
+            occ = next((o for o in obs["occurrences"] if o["line"] == actual), None)
+            if occ and _sha1(occ["text"]) != expected["span_sha1"]:
+                flags.append("content_changed")
+        if face == "grep" and expected.get("unique"):
+            total = len(obs.get("scope_occurrences") or obs["occurrences"])
+            if total != 1:
+                flags.append(f"unique_mismatch(scope={total})")
+        if face == "read" and anchor_ok and actual is not None:
+            lo, hi = expected["line_range"]
+            if not (lo <= actual <= hi):
+                flags.append("window_shifted")
+                if not recorded:  # 未刷新的 read 探针：行窗就是判据（旧口径，硬）
+                    position_ok = False
+                    notes.append(f"行窗 [{lo},{hi}] 不含锚短语（实际行 {actual}）：请 --refresh")
+
+    ok = exists_ok and anchor_ok and position_ok
+    if not exists_ok:
+        notes.insert(0, f"文件不存在：{expected['file']}")
+    elif face != "history" and not recorded:
+        flags.append("no_recorded_line")
+    return {"ok": ok,
+            "checks": {"exists": exists_ok, "anchor": bool(anchor_ok), "position": bool(position_ok)},
+            "actual_line": actual, "notes": notes, "flags": flags}
+
+
+def refresh(probes_doc: dict, *, repo_root: str = REPO_ROOT, tolerance: int | None = None,
+            out_path: str | None = None, today: str | None = None) -> dict:
+    """重推锚行 / 行窗并记录**内容指纹**（`span_sha1`）与刷新提交；写回探针 JSON。
+
+    - 只改**位置元数据**（`span_line` / `anchor_line` / read 的 `line_range` / `span_sha1` /
+      `refreshed_at`），**不动 query / 期望语义**。
+    - 锚短语**不在文件里**（真失效）→ 进 `unrefreshable`，需人工改探针（不自动换锚）。
+    """
+    from datetime import datetime, timezone
+
+    roots = _roots(repo_root)
+    head = (_git(repo_root, ["rev-parse", "HEAD"]) or [None])[0]
+    if today is None:
+        today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+
+    updated, unrefreshable, skipped = [], [], []
+    for probe in probes_doc["probes"]:
+        face = probe["face"]
+        expected = probe["expected"]
+        if face == "history":
+            skipped.append(probe["id"])
+            continue
+        obs = observe(probe, roots)
+        if not obs["exists"]:
+            unrefreshable.append({"id": probe["id"], "reason": f"文件不存在：{expected['file']}"})
+            continue
+        if face == "outline":
+            if obs.get("heading") is None or obs.get("level") != expected["level"]:
+                unrefreshable.append({"id": probe["id"],
+                                      "reason": f"标题不在 / 层级不符：{expected['heading']!r}"})
+                continue
+            before = expected.get("anchor_line")
+            expected["anchor_line"] = obs["heading_line"]
+            expected["span_line"] = obs["heading_line"]
+            expected["span_sha1"] = _sha1(obs["heading_text"])
+            probe["refreshed_at"] = head
+            updated.append({"id": probe["id"], "file": expected["file"],
+                            "line": f"{before} -> {obs['heading_line']}"})
+            continue
+        if not obs["occurrences"]:
+            unrefreshable.append({"id": probe["id"],
+                                  "reason": f"锚短语已不在文件：{expected['span']!r}"})
+            continue
+        before = expected.get("span_line") or expected.get("anchor_line")
+        actual = _pick(obs["occurrences"], before)
+        line_text = next(o["text"] for o in obs["occurrences"] if o["line"] == actual)
+        expected["span_line"] = actual
+        expected["anchor_line"] = actual
+        expected["span_sha1"] = _sha1(line_text)
+        if face == "read" and before:
+            lo, hi = expected["line_range"]
+            delta = actual - before
+            expected["line_range"] = [lo + delta, hi + delta]
+        elif face == "read" and expected.get("span_offset") is not None:
+            # 首次刷新（没有记录行）：用 span_offset / line_width 把行窗**刚性平移**到锚上
+            lo, hi = expected["line_range"]
+            off = expected["span_offset"]
+            width = expected.get("line_width", hi - lo)
+            expected["line_range"] = [actual - off, actual - off + width]
+        probe["refreshed_at"] = head
+        updated.append({"id": probe["id"], "file": expected["file"],
+                        "line": f"{before} -> {actual}",
+                        "line_range": expected.get("line_range")})
+
+    probes_doc["refresh"] = {
+        "tolerance": tolerance if tolerance is not None else probes_doc.get("tolerance", 10),
+        "recorded_at": today,
+        "recorded_at_commit": head,
+        "semantics": "① 文件存在 ② 锚短语仍在 ③ 位置在记录值 ±tolerance（文档位移 ⇒ --refresh 可修；"
+                     "锚短语消失 ⇒ 真失效，必须改探针）",
     }
+    if tolerance is not None:
+        probes_doc["tolerance"] = tolerance
+    probes_doc["tolerance"] = probes_doc["refresh"]["tolerance"]
+    target = out_path or PROBES_JSON
+    with open(target, "w", encoding="utf-8") as handle:
+        json.dump(probes_doc, handle, ensure_ascii=False, indent=2)
+        handle.write("\n")
+    return {"mode": "refresh", "out": target, "tolerance": probes_doc["refresh"]["tolerance"],
+            "head": head, "updated": updated, "unrefreshable": unrefreshable,
+            "skipped_immutable": skipped}
+
+
+def verify(probes_doc: dict, *, repo_root: str = REPO_ROOT,
+           tolerance: int | None = None) -> dict:
+    roots = _roots(repo_root)
+    tol = tolerance if tolerance is not None else int(
+        probes_doc.get("refresh", {}).get("tolerance", probes_doc.get("tolerance", 10)))
     label = probes_doc.get("readonly_label", "agent-knowledge-base")
     from memory_agent.corpus.loader import _iter_markdown
 
@@ -255,12 +416,11 @@ def verify(probes_doc: dict, *, repo_root: str = REPO_ROOT) -> dict:
         if meta.get("id"):
             kb_ids[rel] = str(meta["id"])
 
-    runner = {"grep": _verify_grep, "read": _verify_read,
-              "outline": _verify_outline, "history": _verify_history}
     rows = []
     for probe in probes_doc["probes"]:
         face = probe["face"]
-        result = runner[face](probe, roots)
+        obs = observe(probe, roots)
+        result = judge(probe, obs, tol)
         # baseline_entry_id 一致性（探针自身自洽性）
         entry = probe.get("baseline_entry_id")
         entry_actual = None
@@ -274,12 +434,15 @@ def verify(probes_doc: dict, *, repo_root: str = REPO_ROOT) -> dict:
         result.update({
             "id": probe["id"], "face": face, "scope": probe.get("scope", "corpus"),
             "difficulty": probe["difficulty"],
+            "recorded_line": probe["expected"].get("span_line")
+            or probe["expected"].get("anchor_line"),
             "baseline_entry_id": entry,
             "baseline_entry_actual": entry_actual,
             "baseline_entry_ok": entry_ok,
         })
         if entry and not entry_ok:
             result["ok"] = False
+            result["checks"]["anchor"] = False
             result["notes"] = list(result.get("notes") or []) + [
                 f"baseline_entry_id 不自洽：期望 {entry} 实测 {entry_actual}"]
         rows.append(result)
@@ -289,16 +452,20 @@ def verify(probes_doc: dict, *, repo_root: str = REPO_ROOT) -> dict:
         bucket = by_face.setdefault(row["face"], {"n": 0, "ok": 0})
         bucket["n"] += 1
         bucket["ok"] += int(row["ok"])
+    flagged = [{"id": r["id"], "flags": r["flags"]} for r in rows if r.get("flags")]
     return {
         "mode": "verify",
         "n": len(rows),
         "ok": sum(1 for r in rows if r["ok"]),
+        "tolerance": tol,
         "failed": [r for r in rows if not r["ok"]],
+        "flagged": flagged,
         "by_face": by_face,
         "by_scope": {scope: sum(1 for r in rows if r["scope"] == scope)
                      for scope in ("corpus", "kb", "repo")},
         "entry_addressable": sum(1 for r in rows if r["baseline_entry_id"]),
         "structurally_unreachable": sum(1 for r in rows if not r["baseline_entry_id"]),
+        "refresh": probes_doc.get("refresh"),
         "rows": rows,
     }
 
@@ -512,8 +679,13 @@ def baseline(probes_doc: dict, *, prod_index: str, index_dir: str,
 def main(argv=None) -> int:
     parser = argparse.ArgumentParser(description="nav probes #71 verifier + one-shot baseline")
     parser.add_argument("--verify", action="store_true", help="只读校验探针（无模型）")
+    parser.add_argument("--refresh", action="store_true",
+                        help="重推锚行 / 行窗 + 记录内容指纹（写回探针 JSON，不动 query）")
     parser.add_argument("--baseline", action="store_true", help="跑一次性检索基线（需 BGE-M3）")
     parser.add_argument("--probes", default=PROBES_JSON)
+    parser.add_argument("--probes-out", default=None, help="--refresh 的写回目标（默认原地）")
+    parser.add_argument("--tolerance", type=int, default=None,
+                        help="③ 位置判定的 ±N（默认取探针 meta.tolerance / 10）")
     parser.add_argument("--out", default=None)
     parser.add_argument("--k", type=int, default=PROD_POOL)
     parser.add_argument("--limit", type=int, default=None)
@@ -522,13 +694,13 @@ def main(argv=None) -> int:
     parser.add_argument("--index-dir", default=None,
                         help="临时索引根（默认 %%TEMP%%/eval71-nav/index）")
     args = parser.parse_args(argv)
-    if not args.verify and not args.baseline:
-        parser.error("至少要给 --verify 或 --baseline")
+    if not args.verify and not args.baseline and not args.refresh:
+        parser.error("至少要给 --verify / --refresh / --baseline")
 
     probes_doc = load_probes(args.probes)
     rc = 0
-    # 先 baseline 后 verify：`verify` 会 import `memory_agent.settings`（冻结 INDEX_DIR），
-    # 而 baseline 必须在那之前 pin 临时索引根。两者同时给时顺序不能反。
+    # 顺序关键：`verify` / `refresh` 会 import `memory_agent.settings`（冻结 INDEX_DIR），
+    # 而 baseline 必须在那之前 pin 临时索引根。baseline 放最前，三者同给时顺序不会错。
     if args.baseline:
         prod_index = args.prod_index or os.path.join(
             main_worktree(), "memory_agent", "vector_db")
@@ -545,11 +717,26 @@ def main(argv=None) -> int:
               f"refresh_s={result['index']['refresh_s']} "
               f"entries {result['index']['entries_before']}->{result['index']['entries_after']}")
 
+    if args.refresh:
+        refreshed = refresh(probes_doc, tolerance=args.tolerance,
+                            out_path=args.probes_out)
+        print(f"[refresh] 更新 {len(refreshed['updated'])} 条；"
+              f"不动 {len(refreshed['skipped_immutable'])} 条（history 不可变）；"
+              f"不可自动刷新 {len(refreshed['unrefreshable'])} 条")
+        for item in refreshed["unrefreshable"]:
+            print(f"  UNREFRESHABLE {item['id']}: {item['reason']}")
+        print(f"  tolerance=±{refreshed['tolerance']} head={refreshed['head']}")
+        print(f"  [out] {refreshed['out']}")
+        probes_doc = load_probes(args.probes_out or args.probes)
+
     if args.verify:
-        result = verify(probes_doc)
-        print(f"[verify] {result['ok']}/{result['n']} 条通过；by_face={result['by_face']}")
+        result = verify(probes_doc, tolerance=args.tolerance)
+        print(f"[verify] {result['ok']}/{result['n']} 条通过（±{result['tolerance']}）；"
+              f"by_face={result['by_face']}")
         for row in result["failed"]:
-            print(f"  FAIL {row['id']} ({row['face']}): {row['notes']}")
+            print(f"  FAIL {row['id']} ({row['face']}): checks={row['checks']} {row['notes']}")
+        for row in result["flagged"]:
+            print(f"  flag {row['id']}: {row['flags']}")
         if args.out:
             with open(args.out, "w", encoding="utf-8") as handle:
                 json.dump(result, handle, ensure_ascii=False, indent=1)

@@ -46,14 +46,24 @@
 
 ## 4. 判命中口径（由 `memory_agent/eval/eval_71_nav.py --verify` 执行）
 
-**A. 导航动作层（做得到吗）**——verify 模式用 Python 复刻参考动作执行：
+**A. 导航动作层（做得到吗）——三段判定**（2026-10-07 收尾修订；Lead 复核后由"行号写死"改为三段）：
 
-| face | 参考动作 | 命中条件 |
+| 段 | 判据 | 说明 |
 |---|---|---|
-| `grep` | 在 scope 内逐行**字面**匹配 `pattern` | 期望 `file` 出现该 `span`；`unique=true` 时要求全 scope 唯一（否则报 `probe_stale`） |
-| `read` | 读 `file` 的 `[lo,hi]` 行 | 该行窗文本含期望 `span`（**行号错位即不算命中**——行窗本身就是被测能力） |
-| `outline` | 解析该文件的标题树（**跳过 fenced code block**） | 存在期望 `heading`（含 `level` 与逐字文本；`anchor_line` 仅警告不判负） |
-| `history` | `git log --diff-filter=A -- <path>` 或 `git log -S <pattern> -- <path>` | 返回的提交集合含期望 `commit` |
+| ① 存在 | 目标文件存在（`corpus`/`kb`/`repo` 作用域内） | 文件被删/改名 ⇒ 失败 |
+| ② **语义锚** | **锚短语仍在**：`grep`/`read` = `span` 出现在目标文件；`outline` = 标题逐字存在且 `level` 相符；`history` = git 查询返回期望 `commit` | **这才是被测语义**；② 失败 = **真失效**（锚被删改），必须改探针 |
+| ③ 位置 | 锚的**实际行**与记录值（`span_line`）之差 ≤ **tolerance（默认 ±10）** | 文档位移在容差内 ⇒ 通过（并记 `window_shifted` 告警）；超差 ⇒ 提示 `--refresh` |
+
+- **`--refresh`**：重推 `span_line` / `anchor_line` / read 的 `line_range`，并记录**内容指纹**
+  （`span_sha1` = 锚所在行的 sha1 前 12 位）与 `refreshed_at`（当时 HEAD）、`tolerance`。
+  它**只改位置元数据，不动 query / 期望语义**；锚短语找不到的探针进 `unrefreshable`
+  （需人工换锚），**不会**被自动改写。
+- **`unique=true` 降级为告警**（`unique_mismatch(scope=N)`）：仓库合法地多出一处同名 token 不该判负；
+  每条仍记录 scope 内命中数供人工判断。
+- `content_changed`（行内容变但锚短语还在）也是**告警**，不是失败——它提示"这条锚的事实可能过期"。
+- 逐 face 的参考动作与作用于 §2 的 scope 定义一致：`grep` 字面匹配 + globs；`read` 读 `[lo,hi]`；
+  `outline` 解析标题树（**跳过 fenced code block**）；`history` 用 `git log --diff-filter=A` /
+  `git log -S`。
 
 **B. paired 基线层（一次性检索够不够）**——`--baseline` 模式：
 
@@ -70,7 +80,22 @@
 
 - 不测答案正确性、不测 LLM 在环、不建 in-domain 集（#65）。
 - 不测 rerank（保持生产默认关）；不测具名视图 / 退役过滤。
-- `read` / `outline` 的期望行号绑定在**当次工作树**；文档一改，verify 会报 stale——**这是设计**（探针要可失活）。
+- 位置元数据绑定在**刷新时的提交**（`refresh.recorded_at_commit`）；文档一改：位移 ⇒ `--refresh` 可修，
+  锚消失 ⇒ verify 报**真失效**（不是假通过，也不是必然失败）。
+
+### 4.1 2026-10-07 收尾重同步（记录）
+
+Lead 在合并后同步了地图（#69 CI + 计划段 + ADR 收窄）→ `--verify` 在 master 上 **26/28**。两处：
+
+| 探针 | 现象 | 处置 |
+|---|---|---|
+| `nav-071-r01`（read，ADR-0030 D7.5–D7.7 行窗） | 锚 `D7.7 regret` 从行 60 位移到 **66**（整段刚性下移） | **`--refresh`**：行窗 `[55,61]` → **`[61,67]`**（按 `span_offset=5` / `line_width=6` 刚性平移）；`span_line=66`、`span_sha1=2050152724fc` |
+| `nav-071-g07`（grep，原锚 `579 passed`） | 锚**消失**（单测数随提交变，#69 把它改成 `584 passed`）→ **真失效** | **就地换锚**（非位移）：改为冻结的实测数字 **`2.67s`**（#35 ONNX 重排器，AGENTS.md:88，全 scope 唯一）；query/why 同步改写，原因写进 `why` 字段 |
+
+`--refresh` 一次更新 **22** 条（10 grep + 7 read + 5 outline）、不动 6 条 history（不可变）、
+`unrefreshable = 0`；`--verify` 回到 **28/28**；再次 `--refresh` 的 diff 哈希不变（**幂等**）。
+刷新以 `json.dump(indent=2)` 规范化写回 → 嵌套单行对象被展开（**一次性重排**，此后刷新是最小 diff）。
+`nav-071-g07` 的 query 变了 ⇒ paired 基线**重跑一次**（见 `eval_71_results.md` §2.2）。
 
 ## 5. 谁来执行 / 怎么复跑
 
@@ -78,8 +103,11 @@
 $py = "D:\python_work\work2026-4\Agent-Knowledge-Base\venv\Scripts\python.exe"
 $env:PYTHONPATH = "D:\python_work\work2026-4\wk-71-eval"
 
-# A. 只读校验（无模型、秒级）：参考动作能不能命中全部 28 条
+# A. 只读校验（无模型、秒级）：三段判定能不能过全部 28 条
 & $py memory_agent/eval/eval_71_nav.py --verify
+
+# A'. 文档位移后用刷新修位置元数据（不改 query；锚消失的会进 UNREFRESHABLE）
+& $py memory_agent/eval/eval_71_nav.py --refresh          # 默认 ±10，可 --tolerance N
 
 # B. paired 基线（需 BGE-M3；索引在临时副本上跑，绝不写生产）
 & $py memory_agent/eval/eval_71_nav.py --baseline --out memory_agent/eval/eval_71_nav_baseline.json
