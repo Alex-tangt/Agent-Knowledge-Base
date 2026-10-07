@@ -217,3 +217,31 @@ Status: accepted（owner 拍板「换 BM25」）。
 
 Relates（D16）：#21、#40、`experiments/bge-m3-sparse-colbert/{compare_lexical.py,bm25_matrix.py,README.md §11}`、
 ADR-0022 D4（同批修订）、`docs/retrieval_optimization_report.md` §C2。
+
+## 修订（2026-10-07）：D3 的「只可收窄」= store 绑定租户与调用方 tenant **求交**（#39）
+
+**触发**：#34 隔离绕过套件量到 **3 条真实跨租户泄漏**（F1/F2/F3，证据
+`memory_agent/eval/isolation_bypass_34_results.md`）。**D3 的文本本来就对**（「tenant 只收窄不可放宽」），
+**是实现违背了文本**——`QdrantLocalStore` / `QdrantNetworkStore` 的检索路径把 `self.tenant`
+用来**覆盖**调用方（网关）注入的 `payload_filter`，而 keyword 通道**原样透传**、不带绑定租户。
+于是出现双向错：绑定 `org-a` 的 store 被 `org-b` 身份调用时**返回 org-a 全量**（放宽），
+而 keyword 通道又能**漏出 org-b**（绕过）。
+
+**修订口径（实现必须与此一致）**：
+
+- **D3.1 store 绑定租户与调用方 tenant 求交**：两边都声明时取**交集**；**交集为空 = 返回空**。
+  任一端都不许退化为「全量」，也不许「用自己那层覆盖对方」（**覆盖不是收窄**）。
+- **D3.2 强制过滤贯穿所有通道**：向量、keyword、hybrid、`search_dense` 全路径一致；
+  只要存在有效过滤条件，**每条通道都要过**，不许有哪条通道「后置过滤仅在有 filter 时才跑」。
+- **D3.3 身份未声明 tenant 时不是「全拒」而是「只到绑定租户」**：绑定 `org-a` 的 store +
+  无 `tenant` 身份 = 交集取绑定租户（`org-a`）；**只读得到 `org-a`**，读不到其它租户。
+- **D3.4 双重租户来源保留、但只做纵深防御**：`runtime._store_factory` 的进程租户绑定**不删**
+  （`#34` 套件把它当组合前提断言），改成「绑定 + 求交」两层；**不做启动期失败**
+  （删绑定会打挂套件断言，且与 ADR-0018 D2 的纵深防御取向相反）。
+- **越界即缺陷**：任何通道出现「放宽 / 覆盖 / 透传跳过」= 安全缺陷，按 #34 套件回归卡住
+  （`memory_agent/eval/isolation_bypass_34.py` 由 32/35 → **35/35**，3 条 xfail 移除）。
+
+Relates（D3 修订）：#39（修复票）、#34（发现 + 回归套件）、ADR-0018 D1/D2（网关唯一强制）、
+`tests/unit/test_memory_store_port.py` / `test_memory_networked_store.py`（旧确认了「覆盖」语义的
+断言已同步改为「求交 → 空」）。
+

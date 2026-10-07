@@ -253,6 +253,24 @@ def test_open_store_switches_to_network_when_url_given():
 
 # --------------------------------------- 端口契约（共享适配器，需自建 Qdrant 服务）
 
+def test_network_store_tenant_intersection_short_circuits_without_server():
+    """#39：绑定租户与调用方 tenant **不相交 → 直接返回空，不触达后端**（无服务也能验）。
+
+    相交分支需要真 Qdrant 服务（见下面的 `@requires_server` 用例）；这里钉住的是
+    「越界请求绝不回落到任一端全量」这条安全性质——对**不可达**的端点也必须成立
+    （短路口必须在 `_service` 调用之前）。同时覆盖 shared 平面的三条读通道。
+    """
+    store = QdrantNetworkStore(url="http://127.0.0.1:9", collection_name="pytest_39_unreachable",
+                               embeddings=StubEmbeddings(), tenant="org-a")
+    try:
+        assert store.search("doc", k=5, payload_filter={"tenant": "org-b"})["metadatas"][0] == []
+        assert store.search("doc", k=5, tenant="org-b")["metadatas"][0] == []
+        assert store.search_dense("doc", k=5, payload_filter={"tenant": "org-b"})["metadatas"][0] == []
+        assert store.search_hybrid("doc", k=5, payload_filter={"tenant": "org-b"})["metadatas"][0] == []
+    finally:
+        store.close()
+
+
 @requires_server
 def test_network_store_satisfies_port_contract():
     collection = f"pytest_33_{os.getpid()}"
@@ -271,8 +289,13 @@ def test_network_store_satisfies_port_contract():
 
         hits = store.search("doc", k=5)
         assert [m["entry_id"] for m in hits["metadatas"][0]] == ["a"]  # 绑定租户收窄
+        # 交集非空：绑定 org-a + 请求 org-a → 仍返回 org-a 条目（求交 ≠ 一律拒绝）。
+        same = store.search("doc", k=5, payload_filter={"tenant": "org-a"})
+        assert [m["entry_id"] for m in same["metadatas"][0]] == ["a"]
+        # 旧断言 = store 绑定**覆盖**调用方 tenant 的「覆盖语义」（#39 F2 缺陷口径：
+        # org-b 请求拿到 org-a 数据）。新断言 = **求交**（ADR-0019 D3.1）：不相交 → 返回空。
         widened = store.search("doc", k=5, payload_filter={"tenant": "org-b"})
-        assert [m["entry_id"] for m in widened["metadatas"][0]] == ["a"]
+        assert widened["metadatas"][0] == []
 
         store.delete([point_id_for("a")])
         assert store.count() == 1

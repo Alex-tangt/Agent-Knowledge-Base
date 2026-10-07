@@ -1,9 +1,12 @@
 """#34 隔离绕过对抗性单测（锁外部可观察行为，不加载模型）。
 
 与 `memory_agent/eval/isolation_bypass_34.py` 同口径的快速回归：覆盖 tenant / classification /
-residency 的负向断言 + proxy 伪造身份 + 工具面无裸 store 入口。三个**已知未被拦**的攻击面
-（store 绑定租户被 keyword 通道绕过 / store 绑定覆盖网关注入 tenant）用 `xfail(strict=True)`
-标出——它们是 #34 的阻塞项，修好后会 XPASS 提醒移除标记。
+residency 的负向断言 + proxy 伪造身份 + 工具面无裸 store 入口。
+
+三个**曾被判「未被拦」**的攻击面（store 绑定租户被 keyword 通道绕过 / store 绑定覆盖网关注入
+tenant）已由 **#39** 修掉：store 绑定租户与调用方（网关注入）tenant **求交**，不相交 = 返回空
+（ADR-0019 D3.1–D3.3）。原先的 `xfail(strict=True)` 标记已**移除**——这些用例现在是硬回归：
+每条都**同时**钉住「越界请求 → 空」与「授权内请求 → 仍正常返回」（不许把功能改没了）。
 """
 import asyncio
 import os
@@ -150,9 +153,42 @@ def test_memory_get_rejects_cross_tenant_id(tmp_path, monkeypatch):
 
 def test_bound_store_vector_channel_cannot_be_widened(tmp_path):
     index = _index(tmp_path, "bound", _fixture(tmp_path), tenant=BOUND_TENANT)
-    widened = index.store.search("note", k=10, payload_filter={"tenant": "org-b"})
-    ids = {m["entry_id"] for m in widened["metadatas"][0]}
+
+    # 交集非空：绑定 org-a + 请求 org-a → 正常返回 org-a 条目（求交不是「一律拒绝」）。
+    within = index.store.search("note", k=10, payload_filter={"tenant": BOUND_TENANT})
+    ids = {m["entry_id"] for m in within["metadatas"][0]}
     assert ids and all(i.startswith("topics/a-") for i in ids)
+
+    # 旧断言 = store 绑定**覆盖**调用方 tenant 的「覆盖语义」（#39 F2 缺陷口径：org-b 请求
+    # 拿到 org-a 数据）。新断言 = **求交**（ADR-0019 D3.1）：不相交 → 返回空，绝不给全量。
+    widened = index.store.search("note", k=10, payload_filter={"tenant": "org-b"})
+    assert widened["metadatas"][0] == []
+    assert widened["documents"][0] == []
+
+
+def test_bound_store_keyword_channel_honours_tenant_and_still_returns_own_tenant(tmp_path):
+    """#39 F1：keyword 通道继承 store 绑定租户；绑定租户自己的条目仍取得到。"""
+    index = _index(tmp_path, "bound", _fixture(tmp_path), tenant=BOUND_TENANT)
+
+    # marker 只在 org-b 条目里 → 绑定 org-a 的 store 必须一条都不给。
+    assert index.store.search_by_keywords([MARK_B]) == []
+
+    # 绑定租户自己的条目仍要能召回（收窄 ≠ 关掉通道）。
+    own = index.store.search_by_keywords([MARK_A])
+    assert own and all(m["metadata"]["tenant"] == BOUND_TENANT for m in own)
+    assert {m["metadata"]["entry_id"] for m in own} == {"topics/a-priv"}
+
+
+def test_bound_store_search_dense_channel_intersects_tenant(tmp_path):
+    """#39：`search_dense`（去重通道）也必须求交，不相交 → 空。"""
+    index = _index(tmp_path, "bound", _fixture(tmp_path), tenant=BOUND_TENANT)
+
+    widened = index.store.search_dense("note", k=10, payload_filter={"tenant": "org-b"})
+    assert widened["metadatas"][0] == []
+
+    within = index.store.search_dense("note", k=10, payload_filter={"tenant": BOUND_TENANT})
+    assert within["metadatas"][0]
+    assert all(m["tenant"] == BOUND_TENANT for m in within["metadatas"][0])
 
 
 def test_mcp_tool_surface_has_no_raw_store_parameters():
@@ -246,28 +282,45 @@ def test_residency_entitlement_isolates_search_and_get(tmp_path, monkeypatch):
             mcp_server.memory_get("topics/a-cloud")
 
 
-# --------------------------------------------------- #34 阻塞项（已知未被拦，xfail）
+# ------------------------------------------- #34 阻塞项 → #39 已修（xfail 标记已移除）
 
-@pytest.mark.xfail(strict=True, reason="#34 阻塞：keyword 通道不认 store 绑定租户，跨租户泄漏")
 def test_bound_store_keyword_channel_honours_tenant(tmp_path):
+    """#39 F1：绑定租户的 store，keyword 通道不许返回其它租户（原 xfail，现硬回归）。"""
     index = _index(tmp_path, "bound", _fixture(tmp_path), tenant=BOUND_TENANT)
-    matches = index.store.search_by_keywords([MARK_B])
-    assert matches == []
+    assert index.store.search_by_keywords([MARK_B]) == []
+    # 反向对照：绑定租户自己的条目仍能取到（不是把通道整个关掉）。
+    own = index.store.search_by_keywords([MARK_A])
+    assert {m["metadata"]["entry_id"] for m in own} == {"topics/a-priv"}
 
 
-@pytest.mark.xfail(strict=True, reason="#34 阻塞：store 绑定租户覆盖网关注入的 tenant，org-b 拿到 org-a")
 def test_bound_store_does_not_override_gateway_tenant(tmp_path, monkeypatch):
+    """#39 F2：org-b 身份 + 绑定 org-a 的 store → 求交为空，不返回 org-a 数据。"""
     index = _index(tmp_path, "bound", _fixture(tmp_path), tenant=BOUND_TENANT)
     monkeypatch.setattr(mcp_server, "get_index", lambda: index)
     org_b = make_identity(principal="svc-b", tenant="org-b", role="reader")
     hits = _search(org_b, MARK_A)
     assert _hit_ids(hits) == set()
+    assert not any(h["tenant"] == "org-a" for h in hits)
+
+    # 反向对照：同一绑定 store 上，身份 tenant == 绑定租户时仍正常返回（stub 嵌入下
+    # 向量通道会把授权内的 org-a 条目都给出来；这里只钉「非空 + 全 org-a + 命中 a-priv」）。
+    own = _search(_org_a(), MARK_A)
+    assert own and all(h["tenant"] == "org-a" for h in own)
+    assert "topics/a-priv" in _hit_ids(own)
 
 
-@pytest.mark.xfail(strict=True, reason="#34 阻塞：身份未声明 tenant 时 keyword 通道漏 org-b")
 def test_unbound_identity_on_bound_store_does_not_leak(tmp_path, monkeypatch):
+    """#39 F3：身份未声明 tenant 时不是「全拒」，而是**只到绑定租户**（ADR-0019 D3.3）。"""
     index = _index(tmp_path, "bound", _fixture(tmp_path), tenant=BOUND_TENANT)
     monkeypatch.setattr(mcp_server, "get_index", lambda: index)
     unbound = make_identity(principal="svc-unbound", tenant=None, role="reader")
+
+    # 攻击面：marker 只在 org-b 条目里 → 不许漏出。
     hits = _search(unbound, MARK_B)
+    assert not any(h["tenant"] == "org-b" for h in hits)
     assert all(h["tenant"] == "org-a" for h in hits)
+
+    # 口径钉死：绑定租户自己的条目**仍读得到**（交集取绑定租户，而非空）。
+    own = _search(unbound, MARK_A)
+    assert own and all(h["tenant"] == "org-a" for h in own)
+    assert "topics/a-priv" in _hit_ids(own)
