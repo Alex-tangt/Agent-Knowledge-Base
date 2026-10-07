@@ -172,8 +172,14 @@ def main(argv: list[str] | None = None) -> int:
             return 0
         raise
 
-    if not checks or checks[0].ok is False:
-        print(f"SKIP：{args.base_url} 上没有在跑的 opencode server（`opencode serve --port 4096 --pure`）")
+    # server 缺席 = SKIP（退出码 0）：判据是**可达性那一条**，不是 checks[0]。
+    # 回归依据：`checks[0]` 是离线检查（model 缺 `/` 快速失败，永远 ok），旧写法在
+    # server 缺席时走到这里仍判 exit 1 —— 与"缺席即 SKIP"的契约相反（#69 实测发现）。
+    unreachable = next((c for c in checks if c.name.startswith("GET /doc 可达") and c.ok is False), None)
+    if unreachable is not None:
+        print(f"SKIP：{args.base_url} 上没有在跑的 opencode server"
+              "（`opencode serve --port 4096 --pure`）", file=sys.stderr)
+        print(f"      探测失败原因：{unreachable.detail}", file=sys.stderr)
         return 0
 
     if args.json:
