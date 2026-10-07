@@ -1,5 +1,7 @@
 # Agent-Knowledge-Base
 
+[![CI](https://github.com/Alex-tangt/Agent-Knowledge-Base/actions/workflows/ci.yml/badge.svg)](https://github.com/Alex-tangt/Agent-Knowledge-Base/actions/workflows/ci.yml)
+
 **把 Markdown 知识库变成 agent 可安全读写、可检索的长期知识底座。**
 
 三模块单仓：
@@ -8,7 +10,7 @@
 - **`ragcore/`** —— 可复用核心：检索 / 重排 / 路由 / 会话记忆，零 FastAPI 依赖的真包。
 - **`legal_web/`** —— 一个可运行、有评测证据的 RAG 问答 demo：「21 部中国现行法律法规」问答（含 53 题评测集与结果，起点为大学 NLP 课程作业）。
 
-设计要点：**Markdown + Git 为真相源、向量索引可随时重建**；**28 篇 ADR** 记录架构决策，**426 项自动化测试**，实验留痕可复现。决策见 `docs/adr/`，领域语言见 `CONTEXT.md`。
+设计要点：**Markdown + Git 为真相源、向量索引可随时重建**；**31 篇 ADR** 记录架构决策，**582 项自动化测试**（CI：`.github/workflows/ci.yml`，Ubuntu + Windows 两腿跑单测 / 评测 harness / 接入冒烟），实验留痕可复现。决策见 `docs/adr/`，领域语言见 `CONTEXT.md`。
 
 ---
 
@@ -84,6 +86,7 @@
 - **决策可追溯**：`docs/adr/` 记录目标形状、基线重置、评估策略、开发纪律、产品升级、记忆架构、布局更名
 - **实验留痕**：`experiments/` 每实验一目录——延迟调查（rerank-latency、e2e-latency）、拒答根因、查询改写优化器，脚本+数据+结论同处
 - **锚点纪律**：`memory_agent/eval/baseline_A.md` 记录每次重构前后可复现的基准（单测 + 导入冒烟 + 启动冒烟）
+- **CI 回归闸门（#69）**：`.github/workflows/ci.yml` —— 每次 push / PR 在 Ubuntu 与 Windows 上跑单测 + 检索 agent 评测 harness（确定性桩场景，两次运行逐字节相同）+ 真 `opencode serve` 接入冒烟（无 server 时 SKIP）
 - **开发工作流**：`AGENTS.md` 内嵌流程路由（缺陷→根因 / 功能→决策闸门→单元提交 / 实验→留痕 / 收工→健康闸门），解决 AI 开发中"调优无底洞、不提交、文档脱离实际"的失控问题
 
 ## 快速开始

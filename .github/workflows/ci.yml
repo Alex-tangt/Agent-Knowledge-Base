@@ -1,0 +1,64 @@
+# CI（#69）—— 补 L0 闸门（docs/agent-capability-rubric.md §5）的「回归」半边。
+#
+# 范围刻意最小：只跑本仓**已有**的三件事——单测 / 评测 harness / 接入冒烟。
+# 不引入 lint、typecheck、发布流水线：AGENTS.md 明令 "Don't invent those commands"。
+name: CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  gate:
+    name: L0 闸门 (${{ matrix.os }} · py${{ matrix.python-version }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        # 两条腿都是真实目标：开发机 = Windows，部署与验收 = WSL/Linux（ADR-0028）。
+        os: [ubuntu-latest, windows-latest]
+        python-version: ["3.11"]
+    steps:
+      - name: 取源码
+        uses: actions/checkout@v4
+
+      - name: 装 Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      # 与 install.sh / install.ps1 的默认一致：CPU 版 torch，别在 CI 里拉 CUDA 轮子（#52 / ADR-0028 D1）。
+      - name: 装 CPU 版 torch
+        run: python -m pip install torch --index-url https://download.pytorch.org/whl/cpu
+
+      # memory_agent/deploy-requirements.txt = 运行时**权威依赖源**（ADR-0028 D3），
+      # 并显式固定 sentence-transformers==5.4.1 / transformers==4.57.6 这一已知可用组合（BGE-M3 兼容）。
+      # pytest 只为跑本 workflow。
+      - name: 装运行时依赖 + pytest
+        run: python -m pip install -r memory_agent/deploy-requirements.txt pytest
+
+      - name: 装两个本地包（editable）
+        run: python -m pip install -e ragcore -e memory_agent
+
+      # 本地基线：579 passed / 3 skipped / 3 xfailed（AGENTS.md「Tests」节）。
+      - name: 单元测试（回归闸门）
+        run: python -m pytest tests/unit -q
+
+      # 检索 agent 的评测基座（#62 / ADR-0030 D7）：10 条确定性桩场景，零网络零权重。
+      # 「两次运行逐字节相同」由 tests/unit/test_agent_loop_harness.py 断言（含子进程两次跑）。
+      - name: 评测 harness（agent evaluations）
+        run: python -m memory_agent.eval.harness --out harness_report.json
+
+      # 真 opencode server 的契约冒烟（#62）：宿主没有 server 时脚本自己 SKIP 并退出码 0
+      # ——「有 server 则核契约、无则跳过」，不把 CI 变成需要 opencode 的环境。
+      - name: 接入冒烟（无 opencode serve 则 SKIP，退出码 0）
+        run: python memory_agent/eval/opencode_server_smoke_62.py
