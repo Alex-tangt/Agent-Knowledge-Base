@@ -69,7 +69,7 @@ gitignored 只影响"不进提交"，不影响"必须留着"。
 | 资产 | 位置 | 复原方式 | 现状（2026-10-07 核对） |
 |---|---|---|---|
 | 数据集（ODC-BY） | `data/corpus.json` + `data/MultiHopRAG.json` | 从 HF 缓存**秒级**复制（无需联网）：`~/.cache/huggingface/hub/datasets--yixuantt--MultiHopRAG/snapshots/71ac0d0bd1f951d2d6b70311f7d2ae404e1ffa82/`（HF refs/main = 该 revision） | ✅ **已复原**：`corpus.json` 6,785,567 B sha256 `20B61B5AB84DE84A…` · `MultiHopRAG.json` 5,171,312 B sha256 `03CFB4926461F868…` |
-| 派生索引（store） | `store/<variant>/qdrant` | **只能重建**：`venv\Scripts\python.exe experiments/agentic-rag-census/build_index.py --variant base --force`（**≈47 min CPU**，609 篇长文；`--variant full` 另算） | 2026-10-07 重建中（历史：曾不存在，脚本与 `artifacts/` 仍在，**索引本体丢失过**） |
+| 派生索引（store） | `store/<variant>/qdrant` | **只能重建**：`venv\Scripts\python.exe experiments/agentic-rag-census/build_index.py --variant base --force`（**≈47 min CPU**，609 篇长文；`--variant full` 另算） | ✅ **已重建（2026-10-07 23:13→23:58）**：`entries=609`、`elapsed_s=2726.4`（≈45.4 min）、store 10.16 MB（`storage.sqlite` 10 MB + `manifest.json` 578 KB）、`data/articles/` 609 篇；开库校验 `count()=609` |
 | 逐题证据（不可变） | `artifacts/per_query_ids.json` 等 | 已提交，git 可复原 | ✅ 在库 |
 
 **为什么写这一节**：索引被清过一次（git 不跟踪 gitignored 路径 → 无法证明谁/何时删的，也没有清理日志），
