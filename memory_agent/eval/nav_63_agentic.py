@@ -64,6 +64,28 @@ SELF_EXCLUDE_EXTRA = (
 )
 
 
+def sanitize_proxy_env() -> dict:
+    """把 `no_proxy` / `NO_PROXY` 里的 IPv6 条目去掉（**进程内**，不落盘）。
+
+    宿主 `NO_PROXY` 含带方括号的 IPv6（如 `[::1]`）时 httpx 建 client 会抛
+    `InvalidURL: Invalid port: ':1]'`（#62 已记录，正解是改宿主 env）。本机 env 块里
+    **同一个键有重复项**，PowerShell 改不动 Python 看到的那一份，所以在进程内改。
+    只删 IPv6-ish 条目（含 `:` / `[` / `]`），保留 `localhost,127.0.0.1,...`。
+    """
+    changed: dict[str, str] = {}
+    for key in ("NO_PROXY", "no_proxy"):
+        raw = os.environ.get(key)
+        if not raw:
+            continue
+        parts = [item.strip() for item in raw.split(",") if item.strip()]
+        kept = [item for item in parts if not any(ch in item for ch in ":[]")]
+        if kept != parts:
+            cleaned = ",".join(kept)
+            os.environ[key] = cleaned
+            changed[key] = cleaned
+    return changed
+
+
 # ---------------------------------------------------------------- 隔离环境
 
 def setup_isolated_index(prod_index: str, index_dir: str) -> dict:
@@ -349,7 +371,8 @@ def run_boundary_face(registry, catalog: dict[str, dict], probes: list[dict],
 
 # ------------------------------------------------------------------ 配对统计
 
-def paired_stats(rows: list[dict], baseline_rows: list[dict]) -> dict:
+def paired_stats(rows: list[dict], baseline_rows: list[dict], *,
+                 caution: str | None = None) -> dict:
     from memory_agent.eval.harness.stats import bootstrap_ci, paired_diffs
 
     by_id = {row["id"]: row for row in baseline_rows}
@@ -381,8 +404,9 @@ def paired_stats(rows: list[dict], baseline_rows: list[dict]) -> dict:
         "delta": ci["mean"], "ci": {"lo": ci["lo"], "hi": ci["hi"]},
         "significant": ci["significant"],
         "by_face": per_face,
-        "caution": ("scripted decisions (reference actions) -> delta measures the face + tool "
-                    "execution upper bound, NOT LLM-agent significance (#71 same caveat)"),
+        "caution": caution or (
+            "scripted decisions (reference actions) -> delta measures the face + tool "
+            "execution upper bound, NOT LLM-agent significance (#71 same caveat)"),
     }
 
 
@@ -392,11 +416,15 @@ def run_agent(registry, probes: list[dict], *, provider, base_url, model,
               rounds: int, limit: int | None) -> dict:
     """真 LLM 臂：模型自己决定工具。**本机无 LLM 时不会跑到这里**。"""
     from memory_agent.agent_loop import AgentLoop, Budget
-    from memory_agent.agent_loop.llm import ProviderSpec, resolve_llm_client
+    from memory_agent.agent_loop.llm import (
+        ProviderSpec,
+        build_llm_client,
+        resolve_provider,
+    )
     from memory_agent.agent_loop.tools import SEARCH_TOOL
 
-    spec = ProviderSpec(provider=provider, base_url=base_url, model=model)
-    llm = resolve_llm_client(spec)          # 缺 key / server 缺席 → 这里抛，不伪造结果
+    spec = resolve_provider(ProviderSpec(provider=provider, base_url=base_url, model=model))
+    llm = build_llm_client(spec)      # 缺 key / server 缺席 → 这里抛，不伪造结果；key 不进 repr
     chosen = probes[:limit] if limit else probes
     rows = []
     for probe in chosen:
@@ -418,8 +446,9 @@ def run_agent(registry, probes: list[dict], *, provider, base_url, model,
             "elapsed_s": elapsed,
             "answer": trace.final.get("answer"),
         })
-    return {"rows": rows, "provider": provider, "base_url": base_url, "model": model,
-            "n": len(rows),
+    return {"rows": rows, "provider": spec.provider, "base_url": spec.base_url,
+            "model": spec.model, "temperature": spec.temperature, "seed": spec.seed,
+            "n": len(rows), "elapsed_total_s": round(sum(r["elapsed_s"] for r in rows), 1),
             "nav_tool_use_rate": round(
                 sum(1 for row in rows if row["used_nav_tool"]) / len(rows), 6) if rows else None}
 
@@ -457,6 +486,8 @@ def main(argv=None) -> int:
     parser.add_argument("--limit", type=int, default=None)
     parser.add_argument("--no-refresh", action="store_true",
                         help="skip the lazy refresh that brings the temp copy to corpus parity")
+    parser.add_argument("--sanitize-proxy-env", action="store_true",
+                        help="drop IPv6 entries from NO_PROXY in-process (host env defect)")
     parser.add_argument("--probes", default=PROBES_JSON)
     parser.add_argument("--baseline-json", default=BASELINE_JSON)
     parser.add_argument("--out", default=os.path.join(HERE, "nav_63_results.json"))
@@ -466,6 +497,7 @@ def main(argv=None) -> int:
     args = parser.parse_args(argv)
     if not args.run and not args.agent:
         args.run = True
+    proxy_env = sanitize_proxy_env() if args.sanitize_proxy_env else {}
 
     probes_doc = load_probes(args.probes)
     label = probes_doc.get("readonly_label")
@@ -511,6 +543,7 @@ def main(argv=None) -> int:
         },
         "index": {**isolation, "entries": len(catalog), "refresh": refresh},
         "env_pins": EVAL_ENV_PINS,
+        "proxy_env_sanitized": proxy_env,
     }
 
     if args.run:
@@ -543,7 +576,10 @@ def main(argv=None) -> int:
         agent["paired"] = paired_stats(
             [{"id": row["id"], "face": row["face"], "target": row["target"],
               "hit": row["hit"], "usable": True} for row in agent["rows"]],
-            baseline.get("rows") or [])
+            baseline.get("rows") or [],
+            caution=("real LLM in the loop (model picks the tools; temperature=0, seed=42). "
+                     "LLM is NOT byte-deterministic -> this is one observed run, not a "
+                     "reproducibility claim; n is small so the CI is wide."))
         agent["end_to_end_significance"] = {
             "verified": True,
             "reason": f"real LLM in the loop (provider={agent['provider']}); model picks tools",
