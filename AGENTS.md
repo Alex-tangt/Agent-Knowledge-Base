@@ -302,6 +302,18 @@ The `warmup()` function (called from `app.py` lifespan) eagerly triggers BGE-M3 
 - 一个单元 = 一个 commit（见"单元"），消息沿用本仓库的宽松前缀（`feat:` / `fix:` / `docs:` / `chore:`，中文描述）。
 - 密钥 / token 永不进提交。
 
+### 智能体团队并行（Agent Teams；2026-10-07）
+
+**分工**：**Lead（规划层）在主树**只做规划 / 决策 / ADR / 验收 / 合并 / 地图同步；**teammate（执行层）一票一 `worktree`，一人一个写域**。
+
+- **任务卡**：每张票开工前在共享任务板建一条任务，写明 **write scope**（workspace 相对路径前缀）、**blocked_by**（以 GitHub 原生阻塞边为准）、验收锚点；teammate 认领后开工，完工即 complete。
+- **写域不重叠**：同一时刻同一路径**只有一个写者**。跨域文件（`README.md`、`AGENTS.md`、`CONTEXT.md`、`docs/adr/**`、任何"地图同步"）**一律归 Lead**，teammate 不改——否则两个 teammate 会在同一文件上互相覆盖。
+- **决策边界**：teammate **不做架构决策**（与「角色分离」同一条）；遇到决策**停下来**提给 Lead/owner。
+- **验收**：Lead 必须在**冻结版本**上复跑全量闸门（`pytest tests/unit -q` + 冒烟 + 地图一致 + `git status` 干净）并 review diff；**teammate 的自述不能替代 Lead 的复跑**。
+- **并行上限**：先按「**两条线各一**」起（线① / 线②），同一模块不拆给多人；加人前先确认写域不相交。
+- **共享资源**：venv 用**主树绝对路径**；daemon 单实例（同机多实例用 `MEMORY_MCP_PORT` 隔离）；MCP 注册指向主树。
+- **交接**：交接书放临时目录、**引用而非重复**、**redact 密钥**；**先给 owner 审核，再派**。
+
 ### 安全
 - 密钥 / token **永不落盘或提交**；凭据走**进程环境**；错误信息不回显凭证。
 
@@ -320,6 +332,8 @@ The `warmup()` function (called from `app.py` lifespan) eagerly triggers BGE-M3 
   **形态（2026-10-06 owner 定）：双产品 monorepo —— 知识库（`memory_agent`）与检索 agent 各自可独立部署，交集 = 单向接缝**（`ADR-0031` **proposed**）；**首票 P1 = #68**（建 `retrieval_agent` 包 + 迁移 `agent_loop`/`trace`/`harness` + 单向依赖守卫 + `interop/` 骨架；**逻辑分离**，不物理拆仓）。
   **两条线（2026-10-07 owner 定，简历按两个项目写）**：**线①知识库（后端定位）** = 已有资产（索引一致性 / 单 daemon 拓扑 / 治理 / 幂等部署）+ **#69 CI**（补 L0 的回归半边）+ **#70 并发数字** + **#39 真实跨租户泄漏**（可提前）；**线② agentic search** = 代码控循环 / `trace` 契约 / harness（已有）+ **A（#63）导航工具集** + **标准数据集评测**（MultiHop-RAG 已有基建 + 一个标准 RAG 集；**只作机制证据，不声称本库增益**，沿 ADR-0026 D5/D6）+ 20–30 条导航探针（grep/read/history，标准集不覆盖）。
   **C（#67 版本/冲突）后延、E（#65）随之重划**：2026-10-07 量测 —— **全索引 260 条中退役条目 = 0**（可写 KB 40 条无退役；只读语料**不可能**退役——工具拒绝），按「实例数为 0 只写触发条件」的规矩**不投资**；触发 = 出现**首条**真实退役条目**且**量测到它进入 top-k 影响答案（记录见 `CONTEXT.md`「视图」词条）。`ADR-0030` 路线是否由 `H→A→B→C` 收窄为 `H→A→B`——**待 owner 确认后 amend**。
+  **前沿票（2026-10-07 开）**：**#69 CI**（先做，最便宜，补 L0 回归半边）· **#70 并发数字**（线①）· **#71 线②评测基座**（MultiHop-RAG 适配 + 标准 RAG 集 + 20–30 条导航探针）→ **#63 A 导航工具**（**blocked_by #71**，原生边）· **#64 B** 后续 · **#68 P1 逻辑分离**（须产出两份门面 README）· **#39 可提前**（修真实泄漏，须 owner 明确开工）。
+  **执行方式（owner 2026-10-07）**：下一批用 **Agent Teams 并行**——规矩见「开发纪律 / 智能体团队并行」（Lead 主树规划验收 + teammate 一票一 worktree，跨域文件归 Lead）。
 - **新功能线 = 文档解析与收录**（`ADR-0027` accepted；票 **#50 ✅ → #51 ✅**）：✅ **#50 已合**（`memory_agent/parse/` 端口 + Docling/pypdf + 按节切）；✅ **#51 已合**（`memory_agent/ingest.py` + `parse_worker.py`；上传 → 物化 → **overlay 只读收录**，真 Docling 14/14；426 passed）——PDF / DOCX → **物化 Markdown · 按节切**（每节一个条目）→ 复用现有 `.md` 条目管线（**保 ADR-0025**，顺带修 #47 的 6000 字截断）；引擎 = 可插拔 `DocumentParser` 端口 + **Docling 首装 / `pypdf` 兜底**；本地个人模式、**上传收录为只读语料（overlay）**；重依赖走**独立解析环境**、**不进 daemon**。调研 `experiments/document-parsing-survey/`。
 - ✅ **部署 + 跨平台**（`ADR-0028`；票 **#52 ✅ → #53 ✅**，v2 **#54** backlog）：`git clone` + **一条命令**（`install.sh` / `install.ps1` → `memory-agent install` 幂等）——建 venv / 装**独立 deploy requirements（与 `legal_web` 解耦）** / 建索引 / **写 opencode MCP 注册（幂等+备份+dry-run）** / 落 skill / 起 daemon / 冒烟；**支持 WSL/Linux + Windows**（修 POSIX 守护）。**final test = 全新 WSL**：Tier1 全绿、Tier2 全绿（retrieval_eval 用过滤集）、真实使用 A–G 通过、opencode `mcp list` connected；证据 `memory_agent/eval/one_click_deploy_52_results.md`、上手文档 `docs/deploy-quickstart.md`。final test 另发现并修掉 5 个真实缺陷（KB_DIR 跨平台 / `local_files_only` / `is_model_cached` 半成品 / 写去重误判 / 逐模型 HF 离线）。
   - **遗留**：① daemon 身份核验（WSL2 localhost 会串到宿主 Windows daemon）**已降 backlog（#55）**——个人模式是「单 daemon + 单基表」，同机多部署用 `MEMORY_MCP_PORT` 隔离（owner 视为可接受：多端默认只跑一个端口）；② **npx 薄包装已合**（#56 / PR #58）；v2 真·打包 + XDG 仍 backlog（`ADR-0028` D6 / `#54`）。部署收尾已合：Windows 默认 CPU torch、`memory-agent uninstall`、人的小抽查文档 + 数据基座（`docs/acceptance-personal-mode.md`、`memory_agent/eval/acceptance/`）。
