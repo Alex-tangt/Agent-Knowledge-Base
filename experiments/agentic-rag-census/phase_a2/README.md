@@ -115,7 +115,39 @@
 
 ## 8. 实测记录（追加）
 
-- **冒烟**：见 `smoke/smoke_summary.json`（只含 id / 工具名 / 计时 / 停止触发器，无数据集文本）
-  与本节数字（冒烟后追写）。
-- **Step 0**：见 `artifacts/control_rankings.json`（`consistency` 节）与 `report.md`。
-- **与预注册的偏差**：见 `report.md` 的「与预注册的偏差」节（开跑时 = 无；后续如实追加）。
+### 8.1 冒烟（3 题，真 LLM；2026-10-08）— 明细 `smoke/smoke_summary.json`
+
+| 检查 | 实测 |
+|---|---|
+| 工具目录 | `MemoryNavToolRegistry(index)` = **8** 个，与预期集合一致；`describe_tools` 764 字符，**8 个名字全在 prompt 里**（`prompt_has_all_tools=True`） |
+| `TOOL:` 派发 | `ScriptedLLM` 写死 `TOOL: memory_grep {...}` → 真执行：`grep` 命中 1 条并**进 `evidence_ids`**（`multihop:0000`），stop=answer |
+| `memory_grep` 单次耗时（609 条目） | **全扫（0 命中）0.3644s**；`limit=50` 早退 0.0030s；`"2023"` 0.0069s |
+| `memory_history` / `memory_links` 形状 | history：`count=0`（无 git 历史）、无 error；links：`chain` 长度 1、无 error → 结构性近空（§5 第 2 条），**不算工具失败** |
+| 宿主 `NO_PROXY` 污染 | 进程内剥掉 IPv6 条目（`[::1]` 等）后才建出 httpx client（照 `nav_63_agentic.sanitize_proxy_env`） |
+
+3 题逐题（同一 `Budget(3,20)` / `k=5`）：
+
+| id | stop | rounds | 工具 | 耗时 | 展示集 gold 召回 |
+|---|---|---|---|---|---|
+| mhr1926 | `fallback` | 1 | search×1 | 10.6s | 0.5 |
+| mhr0443 | `budget` | 3 | search×3 | 56.1s | 0.5 |
+| mhr2012 | `budget` | 3 | search×1 + **read×3** | 61.0s | 0.5 |
+
+- 冒烟即复现 #63 的 `fallback` 形态（1/3：模型输出不可解析 → 兜底）。
+- 观察到一次**模型侧**参数名错误：`memory_read` 用 `id` 而非 `entry_id`（3 次里 2 次）→ 运行时如实返回 `{"error": "unknown_entry"}`（运行时行为正确；这是模型 ACI 误用，描述性记录）。
+- 注：`prompt_has_tool_protocol` 只检查了 **user** 消息（`TOOL:` 协议写在 **system** 消息里），故该字段为 False 是口径假阴性；`prompt_has_all_tools=True` 已证明工具目录进了 prompt。
+
+**并发决定**：**4**（每题串行 ≈42s，其中 LLM 占 ≈95% → 200 题 4 路并行 ≈35 min；上限 8 留余量，避免 DashScope 限流）。
+
+### 8.2 Step 0（零 LLM）
+
+见 `artifacts/control_rankings.json`（`recall` / `consistency_with_47` / `exclude_retired_noop_test` /
+`store_signature` 节）与 `report.md` §1。
+
+### 8.3 A1（N=200）
+
+见 `report.md` / `report.json`；原始 trace 在 `artifacts/trace/a1_traces.jsonl`（gitignored，不入库）。
+
+### 8.4 与预注册的偏差
+
+见 `report.md` 的「与预注册的偏差」节。
