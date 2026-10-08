@@ -1,21 +1,17 @@
-"""Lead 分析：A″ 的「停止判据是不是瓶颈」——按停止触发器分层，量早停的代价。
+"""Lead 分析：A″ 的「停止判据是不是瓶颈」——按停止触发器分层 + 导出**单题完整案例**。
 
-只读已入库的产物（`control_rankings.json` + 本地 trace），不调 LLM。
+只读已入库的产物（`control_rankings.json` + 本地 trace + `data/corpus.json`），不调 LLM。
 
-    python lead_stop_analysis.py --phase-a2 <dir>
-
-输出：
-1. 按 stop 触发器分层：n / A1 召回 / C15 召回（= 同额度的天花板）/ 差额 / 平均展示条数；
-2. 「模型自己说够了、但 gold 没齐」的题数（= 早停直接造成损失的题数）；
-3. 候选「经典案例」：trigger=answer 且只跑 1 轮、gold 缺失、缺失的 gold 就在首轮 top-6..15
-   （即"再多看几条就拿到了"）。
+    # 分层统计
+    python lead_stop_analysis.py
+    # 导出某一题的完整案例（markdown；含数据集原文 → 落 gitignored 目录）
+    python lead_stop_analysis.py --case mhr2475 --out <path>.md
 """
 from __future__ import annotations
 
 import argparse
 import json
 import os
-import statistics
 
 
 def load_json(path):
@@ -40,123 +36,225 @@ def mean(values):
     return sum(values) / len(values) if values else None
 
 
-def r(value):
-    return None if value is None else round(value, 4)
+class Data:
+    """一次装载：控制臂排名 + 轨迹 + 语料标题 + 评测集。"""
 
+    def __init__(self, phase):
+        self.phase = phase
+        self.census = os.path.dirname(phase)
+        self.rows = {row["id"]: row for row in load_json(
+            os.path.join(phase, "artifacts", "control_rankings.json"))["rows"]}
+        self.records = {}
+        with open(os.path.join(phase, "artifacts", "trace", "a1_traces.jsonl"),
+                  "r", encoding="utf-8") as handle:
+            for line in handle:
+                if line.strip():
+                    record = json.loads(line)
+                    self.records[record["id"]] = record
+        self.ids = list(self.rows)
+        self.completed = [q for q in self.ids
+                          if q in self.records and not self.records[q].get("error")]
+        self.answerable = [q for q in self.completed if self.rows[q]["relevant"]]
+        corpus_path = os.path.join(self.census, "data", "corpus.json")
+        self.titles = {}
+        if os.path.isfile(corpus_path):
+            for index, article in enumerate(load_json(corpus_path)):
+                self.titles[index] = (article.get("title") or "").strip()
+        self.per = {qid: self._one(qid) for qid in self.answerable}
 
-def main(argv=None):
-    parser = argparse.ArgumentParser(description="A″ early-stop analysis")
-    parser.add_argument("--phase-a2", default=None)
-    args = parser.parse_args(argv)
-    phase = args.phase_a2 or os.path.join(
-        os.path.dirname(os.path.abspath(__file__)))
-    census = os.path.dirname(os.path.dirname(phase))
-
-    rows = {row["id"]: row for row in
-            load_json(os.path.join(phase, "artifacts", "control_rankings.json"))["rows"]}
-    records = {}
-    with open(os.path.join(phase, "artifacts", "trace", "a1_traces.jsonl"),
-              "r", encoding="utf-8") as handle:
-        for line in handle:
-            if line.strip():
-                record = json.loads(line)
-                records[record["id"]] = record
-    ids = list(rows)
-
-    def trigger(qid):
-        stop = records[qid]["trace"].get("stop")
-        return stop.get("trigger") if isinstance(stop, dict) else stop
-
-    completed = [q for q in ids if q in records and not records[q].get("error")]
-    answerable = [q for q in completed if rows[q]["relevant"]]
-
-    per = {}
-    for qid in answerable:
-        trace = records[qid]["trace"]
+    def _one(self, qid):
+        trace = self.records[qid]["trace"]
         shown = [nid(x) for x in (trace.get("final") or {}).get("evidence_ids") or []]
-        gold = set(nid(x) for x in rows[qid]["relevant"])
-        per[qid] = {
-            "trigger": trigger(qid),
+        gold = set(nid(x) for x in self.rows[qid]["relevant"])
+        stop = trace.get("stop")
+        return {
+            "trigger": stop.get("trigger") if isinstance(stop, dict) else stop,
             "rounds": len(trace.get("rounds") or []),
             "shown": shown,
             "n_shown": len(shown),
             "gold": gold,
             "missing": sorted(gold - set(shown)),
-            "a1": recall_at(rows[qid]["ranked"], rows[qid]["relevant"], 10 ** 6)
-                  if False else len(gold & set(shown)) / len(gold),
-            "c15": recall_at(rows[qid]["ranked"], rows[qid]["relevant"], 15),
-            "c20": recall_at(rows[qid]["ranked"], rows[qid]["relevant"], 20),
-            "first_ranking": [nid(x) for x in rows[qid]["ranked"]],
-            "type": rows[qid].get("question_type"),
+            "a1": len(gold & set(shown)) / len(gold) if gold else None,
+            "c15": recall_at(self.rows[qid]["ranked"], self.rows[qid]["relevant"], 15),
+            "first_ranking": [nid(x) for x in self.rows[qid]["ranked"]],
+            "type": self.rows[qid].get("question_type"),
         }
 
-    print("=== 1. 按 stop 触发器分层（n=176 可答）===")
-    print(f"{'trigger':<14}{'n':>4}{'A1':>9}{'C15':>9}{'差(C15-A1)':>12}"
-          f"{'A1展示条数':>11}{'只跑1轮':>9}")
+    def title(self, index):
+        return self.titles.get(index) or "_(标题缺失)_"
+
+    def rank_of(self, qid, index):
+        return {entry: pos + 1
+                for pos, entry in enumerate(self.per[qid]["first_ranking"])}.get(index)
+
+
+def markdown_case(data: Data, qid: str) -> str:
+    row = data.per[qid]
+    trace = data.records[qid]["trace"]
+    ranks = {entry: pos + 1
+             for pos, entry in enumerate(row["first_ranking"])}
+    gold = sorted(row["gold"])
+    lines = [
+        f"# A″ 单题案例：`{qid}`（{row['type']}，gold = {len(gold)} 篇）",
+        "",
+        "> **含数据集原文**（MultiHop-RAG，ODC-BY，`yixuantt/MultiHopRAG`）→",
+        "> 本文件落在 **gitignored** 的 `artifacts/trace/` 下，**不入库**。",
+        "> 生成：`python lead_stop_analysis.py --case " + qid + " --out <path>`（只读、不调 LLM）",
+        "",
+        "## 1. 问题（数据集原文）",
+        "",
+        f"> {trace.get('query')}",
+        "",
+        "## 2. 该题的标准答案 = 必须被找到的 " + str(len(gold)) + " 篇文章",
+        "",
+        "| # | 条目 | 标题 | 首轮排名 |",
+        "|---|---|---|---|",
+    ]
+    for position, index in enumerate(gold, start=1):
+        lines.append(f"| {position} | `multihop:{index:04d}` | {data.title(index)} | "
+                     f"第 {ranks.get(index)} 名 |")
+
+    lines += [
+        "",
+        f"## 3. 实际发生了什么（停止原因 = `{row['trigger']}`，共 {row['rounds']} 轮）",
+        "",
+    ]
+    for rnd in trace.get("rounds") or []:
+        lines.append(f"### 第 {rnd.get('round')} 轮")
+        lines.append("")
+        lines.append(f"- 这一轮使用的检索 query：`{rnd.get('query')}`")
+        for call in rnd.get("tool_calls") or []:
+            lines.append(f"- 工具调用：`{call.get('tool')}` 参数 `{call.get('args')}`")
+        added = [nid(x) for call in (rnd.get("tool_calls") or [])
+                 for x in (call.get("added_ids") or [])]
+        lines.append(f"- 本轮新展示的条目（{len(added)} 条）：")
+        for index in added:
+            flag = "**gold**" if index in row["gold"] else "非 gold"
+            lines.append(f"  - `multihop:{index:04d}`（首轮第 {ranks.get(index)} 名，{flag}）"
+                         f" — {data.title(index)}")
+        output = (rnd.get("model_output") or "").strip()
+        lines += ["", "模型这一轮的输出：", "", "```", output, "```", ""]
+
+    lines += [
+        "## 4. 结果",
+        "",
+        f"- 证据召回 = **{row['a1']:.4f}**（{len(row['gold']) - len(row['missing'])}"
+        f"/{len(row['gold'])} 篇 gold 被展示）",
+        f"- 最终答案：`{(trace.get('final') or {}).get('answer')}`",
+        "",
+        "**没被展示的 gold 文章**（= 召回缺口）：",
+        "",
+        "| 条目 | 标题 | 首轮排名 | 距「再多看一眼」多远 |",
+        "|---|---|---|---|",
+    ]
+    for index in row["missing"]:
+        rank = ranks.get(index)
+        note = ("在首轮 6–15 名内（多跑一步 / 把 k 调到 15 就能拿到）"
+                if rank and 6 <= rank <= 15 else
+                f"首轮第 {rank} 名（超出 15，需改写 query）" if rank and rank > 15 else
+                "不在首轮前 50（属覆盖问题）")
+        lines.append(f"| `multihop:{index:04d}` | {data.title(index)} | 第 {rank} 名 | {note} |")
+
+    lines += [
+        "",
+        "## 5. 反事实：如果一次性取前 15 条",
+        "",
+        "| 首轮排名 | 条目 | gold? | 标题 |",
+        "|---|---|---|---|",
+    ]
+    for position, index in enumerate(row["first_ranking"][:15], start=1):
+        lines.append(f"| {position} | `multihop:{index:04d}` | "
+                     f"{'✅' if index in row['gold'] else ''} | {data.title(index)} |")
+    lines += [
+        "",
+        f"→ 一次性 top-15 的召回 = **{row['c15']:.4f}**；agent 实际 = **{row['a1']:.4f}**。",
+        "",
+        "## 6. 成因",
+        "",
+        "运行时的充分性判据是「**模型给出了终结回复**」（`ANSWER:` / `INSUFFICIENT`）——",
+        "它回答的是「**我能不能答**」；而本题的评分要求是「**这 " + str(len(gold)) + " 篇证据齐不齐**」。",
+        "",
+        "这道题上两者正好分岔：第 1 轮命中的条目已经足够让模型**答出**标准答案实体，",
+        "于是它在只拿到 "
+        f"{len(row['gold']) - len(row['missing'])}/{len(row['gold'])} 证据时就宣布完成，"
+        f"循环随之结束（停止原因 `{row['trigger']}`）。",
+        "",
+        "**不是模型答错了，是判据与指标不对齐**：它因为「答案有了」而停，不是因为「证据够了」而停。",
+        "",
+        "## 7. 原始轨迹（可审计）",
+        "",
+        "```json",
+        json.dumps(trace, ensure_ascii=False, indent=1)[:12000],
+        "```",
+        "",
+    ]
+    return "\n".join(lines)
+
+
+def main(argv=None):
+    parser = argparse.ArgumentParser(description="A″ early-stop analysis")
+    parser.add_argument("--phase-a2", default=os.path.dirname(os.path.abspath(__file__)))
+    parser.add_argument("--case", default=None, help="导出该题 id 的完整案例 markdown")
+    parser.add_argument("--out", default=None, help="案例输出路径")
+    args = parser.parse_args(argv)
+
+    data = Data(args.phase_a2)
+    answerable = data.answerable
+
+    if args.case:
+        if args.case not in data.per:
+            raise SystemExit(f"未知 / 不可答的题 id：{args.case}")
+        text = markdown_case(data, args.case)
+        out = args.out or os.path.join(
+            data.phase, "artifacts", "trace", f"case_{args.case}.md")
+        os.makedirs(os.path.dirname(os.path.abspath(out)), exist_ok=True)
+        with open(out, "w", encoding="utf-8") as handle:
+            handle.write(text)
+        print(f"[out] {out}  ({len(text)} chars)")
+        return 0
+
+    per = data.per
+    print("=== 1. 按 stop 触发器分层（n=%d 可答）===" % len(answerable))
+    print(f"{'trigger':<14}{'n':>4}{'A1':>9}{'C15':>9}{'gap':>9}{'shown':>7}{'1轮':>5}")
     for name in ("answer", "no_new_ids", "budget", "fallback", "insufficient"):
         group = [q for q in answerable if per[q]["trigger"] == name]
         if not group:
             continue
         a1 = mean([per[q]["a1"] for q in group])
         c15 = mean([per[q]["c15"] for q in group])
-        shown = mean([per[q]["n_shown"] for q in group])
-        one = sum(1 for q in group if per[q]["rounds"] == 1)
-        print(f"{name:<14}{len(group):>4}{a1:>9.4f}{c15:>9.4f}{c15 - a1:>12.4f}"
-              f"{shown:>11.2f}{one:>9}")
+        print(f"{name:<14}{len(group):>4}{a1:>9.4f}{c15:>9.4f}{c15 - a1:>9.4f}"
+              f"{mean([per[q]['n_shown'] for q in group]):>7.2f}"
+              f"{sum(1 for q in group if per[q]['rounds'] == 1):>5}")
 
-    print("\n=== 2. 「模型自己说够了 / 判定没新东西」但 gold 没齐 = 早停的直接代价 ===")
+    print("\n=== 2. 早停的直接代价 ===")
     for name in ("answer", "no_new_ids"):
         group = [q for q in answerable if per[q]["trigger"] == name]
         short = [q for q in group if per[q]["missing"]]
-        print(f"  {name}: {len(group)} 题，其中 gold 没齐 {len(short)} 题 "
-              f"({len(short) / len(group):.1%})；"
-              f"缺口 = gold 还差 {sum(len(per[q]['missing']) for q in short)} 个槽位")
+        print(f"  {name}: {len(group)} 题，gold 没齐 {len(short)} 题"
+              f"（{len(short) / len(group):.1%}），共缺 "
+              f"{sum(len(per[q]['missing']) for q in short)} 个槽位")
     early = [q for q in answerable if per[q]["trigger"] in ("answer", "no_new_ids")]
     late = [q for q in answerable if per[q]["trigger"] == "budget"]
-    print(f"  早停层 n={len(early)}：A1 {mean([per[q]['a1'] for q in early]):.4f} / "
-          f"C15 天花板 {mean([per[q]['c15'] for q in early]):.4f} → 差额 "
-          f"{mean([per[q]['c15'] for q in early]) - mean([per[q]['a1'] for q in early]):.4f}")
-    print(f"  用满预算层 n={len(late)}：A1 {mean([per[q]['a1'] for q in late]):.4f} / "
-          f"C15 天花板 {mean([per[q]['c15'] for q in late]):.4f} → 差额 "
-          f"{mean([per[q]['c15'] for q in late]) - mean([per[q]['a1'] for q in late]):.4f}")
+    for label, group in (("早停层", early), ("用满预算层", late)):
+        a1 = mean([per[q]["a1"] for q in group])
+        c15 = mean([per[q]["c15"] for q in group])
+        print(f"  {label} n={len(group)}：A1 {a1:.4f} / 天花板 {c15:.4f} → 差 {c15 - a1:.4f}")
 
-    print("\n=== 3. 经典案例候选（answer 且只跑 1 轮、gold 缺失、缺失项就在首轮 top-6..15）===")
     cases = []
     for qid in answerable:
         row = per[qid]
-        if row["trigger"] != "answer" or row["rounds"] != 1:
+        if row["trigger"] != "answer" or row["rounds"] != 1 or not row["missing"]:
             continue
-        if not row["missing"] or not row["shown"]:
-            continue
-        ranks = {entry: index + 1 for index, entry in enumerate(row["first_ranking"])}
-        just_outside = [entry for entry in row["missing"] if 6 <= ranks.get(entry, 999) <= 15]
+        ranks = {entry: pos + 1 for pos, entry in enumerate(row["first_ranking"])}
+        just_outside = [e for e in row["missing"] if 6 <= ranks.get(e, 999) <= 15]
         if just_outside:
-            cases.append((row["c15"] - row["a1"], qid, just_outside, ranks))
+            cases.append((row["c15"] - row["a1"], qid, just_outside))
     cases.sort(reverse=True)
-    print(f"  符合「只看了一轮 + 明确作答 + 缺的 gold 就在首轮第 6–15 名」的题数：{len(cases)}")
-    for gap, qid, just_outside, ranks in cases[:5]:
-        row = per[qid]
-        print(f"\n  --- {qid}（{row['type']}，gold {len(row['gold'])} 篇，"
-              f"缺口 {gap:.3f}）---")
-        print(f"    展示 {row['n_shown']} 条："
-              f"{[f'{r}#{ranks.get(r)}' for r in row['shown']]}")
-        print(f"    缺的 gold：{[(f'{r}#{ranks.get(r)}') for r in row['missing']]}")
-        print(f"    首轮就落在 6–15 名的：{just_outside}")
+    print(f"\n=== 3. 「只跑 1 轮就作答 + 缺的 gold 落在首轮第 6–15 名」共 {len(cases)} 题 ===")
+    for gap, qid, _ in cases[:10]:
+        print(f"  {qid}  缺口 {gap:.3f}  A1 {per[qid]['a1']:.2f}")
     if cases:
-        gap, qid, just_outside, ranks = cases[0]
-        trace = records[qid]["trace"]
-        print(f"\n=== 4. 上面第一条的完整轨迹（{qid}）===")
-        print(f"  问题：{trace.get('query')}")
-        for rnd in trace.get("rounds") or []:
-            calls = [(c.get("tool"), c.get("args")) for c in (rnd.get("tool_calls") or [])]
-            print(f"  第 {rnd.get('round')} 轮：query={rnd.get('query')!r}")
-            print(f"     工具调用：{calls}")
-            print(f"     展示的 id：{[(x, ranks.get(nid(x))) for x in rnd.get('added_ids') or []]}")
-            out = (rnd.get("model_output") or "").strip().replace("\n", " | ")
-            print(f"     模型输出：{out[:600]}")
-        print(f"  最终答案：{(trace.get('final') or {}).get('answer')!r}")
-        print(f"  缺的 gold 在首轮的排名："
-              f"{[(x, ranks.get(x)) for x in per[qid]['missing']]}")
+        print(f"\n导出首例：python lead_stop_analysis.py --case {cases[0][1]}")
     return 0
 
 
