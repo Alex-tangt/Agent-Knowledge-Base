@@ -133,3 +133,34 @@
   **先写记录再跑**（AGENTS.md「实验留痕」）。
 - 任务卡 / write scope / 验收锚点见共享任务板（ticket #74）；
   决策落点 = `docs/adr/0030`（D8 之后的实测补充由 Lead 在验收后写）。
+
+## 11. 修订记录（**开跑前**，只增不改前文）
+
+### R1（Lead，2026-10-08，LLM 臂开跑前；此时只完成了零 LLM 的 Step 0）
+
+审计 §2/§4/§6 发现三处会被事后争议的口径，**在真 LLM 臂开跑前**补齐（前文一字未改）：
+
+**(a) `exclude_retired` 取值已定：`False`（= 交付运行时的出厂默认）**
+
+- 依据：`memory_agent/agent_loop/tools.py:289` / `:340` 的默认值都是 `False`；
+  `memory_agent/mcp_server.py` 的 `memory_search` 默认同为 `False`（docstring 明写"默认 False"）。
+- 与 #63 的一处**已知差异**：`memory_agent/eval/nav_63_agentic.py::build_registry`
+  默认用了 `True`（那是**评测臂**的选择，不是运行时默认）。本票取**运行时默认**，
+  与 §2「运行时不动」自洽——**但不得把本票结果说成"延续 #63 同一设置下的复核"**。
+- 本语料上这是**语义 no-op**（MultiHop 条目没有 `status` 字段，不可能命中退役集合）；
+  可能的**机械**差异只经 `index.search` 的 `fetch_k`（`True` 时 = `max(k, pool_size=50)`，
+  `False` 时 = `k`）→ **报告必须实测并披露**：同一 query 下两种取值的 top-5 id 是否相同
+  （零 LLM，1 条 query 即可），并写明 A1 实际用的值。
+
+**(b) `per_query_ids.json` 的 id 是整数序号，不是 `multihop:<i:04d>`**
+
+§9 的逐位一致性核对必须先做映射：该文件里 `relevant` / `ranked` 存的是**文章序号**（`run_census.short()`），
+本票内部用的是 `multihop:<i:04d>`。核对前统一成同一种表示，避免把"格式不同"误报成"排名不一致"。
+
+**(c) `fallback` 率的分母：两个都报，判定带用「已完成题」为分母**
+
+§6 写"全部 200 题"，但 LLM/工具失败的题**没有**停止触发器 → 分母会产生歧义。修正为：
+- 报 `fallback / completed`（**判定带用这个**）与 `fallback / 200`（含失败题，保守上界）两个数；
+- `completed` < 190 时按 §7/验收第 2 条声明**证据不足**，判定带只作参考。
+
+其余前文（三臂定义、主对照 C20、主指标、10% 判定带、边界、不做答案判分）**不变**。
