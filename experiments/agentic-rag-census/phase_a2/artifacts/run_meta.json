@@ -1,0 +1,54 @@
+{
+ "prereg_commit": "fff00c2",
+ "prereg_amend": "55472c4",
+ "census_dir_rel": "experiments/agentic-rag-census",
+ "llm": {
+  "provider": "openai-compat",
+  "model": "qwen3.7-flash",
+  "temperature": 0.0,
+  "seed": 42
+ },
+ "loop": {
+  "max_rounds": 3,
+  "max_evidence": 20,
+  "k": 5
+ },
+ "exclude_retired": false,
+ "n_target": 200,
+ "n_pending": 3,
+ "concurrency": 2,
+ "started": "2026-10-08T11:09:54",
+ "wall_clock_s": 219.3,
+ "wall_clock_s_total": 3747.8,
+ "passes": [
+  {
+   "prereg_commit": "fff00c2",
+   "prereg_amend": "55472c4",
+   "census_dir_rel": "experiments/agentic-rag-census",
+   "llm": {
+    "provider": "openai-compat",
+    "model": "qwen3.7-flash",
+    "temperature": 0.0,
+    "seed": 42
+   },
+   "loop": {
+    "max_rounds": 3,
+    "max_evidence": 20,
+    "k": 5
+   },
+   "exclude_retired": false,
+   "n_target": 200,
+   "n_pending": 200,
+   "concurrency": 4,
+   "started": "2026-10-08T10:07:59",
+   "wall_clock_s": 3528.5
+  },
+  {
+   "n_target": 200,
+   "n_pending": 3,
+   "concurrency": 2,
+   "started": "2026-10-08T11:09:54",
+   "wall_clock_s": 219.3
+  }
+ ]
+}

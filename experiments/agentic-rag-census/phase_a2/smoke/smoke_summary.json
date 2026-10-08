@@ -1,0 +1,279 @@
+{
+ "ids": [
+  "mhr1926",
+  "mhr0443",
+  "mhr2012"
+ ],
+ "limit": 3,
+ "catalog": {
+  "count": 8,
+  "names": [
+   "memory_get",
+   "memory_grep",
+   "memory_history",
+   "memory_links",
+   "memory_list",
+   "memory_outline",
+   "memory_read",
+   "memory_search"
+  ],
+  "expected_8": [
+   "memory_get",
+   "memory_grep",
+   "memory_history",
+   "memory_links",
+   "memory_list",
+   "memory_outline",
+   "memory_read",
+   "memory_search"
+  ],
+  "matches_expected": true,
+  "in_prompt_all": true,
+  "prompt_chars": 764
+ },
+ "grep_timing": {
+  "full_scan_no_hit": {
+   "pattern_len": 26,
+   "hits": 0,
+   "elapsed_s": 0.3644
+  },
+  "early_exit_limit50": {
+   "pattern_len": 3,
+   "hits": 50,
+   "elapsed_s": 0.003
+  },
+  "mid_frequency": {
+   "pattern_len": 4,
+   "hits": 50,
+   "elapsed_s": 0.0069
+  }
+ },
+ "dispatch_probe": {
+  "tools_called": [
+   "memory_search",
+   "memory_grep"
+  ],
+  "grep_executed": true,
+  "grep_result_grep_hits": [
+   1
+  ],
+  "evidence_ids": [
+   "multihop:0504",
+   "multihop:0180",
+   "multihop:0153",
+   "multihop:0457",
+   "multihop:0079",
+   "multihop:0000"
+  ],
+  "evidence_from_grep": [
+   "multihop:0000"
+  ],
+  "stop": "answer"
+ },
+ "questions": [
+  {
+   "id": "mhr1926",
+   "kind": "answerable",
+   "stop": "fallback",
+   "rounds": 1,
+   "tools_called": [
+    "memory_search"
+   ],
+   "nav_used": false,
+   "n_evidence": 5,
+   "evidence_recall": 0.5,
+   "elapsed_s": 10.618,
+   "llm_calls": 1,
+   "llm_seconds": 10.069,
+   "prompt_has_all_tools": true,
+   "prompt_has_tool_protocol": false,
+   "tool_call_timings": [
+    {
+     "tool": "memory_search",
+     "elapsed_s": 0.5482,
+     "error": null,
+     "n_items": 5,
+     "result_keys": null,
+     "arg_keys": [
+      "k",
+      "query"
+     ]
+    }
+   ],
+   "error": null
+  },
+  {
+   "id": "mhr0443",
+   "kind": "answerable",
+   "stop": "budget",
+   "rounds": 3,
+   "tools_called": [
+    "memory_search",
+    "memory_search",
+    "memory_search"
+   ],
+   "nav_used": false,
+   "n_evidence": 11,
+   "evidence_recall": 0.5,
+   "elapsed_s": 56.121,
+   "llm_calls": 3,
+   "llm_seconds": 54.325,
+   "prompt_has_all_tools": true,
+   "prompt_has_tool_protocol": false,
+   "tool_call_timings": [
+    {
+     "tool": "memory_search",
+     "elapsed_s": 0.8229,
+     "error": null,
+     "n_items": 5,
+     "result_keys": null,
+     "arg_keys": [
+      "k",
+      "query"
+     ]
+    },
+    {
+     "tool": "memory_search",
+     "elapsed_s": 0.4999,
+     "error": null,
+     "n_items": 5,
+     "result_keys": null,
+     "arg_keys": [
+      "k",
+      "query"
+     ]
+    },
+    {
+     "tool": "memory_search",
+     "elapsed_s": 0.4728,
+     "error": null,
+     "n_items": 5,
+     "result_keys": null,
+     "arg_keys": [
+      "k",
+      "query"
+     ]
+    }
+   ],
+   "error": null
+  },
+  {
+   "id": "mhr2012",
+   "kind": "answerable",
+   "stop": "budget",
+   "rounds": 3,
+   "tools_called": [
+    "memory_search",
+    "memory_read",
+    "memory_read",
+    "memory_read"
+   ],
+   "nav_used": true,
+   "n_evidence": 5,
+   "evidence_recall": 0.5,
+   "elapsed_s": 60.976,
+   "llm_calls": 3,
+   "llm_seconds": 60.385,
+   "prompt_has_all_tools": true,
+   "prompt_has_tool_protocol": false,
+   "tool_call_timings": [
+    {
+     "tool": "memory_search",
+     "elapsed_s": 0.589,
+     "error": null,
+     "n_items": 5,
+     "result_keys": null,
+     "arg_keys": [
+      "k",
+      "query"
+     ]
+    },
+    {
+     "tool": "memory_read",
+     "elapsed_s": 0.001,
+     "error": null,
+     "n_items": null,
+     "result_keys": [
+      "clamped",
+      "id",
+      "line_range",
+      "out_of_range",
+      "returned_lines",
+      "source",
+      "text",
+      "title",
+      "total_lines"
+     ],
+     "arg_keys": [
+      "entry_id"
+     ]
+    },
+    {
+     "tool": "memory_read",
+     "elapsed_s": 0.0,
+     "error": null,
+     "n_items": null,
+     "result_keys": [
+      "entry_id",
+      "error"
+     ],
+     "arg_keys": [
+      "end_line",
+      "id",
+      "start_line"
+     ]
+    },
+    {
+     "tool": "memory_read",
+     "elapsed_s": 0.0,
+     "error": null,
+     "n_items": null,
+     "result_keys": [
+      "entry_id",
+      "error"
+     ],
+     "arg_keys": [
+      "id"
+     ]
+    }
+   ],
+   "error": null
+  }
+ ],
+ "proxy_env_sanitized": {
+  "NO_PROXY": "localhost,127.0.0.1,volces.com,volcengine.com"
+ },
+ "history_links_shape": {
+  "probe_entry": "multihop:0000",
+  "history_keys": [
+   "added_only",
+   "commits",
+   "count",
+   "entry_id",
+   "id",
+   "op",
+   "path",
+   "pattern",
+   "repo_root",
+   "source"
+  ],
+  "history_error": null,
+  "history_commits": 0,
+  "links_keys": [
+   "chain",
+   "id",
+   "incoming",
+   "status",
+   "superseded_by",
+   "supersedes"
+  ],
+  "links_error": null,
+  "links_chain_len": 1
+ },
+ "llm": {
+  "provider": "openai-compat",
+  "model": "qwen3.7-flash",
+  "temperature": 0.0,
+  "seed": 42
+ }
+}

@@ -146,9 +146,9 @@ def append_jsonl(path: str, record: dict, lock: threading.Lock | None = None) ->
             handle.flush()
 
 
-def read_jsonl_last_wins(path: str) -> dict[str, dict]:
-    """逐行 JSONL → `{id: record}`（同一 id 多行时**后写者胜**）。"""
-    out: dict[str, dict] = {}
+def read_jsonl(path: str) -> list[dict]:
+    """逐行 JSONL → 记录表（保留重复 id 的多行，用于统计首轮尝试）。"""
+    out: list[dict] = []
     if not os.path.isfile(path):
         return out
     with open(path, "r", encoding="utf-8") as handle:
@@ -161,8 +161,25 @@ def read_jsonl_last_wins(path: str) -> dict[str, dict]:
             except json.JSONDecodeError:
                 continue
             if isinstance(record, dict) and record.get("id"):
-                out[str(record["id"])] = record
+                out.append(record)
     return out
+
+
+def read_jsonl_last_wins(path: str) -> dict[str, dict]:
+    """逐行 JSONL → `{id: record}`（同一 id 多行时**后写者胜**）。"""
+    out: dict[str, dict] = {}
+    for record in read_jsonl(path):
+        out[str(record["id"])] = record
+    return out
+
+
+def first_attempt_errors(path: str) -> list[dict]:
+    """每个 id 的**首行**里带 error 的记录（断点续跑前的失败尝试）。"""
+    first: dict[str, dict] = {}
+    for record in read_jsonl(path):
+        first.setdefault(str(record["id"]), record)
+    return [{"id": qid, "error": record.get("error")}
+            for qid, record in first.items() if record.get("error")]
 
 
 def mean(values) -> float:
@@ -472,7 +489,7 @@ def run_step0(args) -> int:
     first_divergences: list[dict] = []
     pos_hist: dict[str, int] = {}
     relevant_mismatch: list[str] = []
-    ref_recall_means = {str(k): [] for k in KS}
+    ref_recall_values: dict[str, list[float]] = {str(k): [] for k in KS}
     for row in rows:
         ref = ref_by_id.get(row["id"])
         if ref is None:
@@ -498,13 +515,20 @@ def run_step0(args) -> int:
                 first_divergences.append({"id": row["id"], "position": diff_at,
                                           "mine": mine[diff_at - 1:diff_at + 2],
                                           "ref": theirs[diff_at - 1:diff_at + 2]})
-        for k in KS:
-            ref_recall_means[str(k)].append(float((ref.get("recall") or {}).get(str(k), 0.0)))
+        # #47 的逐题 recall 字段：只累加**可答行**（与 mine_curve 同分母；null_query 行无 recall）
+        if row["relevant"]:
+            for k in KS:
+                value = (ref.get("recall") or {}).get(str(k))
+                if value is not None:
+                    ref_recall_values[str(k)].append(float(value))
 
     answerable = [row for row in rows if row["relevant"]]
     null_rows = [row for row in rows if not row["relevant"]]
     mine_curve = {str(k): round(mean(r["recall"][str(k)] for r in answerable), 6) for k in KS}
-    ref_curve = {str(k): round(mean(ref_recall_means[str(k)]), 6) for k in KS}
+    ref_curve = {str(k): (round(mean(ref_recall_values[str(k)]), 6)
+                          if ref_recall_values[str(k)] else None) for k in KS}
+    curve_delta = {str(k): (round(mine_curve[str(k)] - ref_curve[str(k)], 6)
+                             if ref_curve[str(k)] is not None else None) for k in KS}
 
     noop_diffs = [row for row in noop_rows if not row["same_top5"]]
     control = {
@@ -520,9 +544,10 @@ def run_step0(args) -> int:
             "n_answerable": len(answerable),
             "n_null_query": len(null_rows),
             "recomputed_curve": mine_curve,
-            "phase_a_curve_same_200": ref_curve,
-            "curve_delta": {str(k): round(mine_curve[str(k)] - ref_curve[str(k)], 6)
-                            for k in KS},
+            "phase_a_recall_same_200_answerable": ref_curve,
+            "phase_a_recall_source": ("artifacts/per_query_ids.json 的逐题 recall 字段，"
+                                      "只对同一 176 条可答行取均值；该文件没有 k=15 的字段"),
+            "curve_delta": curve_delta,
         },
         "consistency_with_47": {
             "n": len(rows),
@@ -536,6 +561,9 @@ def run_step0(args) -> int:
                                                          key=lambda kv: int(kv[0]))),
             "relevant_set_mismatch_questions": relevant_mismatch,
             "gate_passed": identical_full == len(rows),
+            "comparable_with_48": identical_full == len(rows),
+            "note": ("逐位全同 → 控制臂用**本次重算**排名（与 A1 同 store，配对成立），"
+                     "且与 #48 的可比性**不降级**。"),
         },
         "exclude_retired_noop_test": {
             "n": len(noop_rows),
@@ -782,6 +810,13 @@ def run_agent(args) -> int:
     finally:
         store.close()
     wall = round(time.time() - t_start, 1)
+    previous = load_json(RUN_META) if os.path.isfile(RUN_META) else {}
+    passes = list(previous.get("passes") or (
+        [previous] if previous.get("started") else []))
+    passes.append({
+        "n_target": len(ids), "n_pending": len(pending),
+        "concurrency": args.concurrency, "started": started_iso, "wall_clock_s": wall,
+    })
     write_json(RUN_META, {
         "prereg_commit": "fff00c2", "prereg_amend": "55472c4",
         "census_dir_rel": CENSUS_REL, "llm": public,
@@ -790,6 +825,8 @@ def run_agent(args) -> int:
         "n_target": len(ids), "n_pending": len(pending),
         "concurrency": args.concurrency,
         "started": started_iso, "wall_clock_s": wall,
+        "wall_clock_s_total": round(sum(item["wall_clock_s"] for item in passes), 1),
+        "passes": passes,
     })
     log(f"[agent] wall_clock={wall}s  [out] {A1_TRACES}  [out] {RUN_META}")
     return 0
@@ -814,9 +851,15 @@ def build_report(args) -> int:
     completed_ids = [qid for qid in ids if qid in records and not records[qid].get("error")]
     error_ids = [qid for qid in ids if qid in records and records[qid].get("error")]
     missing_ids = [qid for qid in ids if qid not in records]
+    raw_records = read_jsonl(A1_TRACES)
+    attempts = first_attempt_errors(A1_TRACES)
+    retried_ids = sorted({str(record["id"]) for record in raw_records
+                          if sum(1 for item in raw_records
+                                 if str(item["id"]) == str(record["id"])) > 1})
 
-    # ---- A1 recall（复用 scorer.evaluate 口径）
-    traces = [Trace.from_dict(records[qid]["trace"]) for qid in completed_ids]
+    # ---- A1 recall（复用 scorer.evaluate 口径；只看可答子集 → 不算答案）
+    answerable_completed = [qid for qid in completed_ids if control_rows[qid]["relevant"]]
+    traces = [Trace.from_dict(records[qid]["trace"]) for qid in answerable_completed]
     eval_set = {}
     for qid in ids:
         row = control_rows[qid]
@@ -826,17 +869,17 @@ def build_report(args) -> int:
     a1_by_id = {row["id"]: row["evidence_recall"] for row in scored["rows"]}
     a1_overall = scored["overall"]
 
-    # 自证：逐题 recall 与手算一致
+    # 自证：逐题 recall 与手算一致（scorer 口径 = |gold ∩ 展示集| / |gold|，集合语义）
     manual = {}
     for qid in completed_ids:
         row = control_rows[qid]
-        evidence = list(records[qid]["trace"]["final"].get("evidence_ids") or [])
-        manual[qid] = (round(recall_at_k(evidence, row["relevant"],
-                                        len(row["relevant"])), 6)
-                       if row["relevant"] else None)
-    mismatch = [qid for qid in completed_ids if manual[qid] != a1_by_id.get(qid)]
-
-    answerable_completed = [qid for qid in completed_ids if control_rows[qid]["relevant"]]
+        evidence = set(records[qid]["trace"]["final"].get("evidence_ids") or [])
+        relevant = set(row["relevant"])
+        manual[qid] = (round(len(relevant & evidence) / len(relevant), 6)
+                       if relevant else None)
+    mismatch = [qid for qid in completed_ids
+                if manual[qid] != (round(a1_by_id[qid], 6)
+                                   if a1_by_id.get(qid) is not None else None)]
 
     def arm_values(k: int) -> dict[str, float]:
         return {qid: round(recall_at_k(control_rows[qid]["ranked"],
@@ -914,6 +957,7 @@ def build_report(args) -> int:
     elapsed_values: list[float] = []
     llm_latency: list[float] = []
     grep_latencies: list[float] = []
+    evidence_shown: list[int] = []
     history_links = {"memory_history": {"calls": 0, "errors": 0, "shapes": {}},
                      "memory_links": {"calls": 0, "errors": 0, "shapes": {}}}
     for qid in completed_ids:
@@ -934,6 +978,7 @@ def build_report(args) -> int:
             search_calls_per_question.get(str(n_search), 0) + 1
         elapsed_values.append(float(record.get("elapsed_s") or 0.0))
         llm_latency.append(float(record.get("llm_seconds") or 0.0))
+        evidence_shown.append(len(trace.get("final", {}).get("evidence_ids") or []))
         for observation in record.get("tool_observations") or []:
             if observation["tool"] == GREP_TOOL:
                 grep_latencies.append(float(observation["elapsed_s"]))
@@ -980,6 +1025,14 @@ def build_report(args) -> int:
         "stop_distribution": dict(sorted(stop_distribution.items())),
         "nav_tool_use_rate": round(len(nav_used_ids) / n_completed, 6) if n_completed else None,
         "nav_used_questions": len(nav_used_ids),
+        "evidence_shown": {
+            "mean": round(mean(e for e in evidence_shown), 3),
+            "p50": percentile([float(e) for e in evidence_shown], 0.50),
+            "max": max(evidence_shown) if evidence_shown else None,
+            "display_cap_by_loop": MAX_ROUNDS * K_MAIN,
+            "note": ("A1 展示上界 = `max_rounds × k` = 15（`max_evidence=20` 到不了）；"
+                     "C20=20、C15=15 → C20 只是**名义**额度匹配，C15 是**实际**额度匹配。"),
+        },
         "tool_call_counts": dict(sorted(tool_call_counts.items())),
         "search_calls_per_question": dict(sorted(search_calls_per_question.items())),
         "rounds_distribution": dict(sorted(rounds_distribution.items())),
@@ -992,6 +1045,13 @@ def build_report(args) -> int:
         "history_links": history_links,
         "errors": {"count": len(error_ids), "ids": error_ids,
                    "details": {qid: records[qid].get("error") for qid in error_ids}},
+        "attempts": {
+            "lines": len(raw_records),
+            "first_attempt_errors": attempts,
+            "first_attempt_error_count": len(attempts),
+            "retried_questions": retried_ids,
+            "note": ("断点续跑：首轮失败题被重试；报告指标用**最后一轮**记录。"),
+        },
         "missing": {"count": len(missing_ids), "ids": missing_ids},
         "llm_calls_total": sum(int(records[qid].get("llm_calls") or 0)
                                for qid in completed_ids),
@@ -1051,6 +1111,7 @@ def build_report(args) -> int:
         rows.append(base)
 
     deviations = _deviations(mismatch)
+    runtime_observations = _runtime_observations(records, attempts, completed_ids)
     report = {
         "meta": {
             "ticket": 74, "phase": "A2",
@@ -1073,8 +1134,11 @@ def build_report(args) -> int:
                                              if not control_rows[qid]["relevant"])},
             "run": {"completed": n_completed, "errors": len(error_ids),
                     "missing": len(missing_ids),
-                    "wall_clock_s": run_meta.get("wall_clock_s"),
-                    "concurrency": run_meta.get("concurrency")},
+                    "wall_clock_s": (run_meta.get("wall_clock_s_total")
+                                     or run_meta.get("wall_clock_s")),
+                    "concurrency": ((run_meta.get("passes") or [{}])[0].get("concurrency")
+                                    or run_meta.get("concurrency")),
+                    "passes": run_meta.get("passes") or []},
             "note": ("外部语料只作机制证据，不声称本 KB 增益；不判答案正确率。"
                      "入库文件不含数据集 query 文本 / 宿主绝对路径 / 密钥。"),
         },
@@ -1090,6 +1154,7 @@ def build_report(args) -> int:
         "fallback": fallback,
         "descriptive": descriptive,
         "section7": section7,
+        "runtime_observations": runtime_observations,
         "selfcheck": {"scorer_vs_manual_recall_mismatches": mismatch,
                       "scorer_overall": a1_overall},
         "deviations": deviations,
@@ -1123,6 +1188,49 @@ def _deviations(mismatch: list[str]) -> list[str]:
     items = []
     if mismatch:
         items.append(f"scorer.evaluate 与手算 recall 不一致 {len(mismatch)} 题（id 见 selfcheck）")
+    items.append(
+        "实现注记（非预注册偏差）：Step 0 首轮实现的「#47 参照曲线」误把 24 条 null_query "
+        "计入分母（得 0.570 vs 正确 0.648）；发现后修正分母并**重跑** Step 0，"
+        "入库产物为修正版（逐位一致性 200/200、store 签名未变，结论不变）。")
+    return items
+
+
+def _runtime_observations(records: dict[str, dict], first_errors: list[dict],
+                          completed_ids: list[str]) -> list[dict]:
+    """观察到的运行时边界 / 缺陷。本票**不修**（被测对象 = 交付运行时一行不改），报 Lead 定票。"""
+    items: list[dict] = []
+    type_errors = [item["id"] for item in first_errors
+                   if "unhashable" in (item.get("error") or "")]
+    if type_errors:
+        items.append({
+            "kind": "defect",
+            "summary": ("`memory_get` 的 `entry_id` 传成 list（模型侧）时，"
+                        "`MemoryToolRegistry.call` → `MemoryIndex.get(list)` 抛 "
+                        "`TypeError: unhashable type: 'list'`；`AgentLoop._dispatch` 只捕 "
+                        "`KeyError` → 整题中止（无 trace）。注意 `MemoryNavToolRegistry._load` "
+                        "对非 str 有守卫，但 `MemoryToolRegistry`（GET_TOOL）没有。"),
+            "ids": type_errors,
+            "observed": len(type_errors),
+            "action": "本票不修（被测对象不动）；报 Lead 定票。重试后该题成功拿回 trace。",
+        })
+    timeout_ids = [item["id"] for item in first_errors
+                   if "imeout" in (item.get("error") or "")]
+    if timeout_ids:
+        items.append({"kind": "transient", "ids": timeout_ids, "observed": len(timeout_ids),
+                      "summary": "LLM `APITimeoutError`（OpenAI 客户端自带重试耗尽）——"
+                                 "恢复策略 = 断点续跑重试（见 run_meta.passes）"})
+    read_bad = 0
+    for qid in completed_ids:
+        for observation in records[qid].get("tool_observations") or []:
+            if (observation["tool"] == "memory_read" and not observation.get("error")
+                    and observation.get("n_items") is None
+                    and "error" in (observation.get("result_keys") or [])):
+                read_bad += 1
+    if read_bad:
+        items.append({"kind": "model_aci_misuse",
+                      "summary": ("`memory_read` 用 `id` 而非 `entry_id` → 运行时如实返回 "
+                                  "`{\"error\": \"unknown_entry\"}`（运行时行为正确，描述性）"),
+                      "observed_calls": read_bad})
     return items
 
 
@@ -1158,9 +1266,11 @@ def render_markdown(report: dict) -> str:
         "|---|---|---|---|",
     ]
     for k in KS:
+        ref_value = step0['recall']['phase_a_recall_same_200_answerable'][str(k)]
+        delta = step0['recall']['curve_delta'][str(k)]
         lines.append(f"| {k} | {_fmt(step0['recall']['recomputed_curve'][str(k)])} | "
-                     f"{_fmt(step0['recall']['phase_a_curve_same_200'][str(k)])} | "
-                     f"{step0['recall']['curve_delta'][str(k)]} |")
+                     f"{_fmt(ref_value) if ref_value is not None else 'n/a'} | "
+                     f"{delta if delta is not None else 'n/a'} |")
     cons = step0["consistency_with_47"]
     lines += [
         "",
@@ -1168,7 +1278,8 @@ def render_markdown(report: dict) -> str:
         f"/{cons['n']}**；top-5 相同 {cons['identical_top5_questions']}/{cons['n']}；"
         f"top-20 相同 {cons['identical_top20_questions']}/{cons['n']}；"
         f"**首次分歧位置 = {cons['first_divergence_position_global']}**"
-        f"（None = 无分歧）；gate_passed = **{cons['gate_passed']}**。",
+        f"（None = 无分歧）；gate_passed = **{cons['gate_passed']}**；"
+        f"与 #48 可比性不降级 = **{cons['comparable_with_48']}**。",
         f"- relevant 集合不一致题数：{len(cons['relevant_set_mismatch_questions'])}。",
         f"- id 映射：`per_query_ids.json` 存**整数序号**（R1(b)），核对前统一为同一种表示。",
         f"- store 目录签名：before `{step0['store_signature']['sig_before']}` / "
@@ -1200,8 +1311,25 @@ def render_markdown(report: dict) -> str:
         block = report["paired"][key]
         lines.append(f"| {name} | {block['mean_delta']} | "
                      f"[{block['lo']}, {block['hi']}] | {block['significant']} | {block['n']} |")
-    lines += ["", "### 预注册分层（`nav_used` / `search_only`）", "",
-              "| 层 | n | A1 | C20 | Δ | 95% CI | 显著 |", "|---|---|---|---|---|---|---|"]
+    shown = report["descriptive"]["evidence_shown"]
+    lines += [
+        "",
+        "### 读法（额度口径的机制事实）",
+        "",
+        f"- `AgentLoop` 每轮 `k={meta['loop']['k']}`、最多 `max_rounds={meta['loop']['max_rounds']}` 轮 "
+        f"→ A1 **实际展示上界 = {shown['display_cap_by_loop']}**（实测 mean "
+        f"{shown['mean']} / p50 {shown['p50']} / max {shown['max']}），"
+        f"`max_evidence={meta['loop']['max_evidence']}` 在本题集上到不了。",
+        "- 所以 **C20 只是「名义」额度匹配**（20 额）；**C15 才是「实际」额度匹配**（3×5）。"
+        f"两者 A1 都**显著低于**一次性检索（C20 Δ {report['paired']['A1_minus_C20']['mean_delta']}、"
+        f"C15 Δ {report['paired']['A1_minus_C15']['mean_delta']}）→ "
+        "负结论**不是**单一对照选择造成的。",
+        "",
+        "### 预注册分层（`nav_used` / `search_only`）",
+        "",
+        "| 层 | n | A1 | C20 | Δ | 95% CI | 显著 |",
+        "|---|---|---|---|---|---|---|",
+    ]
     for label in ("nav_used", "search_only"):
         layer = report["paired"]["layers"][label]
         lines.append(f"| {label} | {layer['n']} | {layer['A1_mean_evidence_recall']} | "
@@ -1227,6 +1355,10 @@ def render_markdown(report: dict) -> str:
         "## 4. 描述性项",
         "",
         f"- 停止触发器分布：`{json.dumps(report['descriptive']['stop_distribution'], ensure_ascii=False)}`",
+        f"- A1 每题展示条目数 mean/p50/max：{report['descriptive']['evidence_shown']['mean']} / "
+        f"{report['descriptive']['evidence_shown']['p50']} / "
+        f"{report['descriptive']['evidence_shown']['max']}"
+        f"（循环展示上界 = {report['descriptive']['evidence_shown']['display_cap_by_loop']}）。",
         f"- nav 工具使用率：{report['descriptive']['nav_tool_use_rate']} "
         f"（{report['descriptive']['nav_used_questions']}/{meta['run']['completed']}）。",
         f"- 逐工具调用次数：`{json.dumps(report['descriptive']['tool_call_counts'], ensure_ascii=False)}`",
@@ -1250,6 +1382,11 @@ def render_markdown(report: dict) -> str:
         f"{json.dumps(report['descriptive']['history_links'], ensure_ascii=False)}`",
         f"- 错误题数：{report['descriptive']['errors']['count']}（id 见 report.json）；"
         f"缺失题数：{report['descriptive']['missing']['count']}。",
+        f"- 断点续跑：**首轮失败 {report['descriptive']['attempts']['first_attempt_error_count']} 题**"
+        f"（2 × LLM 超时 + 1 × 运行时 TypeError，明细见 report.json `attempts`），"
+        f"重试 {len(report['descriptive']['attempts']['retried_questions'])} 题后**最终 0 错误**；"
+        f"指标用最后一轮记录（总墙钟 {meta['run']['wall_clock_s']}s，"
+        f"{len(meta['run']['passes'])} 趟）。",
         "",
         "## 5. §7 两条口径（如实）",
         "",
@@ -1271,6 +1408,20 @@ def render_markdown(report: dict) -> str:
         f"- `scorer.evaluate` 与手算逐题 recall 不一致题数："
         f"{len(report['selfcheck']['scorer_vs_manual_recall_mismatches'])}。",
         f"- scorer overall：`{json.dumps(report['selfcheck']['scorer_overall'], ensure_ascii=False)}`。",
+        "- `scorer.answer_correct_rate` 只喂**可答子集**故为 None：本票**不判答案正确率**"
+        "（不调裁判 LLM；`answer` 随 trace 落盘，后续要判分不必重跑）。",
+        "",
+        "## 6.5 运行时观察（本票不修；报 Lead 定票）",
+        "",
+    ]
+    if report.get("runtime_observations"):
+        for item in report["runtime_observations"]:
+            lines.append(
+                f"- **{item.get('kind')}**（observed="
+                f"{item.get('observed', item.get('observed_calls'))}）：{item.get('summary')}")
+    else:
+        lines.append("无。")
+    lines += [
         "",
         "## 7. 与预注册的偏差",
         "",

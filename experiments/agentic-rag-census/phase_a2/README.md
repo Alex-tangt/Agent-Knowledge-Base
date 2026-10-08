@@ -139,15 +139,35 @@
 
 **并发决定**：**4**（每题串行 ≈42s，其中 LLM 占 ≈95% → 200 题 4 路并行 ≈35 min；上限 8 留余量，避免 DashScope 限流）。
 
-### 8.2 Step 0（零 LLM）
+### 8.2 Step 0（零 LLM）— 2026-10-08
 
-见 `artifacts/control_rankings.json`（`recall` / `consistency_with_47` / `exclude_retired_noop_test` /
-`store_signature` 节）与 `report.md` §1。
+明细 `artifacts/control_rankings.json`；结论 `report.md` §1。
 
-### 8.3 A1（N=200）
+- 本次重算 recall@k（176 可答）：@1 0.2495 / **@5 0.6482** / @10 0.7812 / @15 0.8537 / @20 0.9029 / **@50 0.9616**。
+- **与 #47 逐位一致性：200/200 全同**（top-5 / top-20 也各 200/200），**首次分歧 = 无** → 闸门通过，
+  **控制臂用本次重算值**（与 A1 同 store），**与 #48 可比性不降级**；#47 存档逐题 recall 在同 176 行上
+  Δ = 0.000000（#47 该文件无 k=15 字段）。
+- `exclude_retired` True/False 同 query top-5 **200/200 逐位相同**（R1(a)：本语料无退役条目，纯机械 no-op）；
+  A1 实际用 **False**。
+- store 目录签名 before = after = `626e174119757612` → **未变**（只读证明）；金标缺 0。
 
-见 `report.md` / `report.json`；原始 trace 在 `artifacts/trace/a1_traces.jsonl`（gitignored，不入库）。
+### 8.3 A1（N=200，2026-10-08）— 结论
+
+明细 `report.md` / `report.json`；原始 trace 在 `artifacts/trace/a1_traces.jsonl`（gitignored，不入库）。
+
+- **完成 200 / 最终错误 0**（首轮 3 题失败：2 × LLM 超时 + 1 × 运行时 TypeError，断点续跑重试后全部成功）；
+  并发 4；总墙钟 **3747.8s**（2 趟）。
+- **主比较 `A1 − C20` = −0.2098**，95% CI **[−0.2505, −0.1690]** → **显著为负**（A1 0.6932 vs C20 0.9029）。
+  次比较 `A1 − C5` = **+0.0450** [+0.0270, +0.0653]（显著为正）；`A1 − C15` = −0.1605（显著为负）。
+- **额度口径的机制事实**：循环每轮 `k=5` × 最多 3 轮 → A1 **实际展示上界 = 15**（实测 mean 6.4 / max 15），
+  `max_evidence=20` 到不了 → C20 只是**名义**额度匹配，**C15 才是实际额度匹配**；两者 A1 都显著更低。
+- 分层：`nav_used`（n=51）Δ −0.1454、`search_only`（n=125）Δ −0.2360，两层都显著为负。
+- `fallback` = **26/200 = 13.0%**，95% bootstrap CI [8.5%, 18.0%]（Wilson [9.0%, 18.4%]）→
+  按 §6 10% 判定带 = **未决**；若真实率维持 13%，Wilson 下界越过 10% 需要 **N≈390**。
+- 运行时观察（**本票不修**，报 Lead）：`memory_get(entry_id=[...])` 触发
+  `TypeError: unhashable type: 'list'` 并中止整题（`_dispatch` 只捕 `KeyError`）。
 
 ### 8.4 与预注册的偏差
 
-见 `report.md` 的「与预注册的偏差」节。
+见 `report.md` §7：无预注册偏差；另记一条**实现注记**（Step 0 首轮参照曲线分母误含 24 条 null_query，
+已修正并重跑，入库为修正版）。
