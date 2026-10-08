@@ -104,6 +104,9 @@ experiments/agentic-rag-census/artifacts/trace/
 # Phase B raw per-query logs (contain dataset query text / model answers)
 experiments/agentic-rag-census/phase_b/artifacts/trace/
 
+# Phase A″ raw agent traces (contain dataset query text / model answers)
+experiments/agentic-rag-census/phase_a2/artifacts/trace/
+
 # Trae IDE
 #
 .trae/
