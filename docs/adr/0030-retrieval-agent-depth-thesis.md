@@ -108,3 +108,62 @@ Considered options：
   `opencode serve` 接入冒烟（6/6，证据 `memory_agent/eval/opencode_server_smoke_62_results.md`）。
   H 的场景集按 **D7.5** 是**确定性桩集**（通路证明）；in-domain 集仍归 E。
 - 调研页 `experiments/retrieval-agent-depth/`（本 ADR 的依据，含外部一手来源清单）。
+
+## 实测补充（A″ · #74，2026-10-08）：agent 循环在外部多跳语料上的**配对**实测
+
+> 这是 D1–D8 **之后的实测**，不改任何既有决策。预注册
+> `experiments/agentic-rag-census/phase_a2/PREREGISTRATION.md`（`fff00c2` + R1 `55472c4`，**开跑前冻结**）。
+
+**设置**：MultiHop-RAG（609 篇，重建 store）200 条冻结题（可答 176）；被测对象 = **交付的**
+`AgentLoop` + `MemoryNavToolRegistry`（8 工具），`Budget(max_rounds=3, max_evidence=20)`、`k=5`、
+`exclude_retired=False`（出厂默认）、`qwen3.7-flash` / T=0 / seed=42；对照 = 同一 store 上重算的
+一次性 top-k。**Step 0 闸门**：重算排名与 #47 不可变证据 **200/200 逐位相同（首次分歧 = 无）**
+⇒ 与 #47 / #48 可比（不降级）。
+
+| 臂（n=176） | mean evidence recall |
+|---|---|
+| A1（agent 循环） | **0.6932** |
+| C5（产品默认 k=5） | 0.6482 |
+| C15（**实际**额度 = 3 轮 × 5） | 0.8537 |
+| C20（**名义**额度 = `max_evidence`） | 0.9029 |
+| Cad（**事后探索**：按每题 A1 自己的展示深度截断一次性排名） | 0.6818 |
+
+**结果**（前两条预注册，第三条**事后**）：
+
+1. `A1 − C20` = **−0.209754 [−0.250474, −0.169034]** 显著**为负**；`A1 − C15` = −0.160511
+   亦显著为负；`A1 − C5` = **+0.044981 [+0.026989, +0.065341]** 显著为正。
+2. **额度机制事实**：A1 实际展示深度 **mean 6.0 / p50 5 / max 15**（176 可答口径），
+   而对照按**允许**额度给 15–20 ⇒ `max_evidence=20` **到不了**，A1 只花掉允许额度 ~1/3。
+   停止分布 `answer 68 / budget 64 / no_new_ids 41 / fallback 26 / insufficient 1`
+   （首轮即作答或判无新条目 = 54%）。
+3. **深度匹配对照（事后、探索性，不得当预注册结果引用）**：`A1 − Cad = +0.011364`
+   **[−0.005682, +0.028409]** → **不显著**。
+
+**结论（可引用口径）**：在这套外部语料上，**agent 循环没有带来可测的检索质量增益**——它相对
+产品默认 top-5 的优势（+0.045）在把额度钉到**同题同深度**后**归零**（+0.011 不显著）：
+增益来自"**多展示 1–2 条**"，**不来自"更聪明的选择"**；代价 = 448 次 LLM 调用 / 3748 s 墙钟。
+⇒ **下一个杠杆是循环的停止判据**（早停导致额度花不完），**不是再加工具**。
+（边界：外部语料**只作机制证据**，不声称本 KB 增益——沿 D5/D6 与 ADR-0026。）
+
+**同时量到的两件事**：
+
+- **`fallback` 协议失配率 = 13.0%（26/200）**，95% CI [8.5%, 18.0%]（Wilson [9.03%, 18.37%]）。
+  按开跑前写下的 **10% 判定带 = 未决**（两端各差 ~2pp）；真实率维持 13% 时 Wilson 下界越过 10%
+  需 **N≈390**。⇒ #63 的 `26%（5/19）` **既未被证实也未被证伪**，但**点估计下调一半**。
+- **6 个导航工具里 4 个从未被调用**（`memory_list` / `memory_outline` / `memory_history` /
+  `memory_links` = 0 次）；`memory_grep` 仅 **10** 次；靠导航工具把 gold 补进展示集的只有 **2 题**。
+
+**建议处置（待 owner 确认；本 ADR 不据此改既有决策）**：
+
+1. `memory_list` / `memory_outline` / `memory_history` / `memory_links` 按「**实例数为 0 的机制
+   只写触发条件、不写实现**」的既有规矩**不投资**（`memory_links` 尤其：全索引退役条目 = 0）；
+   代码保留，但不再为其排评测。
+2. **`fallback` 加固不单开实现票**（判定未决）：触发条件 = 出现 N ≥ 390 的测量，或在**真实用户
+   路径**上观测到 `fallback` 造成的可见失败。
+3. 新开缺陷票：**`memory_get` 的 `entry_id` 传成 list → `TypeError: unhashable type: 'list'`
+   中止整题**（`AgentLoop._dispatch` 只捕 `KeyError`；`MemoryNavToolRegistry._load` 对非 str 有
+   守卫，`MemoryToolRegistry` 的 GET_TOOL 路径没有）。
+
+**复核**：Lead 的**独立**复算脚本 `experiments/agentic-rag-census/phase_a2/lead_verify_74.py`
+（不复用被测脚本的任何计算）逐项复现上表与 CI（召回差 0.0）；`pytest tests/unit -q` =
+647 passed / 3 skipped。
