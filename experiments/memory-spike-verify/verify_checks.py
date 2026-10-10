@@ -407,6 +407,8 @@ def run_live(auto_start: bool = True) -> Dict[str, Any]:
         obs["ready"] = wait_ready()
         if not obs["ready"].get("ready"):
             obs["fatal"] = "隔离实例未就绪"
+            # 不留下半启动的实例：按登记 PID + 端口所有权停掉再返回
+            obs["stop_after_failed_ready"] = E.stop_server(started.get("pid"))
             return _finalize(rec, obs)
 
     consumer = P.Consumer("verify-a")
@@ -755,17 +757,22 @@ def run_live(auto_start: bool = True) -> Dict[str, Any]:
         obs["C5"] = c5
         obs["C5_evidence"] = _write_evidence("C5_down.json", c5)
 
+        stop_failed = not bool(stop.get("stopped"))
         rec.probe(
-            "C5b", "PASS" if down.get("read_raised") else "FAIL",
-            {"raised": down.get("read_raised"), "error": down.get("read_error"),
+            "C5b",
+            "INCONCLUSIVE" if stop_failed else ("PASS" if down.get("read_raised") else "FAIL"),
+            {"stop": stop, "raised": down.get("read_raised"), "error": down.get("read_error"),
              "returned": down.get("read_returned")},
-            "停机后读取必须抛显式错误，不能返回空结果",
+            "停机后读取必须抛显式错误，不能返回空结果"
+            + ("（停机未成功 → 无法裁决）" if stop_failed else ""),
         )
         rec.probe(
-            "C5c", "PASS" if down.get("find_raised") else "FAIL",
-            {"raised": down.get("find_raised"), "error": down.get("find_error"),
+            "C5c",
+            "INCONCLUSIVE" if stop_failed else ("PASS" if down.get("find_raised") else "FAIL"),
+            {"stop": stop, "raised": down.get("find_raised"), "error": down.get("find_error"),
              "returned": down.get("find_returned")},
-            "停机后检索必须抛显式错误，不能返回空命中",
+            "停机后检索必须抛显式错误，不能返回空命中"
+            + ("（停机未成功 → 无法裁决）" if stop_failed else ""),
         )
         taxonomy = {
             "not_found": c5.get("missing"),
@@ -787,16 +794,27 @@ def run_live(auto_start: bool = True) -> Dict[str, Any]:
         # 重启后读回（C1d）
         restart = E.start_server()
         obs["restart"] = restart
+        started = restart  # 最终停机必须按"当前"实例的 PID，否则端口所有者校验会拒绝停
         obs["restart_ready"] = wait_ready()
-        try:
-            again = consumer.read_raw(entry_uri)
-            obs["C1d"] = {"equal": again == text, "sha256": E.sha256_text(again)}
-        except Exception as exc:
-            obs["C1d"] = {"equal": False, "error": _err(exc)}
-        rec.probe(
-            "C1d", "PASS" if obs["C1d"]["equal"] else "FAIL",
-            obs["C1d"], "重启后原文仍可读回同一内容",
-        )
+        if not restart.get("started"):
+            # 实例没真正重启（旧进程仍在 / 启动被拒）→ 不把"旧进程仍可读"误记成重启后仍可读
+            obs["C1d"] = {"equal": False, "error": "restart_not_started",
+                          "reason": restart.get("reason"), "restart": restart}
+            rec.probe("C1d", "INCONCLUSIVE", obs["C1d"],
+                      "隔离实例未真正重启（旧进程仍在或启动被拒）→ 无法核 C1d")
+        elif not obs["restart_ready"].get("ready"):
+            obs["C1d"] = {"equal": False, "error": "restart_not_ready"}
+            rec.probe("C1d", "INCONCLUSIVE", obs["C1d"], "重启后未就绪 → 无法核 C1d")
+        else:
+            try:
+                again = consumer.read_raw(entry_uri)
+                obs["C1d"] = {"equal": again == text, "sha256": E.sha256_text(again)}
+            except Exception as exc:
+                obs["C1d"] = {"equal": False, "error": _err(exc)}
+            rec.probe(
+                "C1d", "PASS" if obs["C1d"]["equal"] else "FAIL",
+                obs["C1d"], "重启后原文仍可读回同一内容",
+            )
     finally:
         import contextlib
 

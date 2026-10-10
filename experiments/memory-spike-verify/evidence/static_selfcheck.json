@@ -189,7 +189,7 @@
       "check": "harness_pinned",
       "detail": {
         "run_verify.py": "20a08e3d6114c356c4f776386b7c65f4a9d29f0e9f01c3a2caedee0fa52852be",
-        "verify_checks.py": "cd486b68cfb5760af3ae847f759972dbbcb9e090ea16c124dfc40fa6b4afea8a",
+        "verify_checks.py": "084c47a417913b8784ec4e6b9220e2c3277358a4dff636ecba94a856cdef9743",
         "verify_criteria.py": "a0e4870f94e4e1623d1ed30ec04bc72bbbd10d59d0e58a1b516ce51cde5d6593",
         "verify_env.py": "cf56598f59856a5f5e28c490fafda2616916d13c9ffc95ba61d746e26fc255b3",
         "verify_probe.py": "89c3a7f744c19f777315e5d9fb36a03994cfc2fe352ab7bc733adab483967488"
@@ -200,10 +200,10 @@
   "criteria_file_sha256": "a0e4870f94e4e1623d1ed30ec04bc72bbbd10d59d0e58a1b516ce51cde5d6593",
   "criteria_sha256": "17d18b7bbe842da6059b341a41319c11fa2824f30817aa191bc96802174f2f4d",
   "criteria_version": "1.0.0",
-  "generated_at": "2026-10-10T14:25:10+0800",
+  "generated_at": "2026-10-10T15:27:23+0800",
   "harness_sha256": {
     "run_verify.py": "20a08e3d6114c356c4f776386b7c65f4a9d29f0e9f01c3a2caedee0fa52852be",
-    "verify_checks.py": "cd486b68cfb5760af3ae847f759972dbbcb9e090ea16c124dfc40fa6b4afea8a",
+    "verify_checks.py": "084c47a417913b8784ec4e6b9220e2c3277358a4dff636ecba94a856cdef9743",
     "verify_criteria.py": "a0e4870f94e4e1623d1ed30ec04bc72bbbd10d59d0e58a1b516ce51cde5d6593",
     "verify_env.py": "cf56598f59856a5f5e28c490fafda2616916d13c9ffc95ba61d746e26fc255b3",
     "verify_probe.py": "89c3a7f744c19f777315e5d9fb36a03994cfc2fe352ab7bc733adab483967488"
@@ -239,7 +239,7 @@
     "UPDATE_POLL_S": 10,
     "UPDATE_WINDOW_S": 120
   },
-  "payload_sha256": "5fdc1aeb5817ec6d6489d27c55a0680627abbcc5b12dbe8e401835236c48a1cb",
+  "payload_sha256": "76a041c65b8ecd8260e2fbacafd7b189119431d5b0528f88dab23b43be4c6f10",
   "pre_registered_at": "2026-10-10T14:20:00+08:00",
   "problems": [],
   "stage": "static",
