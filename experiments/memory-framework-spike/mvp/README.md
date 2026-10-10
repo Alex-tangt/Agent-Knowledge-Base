@@ -36,6 +36,8 @@
   **写探针只打 scratch 路径**、证据新增 `artifact_immutability` 与 `write_probe_timeline`；
   `m5b_outofprocess_restore.md` 顶部有更正说明。第三方复算脚本 `scripts/verify_seal.py`：
   落盘物 == 封存副本 == 证据哈希（53 B / `c4dfc7ac…6874`）。
+  封存副本同时放进 `evidence/sealed/`（附 `.gitattributes` 标记 `-text`，避免 `core.autocrlf=true`
+  在重新检出时改成 CRLF 而改变字节；已实测提交后的 blob 逐字节 == 53 B 同上哈希）。
 
 ### 已登记限制（保留，不淡化）
 
