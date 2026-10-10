@@ -54,3 +54,5 @@ owner 将下一步优先级收敛为**可部署、可接入、真实使用验收
 - **D12 凭据与权限**：OpenViking 使用 key 模式并显式开启账户 ACL。Windows 正式部署使用系统凭据管理器提供凭据，再注入进程环境；其它平台支持进程环境。配置、日志、验收记录不写明文凭据。
 
 执行单元：[部署 #79](https://github.com/Alex-tangt/Agent-Knowledge-Base/issues/79)、[统一接入 #80](https://github.com/Alex-tangt/Agent-Knowledge-Base/issues/80)、[Bubble 集成与真实验收 #81](https://github.com/Alex-tangt/Agent-Knowledge-Base/issues/81)。完成事实以集成后的实测记录为准，此处不将实现计划标成已完成。
+
+**增量验收补充（2026-10-11）**：D9–D12 的 Windows 正式部署及 Bubble 实际读写已通过；真实 Codex CLI 可以搜索、读回 Bubble 总结，完整服务重启保持 URI/正文哈希。DSH/opencode 已登记但实际会话调用未验证；POSIX 首次凭据持久化未完成。具体判据、复跑方法及资源测量见 [真实接入验收](../../experiments/memory-base-live/README.md)。该增量不消除来源新鲜度缺陷，也不标志后续产品化阶段完成。

@@ -1,0 +1,47 @@
+{
+  "testedAt": "2026-10-10T18:31:10.893Z",
+  "tasks": [
+    {
+      "kind": "article",
+      "taskId": "371a0f8f-dd90-4fe5-856c-34b9b7302f1a",
+      "conversationId": "dc57d928-b0cd-4031-aae5-009fd3d5ecd0",
+      "sourceId": "0e69be02f741f7c77bf812c51f78e0d681437b3b15cc920f89e39c1707488675",
+      "title": "给 Agent 加了记忆、反思、Skill，真的会变强吗？",
+      "uri": "viking://resources/captures/4b24c835877cfaa5666c2ba322431a663aab3fdd17c3196ac99274e94fcf591d/content.md",
+      "requestId": "agent-bubble-summary-371a0f8f-dd90-4fe5-856c-34b9b7302f1a",
+      "contentHash": "a773d1d44eb19f2b3e061417b37aabfc728a1878bf50f0918eb994e1746b8095",
+      "bytes": 1006,
+      "model": "deepseek-flash",
+      "saved": true,
+      "readByteExact": true,
+      "retrySameUri": true,
+      "sourceUnchanged": true
+    },
+    {
+      "kind": "video",
+      "taskId": "38985cdf-9228-442d-b387-a398abc35ece",
+      "conversationId": "186f56a8-92ed-4214-88c4-8a9753eed67f",
+      "sourceId": "00ea8357ea139256d8f710ab75bdb397a2e2530b872de561f47307f804c3e50b",
+      "title": "比付费强十倍！2026吃透最全最细的DeepSeek Harness全套教程，从下载安装到环境配置使用、AI工程化落地项目实战！存下吧，很难找全的！ p01 1.【Agent 七大架构场景化选型 + 完整落地】Agent 架构技术选型与全链路项目实战",
+      "uri": "viking://resources/captures/0ada0a7776fcf4e646f0b3b54d69972334f01b04a7da6488c4044fa6f46dbd7b/content.md",
+      "requestId": "agent-bubble-summary-38985cdf-9228-442d-b387-a398abc35ece",
+      "contentHash": "5f6ba7e2e05b205484c0034111404a363151d35d95516871c61fd6d727eeadc7",
+      "bytes": 914,
+      "model": "deepseek-flash",
+      "saved": true,
+      "readByteExact": true,
+      "retrySameUri": true,
+      "sourceUnchanged": true
+    }
+  ],
+  "followUp": {
+    "taskId": "db9f414e-c1db-4a8c-8ee4-e7ba37663481",
+    "conversationId": "dc57d928-b0cd-4031-aae5-009fd3d5ecd0",
+    "tools": [
+      "memory_search",
+      "memory_get"
+    ],
+    "autoSaved": false,
+    "resultHash": "0489155a31a87b26d1a5ed5ad469da284b93778f578c1c346e997172994f8d9c"
+  }
+}

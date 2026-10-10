@@ -38,17 +38,17 @@
       },
       "expected": {
         "file": "experiments/agentic-rag-census/README.md",
-        "anchor_line": 67,
+        "anchor_line": 81,
         "span": "c1c1287aa60a94acf9c4d20c891c9cd611a0f6e8",
         "unique": true,
-        "span_line": 67,
+        "span_line": 81,
         "span_sha1": "b2845980eaea"
       },
       "in_corpus": true,
       "baseline_entry_id": "repo:agent-knowledge-base/experiments/agentic-rag-census/README.md",
       "min_tool_calls": 1,
       "why": "词法精搜：40 位 commit sha 无法靠语义检索定位（向量/BM25 对十六进制串无区分度），必须精确匹配。",
-      "refreshed_at": "1eebc63b66527adec91f2ea407bb64781766addd"
+      "refreshed_at": "070ee8c48f9f6ca4d310904a9f7438e7f9f6d627"
     },
     {
       "id": "nav-071-g02",
@@ -76,7 +76,7 @@
       "baseline_entry_id": "repo:agent-knowledge-base/docs/adr/0030-retrieval-agent-depth-thesis.md",
       "min_tool_calls": 1,
       "why": "编号 + 英文术语的混合 token：语义检索只会回到 D7 整节（同一文件），但只有词法精搜能直接给出 D7.7 那一行。",
-      "refreshed_at": "1eebc63b66527adec91f2ea407bb64781766addd"
+      "refreshed_at": "070ee8c48f9f6ca4d310904a9f7438e7f9f6d627"
     },
     {
       "id": "nav-071-g03",
@@ -94,17 +94,17 @@
       },
       "expected": {
         "file": "AGENTS.md",
-        "anchor_line": 85,
+        "anchor_line": 91,
         "span": "EXCLUDE_DIR_NAMES",
         "unique": true,
-        "span_line": 85,
+        "span_line": 91,
         "span_sha1": "472e81b1ed5c"
       },
       "in_corpus": true,
       "baseline_entry_id": "repo:agent-knowledge-base/AGENTS.md",
       "min_tool_calls": 1,
       "why": "SCREAMING_SNAKE 标识符是词典外 token（BGE-M3 会被分词成子词），考词法面的精确符号召回。",
-      "refreshed_at": "1eebc63b66527adec91f2ea407bb64781766addd"
+      "refreshed_at": "070ee8c48f9f6ca4d310904a9f7438e7f9f6d627"
     },
     {
       "id": "nav-071-g04",
@@ -122,17 +122,17 @@
       },
       "expected": {
         "file": "AGENTS.md",
-        "anchor_line": 86,
+        "anchor_line": 92,
         "span": "MEMORY_DEDUP_THRESHOLD",
         "unique": true,
-        "span_line": 86,
+        "span_line": 92,
         "span_sha1": "7ac7f749efdb"
       },
       "in_corpus": true,
       "baseline_entry_id": "repo:agent-knowledge-base/AGENTS.md",
       "min_tool_calls": 1,
       "why": "env 变量名 + 默认值 0.88 的联合定位；语义检索会回到一堆讲去重的条目，词法面能直接到行。",
-      "refreshed_at": "1eebc63b66527adec91f2ea407bb64781766addd"
+      "refreshed_at": "070ee8c48f9f6ca4d310904a9f7438e7f9f6d627"
     },
     {
       "id": "nav-071-g05",
@@ -160,7 +160,7 @@
       "baseline_entry_id": "repo:agent-knowledge-base/memory_agent/eval/README.md",
       "min_tool_calls": 1,
       "why": "代码字面量（= 号 + 英文小写）在中文文档里，语义检索难定位；且这条约束决定「什么不算显著」。",
-      "refreshed_at": "1eebc63b66527adec91f2ea407bb64781766addd"
+      "refreshed_at": "070ee8c48f9f6ca4d310904a9f7438e7f9f6d627"
     },
     {
       "id": "nav-071-g06",
@@ -188,7 +188,7 @@
       "baseline_entry_id": "repo:agent-knowledge-base/docs/adr/0019-memory-store-port-residency-classification.md",
       "min_tool_calls": 1,
       "why": "同一 ADR 有 D1–D16 十几个编号，语义检索只会回到整篇；编号级定位是词法面的专属能力。",
-      "refreshed_at": "1eebc63b66527adec91f2ea407bb64781766addd"
+      "refreshed_at": "070ee8c48f9f6ca4d310904a9f7438e7f9f6d627"
     },
     {
       "id": "nav-071-g07",
@@ -206,17 +206,17 @@
       },
       "expected": {
         "file": "AGENTS.md",
-        "anchor_line": 88,
+        "anchor_line": 94,
         "span": "2.67s",
         "unique": true,
-        "span_line": 88,
+        "span_line": 94,
         "span_sha1": "3d4ab94e7f3d"
       },
       "in_corpus": true,
       "baseline_entry_id": "repo:agent-knowledge-base/AGENTS.md",
       "min_tool_calls": 1,
       "why": "数字 + 单位混合 token：语义检索对数值不敏感，词法精搜是唯一稳定解法。**2026-10-07 收尾改锚**：原锚 `579 passed` 是**易变锚**（单测数每次提交都变，#69 把它改成了 584）→ 属「期望真失效」，换成冻结的实测数字 `2.67s`（#35 ONNX 重排器）。",
-      "refreshed_at": "1eebc63b66527adec91f2ea407bb64781766addd"
+      "refreshed_at": "070ee8c48f9f6ca4d310904a9f7438e7f9f6d627"
     },
     {
       "id": "nav-071-g08",
@@ -244,7 +244,7 @@
       "baseline_entry_id": "topics/qdrant-local-mode-semantics",
       "min_tool_calls": 1,
       "why": "可写 KB（≈40 条）也属基表：这条自省记录只有精确短语能一击命中，且它的 id 就是 frontmatter id（与只读条目的 repo: 前缀不同）。",
-      "refreshed_at": "1eebc63b66527adec91f2ea407bb64781766addd"
+      "refreshed_at": "070ee8c48f9f6ca4d310904a9f7438e7f9f6d627"
     },
     {
       "id": "nav-071-r01",
@@ -277,7 +277,7 @@
       "baseline_entry_id": "repo:agent-knowledge-base/docs/adr/0030-retrieval-agent-depth-thesis.md",
       "min_tool_calls": 1,
       "why": "按行范围读回：命中要求**精确行窗**（55–61）含 D7.7——一次性检索只能给整条，不能给行窗，这是 read 面的核心价值（省 token + 可指认）。",
-      "refreshed_at": "1eebc63b66527adec91f2ea407bb64781766addd"
+      "refreshed_at": "070ee8c48f9f6ca4d310904a9f7438e7f9f6d627"
     },
     {
       "id": "nav-071-r02",
@@ -310,7 +310,7 @@
       "baseline_entry_id": "repo:agent-knowledge-base/docs/adr/0026-agentic-loop-measurement-protocol.md",
       "min_tool_calls": 1,
       "why": "同文件的 D2–D5 四条连读；考「定位到节再读窗」的组合，而不是整篇返回。",
-      "refreshed_at": "1eebc63b66527adec91f2ea407bb64781766addd"
+      "refreshed_at": "070ee8c48f9f6ca4d310904a9f7438e7f9f6d627"
     },
     {
       "id": "nav-071-r03",
@@ -343,7 +343,7 @@
       "baseline_entry_id": "repo:agent-knowledge-base/memory_agent/eval/README.md",
       "min_tool_calls": 1,
       "why": "读窗落在文档末尾的「口径」段：这类段落标题泛化（## 跑），语义检索容易把它排在后面，行窗读取不受影响。",
-      "refreshed_at": "1eebc63b66527adec91f2ea407bb64781766addd"
+      "refreshed_at": "070ee8c48f9f6ca4d310904a9f7438e7f9f6d627"
     },
     {
       "id": "nav-071-r04",
@@ -355,28 +355,28 @@
         "tool": "read",
         "file": "AGENTS.md",
         "line_range": [
-          343,
-          345
+          365,
+          367
         ]
       },
       "expected": {
         "file": "AGENTS.md",
         "line_range": [
-          343,
-          345
+          365,
+          367
         ],
         "line_width": 2,
         "span_offset": 0,
         "span": "全索引 260 条中退役条目 = 0",
-        "span_line": 343,
-        "anchor_line": 343,
+        "span_line": 365,
+        "anchor_line": 365,
         "span_sha1": "1aff8f5c83a3"
       },
       "in_corpus": true,
       "baseline_entry_id": "repo:agent-knowledge-base/AGENTS.md",
       "min_tool_calls": 1,
       "why": "AGENTS.md 是一条超大条目（400+ 行）：一次性检索把它当**一个**条目，read 面能定位到行窗——正是 #63 要证明的边界。**2026-10-07 task-6 锚加长**：原锚 `退役条目 = 0` 在 AGENTS.md 出现**两次**（L229 裁决参照 / L343 前沿票），refresh 的『就近取用』曾把它锚到 L229（与该 query 的语义不符）→ 锚加长为 query 里那句 `全索引 260 条中退役条目 = 0`，唯一解析到 L343（query/期望语义不变，只消除歧义）。",
-      "refreshed_at": "1eebc63b66527adec91f2ea407bb64781766addd"
+      "refreshed_at": "070ee8c48f9f6ca4d310904a9f7438e7f9f6d627"
     },
     {
       "id": "nav-071-r05",
@@ -388,28 +388,28 @@
         "tool": "read",
         "file": "experiments/agentic-rag-census/README.md",
         "line_range": [
-          100,
-          107
+          114,
+          121
         ]
       },
       "expected": {
         "file": "experiments/agentic-rag-census/README.md",
         "line_range": [
-          100,
-          107
+          114,
+          121
         ],
         "line_width": 7,
         "span_offset": 5,
         "span": "48503510bedd9655",
-        "span_line": 105,
-        "anchor_line": 105,
+        "span_line": 119,
+        "anchor_line": 119,
         "span_sha1": "1594a21bbb5c"
       },
       "in_corpus": true,
       "baseline_entry_id": "repo:agent-knowledge-base/experiments/agentic-rag-census/README.md",
       "min_tool_calls": 1,
       "why": "「确定性/复现」类事实必须逐字核对 hash——行窗读取 + 精确串比对，不能靠语义相似。",
-      "refreshed_at": "1eebc63b66527adec91f2ea407bb64781766addd"
+      "refreshed_at": "070ee8c48f9f6ca4d310904a9f7438e7f9f6d627"
     },
     {
       "id": "nav-071-r06",
@@ -442,7 +442,7 @@
       "baseline_entry_id": "decisions/KB-0002-growth-control-and-retrieval-ladder",
       "min_tool_calls": 1,
       "why": "可写 KB 的表格行：触发条件是条件式措辞（if/then），语义检索会把整条决策返回，行窗直接给条件本身。",
-      "refreshed_at": "1eebc63b66527adec91f2ea407bb64781766addd"
+      "refreshed_at": "070ee8c48f9f6ca4d310904a9f7438e7f9f6d627"
     },
     {
       "id": "nav-071-o01",
@@ -466,7 +466,7 @@
       "baseline_entry_id": "repo:agent-knowledge-base/docs/adr/0030-retrieval-agent-depth-thesis.md",
       "min_tool_calls": 1,
       "why": "outline 面 = 只读标题树，不读正文；一次性检索没有标题结构这一层，只能回到整条。",
-      "refreshed_at": "1eebc63b66527adec91f2ea407bb64781766addd"
+      "refreshed_at": "070ee8c48f9f6ca4d310904a9f7438e7f9f6d627"
     },
     {
       "id": "nav-071-o02",
@@ -490,7 +490,7 @@
       "baseline_entry_id": "repo:agent-knowledge-base/docs/agent-capability-rubric.md",
       "min_tool_calls": 1,
       "why": "三级标题级定位（一级是文档名、二级是「1. 模型」）——考 outline 的层级导航，而不是扁平的语义相似。",
-      "refreshed_at": "1eebc63b66527adec91f2ea407bb64781766addd"
+      "refreshed_at": "070ee8c48f9f6ca4d310904a9f7438e7f9f6d627"
     },
     {
       "id": "nav-071-o03",
@@ -506,15 +506,15 @@
         "file": "CONTEXT.md",
         "heading": "Glossary",
         "level": 2,
-        "anchor_line": 190,
-        "span_line": 190,
+        "anchor_line": 199,
+        "span_line": 199,
         "span_sha1": "d307ad95cd81"
       },
       "in_corpus": true,
       "baseline_entry_id": "repo:agent-knowledge-base/CONTEXT.md",
       "min_tool_calls": 1,
       "why": "最小的导航动作：一次 outline 就够；对 #63 是「单调用即可答」的对照点。",
-      "refreshed_at": "1eebc63b66527adec91f2ea407bb64781766addd"
+      "refreshed_at": "070ee8c48f9f6ca4d310904a9f7438e7f9f6d627"
     },
     {
       "id": "nav-071-o04",
@@ -538,7 +538,7 @@
       "baseline_entry_id": "repo:agent-knowledge-base/experiments/agentic-rag-census/phase_b/README.md",
       "min_tool_calls": 1,
       "why": "标题里含反引号与斜杠路径——outline 必须原样保留标点；语义检索会把这些符号当噪声丢掉。",
-      "refreshed_at": "1eebc63b66527adec91f2ea407bb64781766addd"
+      "refreshed_at": "070ee8c48f9f6ca4d310904a9f7438e7f9f6d627"
     },
     {
       "id": "nav-071-o05",
@@ -562,7 +562,7 @@
       "baseline_entry_id": "topics/qdrant-local-mode-semantics",
       "min_tool_calls": 1,
       "why": "英文长标题 + em dash：考 outline 的原文保真（TL;DR 里的 \"resurrects the old points\" 与标题措辞不同，语义检索可能抓到前者）。",
-      "refreshed_at": "1eebc63b66527adec91f2ea407bb64781766addd"
+      "refreshed_at": "070ee8c48f9f6ca4d310904a9f7438e7f9f6d627"
     },
     {
       "id": "nav-071-h01",
@@ -725,7 +725,7 @@
       "baseline_note": "只读语料只索引 .md，代码文件系统性缺席（结构性不可达）",
       "min_tool_calls": 1,
       "why": "导航边界探针：基表 = 文件 + git，但**索引**只装 .md。代码问题必须走文件面 grep，一次性检索不可能命中。",
-      "refreshed_at": "1eebc63b66527adec91f2ea407bb64781766addd"
+      "refreshed_at": "070ee8c48f9f6ca4d310904a9f7438e7f9f6d627"
     },
     {
       "id": "nav-071-b02",
@@ -753,7 +753,7 @@
       "baseline_note": "只读语料只索引 .md，代码文件系统性缺席（结构性不可达）",
       "min_tool_calls": 1,
       "why": "同上，且是「实现细节」类问题——文档只讲口径，函数签名只在代码里。",
-      "refreshed_at": "1eebc63b66527adec91f2ea407bb64781766addd"
+      "refreshed_at": "070ee8c48f9f6ca4d310904a9f7438e7f9f6d627"
     },
     {
       "id": "nav-071-b03",
@@ -785,13 +785,13 @@
       "baseline_note": "只读语料只索引 .md，代码文件系统性缺席（结构性不可达）",
       "min_tool_calls": 1,
       "why": "行窗读取 + 代码文件：一次性检索在这里连「条目」都不存在。",
-      "refreshed_at": "1eebc63b66527adec91f2ea407bb64781766addd"
+      "refreshed_at": "070ee8c48f9f6ca4d310904a9f7438e7f9f6d627"
     }
   ],
   "refresh": {
     "tolerance": 10,
-    "recorded_at": "2026-10-07",
-    "recorded_at_commit": "1eebc63b66527adec91f2ea407bb64781766addd",
+    "recorded_at": "2026-10-10",
+    "recorded_at_commit": "070ee8c48f9f6ca4d310904a9f7438e7f9f6d627",
     "semantics": "① 文件存在 ② 锚短语仍在 ③ 位置在记录值 ±tolerance（文档位移 ⇒ --refresh 可修；锚短语消失 ⇒ 真失效，必须改探针）"
   },
   "tolerance": 10

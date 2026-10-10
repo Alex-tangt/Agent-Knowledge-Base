@@ -1,0 +1,573 @@
+{
+ "mode": "verify",
+ "n": 28,
+ "ok": 28,
+ "tolerance": 10,
+ "failed": [],
+ "flagged": [],
+ "by_face": {
+  "grep": {
+   "n": 10,
+   "ok": 10
+  },
+  "read": {
+   "n": 7,
+   "ok": 7
+  },
+  "outline": {
+   "n": 5,
+   "ok": 5
+  },
+  "history": {
+   "n": 6,
+   "ok": 6
+  }
+ },
+ "by_scope": {
+  "corpus": 22,
+  "kb": 3,
+  "repo": 3
+ },
+ "entry_addressable": 19,
+ "structurally_unreachable": 9,
+ "refresh": {
+  "tolerance": 10,
+  "recorded_at": "2026-10-10",
+  "recorded_at_commit": "070ee8c48f9f6ca4d310904a9f7438e7f9f6d627",
+  "semantics": "① 文件存在 ② 锚短语仍在 ③ 位置在记录值 ±tolerance（文档位移 ⇒ --refresh 可修；锚短语消失 ⇒ 真失效，必须改探针）"
+ },
+ "rows": [
+  {
+   "ok": true,
+   "checks": {
+    "exists": true,
+    "anchor": true,
+    "position": true
+   },
+   "actual_line": 81,
+   "notes": [],
+   "flags": [],
+   "id": "nav-071-g01",
+   "face": "grep",
+   "scope": "corpus",
+   "difficulty": "easy",
+   "recorded_line": 81,
+   "baseline_entry_id": "repo:agent-knowledge-base/experiments/agentic-rag-census/README.md",
+   "baseline_entry_actual": "repo:agent-knowledge-base/experiments/agentic-rag-census/README.md",
+   "baseline_entry_ok": true
+  },
+  {
+   "ok": true,
+   "checks": {
+    "exists": true,
+    "anchor": true,
+    "position": true
+   },
+   "actual_line": 66,
+   "notes": [],
+   "flags": [],
+   "id": "nav-071-g02",
+   "face": "grep",
+   "scope": "corpus",
+   "difficulty": "hard",
+   "recorded_line": 66,
+   "baseline_entry_id": "repo:agent-knowledge-base/docs/adr/0030-retrieval-agent-depth-thesis.md",
+   "baseline_entry_actual": "repo:agent-knowledge-base/docs/adr/0030-retrieval-agent-depth-thesis.md",
+   "baseline_entry_ok": true
+  },
+  {
+   "ok": true,
+   "checks": {
+    "exists": true,
+    "anchor": true,
+    "position": true
+   },
+   "actual_line": 91,
+   "notes": [],
+   "flags": [],
+   "id": "nav-071-g03",
+   "face": "grep",
+   "scope": "corpus",
+   "difficulty": "medium",
+   "recorded_line": 91,
+   "baseline_entry_id": "repo:agent-knowledge-base/AGENTS.md",
+   "baseline_entry_actual": "repo:agent-knowledge-base/AGENTS.md",
+   "baseline_entry_ok": true
+  },
+  {
+   "ok": true,
+   "checks": {
+    "exists": true,
+    "anchor": true,
+    "position": true
+   },
+   "actual_line": 92,
+   "notes": [],
+   "flags": [],
+   "id": "nav-071-g04",
+   "face": "grep",
+   "scope": "corpus",
+   "difficulty": "medium",
+   "recorded_line": 92,
+   "baseline_entry_id": "repo:agent-knowledge-base/AGENTS.md",
+   "baseline_entry_actual": "repo:agent-knowledge-base/AGENTS.md",
+   "baseline_entry_ok": true
+  },
+  {
+   "ok": true,
+   "checks": {
+    "exists": true,
+    "anchor": true,
+    "position": true
+   },
+   "actual_line": 87,
+   "notes": [],
+   "flags": [],
+   "id": "nav-071-g05",
+   "face": "grep",
+   "scope": "corpus",
+   "difficulty": "medium",
+   "recorded_line": 87,
+   "baseline_entry_id": "repo:agent-knowledge-base/memory_agent/eval/README.md",
+   "baseline_entry_actual": "repo:agent-knowledge-base/memory_agent/eval/README.md",
+   "baseline_entry_ok": true
+  },
+  {
+   "ok": true,
+   "checks": {
+    "exists": true,
+    "anchor": true,
+    "position": true
+   },
+   "actual_line": 202,
+   "notes": [],
+   "flags": [],
+   "id": "nav-071-g06",
+   "face": "grep",
+   "scope": "corpus",
+   "difficulty": "hard",
+   "recorded_line": 202,
+   "baseline_entry_id": "repo:agent-knowledge-base/docs/adr/0019-memory-store-port-residency-classification.md",
+   "baseline_entry_actual": "repo:agent-knowledge-base/docs/adr/0019-memory-store-port-residency-classification.md",
+   "baseline_entry_ok": true
+  },
+  {
+   "ok": true,
+   "checks": {
+    "exists": true,
+    "anchor": true,
+    "position": true
+   },
+   "actual_line": 94,
+   "notes": [],
+   "flags": [],
+   "id": "nav-071-g07",
+   "face": "grep",
+   "scope": "corpus",
+   "difficulty": "easy",
+   "recorded_line": 94,
+   "baseline_entry_id": "repo:agent-knowledge-base/AGENTS.md",
+   "baseline_entry_actual": "repo:agent-knowledge-base/AGENTS.md",
+   "baseline_entry_ok": true
+  },
+  {
+   "ok": true,
+   "checks": {
+    "exists": true,
+    "anchor": true,
+    "position": true
+   },
+   "actual_line": 83,
+   "notes": [],
+   "flags": [],
+   "id": "nav-071-g08",
+   "face": "grep",
+   "scope": "kb",
+   "difficulty": "medium",
+   "recorded_line": 83,
+   "baseline_entry_id": "topics/qdrant-local-mode-semantics",
+   "baseline_entry_actual": "topics/qdrant-local-mode-semantics",
+   "baseline_entry_ok": true
+  },
+  {
+   "ok": true,
+   "checks": {
+    "exists": true,
+    "anchor": true,
+    "position": true
+   },
+   "actual_line": 66,
+   "notes": [],
+   "flags": [],
+   "id": "nav-071-r01",
+   "face": "read",
+   "scope": "corpus",
+   "difficulty": "hard",
+   "recorded_line": 66,
+   "baseline_entry_id": "repo:agent-knowledge-base/docs/adr/0030-retrieval-agent-depth-thesis.md",
+   "baseline_entry_actual": "repo:agent-knowledge-base/docs/adr/0030-retrieval-agent-depth-thesis.md",
+   "baseline_entry_ok": true
+  },
+  {
+   "ok": true,
+   "checks": {
+    "exists": true,
+    "anchor": true,
+    "position": true
+   },
+   "actual_line": 24,
+   "notes": [],
+   "flags": [],
+   "id": "nav-071-r02",
+   "face": "read",
+   "scope": "corpus",
+   "difficulty": "medium",
+   "recorded_line": 24,
+   "baseline_entry_id": "repo:agent-knowledge-base/docs/adr/0026-agentic-loop-measurement-protocol.md",
+   "baseline_entry_actual": "repo:agent-knowledge-base/docs/adr/0026-agentic-loop-measurement-protocol.md",
+   "baseline_entry_ok": true
+  },
+  {
+   "ok": true,
+   "checks": {
+    "exists": true,
+    "anchor": true,
+    "position": true
+   },
+   "actual_line": 87,
+   "notes": [],
+   "flags": [],
+   "id": "nav-071-r03",
+   "face": "read",
+   "scope": "corpus",
+   "difficulty": "medium",
+   "recorded_line": 87,
+   "baseline_entry_id": "repo:agent-knowledge-base/memory_agent/eval/README.md",
+   "baseline_entry_actual": "repo:agent-knowledge-base/memory_agent/eval/README.md",
+   "baseline_entry_ok": true
+  },
+  {
+   "ok": true,
+   "checks": {
+    "exists": true,
+    "anchor": true,
+    "position": true
+   },
+   "actual_line": 365,
+   "notes": [],
+   "flags": [],
+   "id": "nav-071-r04",
+   "face": "read",
+   "scope": "corpus",
+   "difficulty": "medium",
+   "recorded_line": 365,
+   "baseline_entry_id": "repo:agent-knowledge-base/AGENTS.md",
+   "baseline_entry_actual": "repo:agent-knowledge-base/AGENTS.md",
+   "baseline_entry_ok": true
+  },
+  {
+   "ok": true,
+   "checks": {
+    "exists": true,
+    "anchor": true,
+    "position": true
+   },
+   "actual_line": 119,
+   "notes": [],
+   "flags": [],
+   "id": "nav-071-r05",
+   "face": "read",
+   "scope": "corpus",
+   "difficulty": "hard",
+   "recorded_line": 119,
+   "baseline_entry_id": "repo:agent-knowledge-base/experiments/agentic-rag-census/README.md",
+   "baseline_entry_actual": "repo:agent-knowledge-base/experiments/agentic-rag-census/README.md",
+   "baseline_entry_ok": true
+  },
+  {
+   "ok": true,
+   "checks": {
+    "exists": true,
+    "anchor": true,
+    "position": true
+   },
+   "actual_line": 55,
+   "notes": [],
+   "flags": [],
+   "id": "nav-071-r06",
+   "face": "read",
+   "scope": "kb",
+   "difficulty": "medium",
+   "recorded_line": 55,
+   "baseline_entry_id": "decisions/KB-0002-growth-control-and-retrieval-ladder",
+   "baseline_entry_actual": "decisions/KB-0002-growth-control-and-retrieval-ladder",
+   "baseline_entry_ok": true
+  },
+  {
+   "ok": true,
+   "checks": {
+    "exists": true,
+    "anchor": true,
+    "position": true
+   },
+   "actual_line": 28,
+   "notes": [],
+   "flags": [],
+   "id": "nav-071-o01",
+   "face": "outline",
+   "scope": "corpus",
+   "difficulty": "easy",
+   "recorded_line": 28,
+   "baseline_entry_id": "repo:agent-knowledge-base/docs/adr/0030-retrieval-agent-depth-thesis.md",
+   "baseline_entry_actual": "repo:agent-knowledge-base/docs/adr/0030-retrieval-agent-depth-thesis.md",
+   "baseline_entry_ok": true
+  },
+  {
+   "ok": true,
+   "checks": {
+    "exists": true,
+    "anchor": true,
+    "position": true
+   },
+   "actual_line": 26,
+   "notes": [],
+   "flags": [],
+   "id": "nav-071-o02",
+   "face": "outline",
+   "scope": "corpus",
+   "difficulty": "medium",
+   "recorded_line": 26,
+   "baseline_entry_id": "repo:agent-knowledge-base/docs/agent-capability-rubric.md",
+   "baseline_entry_actual": "repo:agent-knowledge-base/docs/agent-capability-rubric.md",
+   "baseline_entry_ok": true
+  },
+  {
+   "ok": true,
+   "checks": {
+    "exists": true,
+    "anchor": true,
+    "position": true
+   },
+   "actual_line": 199,
+   "notes": [],
+   "flags": [],
+   "id": "nav-071-o03",
+   "face": "outline",
+   "scope": "corpus",
+   "difficulty": "easy",
+   "recorded_line": 199,
+   "baseline_entry_id": "repo:agent-knowledge-base/CONTEXT.md",
+   "baseline_entry_actual": "repo:agent-knowledge-base/CONTEXT.md",
+   "baseline_entry_ok": true
+  },
+  {
+   "ok": true,
+   "checks": {
+    "exists": true,
+    "anchor": true,
+    "position": true
+   },
+   "actual_line": 90,
+   "notes": [],
+   "flags": [],
+   "id": "nav-071-o04",
+   "face": "outline",
+   "scope": "corpus",
+   "difficulty": "medium",
+   "recorded_line": 90,
+   "baseline_entry_id": "repo:agent-knowledge-base/experiments/agentic-rag-census/phase_b/README.md",
+   "baseline_entry_actual": "repo:agent-knowledge-base/experiments/agentic-rag-census/phase_b/README.md",
+   "baseline_entry_ok": true
+  },
+  {
+   "ok": true,
+   "checks": {
+    "exists": true,
+    "anchor": true,
+    "position": true
+   },
+   "actual_line": 54,
+   "notes": [],
+   "flags": [],
+   "id": "nav-071-o05",
+   "face": "outline",
+   "scope": "kb",
+   "difficulty": "medium",
+   "recorded_line": 54,
+   "baseline_entry_id": "topics/qdrant-local-mode-semantics",
+   "baseline_entry_actual": "topics/qdrant-local-mode-semantics",
+   "baseline_entry_ok": true
+  },
+  {
+   "ok": true,
+   "checks": {
+    "exists": true,
+    "anchor": true,
+    "position": true
+   },
+   "actual_line": null,
+   "notes": [],
+   "flags": [],
+   "id": "nav-071-h01",
+   "face": "history",
+   "scope": "corpus",
+   "difficulty": "medium",
+   "recorded_line": null,
+   "baseline_entry_id": null,
+   "baseline_entry_actual": null,
+   "baseline_entry_ok": true
+  },
+  {
+   "ok": true,
+   "checks": {
+    "exists": true,
+    "anchor": true,
+    "position": true
+   },
+   "actual_line": null,
+   "notes": [],
+   "flags": [],
+   "id": "nav-071-h02",
+   "face": "history",
+   "scope": "corpus",
+   "difficulty": "medium",
+   "recorded_line": null,
+   "baseline_entry_id": null,
+   "baseline_entry_actual": null,
+   "baseline_entry_ok": true
+  },
+  {
+   "ok": true,
+   "checks": {
+    "exists": true,
+    "anchor": true,
+    "position": true
+   },
+   "actual_line": null,
+   "notes": [],
+   "flags": [],
+   "id": "nav-071-h03",
+   "face": "history",
+   "scope": "corpus",
+   "difficulty": "hard",
+   "recorded_line": null,
+   "baseline_entry_id": null,
+   "baseline_entry_actual": null,
+   "baseline_entry_ok": true
+  },
+  {
+   "ok": true,
+   "checks": {
+    "exists": true,
+    "anchor": true,
+    "position": true
+   },
+   "actual_line": null,
+   "notes": [],
+   "flags": [],
+   "id": "nav-071-h04",
+   "face": "history",
+   "scope": "corpus",
+   "difficulty": "medium",
+   "recorded_line": null,
+   "baseline_entry_id": null,
+   "baseline_entry_actual": null,
+   "baseline_entry_ok": true
+  },
+  {
+   "ok": true,
+   "checks": {
+    "exists": true,
+    "anchor": true,
+    "position": true
+   },
+   "actual_line": null,
+   "notes": [],
+   "flags": [],
+   "id": "nav-071-h05",
+   "face": "history",
+   "scope": "corpus",
+   "difficulty": "medium",
+   "recorded_line": null,
+   "baseline_entry_id": null,
+   "baseline_entry_actual": null,
+   "baseline_entry_ok": true
+  },
+  {
+   "ok": true,
+   "checks": {
+    "exists": true,
+    "anchor": true,
+    "position": true
+   },
+   "actual_line": null,
+   "notes": [],
+   "flags": [],
+   "id": "nav-071-h06",
+   "face": "history",
+   "scope": "corpus",
+   "difficulty": "hard",
+   "recorded_line": null,
+   "baseline_entry_id": null,
+   "baseline_entry_actual": null,
+   "baseline_entry_ok": true
+  },
+  {
+   "ok": true,
+   "checks": {
+    "exists": true,
+    "anchor": true,
+    "position": true
+   },
+   "actual_line": 27,
+   "notes": [],
+   "flags": [],
+   "id": "nav-071-b01",
+   "face": "grep",
+   "scope": "repo",
+   "difficulty": "easy",
+   "recorded_line": 27,
+   "baseline_entry_id": null,
+   "baseline_entry_actual": null,
+   "baseline_entry_ok": true
+  },
+  {
+   "ok": true,
+   "checks": {
+    "exists": true,
+    "anchor": true,
+    "position": true
+   },
+   "actual_line": 24,
+   "notes": [],
+   "flags": [],
+   "id": "nav-071-b02",
+   "face": "grep",
+   "scope": "repo",
+   "difficulty": "medium",
+   "recorded_line": 24,
+   "baseline_entry_id": null,
+   "baseline_entry_actual": null,
+   "baseline_entry_ok": true
+  },
+  {
+   "ok": true,
+   "checks": {
+    "exists": true,
+    "anchor": true,
+    "position": true
+   },
+   "actual_line": 25,
+   "notes": [],
+   "flags": [],
+   "id": "nav-071-b03",
+   "face": "read",
+   "scope": "repo",
+   "difficulty": "medium",
+   "recorded_line": 25,
+   "baseline_entry_id": null,
+   "baseline_entry_actual": null,
+   "baseline_entry_ok": true
+  }
+ ]
+}

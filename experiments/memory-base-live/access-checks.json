@@ -1,0 +1,7 @@
+{
+  "named_credentials": 7,
+  "files_checked": 37,
+  "scope": "staged files, deployment json/logs, Bubble host logs, host configs and Bubble env",
+  "raw_credential_hits": 0,
+  "passed": true
+}

@@ -23,6 +23,8 @@
 
 `restart` 重启所管理的服务；`install --fresh-runtime` 选择新的专用环境，保留同一状态目录里的数据与身份。`--home` 可指定另一个部署目录。生命周期命令校验 PID、创建时间和启动命令，不接管占用端口的其它服务。
 
+目前没有注册开机自动启动。电脑重启后先执行 `start`，再用 `status` 确认就绪。安装失败时保留数据与日志，可修复前置条件后重新执行安装。
+
 运行包含三个仅监听本机的进程：OpenViking 8786，进程外串行嵌入 8796，统一接入服务 8788。`status=ready` 要求三个受管理进程均健康。OpenViking 显式采用 key 模式、开启账户 ACL，注册密钥以哈希保存；宿主凭据从系统凭据管理器注入进程环境。手机只连接原有 Bubble 后端 8787。
 
 ## 宿主接入
@@ -34,6 +36,8 @@ MCP 统一入口为：
 ```
 
 已登记身份名为 `codex`、`dsh`、`opencode`、`agent-bubble`（writer）及 `reader`（只读）。接口只暴露 `memory_add`、`memory_search`、`memory_get`；不向普通宿主暴露覆盖、删除或管理工具。HTTP 对应 `/api/memory/add`、`/search`、`/get`，与 MCP 共用实现。
+
+MCP 声明搜索和读取为只读，追加为非只读；三个工具均声明幂等、非破坏性且仅在受控范围工作。这些提示供客户端展示和审批使用，权限仍由服务端凭据校验。
 
 Codex 可通过其本机 `codex mcp add personal-memory -- <专用Python> -m memory_base.mcp_stdio --profile codex --home <部署目录>` 登记。DSH 的实际入口为 `~/.dsh/profiles/desktop/cordis.patch.yml` 中的 `@deepseek-ai/dsh-mcp-client` 插件，以 `insert` 插入一条 stdio 配置；opencode 在其 `mcp` 配置登记同一入口。配置里只有路径与身份名。宿主规约源文件为 `memory_base/skill/SKILL.md`。
 
@@ -48,3 +52,9 @@ Bubble `.env` 只增加 `MEMORY_BASE_URL`、`MEMORY_BASE_PYTHON`、`MEMORY_BASE_
 成功响应的 `index.status=pending` 表示正文已保存但派生索引尚未就绪；重试同一请求会再次尝试索引。不可用为明确错误，不能解释为没有记忆。此增量不实现项目文件就地映射、自动来源更新、偏好全局升级或完整产品化裁剪。
 
 最终运行证据与复跑方法见 [真实接入验收](../experiments/memory-base-live/README.md)。安装和接口测试通过不替代真实宿主验收。
+
+## 本机交付结果（2026-10-11）
+
+正式状态目录为 `C:\Users\Tan\.agent-memory-base`，运行使用其中的 `runtime\Scripts\python.exe`，源码指向本仓主目录。三个基座服务与 Bubble 后端均在运行。真实 pi 的文章、视频总结已原样保存，跨会话读取成功；真实 Codex CLI 搜索、读回通过。完整停止和启动后，两份内容的 URI、哈希及搜索结果保持一致；上游不可用时返回明确故障。
+
+Codex CLI 验证使用已登记入口及临时 CLI 默认设置，因桌面模型别名在独立 CLI 不可用；全局模型配置保留。DSH/opencode 已完成配置登记，需要新会话加载，其实际对话调用未纳入本轮成功声明。AOCI 仍未建索引，不是这条接入链路的前置条件。

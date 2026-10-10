@@ -1,0 +1,19 @@
+{
+  "retries": [
+    {
+      "task_id": "371a0f8f-dd90-4fe5-856c-34b9b7302f1a",
+      "uri": "viking://resources/captures/4b24c835877cfaa5666c2ba322431a663aab3fdd17c3196ac99274e94fcf591d/content.md",
+      "status": "exists",
+      "index": "ready",
+      "same_content_hash": true
+    },
+    {
+      "task_id": "38985cdf-9228-442d-b387-a398abc35ece",
+      "uri": "viking://resources/captures/0ada0a7776fcf4e646f0b3b54d69972334f01b04a7da6488c4044fa6f46dbd7b/content.md",
+      "status": "exists",
+      "index": "ready",
+      "same_content_hash": true
+    }
+  ],
+  "passed": true
+}
