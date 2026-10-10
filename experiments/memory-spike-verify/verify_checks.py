@@ -372,6 +372,24 @@ def _err(exc: BaseException) -> Dict[str, Any]:
     return {"exception": type(exc).__name__, "module": type(exc).__module__, "message": str(exc)[:600]}
 
 
+def run_ov(args: List[str]) -> Dict[str, Any]:
+    """以隔离 CLI 配置跑 `ov` 二进制（独立进程的真实消费者路径）。"""
+    import subprocess
+
+    r = subprocess.run(
+        [str(E.OV_EXE), *args],
+        capture_output=True,
+        env=E.child_env(),
+        timeout=C.CALL_TIMEOUT_S,
+    )
+    return {
+        "args": args,
+        "rc": r.returncode,
+        "stdout": r.stdout.decode("utf-8", errors="replace"),
+        "stderr": r.stderr.decode("utf-8", errors="replace")[:600],
+    }
+
+
 def wait_ready(timeout: int = C.SERVER_READY_TIMEOUT_S) -> Dict[str, Any]:
     import httpx
 
@@ -417,8 +435,10 @@ def run_live(auto_start: bool = True) -> Dict[str, Any]:
         obs["ready"] = wait_ready()
         if not obs["ready"].get("ready"):
             obs["fatal"] = "隔离实例未就绪"
-            # 不留下半启动的实例：按登记 PID + 端口所有权停掉再返回
-            obs["stop_after_failed_ready"] = E.stop_server(started.get("pid"))
+            # 不留下半启动的实例：按命令行所有权校验（launcher + 监听进程）停掉再返回
+            obs["stop_after_failed_ready"] = E.stop_server(
+                started.get("pid"), started.get("listener_pid")
+            )
             return _finalize(rec, obs)
 
     consumer = P.Consumer("verify-a")
@@ -495,6 +515,35 @@ def run_live(auto_start: bool = True) -> Dict[str, Any]:
             "默认读回接口若与输入不等，M1 的『原文读回一致』不成立",
         )
 
+        # ------- 附加观测（非预注册 probe，故不改变 criteria_sha256）-------
+        # 执行方在 M1 里声称"磁盘字节 / raw / download / 独立进程 ov read 四处逐字节相同"。
+        # 预注册的 C1a/C1b 只覆盖了 raw 与磁盘两处；这里把另外两处也照实测出来，
+        # 作为**描述性证据**附在结果里（判定仍只由预注册 probe 决定）。
+        supp: Dict[str, Any] = {}
+        try:
+            import httpx
+
+            dr = httpx.get(f"{E.BASE_URL}/api/v1/content/download",
+                           params={"uri": entry_uri}, timeout=C.CALL_TIMEOUT_S, trust_env=False)
+            supp["download"] = {
+                "status": dr.status_code,
+                "bytes": len(dr.content),
+                "sha256": E.sha256_bytes(dr.content),
+                "equal_to_input_bytes": dr.content == text.encode("utf-8"),
+            }
+        except Exception as exc:
+            supp["download_error"] = _err(exc)
+        try:
+            supp["ov_version"] = run_ov(["--version"])
+            supp["ov_read"] = run_ov(["read", entry_uri])
+            out = (supp["ov_read"].get("stdout") or "")
+            supp["ov_read"]["stdout_sha256"] = E.sha256_text(out)
+            supp["ov_read"]["equal_to_input"] = out == text
+            supp["ov_read"]["equal_after_strip"] = out.strip() == text.strip()
+        except Exception as exc:
+            supp["ov_read_error"] = _err(exc)
+        obs["supplementary"] = supp
+
         # ---------------- C4 来源只读 ----------------
         src = E.VERIFY_ROOT / "source-tree"
         P.write_source_tree(src, marker)
@@ -541,40 +590,54 @@ def run_live(auto_start: bool = True) -> Dict[str, Any]:
         )
 
         # 第二份正文：workspace 内是否存在源文件对应的独立副本
-        src_a_bytes = P.make_source_files(marker)["a.md"].encode("utf-8")
+        # 关键：用「源文件在磁盘上的真实字节」当针，而不是我生成的字符串（避免换行/编码口径造成假阴性）
+        src_a_path = src / "a.md"
+        src_a_bytes = src_a_path.read_bytes()
         disk_copy = P.scan_for_bytes(E.WORKSPACE, marker.encode("utf-8"), src_a_bytes)
+        c2["source_a_bytes_sha256"] = E.sha256_bytes(src_a_bytes)
         c2["disk_copy_scan"] = disk_copy
+        imported_a = c2.get("read_a_imported")
+        if imported_a is not None:
+            imported_bytes = imported_a.encode("utf-8")
+            c2["imported_a_read_sha256"] = E.sha256_bytes(imported_bytes)
+            c2["imported_a_equal_source_bytes"] = imported_bytes == src_a_bytes
+            c2["imported_a_bytes"] = len(imported_bytes)
         independent_copy = bool(disk_copy["full_content_hits"])
         rec.probe(
             "C2b",
             "FAIL" if independent_copy else "INCONCLUSIVE",
-            {"workspace_full_content_hits": disk_copy["full_content_hits"],
+            {"source_a": {"path": str(src_a_path), "sha256": E.sha256_bytes(src_a_bytes)},
+             "workspace_full_content_hits": disk_copy["full_content_hits"],
              "marker_hits": [h["path"] for h in disk_copy["marker_hits"]]},
             "workspace 内出现源文件正文的独立副本即判『拷贝』",
         )
 
-        # C2a：外部改源文件，按时限等待追平
+        # C2a：外部改源文件，按时限等待追平（比较锚 = 改动后源文件的真实字节）
         modified = P.make_modified_a(marker)
-        (src / "a.md").write_text(modified, encoding="utf-8")
+        mod_meta = P.replace_source_file(src_a_path, modified)
+        obs["source_modified"] = mod_meta
         import subprocess
 
         subprocess.run(["git", "-C", str(src), "add", "-A"], capture_output=True, text=True)
         subprocess.run(["git", "-C", str(src), "commit", "-q", "-m", "external change v2"],
                        capture_output=True, text=True)
+        expected_bytes = src_a_path.read_bytes()
         propagation: List[Dict[str, Any]] = []
         propagated = False
         deadline = time.time() + C.UPDATE_WINDOW_S
         while True:
+            elapsed = int(time.time() - (deadline - C.UPDATE_WINDOW_S))
             try:
                 got = consumer.read_raw(f"{to_uri}/a.md")
-                equal = got == modified
+                got_bytes = got.encode("utf-8")
+                equal = got_bytes == expected_bytes
+                sample = {"t": elapsed, "equal_to_source_bytes": equal,
+                          "read_sha256": E.sha256_bytes(got_bytes),
+                          "read_bytes": len(got_bytes)}
             except Exception as exc:
-                got, equal = None, False
-                propagation.append({"t": int(time.time() - (deadline - C.UPDATE_WINDOW_S)),
-                                    "error": _err(exc)})
-            propagation.append({"t": int(time.time() - (deadline - C.UPDATE_WINDOW_S)),
-                                "equal_to_modified": equal,
-                                "sha256": E.sha256_text(got) if got is not None else None})
+                equal = False
+                sample = {"t": elapsed, "error": _err(exc)}
+            propagation.append(sample)
             if equal:
                 propagated = True
                 break
@@ -593,9 +656,13 @@ def run_live(auto_start: bool = True) -> Dict[str, Any]:
             "外部改源文件后应在上限内读到新正文（PASS=指过去；FAIL=拷贝/快照未追平）",
         )
 
-        # C2c：同一源重复接入（不指定显式 to，用 parent 计数）
+        # C2c：同一源重复接入（用 parent 计数；先 mkdir，否则 add_resource 的 parent 不存在会直接失败）
         dup_parent = f"viking://resources/verify-{run_id}/dup-parent"
         dup: Dict[str, Any] = {"parent": dup_parent}
+        try:
+            dup["mkdir"] = consumer.mkdir(dup_parent)
+        except Exception as exc:
+            dup["mkdir_error"] = _err(exc)
         for i in (1, 2):
             try:
                 dup[f"add_{i}"] = consumer.add_resource(str(src), parent=dup_parent, wait=True)
@@ -607,15 +674,30 @@ def run_live(auto_start: bool = True) -> Dict[str, Any]:
                 dup[f"ls_after_{i}_error"] = _err(exc)
         counts = [len(dup.get(f"ls_after_{i}") or []) for i in (1, 2)]
         dup["counts"] = counts
+        adds_succeeded = sum(1 for i in (1, 2) if dup.get(f"add_{i}_error") is None)
+        lss_ok = sum(1 for i in (1, 2) if dup.get(f"ls_after_{i}_error") is None)
+        dup["adds_succeeded"] = adds_succeeded
+        dup["ls_succeeded"] = lss_ok
         obs["C2c"] = dup
+        if adds_succeeded == 0 or lss_ok == 0 or counts[0] == 0:
+            # 两次接入都没成功（例如 parent 不存在）→ 这个 probe 什么都没测到，不得记 PASS
+            c2c_verdict, c2c_note = "INCONCLUSIVE", "重复接入本身未成功（parent/mkdir/ls 失败）→ 无法裁决"
+        else:
+            c2c_verdict = "PASS" if counts[0] == counts[1] else "FAIL"
+            c2c_note = "同一源重复接入不应新增第二条（条目数 %s → %s）" % (counts[0], counts[1])
         rec.probe(
-            "C2c", "PASS" if counts[0] == counts[1] else "FAIL",
-            {"count_after_first": counts[0], "count_after_second": counts[1]},
-            "同一源重复接入不应新增第二条",
+            "C2c", c2c_verdict,
+            {"count_after_first": counts[0], "count_after_second": counts[1],
+             "adds_succeeded": adds_succeeded, "ls_succeeded": lss_ok,
+             "ls_after_1": dup.get("ls_after_1"), "ls_after_2": dup.get("ls_after_2"),
+             "mkdir_error": dup.get("mkdir_error"), "add_errors": [
+                 dup.get("add_1_error"), dup.get("add_2_error")]},
+            c2c_note,
         )
 
-        # C4b：通过基座写该来源
-        c4b: Dict[str, Any] = {"target": f"{to_uri}/a.md"}
+        # C4b：通过基座写该来源（基线必须取"写之前"的快照——此前我自己改过源文件）
+        before_write = P.source_snapshot(src)
+        c4b: Dict[str, Any] = {"target": f"{to_uri}/a.md", "baseline": before_write["listing_sha256"]}
         try:
             c4b["write_result"] = consumer.write(f"{to_uri}/a.md", "INJECTED-BY-VERIFY\n",
                                                  mode="replace", wait=True)
@@ -624,7 +706,7 @@ def run_live(auto_start: bool = True) -> Dict[str, Any]:
             c4b["error"] = _err(exc)
             c4b["accepted"] = False
         after_write = P.source_snapshot(src)
-        c4b["source_after_write_diff"] = P.snapshot_diff(before, after_write)
+        c4b["source_diff_vs_before_write"] = P.snapshot_diff(before_write, after_write)
         try:
             c4b["read_back"] = consumer.read_raw(f"{to_uri}/a.md")[:200]
         except Exception as exc:
@@ -633,12 +715,20 @@ def run_live(auto_start: bool = True) -> Dict[str, Any]:
         if not c4b["accepted"]:
             rec.probe("C4b", "PASS", {"rejected": c4b.get("error")},
                       "基座对来源路径的写被显式拒绝")
-        elif not c4b["source_after_write_diff"]["identical"]:
-            rec.probe("C4b", "FAIL", c4b, "写请求改变了源目录内容")
+        elif not c4b["source_diff_vs_before_write"]["identical"]:
+            rec.probe("C4b", "FAIL",
+                      {"accepted": True,
+                       "changed": c4b["source_diff_vs_before_write"]["changed"]},
+                      "基座写请求改变了真实来源目录内容")
         else:
             rec.probe(
-                "C4b", "INCONCLUSIVE", {"accepted": True, "read_back": c4b.get("read_back")},
-                "基座只持有导入副本：副本可写，但源目录无回写通道，物理上不存在『写来源』被拒的证据",
+                "C4b", "INCONCLUSIVE",
+                {"accepted": True, "read_back": c4b.get("read_back"),
+                 "source_dir_unchanged": True,
+                 "imported_copy_changed": (c4b.get("read_back") or "").strip()
+                 == "INJECTED-BY-VERIFY"},
+                "基座只持有导入副本：副本可写、且写不改动真实源目录 —— 物理上没有『写来源』这个动作，"
+                "无法给出『写来源被拒』的证据（不得记 PASS）",
             )
 
         # ---------------- C3 重复提交 ----------------
@@ -746,7 +836,7 @@ def run_live(auto_start: bool = True) -> Dict[str, Any]:
             c5["missing"] = _err(exc)
         obs["C5"] = c5
 
-        stop = E.stop_server(started.get("pid"))
+        stop = E.stop_server(started.get("pid"), started.get("listener_pid"))
         obs["stop_for_C5"] = stop
         down: Dict[str, Any] = {"stop": stop}
         try:
@@ -793,12 +883,20 @@ def run_live(auto_start: bool = True) -> Dict[str, Any]:
             "not_found": (c5.get("missing") or {}).get("exception"),
             "unavailable": (down.get("read_error") or {}).get("exception"),
         }
-        distinct = len({v for v in classes.values() if v}) == len([v for v in classes.values() if v])
+        # 按冻结规则原文执行：必须**同时**拿到"无匹配"与"服务不可用"两档且类型不同；
+        # "拒绝访问"一档在本实例（dev/ROOT）无法构造 → 该档标为无法核实，但不得因此放宽前两档。
+        both_present = all(classes.values())
+        distinct = len(set(classes.values())) == 2 if both_present else False
+        c5d_observed = {"distinct": distinct, "classes": classes,
+                        "permission_denied_unreachable_with_dev_identity": True,
+                        "permission_denied_evidence": obs.get("C4c")}
         rec.probe(
             "C5d",
-            "PASS" if distinct and c5.get("missing", {}).get("exception") else "INCONCLUSIVE",
-            taxonomy,
-            "本实例为 dev/ROOT 身份，无法构造越权调用 → permission_denied 一档无法用身份区分核算",
+            "PASS" if (both_present and distinct) else "INCONCLUSIVE",
+            c5d_observed,
+            "需要『无匹配』与『服务不可用』两档同时存在且类型不同；"
+            "『拒绝访问』一档需非 ROOT 身份，本实例无法构造（如实标为无法核实）"
+            + ("" if both_present else "；本次 unavailable 档缺失 → 无法裁决"),
         )
 
         # 重启后读回（C1d）
@@ -831,8 +929,8 @@ def run_live(auto_start: bool = True) -> Dict[str, Any]:
         with contextlib.suppress(Exception):
             consumer.close()
 
-    # 清理：停掉本线实例（只按登记的 PID/端口）
-    obs["final_stop"] = E.stop_server(started.get("pid"))
+    # 清理：停掉本线实例（按命令行所有权校验，launcher 与监听进程一起停）
+    obs["final_stop"] = E.stop_server(started.get("pid"), started.get("listener_pid"))
     return _finalize(rec, obs)
 
 
@@ -897,6 +995,14 @@ def render_markdown(payload: Dict[str, Any]) -> str:
                     lines.append(f"  - 观测：`{json.dumps(pr['observed'], ensure_ascii=False)[:600]}`")
             elif r.get("note"):
                 lines.append(f"- {r['note']}")
+            lines.append("")
+        supp = (payload.get("observation") or {}).get("supplementary")
+        if supp:
+            lines.append("## 附加观测（非预注册 probe；只作描述性证据，不参与判定）")
+            lines.append("")
+            lines.append("```json")
+            lines.append(json.dumps(supp, ensure_ascii=False, indent=2)[:4000])
+            lines.append("```")
             lines.append("")
     else:
         lines.append(f"- 判定：**{payload.get('verdict')}**")

@@ -1,0 +1,256 @@
+{
+  "add_result": {
+    "context_count": 7,
+    "errors": [],
+    "meta": {
+      "file_count": 3,
+      "repo_name": "repository"
+    },
+    "queue_status": {
+      "Embedding": {
+        "error_count": 0,
+        "errors": [],
+        "processed": 7,
+        "requeue_count": 0
+      },
+      "Semantic": {
+        "error_count": 0,
+        "errors": [],
+        "processed": 1,
+        "requeue_count": 0
+      }
+    },
+    "root_uri": "viking://resources/verify-20261010T153910-e48bc7/src",
+    "source_path": "source-tree",
+    "status": "success",
+    "telemetry": {
+      "id": "tm_6a068c65c969487982d3bbae85ebf201",
+      "summary": {
+        "duration_ms": 842.095,
+        "operation": "add_resource_job",
+        "queue": {
+          "embedding": {
+            "execute": {
+              "duration_ms": 525.82
+            },
+            "processed": 7,
+            "queue_wait": {
+              "duration_ms": 1538.457
+            }
+          },
+          "semantic": {
+            "execute": {
+              "duration_ms": 386.861
+            },
+            "processed": 1,
+            "queue_wait": {
+              "duration_ms": 68.009
+            }
+          }
+        },
+        "resource": {
+          "content_commit": {
+            "duration_ms": 11.827
+          },
+          "derived_enqueue": {
+            "duration_ms": 2.165
+          },
+          "embedding": {
+            "execute": {
+              "duration_ms": 525.82
+            },
+            "queue_wait": {
+              "duration_ms": 1538.457
+            }
+          },
+          "flags": {
+            "build_index": true,
+            "summarize": false,
+            "wait": false,
+            "watch_enabled": false
+          },
+          "parse_artifact": {
+            "duration_ms": 255.617
+          },
+          "semantic": {
+            "execute": {
+              "duration_ms": 386.861
+            },
+            "queue_wait": {
+              "duration_ms": 68.009
+            }
+          },
+          "source_execute": {
+            "duration_ms": 332.223
+          },
+          "source_prepare": {
+            "duration_ms": 21.972
+          },
+          "target_resolve": {
+            "duration_ms": 2.102
+          },
+          "total": {
+            "duration_ms": 842.091
+          },
+          "update_plan": {
+            "artifact_inventory": {
+              "duration_ms": 19.049
+            },
+            "diff_and_compile": {
+              "duration_ms": 1.048
+            },
+            "duration_ms": 21.557,
+            "rnfv_snapshot": {
+              "duration_ms": 1.088
+            }
+          }
+        },
+        "semantic_nodes": {
+          "done": 5,
+          "total": 5
+        },
+        "status": "ok"
+      }
+    },
+    "temp_uri": "viking://temp/default/10101540_ba55ce/repository"
+  },
+  "disk_copy_scan": {
+    "files_scanned": 155,
+    "files_skipped_over_limit": 0,
+    "full_content_hits": [
+      {
+        "file_sha256": "5b687743ed4da48d8caf34ca519c8772f39d99323168101db0994f6d34d53953",
+        "full_offset": 0,
+        "path": "C:\\Users\\Tan\\.openviking-mvp-verify\\data\\viking\\default\\resources\\verify-20261010T153910-e48bc7\\src\\a.md",
+        "size": 78
+      }
+    ],
+    "marker_hits": [
+      {
+        "file_sha256": "5b687743ed4da48d8caf34ca519c8772f39d99323168101db0994f6d34d53953",
+        "marker_offset": 17,
+        "path": "C:\\Users\\Tan\\.openviking-mvp-verify\\data\\viking\\default\\resources\\verify-20261010T153910-e48bc7\\src\\a.md",
+        "size": 78,
+        "window_utf8": "# 来源文件 A OVVERIFY-RT-MARKER-20261010T153910-e48bc7\n\n原始正文 A。\n"
+      },
+      {
+        "file_sha256": "6720a7542bfbbdcfc492bfac4f5fb546a6310ea2589fc5a398a71c616fd8f06f",
+        "marker_offset": 17,
+        "path": "C:\\Users\\Tan\\.openviking-mvp-verify\\data\\viking\\default\\resources\\verify-20261010T153910-e48bc7\\src\\b.md",
+        "size": 78,
+        "window_utf8": "# 来源文件 B OVVERIFY-RT-MARKER-20261010T153910-e48bc7\n\n原始正文 B。\n"
+      },
+      {
+        "file_sha256": "ecbfbe18056b31a07de988c5116970b3d5a539470a94c0b2075e9b3fd9307de2",
+        "marker_offset": 17,
+        "path": "C:\\Users\\Tan\\.openviking-mvp-verify\\data\\viking\\default\\resources\\verify-20261010T153910-e48bc7\\src\\sub\\c.md",
+        "size": 78,
+        "window_utf8": "# 来源文件 C OVVERIFY-RT-MARKER-20261010T153910-e48bc7\n\n原始正文 C。\n"
+      },
+      {
+        "file_sha256": "7889b2ade8fd1767894ec397b5d88ab8befca137d13bc9c20853b71078dbd605",
+        "marker_offset": 21,
+        "path": "C:\\Users\\Tan\\.openviking-mvp-verify\\data\\viking\\default\\user\\default\\verify\\20261010T153910-e48bc7\\roundtrip.md",
+        "size": 519,
+        "window_utf8": "# 原文往返核验 OVVERIFY-RT-MARKER-20261010T153910-e48bc7\n\n这是一条用于独立复核的中文原文，包含 Markdown 语法与唯一标记。\n\n- 唯一标记：`OVVERIFY-R"
+      }
+    ],
+    "root": "C:\\Users\\Tan\\.openviking-mvp-verify\\data"
+  },
+  "imported_a_bytes": 78,
+  "imported_a_equal_source_bytes": true,
+  "imported_a_read_sha256": "5b687743ed4da48d8caf34ca519c8772f39d99323168101db0994f6d34d53953",
+  "ls_imported": [
+    "viking://resources/verify-20261010T153910-e48bc7/src/sub",
+    "viking://resources/verify-20261010T153910-e48bc7/src/.abstract.md",
+    "viking://resources/verify-20261010T153910-e48bc7/src/.overview.md",
+    "viking://resources/verify-20261010T153910-e48bc7/src/a.md",
+    "viking://resources/verify-20261010T153910-e48bc7/src/b.md"
+  ],
+  "modified_sha256": "709a487f411de9de6807f2a4e407638c0cc615b7f52980bc04eeb57434d1a17c",
+  "propagated_within_window": false,
+  "propagation": [
+    {
+      "equal_to_source_bytes": false,
+      "read_bytes": 78,
+      "read_sha256": "5b687743ed4da48d8caf34ca519c8772f39d99323168101db0994f6d34d53953",
+      "t": 0
+    },
+    {
+      "equal_to_source_bytes": false,
+      "read_bytes": 78,
+      "read_sha256": "5b687743ed4da48d8caf34ca519c8772f39d99323168101db0994f6d34d53953",
+      "t": 10
+    },
+    {
+      "equal_to_source_bytes": false,
+      "read_bytes": 78,
+      "read_sha256": "5b687743ed4da48d8caf34ca519c8772f39d99323168101db0994f6d34d53953",
+      "t": 20
+    },
+    {
+      "equal_to_source_bytes": false,
+      "read_bytes": 78,
+      "read_sha256": "5b687743ed4da48d8caf34ca519c8772f39d99323168101db0994f6d34d53953",
+      "t": 30
+    },
+    {
+      "equal_to_source_bytes": false,
+      "read_bytes": 78,
+      "read_sha256": "5b687743ed4da48d8caf34ca519c8772f39d99323168101db0994f6d34d53953",
+      "t": 40
+    },
+    {
+      "equal_to_source_bytes": false,
+      "read_bytes": 78,
+      "read_sha256": "5b687743ed4da48d8caf34ca519c8772f39d99323168101db0994f6d34d53953",
+      "t": 50
+    },
+    {
+      "equal_to_source_bytes": false,
+      "read_bytes": 78,
+      "read_sha256": "5b687743ed4da48d8caf34ca519c8772f39d99323168101db0994f6d34d53953",
+      "t": 60
+    },
+    {
+      "equal_to_source_bytes": false,
+      "read_bytes": 78,
+      "read_sha256": "5b687743ed4da48d8caf34ca519c8772f39d99323168101db0994f6d34d53953",
+      "t": 70
+    },
+    {
+      "equal_to_source_bytes": false,
+      "read_bytes": 78,
+      "read_sha256": "5b687743ed4da48d8caf34ca519c8772f39d99323168101db0994f6d34d53953",
+      "t": 80
+    },
+    {
+      "equal_to_source_bytes": false,
+      "read_bytes": 78,
+      "read_sha256": "5b687743ed4da48d8caf34ca519c8772f39d99323168101db0994f6d34d53953",
+      "t": 90
+    },
+    {
+      "equal_to_source_bytes": false,
+      "read_bytes": 78,
+      "read_sha256": "5b687743ed4da48d8caf34ca519c8772f39d99323168101db0994f6d34d53953",
+      "t": 100
+    },
+    {
+      "equal_to_source_bytes": false,
+      "read_bytes": 78,
+      "read_sha256": "5b687743ed4da48d8caf34ca519c8772f39d99323168101db0994f6d34d53953",
+      "t": 110
+    },
+    {
+      "equal_to_source_bytes": false,
+      "read_bytes": 78,
+      "read_sha256": "5b687743ed4da48d8caf34ca519c8772f39d99323168101db0994f6d34d53953",
+      "t": 120
+    }
+  ],
+  "read_a_imported": "# 来源文件 A OVVERIFY-RT-MARKER-20261010T153910-e48bc7\n\n原始正文 A。\n",
+  "source": "C:\\Users\\Tan\\.openviking-mvp-verify\\source-tree",
+  "source_a_bytes_sha256": "5b687743ed4da48d8caf34ca519c8772f39d99323168101db0994f6d34d53953",
+  "to": "viking://resources/verify-20261010T153910-e48bc7/src"
+}

@@ -81,6 +81,9 @@ class Consumer:
     def find(self, query: str, target_uri: str = "", limit: int = 10) -> Dict[str, Any]:
         return self._client.find(query, target_uri=target_uri, limit=limit)
 
+    def mkdir(self, uri: str) -> Any:
+        return self._client.mkdir(uri)
+
     def add_resource(
         self, path: str, to: Optional[str] = None, parent: Optional[str] = None, wait: bool = True
     ) -> Dict[str, Any]:
@@ -308,13 +311,19 @@ def make_modified_a(marker: str) -> str:
 
 
 def write_source_tree(root: Path, marker: str) -> Dict[str, Any]:
+    """把测试源文件按 **UTF-8 原始字节** 写入（不经文本模式的换行转换）。
+
+    坑：`Path.write_text()` 在 Windows 上会把 `\\n` 翻成 `\\r\\n`，于是"我生成的
+    LF 期望值"与"磁盘上/导入后的 CRLF 实际值"永远不等 —— 会让比对无法判真。
+    这里改为 write_bytes，并把后续所有比对都锚到**磁盘真实字节**（双保险）。
+    """
     E.assert_writable(root)
     root.mkdir(parents=True, exist_ok=True)
     files = make_source_files(marker)
     for rel, text in files.items():
         p = root / rel
         p.parent.mkdir(parents=True, exist_ok=True)
-        p.write_text(text, encoding="utf-8")
+        p.write_bytes(text.encode("utf-8"))
     subprocess.run(["git", "init", "-q"], cwd=str(root), capture_output=True, text=True)
     subprocess.run(["git", "config", "user.email", "verify@local"], cwd=str(root),
                    capture_output=True, text=True)
@@ -326,8 +335,16 @@ def write_source_tree(root: Path, marker: str) -> Dict[str, Any]:
     return files
 
 
+def replace_source_file(path: Path, text: str) -> Dict[str, Any]:
+    """外部改动源文件（同样按原始字节写入），返回改动后的磁盘 sha256/字节数。"""
+    E.assert_writable(path)
+    data = text.encode("utf-8")
+    path.write_bytes(data)
+    return {"path": str(path), "sha256": E.sha256_bytes(data), "bytes": len(data)}
+
+
 __all__ = [
     "Consumer", "http_post", "scan_for_bytes", "scan_git_blobs", "source_snapshot",
     "snapshot_diff", "make_roundtrip_text", "make_source_files", "make_modified_a",
-    "write_source_tree",
+    "write_source_tree", "replace_source_file",
 ]

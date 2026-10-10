@@ -212,8 +212,47 @@ def port_open(port: int = PORT, timeout: float = 1.0) -> bool:
         return s.connect_ex((HOST, port)) == 0
 
 
+def process_cmdline(pid: int) -> str:
+    """取进程命令行（用于"这个 PID 到底是不是我们的实例"的所有权校验）。"""
+    try:
+        r = subprocess.run(
+            ["powershell", "-NoProfile", "-NonInteractive", "-Command",
+             f"(Get-CimInstance Win32_Process -Filter 'ProcessId={pid}').CommandLine"],
+            capture_output=True, text=True, timeout=60, errors="replace",
+        )
+        return (r.stdout or "").strip()
+    except Exception as exc:
+        return f"<cmdline unavailable: {exc}>"
+
+
+def owns_instance(pid: int) -> Dict[str, Any]:
+    """该 PID 是否属于本线隔离实例：命令行必须同时提到本线端口或本线 conf。"""
+    cmd = process_cmdline(pid)
+    return {
+        "pid": pid,
+        "cmdline": cmd[:600],
+        "owns": (f"--port {PORT}" in cmd) or (str(SERVER_CONF) in cmd)
+        or (f"port={PORT}" in cmd) or (f":{PORT}" in cmd),
+    }
+
+
+def wait_listener_pid(timeout: int = C.SERVER_READY_TIMEOUT_S) -> Optional[int]:
+    """等待并返回真正监听 8783 的 PID。
+
+    注意：pip 生成的 openviking-server.exe 是个 launcher，它会再拉起子进程；
+    Popen 拿到的是 launcher 的 PID，而监听端口的是子进程 —— 两者不是同一个 PID。
+    """
+    deadline = time.time() + timeout
+    while time.time() < deadline:
+        pid = port_listening_pid()
+        if pid is not None:
+            return pid
+        time.sleep(1)
+    return None
+
+
 def start_server() -> Dict[str, Any]:
-    """启动隔离实例；只在本线端口/根上操作。返回 PID 与日志路径。"""
+    """启动隔离实例；只在本线端口/根上操作。返回 launcher/监听 PID 与日志路径。"""
     ensure_dirs()
     if port_open():
         return {
@@ -237,36 +276,65 @@ def start_server() -> Dict[str, Any]:
         creationflags=creationflags,
     )
     assert_writable(PID_FILE).write_text(str(proc.pid), encoding="utf-8")
-    return {"started": True, "pid": proc.pid, "log": str(SERVER_LOG), "cmd": str(SERVER_EXE)}
+    listener = wait_listener_pid()
+    return {
+        "started": True,
+        "pid": proc.pid,
+        "launcher_pid": proc.pid,
+        "listener_pid": listener,
+        "pid_match": listener == proc.pid,
+        "log": str(SERVER_LOG),
+        "cmd": str(SERVER_EXE),
+    }
 
 
-def stop_server(expected_pid: Optional[int] = None) -> Dict[str, Any]:
-    """按精确 PID + 端口 停隔离实例；PID 与端口所有权不一致则拒绝停。"""
-    pid = expected_pid
-    if pid is None and PID_FILE.exists():
-        pid = int(PID_FILE.read_text(encoding="utf-8").strip() or "0") or None
+def stop_server(
+    expected_pid: Optional[int] = None,
+    listener_pid: Optional[int] = None,
+) -> Dict[str, Any]:
+    """停本线隔离实例。
+
+    所有权判据（不靠 PID 相等，因为 launcher ≠ 监听进程）：
+    当前 8783 的监听进程命令行必须提到本线端口或本线 conf；否则拒绝停止。
+    """
+    launcher = expected_pid
+    if launcher is None and PID_FILE.exists():
+        launcher = int(PID_FILE.read_text(encoding="utf-8").strip() or "0") or None
     owner = port_listening_pid()
-    result: Dict[str, Any] = {"pid_file": pid, "port_owner_pid": owner}
+    result: Dict[str, Any] = {
+        "expected_launcher_pid": launcher,
+        "recorded_listener_pid": listener_pid,
+        "port_owner_pid": owner,
+    }
     if owner is None:
         result.update({"stopped": True, "note": "端口本来就未监听"})
         return result
-    if pid is not None and owner != pid:
+    ownership = owns_instance(owner)
+    result["ownership"] = ownership
+    if not ownership["owns"]:
         result.update(
-            {
-                "stopped": False,
-                "note": "端口所有者 PID 与登记 PID 不一致 → 拒绝停止（可能是别人的实例）",
-            }
+            {"stopped": False, "note": "8783 的监听进程命令行不含本线端口/conf → 拒绝停止（可能是别人的实例）"}
         )
         return result
-    target = pid if pid is not None else owner
-    subprocess.run(["taskkill", "/PID", str(target), "/T", "/F"], capture_output=True, text=True)
+
+    killed: List[int] = []
+    for pid in [owner, launcher]:
+        if pid and pid not in killed:
+            subprocess.run(["taskkill", "/PID", str(pid), "/T", "/F"],
+                           capture_output=True, text=True)
+            killed.append(pid)
     deadline = time.time() + C.SERVER_STOP_TIMEOUT_S
     while time.time() < deadline:
         if not port_open():
-            result.update({"stopped": True, "killed_pid": target})
+            result.update({"stopped": True, "killed_pids": killed})
             return result
+        still = port_listening_pid()
+        if still and still not in killed and owns_instance(still)["owns"]:
+            subprocess.run(["taskkill", "/PID", str(still), "/T", "/F"],
+                           capture_output=True, text=True)
+            killed.append(still)
         time.sleep(1)
-    result.update({"stopped": False, "killed_pid": target, "note": "超时后端口仍监听"})
+    result.update({"stopped": False, "killed_pids": killed, "note": "超时后端口仍监听"})
     return result
 
 
@@ -277,5 +345,6 @@ __all__ = [
     "assert_writable", "ensure_dirs", "sha256_bytes", "sha256_text", "first_divergence",
     "write_json", "write_text", "build_conf", "build_cli_conf", "has_bom",
     "write_conf_files", "child_env", "port_listening_pid", "port_open",
+    "process_cmdline", "owns_instance", "wait_listener_pid",
     "start_server", "stop_server",
 ]
