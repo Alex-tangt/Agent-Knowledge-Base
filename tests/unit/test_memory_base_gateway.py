@@ -273,6 +273,11 @@ def test_mcp_exposes_the_same_three_actions_and_errors(api):
     async def exercise():
         tools = await server.list_tools()
         assert {tool.name for tool in tools} == {"memory_add", "memory_search", "memory_get"}
+        for tool in tools:
+            assert tool.annotations.model_dump(by_alias=True, exclude_none=True) == {
+                "readOnlyHint": tool.name != "memory_add",
+                "destructiveHint": False, "idempotentHint": True, "openWorldHint": False,
+            }
         created = await server.call_tool("memory_add", BODY)
         structured = created[1] if isinstance(created, tuple) else created.structured_content
         read = await server.call_tool("memory_get", {"uri": structured["uri"]})

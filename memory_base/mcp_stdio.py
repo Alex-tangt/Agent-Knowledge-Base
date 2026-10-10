@@ -12,6 +12,8 @@ import urllib.request
 from pathlib import Path
 from typing import Any, Literal
 
+from mcp.types import ToolAnnotations
+
 try:
     from mcp.server import MCPServer
     from mcp.server.mcpserver.exceptions import ToolError
@@ -59,7 +61,9 @@ def create_mcp(client: GatewayClient) -> MCPServer:
         "This interface does not promote personal preferences to global preferences."
     ))
 
-    @server.tool()
+    @server.tool(annotations=ToolAnnotations(
+        readOnlyHint=False, destructiveHint=False, idempotentHint=True, openWorldHint=False,
+    ))
     def memory_add(request_id: str, content: str, title: str,
                    kind: Literal["note", "article_summary", "video_summary"] = "note",
                    source_url: str | None = None, source_id: str | None = None,
@@ -70,12 +74,16 @@ def create_mcp(client: GatewayClient) -> MCPServer:
             "source_url": source_url, "source_id": source_id, "conversation_id": conversation_id,
         })
 
-    @server.tool()
+    @server.tool(annotations=ToolAnnotations(
+        readOnlyHint=True, destructiveHint=False, idempotentHint=True, openWorldHint=False,
+    ))
     def memory_search(query: str, limit: int = 5) -> dict[str, Any]:
         """Search shared capture vectors and return URIs suitable for memory_get."""
         return client.call("search", {"query": query, "limit": limit})
 
-    @server.tool()
+    @server.tool(annotations=ToolAnnotations(
+        readOnlyHint=True, destructiveHint=False, idempotentHint=True, openWorldHint=False,
+    ))
     def memory_get(uri: str) -> dict[str, Any]:
         """Read the exact stored content of a returned capture URI."""
         return client.call("get", {"uri": uri})
