@@ -1,0 +1,132 @@
+{
+  "unit": "M0",
+  "claim": "候选服务真实就绪（非仅可 import/CLI 存在）",
+  "generated_at": "2026-10-10T14:22:52+0800",
+  "verdict": "PASS",
+  "isolation": {
+    "spike_root": "C:\\Users\\Tan\\.openviking-mvp-spike",
+    "workspace": "C:\\Users\\Tan\\.openviking-mvp-spike\\data",
+    "logs": "C:\\Users\\Tan\\.openviking-mvp-spike\\logs",
+    "port": 8781,
+    "base_url": "http://127.0.0.1:8781",
+    "config_env_keys": [
+      "OPENVIKING_CONFIG_FILE",
+      "OPENVIKING_CLI_CONFIG_FILE"
+    ],
+    "state_outside_repo": true,
+    "cloud_models_enabled": false,
+    "embedding": {
+      "provider": "local",
+      "model": "bge-small-zh-v1.5-f16",
+      "model_file": "C:\\Users\\Tan\\.cache\\openviking\\models\\bge-small-zh-v1.5-f16.gguf"
+    }
+  },
+  "versions": {
+    "python": "Python 3.12.2",
+    "distribution": {
+      "name": "openviking",
+      "version": "0.4.23",
+      "license": "AGPL-3.0"
+    },
+    "ov_binary_version_string": "CLI:     0.4.24.dev0",
+    "server_reported_version": "0.4.23",
+    "key_distributions": {
+      "openviking": "0.4.23.dist",
+      "llama_cpp_python": "0.3.36.dist",
+      "mcp": "1.30.0.dist",
+      "fastapi": "0.143.0.dist",
+      "uvicorn": "0.54.0.dist",
+      "litellm": "1.91.1.dist",
+      "httpx": "0.28.1.dist"
+    },
+    "dist_info_file_hashes": {
+      "METADATA": {
+        "sha256": "1e0cdfe061e35c8b98ff7165f90049a2d1597e05c9bbe5f25537a88c7668e9de",
+        "bytes": 33497
+      },
+      "RECORD": {
+        "sha256": "b4b535ab536fb619813036afe460ea214eae03cfe03833ffd0be8701e9469b36",
+        "bytes": 220200
+      },
+      "entry_points.txt": {
+        "sha256": "092ab79d632709db4161c9cedb89853cdee138804faf05b0a6f0594084bb0b77",
+        "bytes": 190
+      }
+    }
+  },
+  "install_size": {
+    "bytes": 1102342141,
+    "files": 104294,
+    "top_level_entries": 506
+  },
+  "startup_command": "D:\\python_work\\work2026-4\\Agent-Knowledge-Base\\venv-ov\\Scripts\\openviking-server.exe --config C:\\Users\\Tan\\.openviking-mvp-spike\\ov.conf --host 127.0.0.1 --port 8781",
+  "startup_wall_seconds_approx": null,
+  "config": {
+    "path": "C:\\Users\\Tan\\.openviking-mvp-spike\\ov.conf",
+    "bytes_sha256": "ceef226af458eafeeb2e263c0bba97e935c50560d94cbd61c5f39acc2a7fbda8",
+    "bom": false,
+    "content": {
+      "default_account": "default",
+      "default_user": "default",
+      "storage": {
+        "workspace": "C:\\Users\\Tan\\.openviking-mvp-spike\\data"
+      },
+      "embedding": {
+        "dense": {
+          "provider": "local",
+          "model": "bge-small-zh-v1.5-f16"
+        }
+      },
+      "server": {
+        "host": "127.0.0.1",
+        "port": 8781
+      }
+    },
+    "cli_config_path": "C:\\Users\\Tan\\.openviking-mvp-spike\\ovcli.conf",
+    "cli_config": {
+      "url": "http://127.0.0.1:8781",
+      "output": "json",
+      "timeout": 120.0
+    },
+    "credential_values_present": false
+  },
+  "probes": {
+    "GET /health": {
+      "status": "ok",
+      "healthy": true,
+      "version": "0.4.23",
+      "auth_mode": "dev"
+    },
+    "GET /ready": {
+      "status": "ready",
+      "checks": {
+        "agfs": {
+          "status": "ok",
+          "checks": {
+            "filesystem": "ok",
+            "multiwrite_sync": "not_supported"
+          }
+        },
+        "vectordb": "ok",
+        "api_key_manager": "not_configured",
+        "embedding": "ok",
+        "ollama": "not_configured"
+      }
+    },
+    "GET /api/v1/system/status": {
+      "status": "ok",
+      "result": {
+        "initialized": true,
+        "user": "default"
+      },
+      "error": null,
+      "telemetry": null,
+      "profile": null
+    }
+  },
+  "process": {
+    "pid_file": "C:\\Users\\Tan\\.openviking-mvp-spike\\logs\\server.pid",
+    "pid": 21376
+  },
+  "startup_log_first_line": "2026-10-10 14:19:50,506 - openviking.pyagfs - INFO - Loaded RAGFS Rust binding"
+}
