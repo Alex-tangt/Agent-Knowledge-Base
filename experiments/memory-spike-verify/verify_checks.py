@@ -400,6 +400,16 @@ def run_live(auto_start: bool = True) -> Dict[str, Any]:
     E.ensure_dirs()
     conf = E.write_conf_files()
     obs["conf"] = {k: v for k, v in conf.items()}
+    # 驱动器自身的进程环境也钉到隔离配置：SDK/CLI 解析绝不能读到 ~/.openviking 的真实配置
+    import os
+
+    os.environ["OPENVIKING_CONFIG_FILE"] = str(E.SERVER_CONF)
+    os.environ["OPENVIKING_CLI_CONFIG_FILE"] = str(E.CLI_CONF)
+    for key in ("NO_PROXY", "no_proxy"):
+        if key in os.environ:
+            os.environ[key] = ",".join(
+                s for s in os.environ[key].split(",") if s.strip() and "[" not in s and "]" not in s
+            )
 
     if auto_start:
         started = E.start_server()
