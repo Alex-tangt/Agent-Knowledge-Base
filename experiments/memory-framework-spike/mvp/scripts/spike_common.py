@@ -55,9 +55,14 @@ ROOT_KEY_ENV = "OPENVIKING_SPIKE_ROOT_KEY"
 # cannot be exercised).  "authz" switches the same instance/port to api_key auth
 # so a genuine non-root, read-only identity exists for M3.
 PROFILE = os.environ.get("SPIKE_PROFILE", "dev").strip().lower() or "dev"
+# Clean-room restore testing points the same port at a fresh workspace/config
+# without editing the reference configs.
+CONF_OVERRIDE = os.environ.get("SPIKE_CONF_FILE")
 
 
 def active_conf() -> Path:
+    if CONF_OVERRIDE:
+        return Path(CONF_OVERRIDE)
     return AUTHZ_CONF if PROFILE == "authz" else OV_CONF
 
 REPO_ROOT = Path(__file__).resolve().parents[4]  # .../experiments/memory-framework-spike/mvp/scripts -> repo
@@ -94,6 +99,7 @@ def sync_ovcli_conf(api_key: str | None = None) -> Path:
     data: dict = {"url": BASE_URL, "output": "json", "timeout": 120.0}
     if PROFILE == "authz":
         data["api_key"] = api_key or root_api_key()
+        data["root_api_key"] = root_api_key()  # lets `ov ... --sudo` reach the admin plane
     OVCLI_CONF.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     return OVCLI_CONF
 
@@ -186,8 +192,8 @@ def api(method: str, path: str, *, params: dict | None = None, body: dict | None
             return json.loads(payload.decode("utf-8")) if payload else None
     except urllib.error.HTTPError as exc:
         raise ApiError(exc.code, exc.read(), url) from None
-    except urllib.error.URLError as exc:
-        raise ApiError(0, str(exc.reason).encode("utf-8"), url) from None
+    except Exception as exc:  # URLError, ConnectionResetError, timeouts, ...
+        raise ApiError(0, str(exc).encode("utf-8", "replace"), url) from None
 
 
 def http_status(path: str, timeout: float = 10.0) -> tuple[int, bytes]:
@@ -198,8 +204,8 @@ def http_status(path: str, timeout: float = 10.0) -> tuple[int, bytes]:
             return resp.status, resp.read()
     except urllib.error.HTTPError as exc:
         return exc.code, exc.read()
-    except urllib.error.URLError as exc:
-        return 0, str(exc.reason).encode("utf-8")
+    except Exception as exc:  # connection refused / reset / timeout
+        return 0, str(exc).encode("utf-8", "replace")
 
 
 def read_content(uri: str, *, raw: bool = True, offset: int = 0, limit: int = -1,

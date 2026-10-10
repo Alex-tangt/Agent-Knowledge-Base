@@ -91,17 +91,24 @@ def acl_enabled() -> bool:
     return bool(resp["result"]["settings"]["acl"]["enabled"])
 
 
-def ensure_identities() -> dict:
+def ensure_identities(force: bool = False) -> dict:
     """Idempotently provision both consumers and enable account ACL.
+
+    ``force=True`` ignores the cached key file and re-registers against the
+    running server -- required in a clean-room restore, where the workspace (and
+    with it the account's API-key registry) is fresh but the cache file is not.
 
     Returns {"writer": key, "reader": key, "principals": {...}} -- callers must
     not log the keys.
     """
-    data = _load()
+    data = {} if force else _load()
     for user_id, role in ((WRITER, "admin"), (READER, "user")):
         if user_id not in data:
             data[user_id] = _ensure_user(user_id, role)
-            _save(data)
+            if not force:
+                _save(data)
+    if force:
+        _save(data)
     if not acl_enabled():
         enable_account_acl()
         log("account ACL enforcement enabled (default was off)")

@@ -1,0 +1,188 @@
+{
+  "unit": "M4",
+  "claim": "不可用与处理失败可见",
+  "generated_at": "2026-10-10T14:42:51+0800",
+  "profile": "authz",
+  "verdict": "PASS",
+  "checks": [
+    {
+      "id": "M4.1-baseline-up",
+      "claim": "服务在线时读取正常、无匹配可识别",
+      "verdict": "PASS",
+      "detail": {
+        "health": 200,
+        "read_http_status": 200,
+        "read_sha256": "549f159bb0b001bde7fecad24b16181a881dd3de8011714ab7d9846a59102d9f",
+        "no_match": {
+          "grep_http_status": 200,
+          "grep_pattern": "zzz-no-such-pattern-1984736519",
+          "grep_returns_empty": true,
+          "find_with_score_threshold_0.95_http_status": 200,
+          "find_returned_uris": [],
+          "classification": "no_match（200 + 空结果）"
+        },
+        "note": "语义 find 默认无阈值时会返回最近邻（无『无匹配』状态）；要得到真正的『无匹配』需用精确匹配面（grep/glob）或显式 score_threshold。"
+      }
+    },
+    {
+      "id": "M4.2-service-unavailable-explicit",
+      "claim": "只停隔离服务后，消费者收到明确的不可用错误",
+      "verdict": "PASS",
+      "detail": {
+        "target": "仅停 127.0.0.1:8781 的隔离实例（8765 旧 daemon 未触碰）",
+        "http_client": {
+          "health_status": 0,
+          "health_classification": "service_unavailable",
+          "read_status": 0,
+          "read_error": "[WinError 10061] 由于目标计算机积极拒绝，无法连接。",
+          "note": "传输层连接失败，没有 HTTP 状态码——不可用与 4xx 天然不同类"
+        },
+        "ov_cli": {
+          "health_returncode": 1,
+          "health_stderr": "{\"ok\":false,\"error\":{\"code\":\"UNAVAILABLE\",\"message\":\"Network error: HTTP request failed: error sending request for url (http://127.0.0.1:8781/health)\"}}",
+          "health_stdout": "",
+          "read_returncode": 1,
+          "read_stderr": "{\"ok\":false,\"error\":{\"code\":\"UNAVAILABLE\",\"message\":\"Network error: HTTP request failed: error sending request for url (http://127.0.0.1:8781/api/v1/content/read?uri=viking%3A%2F%2Fresources%2Fmvp-proj%2F2026-10-10%2Fnote%2Fm3-scoped.md)\"}}"
+        }
+      }
+    },
+    {
+      "id": "M4.3-three-way-distinguishable",
+      "claim": "无匹配 / 拒绝访问 / 服务不可用 三者可区分",
+      "verdict": "PASS",
+      "detail": {
+        "no_match": {
+          "observed": {
+            "http_status": 200,
+            "empty_result": true
+          },
+          "classification": "no_match（HTTP 200 + 空结果）",
+          "source": "M4.1"
+        },
+        "access_denied": {
+          "observed": {
+            "http_status": 403,
+            "code": "PERMISSION_DENIED"
+          },
+          "classification": "access_denied（403 PERMISSION_DENIED + 具体资源 URI）",
+          "source": "M3.6（在线时实测）"
+        },
+        "service_unavailable": {
+          "observed": {
+            "http_status": 0,
+            "cli_returncode": 1
+          },
+          "classification": "service_unavailable（无 HTTP 状态码 / CLI 非 0）",
+          "source": "M4.2"
+        }
+      }
+    },
+    {
+      "id": "M4.4-recovery-after-restart",
+      "claim": "重启隔离服务后同一引用恢复可读",
+      "verdict": "PASS",
+      "detail": {
+        "restart_wall_seconds": 63.3,
+        "sha256_before_outage": "549f159bb0b001bde7fecad24b16181a881dd3de8011714ab7d9846a59102d9f",
+        "sha256_after_recovery": "549f159bb0b001bde7fecad24b16181a881dd3de8011714ab7d9846a59102d9f",
+        "identical": true
+      }
+    },
+    {
+      "id": "M4.5-processing-failure-visible",
+      "claim": "附带处理失败的可见状态（导入含不可解析文件）",
+      "verdict": "PASS",
+      "detail": {
+        "induced": "目录内放一个损坏的 broken.pdf（本地解析无 MinerU 端点）",
+        "cli_returncode": 1,
+        "cli_error_code": "PROCESSING_ERROR",
+        "cli_error_message": "Directory import incomplete: 1 file(s) failed to parse; failed files: sub/broken.pdf: Parse failed: no content generated; Failed to parse PDF: Local conversion failed and no MinerU endpoint configured: No /",
+        "resulting_tree": [],
+        "partial_import_left_behind": false,
+        "task_api_failed_tasks": [
+          {
+            "task_id": "52673aab-144b-49f5-b202-738e1838534e",
+            "task_type": "add_resource",
+            "status": "failed",
+            "stage": "failed",
+            "resource_id": "viking://resources/wk-spike-badsource/bad-source",
+            "error": "Directory import incomplete: 1 file(s) failed to parse; failed files: sub/broken.pdf: Parse failed: no content generated; Failed to parse PDF: Local conversion failed and no MinerU endpoint configured: No /"
+          },
+          {
+            "task_id": "ae553580-c713-43da-b29c-0a8e2d382d44",
+            "task_type": "add_resource",
+            "status": "failed",
+            "stage": "failed",
+            "resource_id": "viking://resources/wk-spike-badsource/bad-source",
+            "error": "Directory import incomplete: 1 file(s) failed to parse; failed files: sub/broken.pdf: Parse failed: no content generated; Failed to parse PDF: Local conversion failed and no MinerU endpoint configured: No /"
+          },
+          {
+            "task_id": "99962416-6763-4db1-ab01-cc1577d0f5d0",
+            "task_type": "add_resource",
+            "status": "failed",
+            "stage": "failed",
+            "resource_id": "viking://resources/wk-spike-badsource2/bad-source",
+            "error": "Directory import incomplete: 1 file(s) failed to parse; failed files: sub/broken.pdf: Parse failed: no content generated; Failed to parse PDF: Local conversion failed and no MinerU endpoint configured: No /"
+          }
+        ]
+      }
+    },
+    {
+      "id": "M4.6-derived-status-not-proof",
+      "claim": "派生处理状态是否可信（实测并登记）",
+      "verdict": "PASS",
+      "detail": {
+        "write_response": {
+          "written_bytes": 47,
+          "semantic_status": "complete",
+          "vector_status": "complete",
+          "queue_status": {
+            "Semantic": {
+              "processed": 1,
+              "requeue_count": 0,
+              "error_count": 0,
+              "errors": []
+            },
+            "Embedding": {
+              "processed": 3,
+              "requeue_count": 0,
+              "error_count": 0,
+              "errors": []
+            }
+          }
+        },
+        "directory_overview": "# note\n\n[Directory overview is not ready]",
+        "directory_abstract": "[Directory overview is not ready]",
+        "placeholder_written": true,
+        "conclusion": "`semantic_status=complete` 且 `Semantic.error_count=0`，但目录 abstract/overview 实际是 『[Directory overview is not ready]』占位 —— 未配置 VLM 时派生内容静默降级，状态字段不构成『派生内容已生成』的证据。",
+        "limitation": "派生内容失败/降级没有独立可见信号；只能读 abstract/overview 正文自行判断。"
+      }
+    },
+    {
+      "id": "M4.7-followup-paths",
+      "claim": "失败后的后续处理入口存在且可用",
+      "verdict": "PASS",
+      "detail": {
+        "available": {
+          "GET /api/v1/tasks": "失败任务可事后查询（status/stage/error/resource_id）",
+          "POST /api/v1/content/reindex": "索引维护（vectors_only；不做重新解析）",
+          "ov add-resource <dir> --wait": "本地来源的真正重试入口（重新导入）",
+          "ov write <uri> --from-file": "逐文件单向更新"
+        },
+        "reindex_result": {
+          "status": "completed",
+          "uri": "viking://resources/wk-spike-badsource",
+          "object_type": "resource",
+          "mode": "vectors_only",
+          "scanned_records": 1,
+          "rebuilt_records": 0,
+          "deleted_records": 0,
+          "unsupported_records": 0,
+          "failed_records": 0,
+          "duration_ms": 31,
+          "warnings": []
+        }
+      }
+    }
+  ]
+}
