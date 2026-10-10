@@ -196,9 +196,9 @@ def api(method: str, path: str, *, params: dict | None = None, body: dict | None
         raise ApiError(0, str(exc).encode("utf-8", "replace"), url) from None
 
 
-def http_status(path: str, timeout: float = 10.0) -> tuple[int, bytes]:
+def http_status(path: str, timeout: float = 10.0, base: str | None = None) -> tuple[int, bytes]:
     """Return (status, body) without raising, for failure-visibility tests."""
-    url = BASE_URL + path
+    url = (base or BASE_URL) + path
     try:
         with urllib.request.urlopen(url, timeout=timeout) as resp:
             return resp.status, resp.read()

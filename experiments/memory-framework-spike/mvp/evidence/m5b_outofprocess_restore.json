@@ -1,0 +1,302 @@
+{
+  "unit": "M5.4-复盘",
+  "claim": "用进程外串行真模型嵌入重跑干净位置恢复，区分恢复设计与本地嵌入器缺陷",
+  "generated_at": "2026-10-10T15:45:31+0800",
+  "profile": "authz",
+  "verdict": "PASS",
+  "checks": [
+    {
+      "id": "M5B.1-reference-ok",
+      "claim": "进程外嵌入下参照实例可读写、快照与回滚正常（对照 M5.1/M5.2）",
+      "verdict": "PASS",
+      "detail": {
+        "embedding_provider": {
+          "provider": "openai",
+          "api_base": "http://127.0.0.1:8791/v1",
+          "api_key": "local-out-of-process",
+          "model": "bge-small-zh-v1.5-f16",
+          "dimension": 512,
+          "input": "text",
+          "encoding_format": "float"
+        },
+        "embed_server_health": {
+          "status": "ok",
+          "calls": 0,
+          "items": 0,
+          "serialized": true,
+          "model": "bge-small-zh-v1.5-f16"
+        },
+        "commit_v1": "e342798c362ad142fdaa3f6c416c398c0a0ede7f",
+        "commit_v2": "4208d3377ed6aef6b2de83520b44fb36419cad11",
+        "restore_response": {
+          "ok": true,
+          "result": {
+            "result": "applied",
+            "new_commit_oid": "a2adc4d76c6071aa05297d7d39a3ce43587a3c1e",
+            "source_commit": "e342798c362ad142fdaa3f6c416c398c0a0ede7f",
+            "parent_commit": "4208d3377ed6aef6b2de83520b44fb36419cad11",
+            "written": 1,
+            "deleted": 0,
+            "unchanged": 6,
+            "written_paths": [
+              "resources/m5b-proj/2026-10-10/note/m5b-versioned.md"
+            ],
+            "deleted_paths": [],
+            "task_id": "7b318951-8b7b-4094-9cbb-ca3eaac07109"
+          },
+          "_returncode": 0
+        },
+        "content_sha256_after_restore": "c4dfc7ac258fd5875cfc2a3f0759d62dd03eab385e29267e93f325797eee6874",
+        "v1_sha256": "c4dfc7ac258fd5875cfc2a3f0759d62dd03eab385e29267e93f325797eee6874",
+        "restored_equals_v1": true,
+        "server_still_alive": true
+      }
+    },
+    {
+      "id": "M5B.2-backup-both-faces",
+      "claim": "进程外嵌入下备份仍同时覆盖内容面与检索面",
+      "verdict": "PASS",
+      "detail": {
+        "pack": "C:\\Users\\Tan\\.openviking-mvp-spike\\m5b\\artifacts\\m5b-backup-with-vectors.ovpack",
+        "bytes": 77391,
+        "sha256": "85a4c37d0bc1cb6907f61f660d8abb78c63810ec732fd67b88b4fd79fad80b40",
+        "backup_attempts": [
+          {
+            "attempt": 1,
+            "ok": true,
+            "error": null
+          }
+        ],
+        "has_dense_vectors": true,
+        "has_index_records": true,
+        "zip_entries": [
+          "openviking-backup/",
+          "openviking-backup/files/",
+          "openviking-backup/files/resources/",
+          "openviking-backup/files/resources/m5b-proj/",
+          "openviking-backup/files/resources/m5b-proj/2026-10-10/",
+          "openviking-backup/files/resources/m5b-proj/2026-10-10/note/",
+          "openviking-backup/files/resources/m5b-proj/2026-10-10/note/.abstract.md",
+          "openviking-backup/files/resources/m5b-proj/2026-10-10/note/.overview.md",
+          "openviking-backup/files/resources/m5b-proj/2026-10-10/note/m5b-versioned.md",
+          "openviking-backup/files/resources/m5b-proj/2026-10-10/.abstract.md",
+          "openviking-backup/files/resources/m5b-proj/2026-10-10/.overview.md",
+          "openviking-backup/files/resources/m5b-proj/.abstract.md"
+        ]
+      }
+    },
+    {
+      "id": "M5B.3-clean-room-restore-outofprocess",
+      "claim": "用进程外串行真模型嵌入，干净位置恢复走通（原文/引用/权限/损失范围四项）",
+      "verdict": "PASS",
+      "detail": {
+        "embedding_provider": {
+          "provider": "openai",
+          "api_base": "http://127.0.0.1:8791/v1",
+          "api_key": "local-out-of-process",
+          "model": "bge-small-zh-v1.5-f16",
+          "dimension": 512,
+          "input": "text",
+          "encoding_format": "float"
+        },
+        "embed_server": {
+          "base": "http://127.0.0.1:8791",
+          "health_after": {
+            "status": "ok",
+            "calls": 128,
+            "items": 128,
+            "serialized": true,
+            "model": "bge-small-zh-v1.5-f16"
+          }
+        },
+        "clean_room": {
+          "workspace": "C:\\Users\\Tan\\.openviking-mvp-spike\\m5b\\data-clean",
+          "config": "C:\\Users\\Tan\\.openviking-mvp-spike\\m5b\\ov-clean.conf"
+        },
+        "restore_command": "ov restore m5b-backup-with-vectors.ovpack --on-conflict overwrite --vector-mode auto -o json",
+        "restore_attempts": [
+          {
+            "attempt": 1,
+            "ok": true,
+            "returncode": 0,
+            "error": null
+          }
+        ],
+        "restore_cli_response": {
+          "ok": true,
+          "result": {
+            "uri": "viking://"
+          },
+          "_returncode": 0
+        },
+        "cli_note": "`ov restore` **不接受 --sudo**（CLI 原文：『--sudo 只支持 admin、system、reindex、task status 和 task list 命令』），所以必须在恢复位置先登记数据面身份；这与『身份注册表不在备份包内』是同一条恢复步骤。",
+        "server_alive_after_restore": true,
+        "path_discovery": {
+          "expected_uri": "viking://resources/m5b-proj/2026-10-10/note/m5b-versioned.md",
+          "restored_hits": [
+            "viking://resources/m5b-proj/2026-10-10/note/m5b-versioned.md"
+          ],
+          "resolved_uri": "viking://resources/m5b-proj/2026-10-10/note/m5b-versioned.md",
+          "uri_relocated": false,
+          "resources_listing": {
+            "ok": true,
+            "result": [
+              {
+                "uri": "viking://resources/m5b-proj",
+                "size": 0,
+                "isDir": true,
+                "modTime": "2026-10-10T07:45:27.000Z",
+                "rel_path": "m5b-proj",
+                "abstract": "[Directory overview is not ready]"
+              },
+              {
+                "uri": "viking://resources/m5b-proj/2026-10-10",
+                "size": 0,
+                "isDir": true,
+                "modTime": "2026-10-10T07:45:27.000Z",
+                "rel_path": "m5b-proj/2026-10-10",
+                "abstract": "[Directory overview is not ready]"
+              },
+              {
+                "uri": "viking://resources/m5b-proj/2026-10-10/note",
+                "size": 0,
+                "isDir": true,
+                "modTime": "2026-10-10T07:45:28.000Z",
+                "rel_path": "m5b-proj/2026-10-10/note",
+                "abstract": "[Directory overview is not ready]"
+              }
+            ],
+            "has_more": false,
+            "_returncode": 0
+          }
+        },
+        "content_face": {
+          "http_status": 200,
+          "sha256": "c4dfc7ac258fd5875cfc2a3f0759d62dd03eab385e29267e93f325797eee6874",
+          "equals_v1_bytes": true
+        },
+        "retrieval_face": {
+          "exact_content_search_hits": [
+            "viking://resources/m5b-proj/2026-10-10/note/m5b-versioned.md"
+          ],
+          "semantic_find_hits": [
+            "viking://resources/m5b-proj/2026-10-10/note/m5b-versioned.md",
+            "viking://resources/m5b-proj/2026-10-10/.overview.md",
+            "viking://resources/m5b-proj/2026-10-10/note/.overview.md",
+            "viking://resources/m5b-proj/.overview.md",
+            "viking://resources/.abstract.md"
+          ],
+          "served_sha256_of_first_hit": "c4dfc7ac258fd5875cfc2a3f0759d62dd03eab385e29267e93f325797eee6874",
+          "serves_restored_version": true,
+          "index_found_the_content": true
+        },
+        "permission_face": {
+          "acl_scope_used": "viking://resources/m5b-proj",
+          "acl_state_after_restore_before_repair": {
+            "uri": "viking://resources/m5b-proj",
+            "acl_mode": "inherit",
+            "direct_entries": [],
+            "inherited_entries": [
+              {
+                "principal": "user:*",
+                "level": "manage"
+              }
+            ],
+            "effective_entries": [
+              {
+                "principal": "user:*",
+                "level": "manage"
+              }
+            ]
+          },
+          "acl_policy_reapplied_manually": true,
+          "acl_repair_error": null,
+          "reader_read_status": 200,
+          "reader_write_status": 403,
+          "reader_write_error": {
+            "code": "PERMISSION_DENIED",
+            "message": "Access denied for viking://resources/m5b-proj/2026-10-10/note/m5b-versioned.md: write permission required",
+            "details": {
+              "resource": "viking://resources/m5b-proj/2026-10-10/note/m5b-versioned.md"
+            }
+          },
+          "out_of_scope_private_read_status": 403
+        },
+        "what_the_pack_carries": {
+          "identity_registry": {
+            "probe_user_registered_only_in_reference": "m5b-probe",
+            "reference_users": [
+              "mem-rw",
+              "mem-ro",
+              "m5b-probe"
+            ],
+            "clean_room_users_immediately_after_start": [],
+            "clean_room_users_after_restore": [
+              "mem-rw",
+              "mem-ro"
+            ],
+            "probe_user_found_in_clean_room": false,
+            "conclusion": "包内不带身份/API key 注册表：只在参照实例存在的探针用户 没有出现在恢复后的干净位置；干净位置恢复前用户列表为空，必须先重建消费者身份（`ov restore` 又不接受 --sudo）。"
+          },
+          "acl_records": {
+            "carried_by_pack": false,
+            "note": "ACL 记录不能落在命名空间根（viking://resources 被拒 400），只读策略须施加到具体子树"
+          }
+        },
+        "data_loss": {
+          "post_backup_entry_present_after_restore": false,
+          "post_backup_grep_hits": [],
+          "post_backup_entry_sha256": "aad8e1ebb41212258bafb708d885a65417e983176d4ed578cae1c15531fe742b",
+          "expected": "备份点之后的写入不在包内 → 恢复后不可见"
+        }
+      }
+    }
+  ],
+  "embedding_provider": {
+    "provider": "openai",
+    "api_base": "http://127.0.0.1:8791/v1",
+    "api_key": "local-out-of-process",
+    "model": "bge-small-zh-v1.5-f16",
+    "dimension": 512,
+    "input": "text",
+    "encoding_format": "float"
+  },
+  "embed_server": {
+    "base": "http://127.0.0.1:8791",
+    "health_after": {
+      "status": "ok",
+      "calls": 128,
+      "items": 128,
+      "serialized": true,
+      "model": "bge-small-zh-v1.5-f16"
+    }
+  },
+  "pack": {
+    "path": "C:\\Users\\Tan\\.openviking-mvp-spike\\m5b\\artifacts\\m5b-backup-with-vectors.ovpack",
+    "sha256": "85a4c37d0bc1cb6907f61f660d8abb78c63810ec732fd67b88b4fd79fad80b40"
+  },
+  "restore_attempts": [
+    {
+      "attempt": 1,
+      "ok": true,
+      "returncode": 0,
+      "error": null
+    }
+  ],
+  "recovery_points": {
+    "workspace_snapshots": [
+      "M5B v1 / M5B v2（ov snapshot commit）"
+    ],
+    "backups": [
+      {
+        "path": "C:\\Users\\Tan\\.openviking-mvp-spike\\m5b\\artifacts\\m5b-backup-with-vectors.ovpack",
+        "covers": "内容面 files/ + 检索面 index_records.jsonl + dense.f32"
+      }
+    ],
+    "data_loss_range": "备份点之后、下次备份之前的全部写入（post-backup 条目恢复后不存在）",
+    "what_restore_cannot_do": [
+      "包内不带身份/API key 注册表（实测恢复后 users 为空）",
+      "包内不带 ACL 记录（实测恢复后 acl_mode 未随包恢复）"
+    ]
+  }
+}

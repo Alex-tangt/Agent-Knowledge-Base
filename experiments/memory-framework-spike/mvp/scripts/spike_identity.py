@@ -64,6 +64,19 @@ def _ensure_user(user_id: str, role: str) -> str:
     return key
 
 
+def register_user(user_id: str, role: str = "user") -> str:
+    """Register (or fetch the key of) an extra user; used for probe identities."""
+    return _ensure_user(user_id, role)
+
+
+def list_users() -> list[dict]:
+    try:
+        return api("GET", f"/api/v1/admin/accounts/{ACCOUNT}/users",
+                   headers=auth_headers(), timeout=60)["result"]
+    except ApiError as exc:
+        return [{"error": exc.status}]
+
+
 def enable_account_acl() -> dict:
     """Turn on ACL enforcement for the account (default is OFF)."""
     return set_account_acl(True)
