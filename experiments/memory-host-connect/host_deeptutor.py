@@ -77,6 +77,8 @@ def main() -> int:
     parser.add_argument("--dry-run", action="store_true", help="只核验配置，不连接、不调用")
     parser.add_argument("--keep-proxy-env", action="store_true",
                         help="不清理 NO_PROXY（诊断用；正常跑不要开）")
+    parser.add_argument("--authn-mode", default="unknown",
+                        help="task-1 实例的实际 authn 模式（事实字段，照实填；unknown 不等于已授权）")
     args = parser.parse_args()
 
     proxy_fix = {} if args.keep_proxy_env else sanitize_no_proxy()
@@ -97,6 +99,10 @@ def main() -> int:
 
     report: dict = {
         "host": "deeptutor",
+        # Lead decision (2026-10-10): the two hosts differ in driver. This one is driven by
+        # DeepTutor's own MCP client path (probe_server / MCPConnectionManager), NOT by an LLM
+        # choosing tools. The optional `deeptutor run chat` turn is separate additional evidence.
+        "driver": "host MCP client path (DeepTutor's own probe_server / MCPConnectionManager)",
         "deeptutor_version": dt_version,
         "python": sys.version.split()[0],
         "deep_tutor_home": str(home),
@@ -104,6 +110,12 @@ def main() -> int:
         "server": args.server,
         "marker": args.marker,
         "proxy_env_sanitized": proxy_fix,
+        "authn": {
+            "mode": args.authn_mode,
+            "note": "instance authn mode is a FACT supplied by task-1; 'unknown'/'no key' must "
+                    "NOT be recorded as 'authorized'",
+            "credential_headers": [],   # filled from config below (key names only, never values)
+        },
         "steps": [],
     }
 
@@ -122,6 +134,10 @@ def main() -> int:
         _dump(report, args.json_out)
         return 2
     cfg = cfg_all.servers[args.server]
+    header_keys = sorted((cfg.headers or {}).keys())
+    report["authn"]["credential_headers"] = [
+        k for k in header_keys if "key" in k.lower() or "auth" in k.lower()
+    ]
     step("load_mcp_config", True, {
         "servers": names,
         "type": cfg.resolved_type(),
@@ -129,7 +145,7 @@ def main() -> int:
         "enabled": cfg.enabled,
         "enabled_tools": cfg.enabled_tools,
         "disabled_tools": cfg.disabled_tools,
-        "headers_keys": sorted((cfg.headers or {}).keys()),  # 只记键名，不记值
+        "headers_keys": header_keys,  # 只记键名，不记值
     })
 
     # ---- 2. 白名单边界（配置即边界） ----------------------------------------

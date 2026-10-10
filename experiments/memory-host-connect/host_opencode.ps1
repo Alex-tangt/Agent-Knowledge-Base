@@ -67,6 +67,38 @@ Write-Host "   exe       : $opencodeExe"
 Write-Host "   HOME      : $($script:OpencodeHome)"
 Write-Host "   project   : $($script:OpencodeProject)"
 
+# Evidence metadata: records WHO drives the tool calls and under which isolation/authn facts.
+# Lead decision (2026-10-10): the two hosts differ in driver -- opencode = agent-driven
+# (the local LLM decides to call MCP tools); DeepTutor = host MCP client path. The evidence
+# must state that difference instead of implying both are the same.
+$metaPath = Join-Path $EvidenceDir 'opencode\run-meta.json'
+New-Item -ItemType Directory -Force -Path (Split-Path -Parent $metaPath) | Out-Null
+$ErrorActionPreference = 'Continue'
+$oca = & $opencodeExe --version 2>&1 | Out-String
+$ErrorActionPreference = 'Stop'
+$meta = [ordered]@{
+    host             = 'opencode'
+    driver           = 'agent-driven: the local LLM decides which MCP tools to call'
+    opencode_version = $oca.Trim()
+    isolated_home    = $script:OpencodeHome
+    isolated_config  = $script:OpencodeCfg
+    isolated_env     = [ordered]@{
+        USERPROFILE     = $childEnv.USERPROFILE
+        HOME            = $childEnv.HOME
+        XDG_CONFIG_HOME = $childEnv.XDG_CONFIG_HOME
+        NO_PROXY        = $childEnv.NO_PROXY
+    }
+    model            = "ollama/$Model"
+    authn            = [ordered]@{
+        mode               = 'unknown until the task-1 instance states it (localhost, no key assumed -- this is NOT proof of authorization)'
+        identity_headers   = @('X-OpenViking-Account', 'X-OpenViking-User')
+        credential_headers = @()   # fill in when task-1 reports the instance authn mode
+    }
+    in_scope_only    = 'real opencode registration and real DeepTutor config are read-only to this run; see verify_isolation.ps1'
+}
+Write-JsonNoBom -Path $metaPath -Object $meta
+Write-Host "[evidence] $metaPath"
+
 try {
     # Native exes write progress to stderr; with $ErrorActionPreference='Stop' PS 5.1 turns
     # merged native stderr (2>&1) into a terminating error. Relax it around native calls.

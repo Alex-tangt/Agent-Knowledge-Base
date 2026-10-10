@@ -107,6 +107,25 @@ powershell -File verify_isolation.ps1
 就抛 `InvalidURL: Invalid port: ':1]'`（= mvp-protocol「四个启动坑」②）。现在 `host_deeptutor.py` 在
 import/连接前做 `sanitize_no_proxy()`（记录 before/after 到证据），opencode 侧在 PowerShell 层做同样清理。
 
+### 3.2 Lead 已裁决的口径（2026-10-10，写死）
+
+**① 两宿主的差别（证据必须写清，不许含糊成「两个都一样」）**
+
+| | 宿主① opencode | 宿主② DeepTutor |
+|---|---|---|
+| 驱动方 | **agent 驱动**：本地 Ollama 模型的真 agent 轮次，**模型自己决定**调哪些 MCP 工具 | **宿主客户端驱动**：DeepTutor 自身 `probe_server` / `MCPConnectionManager` 路径替它调用 |
+| 主证据 | `evidence/opencode/agent-turn.jsonl` + `run-meta.json`（`driver` 字段） | `evidence/deeptutor/connect.json`（`driver` 字段） |
+| 附加（不要求） | — | `deeptutor run chat` 真 agent 轮次（`host_deeptutor_agent.ps1`），跑通则作**附加**证据 |
+| 云凭据 | 不用 | **不得动用**；需要云凭据才能做的部分记「未测 + 原因」 |
+
+**② authn 按事实记录，不把「没设 key」写成「已授权」**：MVP 隔离实例按 localhost、无 key 走；
+身份区分用宿主自带机制（`X-OpenViking-Account` / `X-OpenViking-User`）。最终 authn 模式作为一条
+**事实**写进证据（`connect.json` 的 `authn.mode` / `run-meta.json` 的 `authn.mode`；用 `--authn-mode`
+传入 task-1 给出的实际值）。若服务要求 key 才能区分身份/范围，按 task-1 给的注入方式（只记变量名/头名）注入。
+
+**③ 写入口以实例 conf 的实际可写域为准**：默认写 `viking://resources/mvp-host-connect/<host>.md`；
+若与 task-1 实例允许的域不一致，改到实例允许的路径并在**证据里记明差异**（`--write-uri` 可覆盖）。
+
 ---
 
 ## 4. M6 逐项 → 证据映射（当前状态：**未测**，等 task-1）
@@ -150,17 +169,18 @@ import/连接前做 `sanitize_no_proxy()`（记录 before/after 到证据），o
    走的是 streamable HTTP 还是 SSE 回退；若是 SSE 回退而我们只暴露 `/mcp`，需在 §3 记录改用
    `--header`/URL 形态或换 `type`。
    *（pre-flight：配置解析与 8782 寻址已确认；协议回退待服务就绪后复测。）*
-2. **DeepTutor 本地模型的工具调用**：`binding` ∈ {`ollama`,`vllm`,`lm_studio`,`llama_cpp`} 被列入
-   `_NATIVE_TOOL_BLOCKED_BINDINGS`（`runtime\agentic\client.py:52`）→ 本地模型不走原生
-   function-calling，走文本工具协议，3B 模型可能不稳。**因此 M6 的 DeepTutor 主证据定为
-   `host_deeptutor.py`（宿主自身配置加载器 + MCP 连接/派发路径）**，LLM 驱动轮次作为加分项。
-   若 owner 要求「必须是 LLM 主动调用」，需授权用云模型或接受 8B 本地模型的稳定性风险 —— **请 Lead 裁决**。
-3. **服务端 authn 模式未定**：本线假设 localhost 单部署者零 key（dev/trusted）。若 task-1 的隔离
-   conf 开了 `api_key` 模式，两宿主需在 `headers` 加 `x-api-key`（凭据只走进程环境，证据只记键名）；
-   **本线会在解阻后按实例实际配置回填，并记为方案变更点上报**。
-4. **写入面选择**：M6 只要求「一次允许的写入」。本线用 `write` 工具写
-   `viking://resources/mvp-host-connect/<host>.md`（`viking://resources/` 是文档明示可写域），
-   不用 `remember`（走会话抽取、有附带 LLM/解析成本）、不用 `forget`/`add_skill`。
+2. **DeepTutor 本地模型的工具调用**（见 §3.2 ①）：`binding` ∈
+   {`ollama`,`vllm`,`lm_studio`,`llama_cpp`} 被列入 `_NATIVE_TOOL_BLOCKED_BINDINGS`
+   （`runtime\agentic\client.py:52`）→ 本地模型不走原生 function-calling，走文本工具协议，3B 可能不稳。
+   **Lead 已裁决（2026-10-10）**：DeepTutor 主证据 = `host_deeptutor.py`（宿主自身 MCP 客户端路径），
+   `deeptutor run chat` 只作附加、跑不通就记「未测 + 原因」，**不得为此动用云凭据**。
+3. **服务端 authn 模式**：本线假设 localhost 零 key（dev/trusted）。**Lead 已裁决（2026-10-10）**：
+   按无 key 走，最终模式作为**事实**写进证据；若实例要求 key 才能区分身份/范围，按 task-1 给的注入方式
+   （只记变量名/头名）注入。**「没设 key」不得写成「已授权」。**
+4. **写入面选择**：M6 只要求「一次允许的写入」。默认用 `write` 工具写
+   `viking://resources/mvp-host-connect/<host>.md`，不用 `remember`（走会话抽取、有附带 LLM/解析成本）、
+   不用 `forget`/`add_skill`。**Lead 已裁决（2026-10-10）**：以 task-1 实例 conf 的实际可写域为准，
+   不一致就改路径并在证据里记差异（`--write-uri` 覆盖）。
 5. **DeepTutor 隔离 home 的最小性**：只放了 `mcp.json` + `model_catalog.json` + 目录骨架。
    `probe_server`/`MCPConnectionManager` 只需 `mcp.json`；若 `deeptutor run` 还要求
    `main.yaml`/`system.json` 等，按缺失报错逐项补（**仍是隔离副本，不复制真实文件**）。
@@ -171,9 +191,14 @@ import/连接前做 `sanitize_no_proxy()`（记录 before/after 到证据），o
 
 ---
 
-## 7. 给 Lead 的待确认项
+## 7. 裁决状态与仍在等的事实
 
-1. **DeepTutor 的「真 agent 宿主」口径**：接受「宿主自身 MCP 客户端路径的工具调用」为主证据
-   （方案 A，推荐，零云调用），还是必须 LLM 主动调用（方案 B，需授权云模型或接受本地 8B 不稳定）？
-2. 服务实例 authn 模式（task-1 落地后回填；若需 key，凭据注入方式请指定）。
-3. M6 写入的目标 URI 是否就用 `viking://resources/mvp-host-connect/<host>.md`。
+**已由 Lead 裁决（2026-10-10）**：
+1. 宿主口径：opencode = agent 驱动（主证据）；DeepTutor = 宿主自身 MCP 客户端路径（主证据），
+   `deeptutor run chat` 仅作附加；**不得动用云凭据**。两宿主差别必须写进证据（见 §3.2 ①）。
+2. authn：localhost 无 key 走，身份用宿主自带头；**模式作为事实写进证据**，不把「没设 key」写成「已授权」。
+3. 写入口：默认 `viking://resources/mvp-host-connect/<host>.md`，**以实例 conf 实际可写域为准**，差异入证。
+
+**仍在等 task-1 的两个事实（解阻时 Lead 会给）**：
+1. 隔离实例的实际 **authn 模式**（→ 传 `host_deeptutor.py --authn-mode`，并写进 opencode `run-meta.json`）。
+2. 实例 conf 的**实际可写域**（→ 决定 `--write-uri`，若与默认不同则在证据里记差异）。

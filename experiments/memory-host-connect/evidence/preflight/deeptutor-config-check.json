@@ -1,11 +1,23 @@
 {
   "host": "deeptutor",
+  "driver": "host MCP client path (DeepTutor's own probe_server / MCPConnectionManager)",
   "deeptutor_version": "1.6.8",
   "python": "3.12.2",
   "deep_tutor_home": "C:\\Users\\Tan\\.openviking-mvp-host\\hosts\\deeptutor-home",
   "mcp_config_path": "C:\\Users\\Tan\\.openviking-mvp-host\\hosts\\deeptutor-home\\data\\user\\settings\\mcp.json",
   "server": "openviking-mvp",
   "marker": "M6-DEEPTUTOR",
+  "proxy_env_sanitized": {
+    "NO_PROXY": {
+      "before": "localhost,127.0.0.1,::1,volces.com,volcengine.com,[::1]",
+      "after": "localhost,127.0.0.1,::1,volces.com,volcengine.com,::1"
+    }
+  },
+  "authn": {
+    "mode": "localhost-no-key (pending task-1 confirmation)",
+    "note": "instance authn mode is a FACT supplied by task-1; 'unknown'/'no key' must NOT be recorded as 'authorized'",
+    "credential_headers": []
+  },
   "steps": [
     {
       "step": "load_mcp_config",
