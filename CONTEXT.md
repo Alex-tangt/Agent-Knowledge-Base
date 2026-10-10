@@ -45,6 +45,11 @@ _Avoid_: 索引、数据库
 从真相源重建、可随时丢弃的检索加速结构，不承载记忆本体。
 _Avoid_: 真相源、存储
 
+**个人记忆基座（Personal Memory Base）**：
+记忆能力的下一阶段形态——**服务端权威的内容仓库 + 只读来源导入 + 派生检索**，由选定开源实现承接存储 / 权限 / 版本 / 恢复，本仓保留接入面与评测。本轮候选 = OpenViking 0.4.23（**导入快照**而非就地挂载；与"映射类"的原始设想有偏差，见 ADR-0032 实测补充）。
+_See_: `docs/adr/0032-personal-memory-base-adopt-then-productize.md`、`experiments/memory-framework-spike/mvp-protocol.md`
+_Avoid_: 记忆能力包（`memory_agent` = 已冻结的旧自研实现）
+
 **视图（View）**：
 一份**具名谓词**，规定哪些**域**的哪些**条目**可见——"看什么"的范围定义；**只读**
 （写不经过视图，如数据库的 VIEW 与基表）。软件能看见哪些视图 = 授权；网关的 tenant/密级

@@ -134,7 +134,16 @@ transform extracted data into canonical entities, time series, and search indexe
 
 ## 结论
 
-_待填。写完前不得用于任何决策。_
+**本页 J1–J5 的原计划（Hindsight / Basic Memory / Cognee 三候选）未执行** —— 2026-10-10 owner 把路线改为"先采用低成本开源产品跑通 MVP"，预注册判据随之降级为历史记录（见页首横幅）。**本轮实际执行的验收是 [mvp-protocol.md](mvp-protocol.md) 的 M0–M6，已全部执行完毕，结论如下：**
+
+> **候选（OpenViking 0.4.23）能**原样保存与读回原文、跨消费者共享、按 ACL 做范围授权、显式报告不可用与处理失败、做版本快照与「内容面 + 检索面」双面备份，并**在两个真实 agent 宿主**（opencode + DeepTutor）接入同一实例；**不能**就地挂载本地来源（只能导入快照，且**读到旧快照没有任何信号**）；其**自带的 in-process 本地 GGUF 嵌入器并发不安全**（整进程 abort，须把嵌入放进程外并串行）。
+
+- 逐项判定、读法前提、独立复核结论与已知限制：**[mvp-protocol.md § 结论](mvp-protocol.md)**（Lead 验收）
+- 执行证据与恢复手册：**[mvp/README.md](mvp/README.md)**、**[mvp/RECOVERY.md](mvp/RECOVERY.md)**
+- 接入与成本账：**[../memory-host-connect/M6-report.md](../memory-host-connect/M6-report.md)**
+- 独立复核（预注册判据，未改）：**[../memory-spike-verify/verify_conclusion.md](../memory-spike-verify/verify_conclusion.md)**
+
+**尚未解决、留给后续阶段的**：来源新鲜度无信号（见 M2 读法前提）、备份包不含身份/ACL、恢复是离散点、账户 ACL 默认关闭、工具数注释陈旧（实测 20）。
 
 ## 资产与复原
 
