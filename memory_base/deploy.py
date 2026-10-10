@@ -260,6 +260,9 @@ def _health(component: str, config: dict) -> dict | None:
         return None
     if component == "embed" and payload.get("service") != "memory-base-embedding":
         return None
+    if component == "upstream" and (payload.get("version") != PINS["openviking"]
+                                     or payload.get("auth_mode") != "api_key" or not payload.get("healthy")):
+        return None
     if component == "gateway" and payload.get("service") != "memory-base-gateway":
         return None
     return payload
@@ -316,10 +319,10 @@ def _spawn(component: str, home: Path, config: dict, records: dict, timeout: flo
     _write_json(home / "processes.json", records)
     deadline = time.monotonic() + timeout
     while time.monotonic() < deadline:
-        if _health(component, config):
-            return
         if process.poll() is not None:
             raise RuntimeError(f"{component} exited during startup; inspect memory-base logs")
+        if _health(component, config):
+            return
         time.sleep(0.5)
     raise RuntimeError(f"{component} did not become healthy before timeout; inspect memory-base logs")
 
@@ -444,7 +447,8 @@ def main(argv: list[str] | None = None) -> int:
                 else:
                     result = start(home, components, args.timeout)
         print(json.dumps(result, ensure_ascii=False, indent=2))
-        return 1 if args.command == "status" and result["status"] != "ready" else 0
+        requires_ready = args.command == "status" or (args.command in ("start", "restart") and set(components) == set(COMPONENTS))
+        return 1 if requires_ready and result["status"] != "ready" else 0
     except (OSError, RuntimeError, ValueError, subprocess.SubprocessError) as error:
         print(f"memory-base: {error}", file=sys.stderr)
         return 1

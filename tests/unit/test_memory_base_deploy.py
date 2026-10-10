@@ -84,6 +84,18 @@ def test_ownership_binds_pid_creation_and_exact_command(monkeypatch):
     assert deploy.owned_process(record)
 
 
+def test_upstream_health_rejects_dev_mode_and_wrong_version(monkeypatch):
+    config = {"ports": {"upstream": 17886}}
+    payload = {"healthy": True, "version": "0.4.23", "auth_mode": "dev"}
+    monkeypatch.setattr(deploy, "_request", lambda *_a, **_k: (200, payload))
+    assert deploy._health("upstream", config) is None
+    payload["auth_mode"] = "api_key"
+    payload["version"] = "0.5.0"
+    assert deploy._health("upstream", config) is None
+    payload["version"] = "0.4.23"
+    assert deploy._health("upstream", config) == payload
+
+
 def test_gateway_env_has_separate_host_identities_and_never_root_key(tmp_path, monkeypatch):
     monkeypatch.setattr(deploy, "get_secret", lambda name, _: "upstream-secret" if name == "upstream-key" else None)
     monkeypatch.setattr(deploy, "_ensure_secret", lambda name, _: "token-" + name)
