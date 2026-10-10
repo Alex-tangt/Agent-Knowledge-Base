@@ -1,0 +1,44 @@
+{
+  "port": 8791,
+  "model_path": "C:\\Users\\Tan\\.cache\\openviking\\models\\bge-small-zh-v1.5-f16.gguf",
+  "health": {
+    "status": "ok",
+    "calls": 0,
+    "items": 0,
+    "serialized": true,
+    "model": "bge-small-zh-v1.5-f16"
+  },
+  "single": {
+    "dims": 512,
+    "count": 1
+  },
+  "batch": {
+    "dims": [
+      512,
+      512,
+      512,
+      512,
+      512,
+      512,
+      512,
+      512
+    ]
+  },
+  "concurrency": {
+    "clients": 10,
+    "requests_each": 5,
+    "total_requests": 50,
+    "errors": [],
+    "error_count": 0,
+    "seconds": 0.3,
+    "server_alive_after": true,
+    "final_health": {
+      "status": "ok",
+      "calls": 52,
+      "items": 59,
+      "serialized": true,
+      "model": "bge-small-zh-v1.5-f16"
+    }
+  },
+  "verdict": "PASS"
+}

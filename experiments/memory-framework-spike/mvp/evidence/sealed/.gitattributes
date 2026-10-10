@@ -1,0 +1,5 @@
+# These are封存副本 (immutable byte-for-byte evidence): their sha256 is asserted in
+# evidence/m5b_outofprocess_restore.json.  They MUST NOT be line-ending converted,
+# otherwise a fresh checkout would hash differently and third-party recomputation
+# would fail.  `-text` disables eol normalization for this directory.
+* -text
