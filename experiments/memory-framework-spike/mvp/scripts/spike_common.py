@@ -23,6 +23,12 @@ import urllib.parse
 import urllib.request
 from pathlib import Path
 
+try:  # console on this host is cp936; keep our Chinese log lines readable in captured output
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+except Exception:
+    pass
+
 # ---------------------------------------------------------------- environment
 
 SPIKE_ROOT = Path(os.environ.get("SPIKE_ROOT") or (Path(os.path.expanduser("~")) / ".openviking-mvp-spike"))
