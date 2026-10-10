@@ -2,11 +2,13 @@
 
 日期：2026-10-10。执行线：**host-connect**（worktree `wk-host`，分支 `feat/memory-mvp-hosts`）。
 写域：`experiments/memory-host-connect/`（本目录）。
-状态：**M6 已实测完成（2026-10-10 15:27–15:45 CST）——判据 PASS，±两处未测见报告 §5。**
+状态：**M6 已实测完成（2026-10-10 15:27–15:45 CST）——判据 PASS；范围级读/写权限已于 15:52 在宿主侧补齐
+（切 authz profile + 只读身份，见 `M6-report.md` §9）。**
 
 > **实测结果与证据见 [`M6-report.md`](M6-report.md)**（本文是运行手册与口径，报告是结果）。
-> 速览：两宿主接入同一实例 `127.0.0.1:8782`（`auth_mode=dev`，v0.4.23）；跨宿主 `search` 命中 + `read`
-> **逐字节相同**；两宿主各完成一次允许的写入；身份/范围按账户-用户对照实测；**云调用 0 / 费用 0**。
+> 速览：两宿主接入同一实例（先 `auth_mode=dev` 跑共享读写，后 `auth_mode=api_key` 跑范围权限）；
+> 跨宿主 `search` 命中 + `read` **逐字节相同**；两宿主各完成一次允许的写入；**云调用 0 / 费用 0**；
+> 授权子树内只读身份**写被 403 `PERMISSION_DENIED`**、读正常。
 
 对应验收：`experiments/memory-framework-spike/mvp-protocol.md` **M6**「至少两个实际 agent 宿主接入同一服务，
 完成共享内容读取与一次允许的写入；记录启用步骤、依赖/存储体积、启动/常驻资源、模型调用和维护步骤」；
@@ -97,6 +99,11 @@ powershell -File collect_cost.ps1
 
 # 6) 隔离与真实配置核验（收工前必跑）
 powershell -File verify_isolation.ps1
+
+# 7) 补充：范围级读/写权限（宿主侧只读身份）——切 authz + 登记身份 + ACL + 两角色对照
+powershell -File run_supplement_authz.ps1
+#   root key 只在那个 shell 的进程环境里（不落盘）；重跑会换 key 并重新 provision。
+#   回到 dev 形态：& $py host_server.py start --profile dev
 ```
 
 `setup_isolation.ps1` 之外的每个脚本都可单独重跑；证据文件每次覆盖，便于「同一命令重跑得同样结果」。
@@ -149,7 +156,7 @@ import/连接前做 `sanitize_no_proxy()`（记录 before/after 到证据），o
 | 宿主② 接入同一服务 | `evidence/deeptutor/connect.json` → `probe_server(list_tools)` | **PASS**：`ok=true`，**20 个工具**（服务器实际注册数；app.py 注释里的 16 是旧值） |
 | 宿主② 共享读取 | `connect.json` → `search` / `cross_host` | **PASS**：`search` 命中含宿主①条目；`read` 取回宿主①的字节，**byte_identical=true** |
 | 宿主② 一次允许的写 | `connect.json` → `tool_calls[write]` + `readback_matches_write` | **PASS**：写 82 B → 读回 82 B 内容一致 |
-| 身份与范围生效 | `evidence/scope-probe.json` + 配置 `headers`/`enabled_tools` | **PASS（部分）**：账户隔离 / 账户内共享 / 无身份拒绝 实测；只读身份强制**未测**（dev 恒 ROLE=root，`M6-report` §5.2） |
+| 身份与范围生效 | `evidence/scope-probe.json` + 配置 `headers`/`enabled_tools` | **PASS**：账户隔离 / 账户内共享 / 无身份拒绝 实测；**宿主侧只读身份**已在 authz profile 补齐（`evidence/supplement-authz/`，`M6-report` §9） |
 | 依赖/存储体积 | `evidence/cost/cost.json` → `dependencies` / `storage` | **PASS**：venv-ov 1058 MB；隔离根 74 MB（宿主副本 65.4 / 服务数据 8.6） |
 | 启动/常驻资源 | `cost.json` → `resident` | **PASS**：服务 pid 25624 `PrivateMemorySize64` 1223.8 MB；opencode 轮次峰值 851 MB；注明跨进程 RSS 不可信 |
 | 模型调用与费用 | `cost.json` → `model_calls` + 事件流 | **PASS**：云调用 **0** / 费用 **0**（全本机 Ollama） |
@@ -182,9 +189,10 @@ import/连接前做 `sanitize_no_proxy()`（记录 before/after 到证据），o
    `_NATIVE_TOOL_BLOCKED_BINDINGS`（`runtime\agentic\client.py:52`）→ 本地模型不走原生 function-calling。
    **Lead 已裁决（2026-10-10）**：DeepTutor 主证据 = `host_deeptutor.py`（宿主自身 MCP 客户端路径）；
    `deeptutor run chat` 只作附加、跑不通就记「未测 + 原因」，**不得为此动用云凭据** → 本线**未跑**该项。
-3. **服务端 authn 模式**：实测 `/health` = `auth_mode=dev`（事实）。**Lead 已裁决（2026-10-10）**：
-   按无 key 走，模式作为**事实**写进证据。**「没设 key」未被写成「已授权」**；dev 恒 ROLE=root，
-   故只读身份强制记为**未测 + 原因**（`M6-report` §5.2）。
+3. **服务端 authn 模式**：先实测 `/health` = `auth_mode=dev`（事实），**后来为补齐范围权限切到
+   `auth_mode=api_key`**。**Lead 已裁决（2026-10-10）**：按无 key 走并把模式作为**事实**写进证据；
+   **「没设 key」未被写成「已授权」**。dev 恒 ROLE=root ⇒ 只读身份无法在 dev 表达，已在 authz profile
+   **宿主侧**补齐（`M6-report` §9）；dev 期证据文件保持冻结未改。
 4. **写入面**：实测 `viking://resources/**` 与服务器端 `write` 工具自述的可写域一致，**无需改路径**。
    本线用 `write` 工具，不用 `remember`（走会话抽取、有附带成本）、不用 `forget`/`add_skill`。
 5. **DeepTutor 隔离 home 的最小性**：实测 `mcp.json` + `model_catalog.json` 足够跑通 `probe_server` /

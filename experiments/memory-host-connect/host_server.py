@@ -168,13 +168,24 @@ def wait_for_health(timeout: float = 300.0, interval: float = 2.0) -> dict:
 
 # ------------------------------------------------------------------- lifecycle
 
-def _pid() -> int | None:
+def _pids() -> list[int]:
+    """Every pid this script has started (a list, not one pid -- see start())."""
     if not PID_FILE.exists():
-        return None
-    try:
-        return int(PID_FILE.read_text().strip())
-    except Exception:
-        return None
+        return []
+    raw = PID_FILE.read_text(encoding="utf-8").strip()
+    out: list[int] = []
+    for part in raw.replace(",", " ").split():
+        try:
+            out.append(int(part))
+        except ValueError:
+            continue
+    return out
+
+
+def _record_pid(pid: int) -> None:
+    pids = [p for p in _pids() if p != pid]
+    pids.append(pid)
+    PID_FILE.write_text(" ".join(str(p) for p in pids), encoding="utf-8")
 
 
 def _alive(pid: int | None) -> bool:
@@ -187,10 +198,14 @@ def _alive(pid: int | None) -> bool:
 
 def start(wait: bool = True, timeout: float = 300.0) -> int:
     assert_not_foreign_port()
+    # Reap anything WE previously started before launching another one. Measured 2026-10-10: a
+    # single-pid file plus repeated starts leaked servers that held the workspace lock / port, and
+    # the next start died silently right after "Loaded RAGFS Rust binding".
+    stop(quiet=True)
     status, body = http_status("/health", timeout=5.0)
     if status == 200:
-        log(f"already healthy: {body[:150].decode('utf-8', 'replace')}")
-        return _pid() or 0
+        log(f"port {PORT} already answers but is not ours: {body[:120].decode('utf-8', 'replace')}")
+        raise SystemExit(f"refusing to start: port {PORT} is held by another process (not started by this script)")
     write_conf_if_absent()
     stdout = open(LOGS / "server.out.log", "ab")
     stderr = open(LOGS / "server.err.log", "ab")
@@ -202,33 +217,46 @@ def start(wait: bool = True, timeout: float = 300.0) -> int:
         stdout=stdout, stderr=stderr, env=env, cwd=str(LOGS),
         creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0),
     )
-    PID_FILE.write_text(str(proc.pid), encoding="utf-8")
+    _record_pid(proc.pid)
     log(f"started pid={proc.pid} profile={PROFILE} conf={active_conf()} -> {BASE_URL}")
     if wait:
-        log(f"healthy: {json.dumps(wait_for_health(timeout=timeout), ensure_ascii=False)}")
+        try:
+            log(f"healthy: {json.dumps(wait_for_health(timeout=timeout), ensure_ascii=False)}")
+        except TimeoutError:
+            log("startup FAILED -- tail of server.err.log:")
+            err = LOGS / "server.err.log"
+            if err.exists():
+                print(err.read_text(encoding="utf-8", errors="replace")[-2500:], flush=True)
+            stop(quiet=True)
+            raise
     return proc.pid
 
 
-def stop() -> None:
-    pid = _pid()
-    if not pid:
-        log("no pid file")
+def stop(quiet: bool = False) -> None:
+    pids = _pids()
+    if not pids:
+        if not quiet:
+            log("no pid file")
+        PID_FILE.unlink(missing_ok=True)
         return
-    subprocess.run(["taskkill", "/PID", str(pid), "/T", "/F"], capture_output=True, text=True)
+    for pid in pids:
+        subprocess.run(["taskkill", "/PID", str(pid), "/T", "/F"], capture_output=True, text=True)
     deadline = time.time() + 30
     while time.time() < deadline:
         if http_status("/health", timeout=2.0)[0] == 0:
             break
         time.sleep(1)
     PID_FILE.unlink(missing_ok=True)
-    log(f"stopped pid={pid}")
+    if not quiet:
+        log(f"stopped pids={pids}")
 
 
 def status() -> int:
-    pid = _pid()
+    pids = _pids()
+    pid = pids[-1] if pids else None
     code, body = http_status("/health", timeout=5.0)
     print(json.dumps({
-        "pid": pid, "pid_alive": _alive(pid), "port": PORT, "base_url": BASE_URL,
+        "pids": pids, "pid_alive": _alive(pid), "port": PORT, "base_url": BASE_URL,
         "health_status": code, "health_body": body.decode("utf-8", "replace"),
         "profile": PROFILE, "conf": str(active_conf()), "workspace": str(WORKSPACE),
     }, ensure_ascii=False, indent=2))

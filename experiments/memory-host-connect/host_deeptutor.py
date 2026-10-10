@@ -82,6 +82,12 @@ def main() -> int:
                         help="task-1 实例的实际 authn 模式（事实字段，照实填；unknown 不等于已授权）")
     parser.add_argument("--peer-disk-path", default=None,
                         help="宿主①写的文件在实例 workspace 里的磁盘路径；给定时做逐字节比对")
+    parser.add_argument("--read-uri", default=None,
+                        help="补充（scope）：额外显式读一个 URI，断言可读")
+    parser.add_argument("--skip-peer-read", action="store_true",
+                        help="补充（scope）：跳过跨宿主 peer 读（authz 账户下 peer 文件不可见）")
+    parser.add_argument("--expect-write-denied", action="store_true",
+                        help="补充（scope）：写必须被拒（只读身份）才算 PASS")
     args = parser.parse_args()
 
     proxy_fix = {} if args.keep_proxy_env else sanitize_no_proxy()
@@ -207,16 +213,42 @@ def main() -> int:
 
         # 3a. 读：共享检索（另一宿主写的条目也应可见）
         await call("search", {"query": args.marker, "limit": 5}, "shared read (search)")
+
+        # 3a'. 补充（scope）：显式读一个指定 URI——只读身份也要能读到授权子树里的内容
+        if args.read_uri:
+            r = await call("read", {"uris": args.read_uri}, "explicit allowed read")
+            report["scope_read"] = {
+                "uri": args.read_uri,
+                "ok": ("NOT_FOUND" not in (r or "")) and not (r or "").startswith("Error executing tool"),
+                "head": redact(r)[:200],
+            }
+            step("scope_read_allowed", report["scope_read"]["ok"],
+                 f"{args.read_uri} readable = {report['scope_read']['ok']}")
+
         # 3b. 写：一次允许的内容写（实例文档明示可写域 = viking://resources/）
         uri = args.write_uri or "viking://resources/mvp-host-connect/deeptutor.md"
         content = (f"# M6 DeepTutor host evidence\n\nmarker={args.marker}\n"
                    f"written_by=deeptutor (isolated)\n")
-        await call("write", {
+        write_resp = await call("write", {
             "uri": uri,
             "content": content,
             "mode": "replace",
             "wait": True,
-        }, "allowed content write")
+        }, "content write")
+        write_denied = ("PERMISSION_DENIED" in (write_resp or "")
+                        or "denied" in (write_resp or "").lower()
+                        or "not authorized" in (write_resp or "").lower())
+        if args.expect_write_denied:
+            # supplement: the whole point is that the write is refused for a read-only identity.
+            step("write_denied_for_readonly", write_denied,
+                 {"uri": uri, "denied": write_denied, "response": redact(write_resp)[:300]})
+            report["write_outcome"] = {"uri": uri, "denied": write_denied}
+            await manager.shutdown()
+            ok = all(s["ok"] is not False for s in report["steps"])
+            step("summary", ok, f"{sum(1 for s in report['steps'] if s['ok'] is True)} PASS / "
+                                f"{sum(1 for s in report['steps'] if s['ok'] is False)} FAIL")
+            return 0 if ok else 1
+
         # 3c. 原文读回 + 逐字节比对（M6 要求「写入一次 + 共享读取」；读回必须一致）
         #     NOTE: the read tool's parameter is `uris` (str | list[str]), not `uri` --
         #     passing `uri` fails pydantic validation (measured 2026-10-10).
@@ -226,6 +258,13 @@ def main() -> int:
              {"uri": uri, "written_chars": len(content), "readback_chars": len(readback or ""),
               "exact_substring": readback_ok})
         # 3d. 枚举 + 跨宿主读：opencode 写的条目（若已存在）
+        if args.skip_peer_read:
+            await call("list", {"uri": "viking://resources"}, "enumerate resources root")
+            await manager.shutdown()
+            ok = all(s["ok"] is not False for s in report["steps"])
+            step("summary", ok, f"{sum(1 for s in report['steps'] if s['ok'] is True)} PASS / "
+                                f"{sum(1 for s in report['steps'] if s['ok'] is False)} FAIL")
+            return 0 if ok else 1
         await call("list", {"uri": "viking://resources/mvp-host-connect"}, "enumerate shared dir")
         peer_uri = "viking://resources/mvp-host-connect/opencode.md"
         peer = await call("read", {"uris": peer_uri}, "read peer host write (may be absent)")

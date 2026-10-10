@@ -3,6 +3,10 @@
 日期：2026-10-10（宿主接入实测 15:27–15:45 CST）。执行线：**host-connect**（worktree `wk-host`，分支 `feat/memory-mvp-hosts`）。
 对应验收：`mvp-protocol.md` **M6**；接入方依据 ADR-0032 **D6**。
 
+> **补充（2026-10-10，按 Lead 裁决追加）**：本实例已切 `auth_mode=api_key`，在**宿主侧**验证了
+> 「范围级读/写权限」——只读身份可读授权子树、写被 `PERMISSION_DENIED` 拒绝；可写身份读写正常。
+> 见 **§9 补充：宿主侧只读身份（范围级权限）实测**。§1–§8 的结论与证据**原样保留、未改**。
+
 ---
 
 ## 0. 结论速览
@@ -262,3 +266,86 @@ powershell -File collect_cost.ps1
 共享读取（跨宿主 `search` 命中 + `read` 逐字节相同）与一次允许的写入（两宿主各一次）均有原始工具调用证据；
 身份/范围用账户-用户对照实测（账户隔离、账户内共享、无身份拒绝）；成本账齐全，**云调用 0 / 费用 0**。
 未测项两处：本实例上的只读身份 ACL 强制（dev 恒 ROLE=root，原因已记）、DeepTutor 的 LLM 驱动轮次（裁决①不要求）。
+
+> 其中第一处未测项已由 **§9 补充**补齐（切 authz 后在**宿主侧**验证只读身份 + 范围级写拒绝）。
+
+---
+
+## 9. 补充：宿主侧只读身份（范围级权限）实测
+
+**本节为追加，§1–§8 的结论与证据未做任何修改。** 触发：Lead 裁决要求补齐「范围级读/写权限（哪些子树
+agent 只读、哪些可写）」——task-1 验的是 **API 身份**，不是**宿主**；本补充在**本线自己的 8782 实例**上
+按 task-1 配方切 authz profile，并把结论落到**宿主侧**。
+
+### 9.1 做了什么（一条命令可复现：`run_supplement_authz.ps1`）
+
+| 步 | 动作 | 结果 |
+|---|---|---|
+| 1 | 本实例切 `auth_mode=api_key`（`ov-authz.conf`；root key **只在进程环境**，本脚本不落盘/不回显） | `/health` → `auth_mode=api_key` |
+| 2 | 登记两名身份：`host-rw`(role=admin) / `host-ro`(role=user) | PASS（已存在则复用，`ALREADY_EXISTS` → 取回既有 key） |
+| 3 | 打开**账户级 ACL**（默认关，不开则 restricted/grant 不生效） | PASS `acl_enabled=true` |
+| 4 | 建**受限子树** `viking://resources/m6-scope` 并授权 | `acl_mode=restricted`；`direct_entries=[{user:host-ro,read},{user:host-rw,write}]` |
+| 5 | 两把 key 存进 **DeepTutor 自己的** per-owner secret store（`data/system/user-secrets/_shared/private/mcp/…`，chmod 700） | PASS；`mcp.json` 里只有引用 `${secret:openviking-mvp/api_key_ro|rw}`，**不含 key** |
+| 6 | **宿主侧**跑只读身份（DeepTutor 自身 MCP 客户端路径） | **6 PASS / 0 FAIL** |
+| 7 | **宿主侧**跑可写身份（同上） | **6 PASS / 0 FAIL** |
+
+### 9.2 宿主侧证据原文（`evidence/supplement-authz/`）
+
+只读身份 `host-ro`（`host-ro-readonly.json`）：
+```
+[PASS] load_mcp_config: headers_keys=[X-API-Key, X-OpenViking-Account, X-OpenViking-User]  ← 只有引用，无 key
+[PASS] probe_server(list_tools): ok=True tools=20
+[PASS] manager.ensure_started: status=connected
+[PASS] scope_read_allowed: viking://resources/m6-scope/seed.md readable = True
+       read  => "M6-SUPPLEMENT seed written by host-rw"
+[PASS] write_denied_for_readonly:
+       write => "PERMISSION_DENIED: Access denied for viking://resources/m6-scope/ro-attempt.md:
+                 write permission required"
+```
+可写身份 `host-rw`（`host-rw-writable.json`）：
+```
+[PASS] scope_read_allowed: viking://resources/m6-scope/seed.md readable = True
+[PASS] readback_matches_write: 写 86 B → 读回 86 B，内容一致
+       write => "Wrote 86 bytes to viking://resources/m6-scope/rw-written.md (mode=replace).
+                 Indexing: semantic=complete, vector=complete."
+```
+**磁盘反证**：被拒的 `ro-attempt.md` **不存在**（拒绝的写没有留下任何字节）；`rw-written.md` 存在。
+⇒ **范围级权限在宿主侧成立**：同一子树，只读身份读得到、写被 403 拒绝；可写身份读写均正常。
+
+**只读身份来自哪个宿主**：DeepTutor（它的 `mcp.json` 支持 `${secret:…}` 引用，key 进它自己的 secret store）。
+opencode 在 authz 下**未接入**，原因：它的 remote-MCP 配置没有同类 secret-reference 机制，把明文 key 写进
+隔离 `opencode.json` 会违反凭据规则；Lead 的口径是「至少一个宿主走只读身份就够」，故此项用 DeepTutor 交付。
+
+### 9.3 凭据处理（照实记）
+
+- **mcp.json 只有引用**：`X-API-Key: ${secret:openviking-mvp/api_key_ro}`（DeepTutor 的产品设计：配置里
+  只允许放引用，值在连接时于内存中解析——`services/mcp/secrets.py`）。
+- **key 值落在 DeepTutor 自己的 secret store**（per-owner、chmod 700、在隔离 `DEEPTUTOR_HOME` 内，仓库外）。
+- **root key（api_key 模式的根凭据）只在进程环境**：由 `run_supplement_authz.ps1` 现场生成、只传给服务进程
+  与 provisioning 进程，**不写文件、不进 git、不回显**；脚本重跑会换一把新 key 并重新 provision。
+- 证据里只有**键名与键前缀**（如 `ZGVmYX...`），无任何完整 key。
+
+### 9.4 切换的副作用（照实记）
+
+切到 authz 后，**§1–§8 的 dev 期证据不能用同样命令重跑**（实例现在要求 `X-API-Key`；dev 期自动创建的
+`mvp-host` / `scope-a` 账户数据仍在磁盘，但 `default` 账户身份看不到它们）。已有证据文件**已冻结、未改**。
+要回到 dev 形态：`python host_server.py start --profile dev`（`ov.conf` 未变）。
+
+### 9.5 补充过程中发现并修掉的三个真实缺陷（都进了脚本）
+
+1. **ACL 调用顺序**：资源不存在时 `PUT /api/v1/acl` / `grant` 返回 **404 NOT_FOUND** → 必须**先写种子文件再设 ACL**。
+2. **PowerShell 只读自动变量**：`setup_authz_supplement.ps1` 里 `$home = …` 抛
+   `VariableNotWritable`（`$HOME` 只读且变量名大小写不敏感）→ 改名 `$dtHome`；已对全部 .ps1 做自动变量扫描。
+3. **实例生命周期泄漏**：`host_server.py` 原来只记**一个** pid，重复 start 会留下孤儿进程占端口/工作区锁
+   （实测出现「服务打印 running 后端口不通」的假象，根因是**我在启动窗口内做了健康探测**，叠加孤儿进程）。
+   现已改为：pid 文件记 pid **列表**、`start()` 先 `stop()` 自清、端口被非本脚本进程占用则拒绝启动、
+   启动超时自动 dump `server.err.log` 尾部。
+
+### 9.6 与宿主工具白名单相关的一条重要事实（Lead 要求显式写）
+
+**服务器实际注册 20 个 MCP 工具**，而 `openviking/server/app.py:788` 的注释写的是
+「serves 16 tools (…16 个名字…)」——**那 16 是旧值，注释未随注册更新**；权威列表是
+`mcp_endpoint.py` 里的 `@mcp.tool` 注册（实测 `probe_server` 返回 **20**）。
+对宿主接入的直接影响：**宿主的 `enabled_tools` 白名单要照实测的 20 个名字写，不能照注释**，
+否则会出现「配置看似完整、但新工具静默不可用」。本线两宿主的白名单都是按 `probe_server` 实测的工具名逐条挑的
+（读 + `write`），并显式 `disabled_tools` 挡掉 `forget`/`add_skill`/`add_resource`。
