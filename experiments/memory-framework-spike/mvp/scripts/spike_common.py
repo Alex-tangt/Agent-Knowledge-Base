@@ -44,10 +44,64 @@ SERVER_EXE = VENV_SCRIPTS / "openviking-server.exe"
 PY_EXE = VENV_SCRIPTS / "python.exe"
 OV_EXE = VENV_SCRIPTS / "ov.exe"
 OV_CONF = Path(os.environ.get("OPENVIKING_CONFIG_FILE") or (SPIKE_ROOT / "ov.conf"))
+AUTHZ_CONF = SPIKE_ROOT / "ov-authz.conf"
 OVCLI_CONF = Path(os.environ.get("OPENVIKING_CLI_CONFIG_FILE") or (SPIKE_ROOT / "ovcli.conf"))
 PID_FILE = LOGS / "server.pid"
+ROOT_KEY_FILE = SPIKE_ROOT / "root-key.txt"
+ROOT_KEY_ENV = "OPENVIKING_SPIKE_ROOT_KEY"
+
+# Profile selects which ov.conf the server is started with.  "dev" is the
+# reference deployment (dev auth plugin => every request is ROLE=root, so ACLs
+# cannot be exercised).  "authz" switches the same instance/port to api_key auth
+# so a genuine non-root, read-only identity exists for M3.
+PROFILE = os.environ.get("SPIKE_PROFILE", "dev").strip().lower() or "dev"
+
+
+def active_conf() -> Path:
+    return AUTHZ_CONF if PROFILE == "authz" else OV_CONF
 
 REPO_ROOT = Path(__file__).resolve().parents[4]  # .../experiments/memory-framework-spike/mvp/scripts -> repo
+
+
+def root_api_key() -> str:
+    """Root API key for the `authz` profile.
+
+    Never stored in the repo and never written into evidence: the ov-authz.conf
+    only carries the literal ``$OPENVIKING_SPIKE_ROOT_KEY`` placeholder, which
+    the loader expands from the process environment (config_loader.load_json_config
+    runs os.path.expandvars before json.loads).  The value itself lives in a
+    gitignored, out-of-repo file so the run is repeatable.
+    """
+    value = os.environ.get(ROOT_KEY_ENV)
+    if value:
+        return value
+    if ROOT_KEY_FILE.exists():
+        return ROOT_KEY_FILE.read_text(encoding="utf-8").strip()
+    import secrets
+    value = "spike-" + secrets.token_hex(16)
+    ROOT_KEY_FILE.write_text(value, encoding="utf-8")
+    return value
+
+
+def sync_ovcli_conf(api_key: str | None = None) -> Path:
+    """Write ovcli.conf for the ov CLI.
+
+    In the `authz` profile the CLI needs a *data-plane* key: ROOT API keys are
+    rejected by tenant-scoped data APIs in api_key mode, so callers pass the
+    writer identity's key.  The file lives outside the repo and the key value
+    never reaches evidence or git.
+    """
+    data: dict = {"url": BASE_URL, "output": "json", "timeout": 120.0}
+    if PROFILE == "authz":
+        data["api_key"] = api_key or root_api_key()
+    OVCLI_CONF.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    return OVCLI_CONF
+
+
+def auth_headers(user_key: str | None = None) -> dict:
+    """Credential header for the api_key profile (never logged)."""
+    key = user_key or root_api_key()
+    return {"X-API-Key": key}
 
 
 def sanitized_env(extra: dict | None = None) -> dict:
@@ -72,8 +126,9 @@ def sanitized_env(extra: dict | None = None) -> dict:
     for key in ("HTTP_PROXY", "HTTPS_PROXY", "ALL_PROXY"):
         out.pop(key, None)
     out["NO_PROXY"] = "localhost,127.0.0.1,::1"
-    out["OPENVIKING_CONFIG_FILE"] = str(OV_CONF)
+    out["OPENVIKING_CONFIG_FILE"] = str(active_conf())
     out["OPENVIKING_CLI_CONFIG_FILE"] = str(OVCLI_CONF)
+    out[ROOT_KEY_ENV] = root_api_key()
     return out
 
 
@@ -148,25 +203,27 @@ def http_status(path: str, timeout: float = 10.0) -> tuple[int, bytes]:
 
 
 def read_content(uri: str, *, raw: bool = True, offset: int = 0, limit: int = -1,
-                 timeout: float = 120.0) -> bytes:
+                 timeout: float = 120.0, headers: dict | None = None) -> bytes:
     """GET /api/v1/content/read and return the正文 as UTF-8 bytes."""
     payload = api(
         "GET",
         "/api/v1/content/read",
         params={"uri": uri, "raw": "true" if raw else "false", "offset": offset, "limit": limit},
         timeout=timeout,
+        headers=headers,
     )
     text = payload["result"]
     return text.encode("utf-8")
 
 
 def write_content(uri: str, content: str, *, mode: str = "replace", wait: bool = True,
-                  timeout: float = 300.0) -> dict:
+                  timeout: float = 300.0, headers: dict | None = None) -> dict:
     return api(
         "POST",
         "/api/v1/content/write",
         body={"uri": uri, "content": content, "mode": mode, "wait": wait, "timeout": timeout},
         timeout=timeout + 30,
+        headers=headers,
     )
 
 

@@ -19,13 +19,15 @@ import time
 from spike_common import (
     BASE_URL,
     LOGS,
-    OV_CONF,
     PID_FILE,
     PORT,
     SERVER_EXE,
+    PROFILE,
+    active_conf,
     http_status,
     log,
     sanitized_env,
+    sync_ovcli_conf,
     wait_for_health,
 )
 
@@ -58,9 +60,10 @@ def start(wait: bool = True, timeout: float = 300.0) -> int:
     LOGS.mkdir(parents=True, exist_ok=True)
     stdout = open(stdout_path, "ab")
     stderr = open(stderr_path, "ab")
+    conf = active_conf()
     env = sanitized_env({"OPENVIKING_START_HOST": "127.0.0.1", "OPENVIKING_START_PORT": str(PORT)})
     proc = subprocess.Popen(
-        [str(SERVER_EXE), "--config", str(OV_CONF), "--host", "127.0.0.1", "--port", str(PORT)],
+        [str(SERVER_EXE), "--config", str(conf), "--host", "127.0.0.1", "--port", str(PORT)],
         stdout=stdout,
         stderr=stderr,
         env=env,
@@ -68,10 +71,15 @@ def start(wait: bool = True, timeout: float = 300.0) -> int:
         creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0),
     )
     PID_FILE.write_text(str(proc.pid), encoding="utf-8")
-    log(f"started pid={proc.pid} -> {BASE_URL}")
+    log(f"started pid={proc.pid} profile={PROFILE} config={conf} -> {BASE_URL}")
     if wait:
         info = wait_for_health(timeout=timeout)
         log(f"healthy: {json.dumps(info, ensure_ascii=False)}")
+        if PROFILE == "authz":
+            from spike_identity import ensure_identities
+            ids = ensure_identities()
+            sync_ovcli_conf(ids["writer"])
+            log("authz profile ready: identities ensured, ovcli.conf bound to the writer identity")
     return proc.pid
 
 

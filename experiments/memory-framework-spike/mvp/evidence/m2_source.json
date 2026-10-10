@@ -1,0 +1,440 @@
+{
+  "unit": "M2",
+  "claim": "既有资料只读接入并追平更新",
+  "generated_at": "2026-10-10T14:33:47+0800",
+  "profile": "authz",
+  "source_dir": "C:\\Users\\Tan\\.openviking-mvp-spike\\source-repo",
+  "source_root_uri": "viking://resources/wk-spike-source",
+  "in_place_mount_exists": false,
+  "verdict": "PASS",
+  "checks": [
+    {
+      "id": "M2.1-no-in-place-watch",
+      "claim": "本地目录能否就地挂载/持续追平（有就地入口 → 才可能『指过去』）",
+      "verdict": "PASS",
+      "detail": {
+        "probe_command": "ov add-resource \"C:\\Users\\Tan\\.openviking-mvp-spike\\source-repo\" --parent-auto-create viking://resources/wk-spike-watch-probe --watch-interval 1",
+        "returncode": 1,
+        "framework_message": "Client error: A local path cannot be watched. Use a URL, sitemap, or RSS source, or re-import the local content when it changes.",
+        "conclusion": "框架明确拒绝：本机目录不可 watch；本地来源只有『导入快照』一条路"
+      }
+    },
+    {
+      "id": "M2.2-ingest-copy",
+      "claim": "基座读取来源副本（导入快照）",
+      "verdict": "PASS",
+      "detail": {
+        "uri_root": "viking://resources/wk-spike-source/source-repo",
+        "response": {
+          "status": "success",
+          "errors": [],
+          "source_path": "source-repo",
+          "meta": {
+            "file_count": 3,
+            "repo_name": "repository"
+          },
+          "root_uri": "viking://resources/wk-spike-source/source-repo",
+          "temp_uri": "viking://temp/mem-rw/10101433_5864c1/repository",
+          "queue_status": {
+            "Semantic": {
+              "processed": 1,
+              "requeue_count": 0,
+              "error_count": 0,
+              "errors": []
+            },
+            "Embedding": {
+              "processed": 9,
+              "requeue_count": 0,
+              "error_count": 0,
+              "errors": []
+            }
+          },
+          "context_count": 9,
+          "telemetry": {
+            "id": "tm_ddaf46d1693e41dcbc6ab4b66f7b75f3",
+            "summary": {
+              "operation": "add_resource_job",
+              "status": "ok",
+              "duration_ms": 1026.518,
+              "queue": {
+                "semantic": {
+                  "processed": 1,
+                  "queue_wait": {
+                    "duration_ms": 139.792
+                  },
+                  "execute": {
+                    "duration_ms": 283.169
+                  }
+                },
+                "embedding": {
+                  "processed": 9,
+                  "queue_wait": {
+                    "duration_ms": 1219.253
+                  },
+                  "execute": {
+                    "duration_ms": 465.428
+                  }
+                }
+              },
+              "semantic_nodes": {
+                "total": 6,
+                "done": 6
+              },
+              "resource": {
+                "total": {
+                  "duration_ms": 1026.511
+                },
+                "source_execute": {
+                  "duration_ms": 558.762
+                },
+                "source_prepare": {
+                  "duration_ms": 26.981
+                },
+                "parse_artifact": {
+                  "duration_ms": 450.662
+                },
+                "target_resolve": {
+                  "duration_ms": 3.177
+                },
+                "update_plan": {
+                  "duration_ms": 16.859,
+                  "artifact_inventory": {
+                    "duration_ms": 12.678
+                  },
+                  "rnfv_snapshot": {
+                    "duration_ms": 1.612
+                  },
+                  "diff_and_compile": {
+                    "duration_ms": 2.243
+                  }
+                },
+                "content_commit": {
+                  "duration_ms": 21.515
+                },
+                "derived_enqueue": {
+                  "duration_ms": 3.591
+                },
+                "semantic": {
+                  "queue_wait": {
+                    "duration_ms": 139.792
+                  },
+                  "execute": {
+                    "duration_ms": 283.169
+                  }
+                },
+                "embedding": {
+                  "queue_wait": {
+                    "duration_ms": 1219.253
+                  },
+                  "execute": {
+                    "duration_ms": 465.428
+                  }
+                },
+                "flags": {
+                  "wait": false,
+                  "build_index": true,
+                  "summarize": false,
+                  "watch_enabled": false
+                }
+              }
+            }
+          }
+        },
+        "ingest_wall_seconds": 1.79,
+        "staged_temp_uri": "viking://temp/mem-rw/10101433_5864c1/repository",
+        "source_path_reported": "source-repo"
+      }
+    },
+    {
+      "id": "M2.3-copy-not-pointer",
+      "claim": "形态判定：导入 = 拷一份",
+      "verdict": "PASS",
+      "detail": {
+        "imported_files": [
+          "viking://resources/wk-spike-source/source-repo/docs/spec.md",
+          "viking://resources/wk-spike-source/source-repo/notes/plan.md",
+          "viking://resources/wk-spike-source/source-repo/README.md"
+        ],
+        "physical_copy_root": "C:\\Users\\Tan\\.openviking-mvp-spike\\data\\viking\\default\\resources\\wk-spike-source",
+        "form": "拷贝（导入快照）：来源仍是权威，基座侧另存一份正文",
+        "bidirectional_sync_required": false,
+        "one_way_sync": "source -> base（source 目录从不被基座写入）"
+      }
+    },
+    {
+      "id": "M2.3b-readonly-policy",
+      "claim": "登记只读策略（ACL restricted + 只读身份 read 授权）",
+      "verdict": "PASS",
+      "detail": {
+        "operator_steps": [
+          "PATCH /api/v1/admin/accounts/default/settings {acl:{enabled:true}}"
+        ],
+        "acl_before": {
+          "uri": "viking://resources/wk-spike-source",
+          "acl_mode": "inherit",
+          "direct_entries": [],
+          "inherited_entries": [
+            {
+              "principal": "user:*",
+              "level": "manage"
+            }
+          ],
+          "effective_entries": [
+            {
+              "principal": "user:*",
+              "level": "manage"
+            }
+          ]
+        },
+        "acl_after": {
+          "uri": "viking://resources/wk-spike-source",
+          "acl_mode": "restricted",
+          "direct_entries": [
+            {
+              "principal": "user:mem-ro",
+              "level": "read"
+            },
+            {
+              "principal": "user:mem-rw",
+              "level": "write"
+            }
+          ],
+          "inherited_entries": [
+            {
+              "principal": "user:*",
+              "level": "manage"
+            }
+          ],
+          "effective_entries": [
+            {
+              "principal": "user:mem-ro",
+              "level": "read"
+            },
+            {
+              "principal": "user:mem-rw",
+              "level": "write"
+            }
+          ]
+        },
+        "note": "账户级 ACL 默认关闭（AclManager.is_enabled 读账户设置 acl.enabled），必须显式打开"
+      }
+    },
+    {
+      "id": "M2.4-copy-fidelity",
+      "claim": "基座侧正文与来源文件逐字节相同（未被解析器改写）",
+      "verdict": "PASS",
+      "detail": {
+        "files": [
+          {
+            "rel": "README.md",
+            "uri": "viking://resources/wk-spike-source/source-repo/README.md",
+            "source_bytes": 103,
+            "source_sha256": "4fd50e35c2386db56a791f315c01ee52dc952828696b3e87b2acf198904cff47",
+            "base_bytes": 103,
+            "base_sha256": "4fd50e35c2386db56a791f315c01ee52dc952828696b3e87b2acf198904cff47",
+            "byte_identical": true,
+            "disk_path": "C:\\Users\\Tan\\.openviking-mvp-spike\\data\\viking\\default\\resources\\wk-spike-source\\source-repo\\README.md",
+            "disk_sha256": "4fd50e35c2386db56a791f315c01ee52dc952828696b3e87b2acf198904cff47"
+          },
+          {
+            "rel": "notes/plan.md",
+            "uri": "viking://resources/wk-spike-source/source-repo/notes/plan.md",
+            "source_bytes": 55,
+            "source_sha256": "bcf6abac7e447382b2b90635075503596f923b2e307fbe34f87a5eaaf8da1a9a",
+            "base_bytes": 55,
+            "base_sha256": "bcf6abac7e447382b2b90635075503596f923b2e307fbe34f87a5eaaf8da1a9a",
+            "byte_identical": true,
+            "disk_path": "C:\\Users\\Tan\\.openviking-mvp-spike\\data\\viking\\default\\resources\\wk-spike-source\\source-repo\\notes\\plan.md",
+            "disk_sha256": "bcf6abac7e447382b2b90635075503596f923b2e307fbe34f87a5eaaf8da1a9a"
+          },
+          {
+            "rel": "docs/spec.md",
+            "uri": "viking://resources/wk-spike-source/source-repo/docs/spec.md",
+            "source_bytes": 92,
+            "source_sha256": "dae4f7dfa10f622e534eafe9c0de1888048a1dfc6a5c684991247403ca4b35f6",
+            "base_bytes": 92,
+            "base_sha256": "dae4f7dfa10f622e534eafe9c0de1888048a1dfc6a5c684991247403ca4b35f6",
+            "byte_identical": true,
+            "disk_path": "C:\\Users\\Tan\\.openviking-mvp-spike\\data\\viking\\default\\resources\\wk-spike-source\\source-repo\\docs\\spec.md",
+            "disk_sha256": "dae4f7dfa10f622e534eafe9c0de1888048a1dfc6a5c684991247403ca4b35f6"
+          }
+        ]
+      }
+    },
+    {
+      "id": "M2.5-source-untouched",
+      "claim": "接入前后来源目录文件清单与 git 提交号一致",
+      "verdict": "PASS",
+      "detail": {
+        "before": {
+          "files": [
+            {
+              "rel": "docs/spec.md",
+              "bytes": 92,
+              "sha256": "dae4f7dfa10f622e534eafe9c0de1888048a1dfc6a5c684991247403ca4b35f6"
+            },
+            {
+              "rel": "notes/plan.md",
+              "bytes": 55,
+              "sha256": "bcf6abac7e447382b2b90635075503596f923b2e307fbe34f87a5eaaf8da1a9a"
+            },
+            {
+              "rel": "README.md",
+              "bytes": 103,
+              "sha256": "4fd50e35c2386db56a791f315c01ee52dc952828696b3e87b2acf198904cff47"
+            }
+          ],
+          "file_count": 3,
+          "git_head": "c9fb9d5d5884656729a2609baafe5bd68109eeb2",
+          "git_status_porcelain": ""
+        },
+        "after_ingest": {
+          "files": [
+            {
+              "rel": "docs/spec.md",
+              "bytes": 92,
+              "sha256": "dae4f7dfa10f622e534eafe9c0de1888048a1dfc6a5c684991247403ca4b35f6"
+            },
+            {
+              "rel": "notes/plan.md",
+              "bytes": 55,
+              "sha256": "bcf6abac7e447382b2b90635075503596f923b2e307fbe34f87a5eaaf8da1a9a"
+            },
+            {
+              "rel": "README.md",
+              "bytes": 103,
+              "sha256": "4fd50e35c2386db56a791f315c01ee52dc952828696b3e87b2acf198904cff47"
+            }
+          ],
+          "file_count": 3,
+          "git_head": "c9fb9d5d5884656729a2609baafe5bd68109eeb2",
+          "git_status_porcelain": ""
+        },
+        "file_list_identical": true,
+        "git_head_identical": true
+      }
+    },
+    {
+      "id": "M2.6-write-to-source-refused",
+      "claim": "通过基座写『该来源』被拒绝（只读身份）",
+      "verdict": "PASS",
+      "detail": {
+        "identity": "user:mem-ro (role=user, ACL level=read)",
+        "http_status": 403,
+        "error_code": "PERMISSION_DENIED",
+        "error_message": "Access denied for viking://resources/wk-spike-source/source-repo/docs/spec.md: write permission required",
+        "writer_identity": "user:mem-rw (role=admin, ACL level=write)",
+        "writer_http_status": 200,
+        "source_dir_still_identical": true,
+        "note": "写的是基座侧副本 URI；来源目录本身从未被写入（源目录哈希不变）"
+      }
+    },
+    {
+      "id": "M2.7-reimport-is-not-an-update",
+      "claim": "重复 add-resource 是否更新同一引用（否则产生第二份正文）",
+      "verdict": "PASS",
+      "detail": {
+        "reimport_root_uri": "viking://resources/wk-spike-source/source-repo_1",
+        "expected_update_target": "viking://resources/wk-spike-source/source-repo",
+        "creates_second_body": true,
+        "note": "重复导入生成兄弟目录（_1），不是原地更新；登记为『不是更新机制』"
+      }
+    },
+    {
+      "id": "M2.8-update-read-new-content",
+      "claim": "外部改动后按登记的更新机制读到新正文（同一引用的新版本）",
+      "verdict": "PASS",
+      "detail": {
+        "mechanism": "单向逐文件推送：ov write <uri> --from-file <来源文件> --wait（源目录为权威，基座侧不回流）",
+        "registered_before_test": true,
+        "uri": "viking://resources/wk-spike-source/source-repo/docs/spec.md",
+        "old_sha256": "d24050bfef13ed6a63e35c7cb080d8d3abc1e9d0a50dda984d71851ee6db9b34",
+        "new_sha256": "832c3ea1cca97c28d9dab29a0ab0468e34eb6c6218e6a42f71556b0d8fc4950a",
+        "source_sha256": "832c3ea1cca97c28d9dab29a0ab0468e34eb6c6218e6a42f71556b0d8fc4950a",
+        "matches_new_source_bytes": true,
+        "content_hash_changed": true,
+        "entries_at_that_uri": 1,
+        "update_wall_seconds": 0.95,
+        "update_response": {
+          "uri": "viking://resources/wk-spike-source/source-repo/docs/spec.md",
+          "root_uri": "viking://resources/wk-spike-source/source-repo/docs",
+          "context_type": "resource",
+          "mode": "replace",
+          "written_bytes": 177,
+          "content_updated": true,
+          "semantic_status": "complete",
+          "vector_status": "complete",
+          "queue_status": {
+            "Semantic": {
+              "processed": 1,
+              "requeue_count": 0,
+              "error_count": 0,
+              "errors": []
+            },
+            "Embedding": {
+              "processed": 3,
+              "requeue_count": 0,
+              "error_count": 0,
+              "errors": []
+            }
+          }
+        },
+        "implicit_latency": "无自动追平：本地来源被框架显式拒绝 watch，延迟 = 显式触发时刻",
+        "source_git_status": "M docs/spec.md",
+        "source_head": "c9fb9d5d5884656729a2609baafe5bd68109eeb2"
+      }
+    },
+    {
+      "id": "M2.9-no-writeback",
+      "claim": "基座不向来源目录回写（来源仍是权威）",
+      "verdict": "PASS",
+      "detail": {
+        "source_files_end": [
+          {
+            "rel": "docs/spec.md",
+            "bytes": 177,
+            "sha256": "832c3ea1cca97c28d9dab29a0ab0468e34eb6c6218e6a42f71556b0d8fc4950a"
+          },
+          {
+            "rel": "notes/plan.md",
+            "bytes": 55,
+            "sha256": "bcf6abac7e447382b2b90635075503596f923b2e307fbe34f87a5eaaf8da1a9a"
+          },
+          {
+            "rel": "README.md",
+            "bytes": 103,
+            "sha256": "4fd50e35c2386db56a791f315c01ee52dc952828696b3e87b2acf198904cff47"
+          }
+        ],
+        "mutated_by_base": [],
+        "git_status_after_external_edit": "M docs/spec.md",
+        "git_head_unchanged": true
+      }
+    }
+  ],
+  "cost": {
+    "first_ingest_wall_seconds": 1.79,
+    "ingest_embedding_items": 9,
+    "ingest_semantic_items": 1,
+    "update_wall_seconds": 0.95,
+    "update_embedding_items": 3,
+    "cloud_model_calls": 0,
+    "cloud_model_cost": 0.0,
+    "storage_overhead": "基座侧另存一份正文（拷贝）；来源目录体积不变",
+    "operator_maintenance": [
+      "首次导入：ov add-resource <本地目录> --parent-auto-create <uri> --wait",
+      "只读策略：账户 ACL 开关 + 目标 restricted + 只读身份 read 授权（见 M2.3b）",
+      "来源变更：逐文件 ov write <uri> --from-file <来源文件> --wait（无自动追平）"
+    ]
+  },
+  "form_finding": {
+    "verdict": "拷贝（导入快照），不是『指过去』",
+    "evidence": [
+      "框架对本地路径 watch 显式拒绝，并指示 re-import",
+      "导入后基座侧 workspace 下出现独立正文（与来源文件逐字节相同）",
+      "重复导入生成兄弟目录 _1（第二份正文），不是原地更新",
+      "来源目录文件清单与 git 提交号在接入前后一致，且基座从不回写"
+    ],
+    "consequence": "更新必须显式触发（单向推送）；无自动追平；步骤/延迟/成本已登记"
+  }
+}
