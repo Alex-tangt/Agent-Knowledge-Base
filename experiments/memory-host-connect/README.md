@@ -2,7 +2,11 @@
 
 日期：2026-10-10。执行线：**host-connect**（worktree `wk-host`，分支 `feat/memory-mvp-hosts`）。
 写域：`experiments/memory-host-connect/`（本目录）。
-状态：**脚本与步骤已就绪；接入测试未跑（task-2 被 task-1 阻塞，共享实例 8782 尚未就绪）。**
+状态：**M6 已实测完成（2026-10-10 15:27–15:45 CST）——判据 PASS，±两处未测见报告 §5。**
+
+> **实测结果与证据见 [`M6-report.md`](M6-report.md)**（本文是运行手册与口径，报告是结果）。
+> 速览：两宿主接入同一实例 `127.0.0.1:8782`（`auth_mode=dev`，v0.4.23）；跨宿主 `search` 命中 + `read`
+> **逐字节相同**；两宿主各完成一次允许的写入；身份/范围按账户-用户对照实测；**云调用 0 / 费用 0**。
 
 对应验收：`experiments/memory-framework-spike/mvp-protocol.md` **M6**「至少两个实际 agent 宿主接入同一服务，
 完成共享内容读取与一次允许的写入；记录启用步骤、依赖/存储体积、启动/常驻资源、模型调用和维护步骤」；
@@ -59,32 +63,39 @@
 
 ---
 
-## 3. 运行手册（task-1 解阻、8782 就绪后按序执行）
+## 3. 运行手册（已按此实跑；完整可复现序列见 `M6-report.md` §7）
 
 ```powershell
 cd D:\python_work\work2026-4\wk-host\experiments\memory-host-connect
+$py  = "D:\python_work\work2026-4\Agent-Knowledge-Base\venv-ov\Scripts\python.exe"
+$dtpy = "D:\Users\Tan\AppData\Local\Programs\Python\Python312\python.exe"
 
-# 0) 前提：隔离实例在 8782 就绪（task-1 的产出；本线不启动服务）
-Invoke-RestMethod http://127.0.0.1:8782/health     # 期望就绪
+# 0) 本线实例（8782；dev profile；配置/数据在 %USERPROFILE%\.openviking-mvp-host\）
+& $py host_server.py start --profile dev
+& $py host_server.py status          # 期望 auth_mode=dev
 
 # 1) 生成两宿主隔离配置（幂等；末尾自带「真实配置零写入」核验）
-powershell -File setup_isolation.ps1 -ServiceUrl http://127.0.0.1:8782/mcp
+powershell -File setup_isolation.ps1 -OllamaModel "qwen2.5:3b-instruct-q4_k_m"
 
-# 2) 宿主① opencode：连接状态 + 真 agent 轮次（本地 Ollama）
-powershell -File host_opencode.ps1 -Model qwen2.5:3b-instruct
-#   证据 → evidence\opencode\mcp-list.txt、agent-turn.jsonl、agent-turn.log
+# 2) 宿主① opencode：连接状态 + 真 agent 轮次（本地 Ollama，非云）
+powershell -File host_opencode.ps1 -Model "qwen2.5:3b-instruct-q4_k_m"
+#   证据 → evidence\opencode\{mcp-list.txt, agent-turn.jsonl, run-meta.json}
 
-# 3) 宿主② DeepTutor：宿主自身配置加载器 + MCP 客户端路径（读 + 写 + 读回）
-& "$env:LOCALAPPDATA\Programs\Python\Python312\python.exe" host_deeptutor.py `
+# 3) 宿主② DeepTutor：宿主自身配置加载器 + MCP 客户端路径（读 + 写 + 读回 + 跨宿主逐字节比对）
+& $dtpy host_deeptutor.py `
     --home "$env:USERPROFILE\.openviking-mvp-host\hosts\deeptutor-home" `
+    --authn-mode "dev (server auto-detected on localhost; ROLE=root)" `
+    --peer-disk-path "$env:USERPROFILE\.openviking-mvp-host\data\viking\mvp-host\resources\mvp-host-connect\opencode.md" `
     --json-out evidence\deeptutor\connect.json
-#   可选（更强证据）：真 agent 轮次
-powershell -File host_deeptutor_agent.ps1 -Model qwen3:8b
+#   附加（本线未跑，原因见 M6-report §5.3）：powershell -File host_deeptutor_agent.ps1 -Model qwen3:8b
 
-# 4) 成本账
+# 4) 身份 / 范围对照（账户隔离 vs 账户内共享）
+& $py scope_probe.py --json-out evidence\scope-probe.json
+
+# 5) 成本账
 powershell -File collect_cost.ps1
 
-# 5) 隔离与真实配置核验（收工前必跑）
+# 6) 隔离与真实配置核验（收工前必跑）
 powershell -File verify_isolation.ps1
 ```
 
@@ -128,21 +139,21 @@ import/连接前做 `sanitize_no_proxy()`（记录 before/after 到证据），o
 
 ---
 
-## 4. M6 逐项 → 证据映射（当前状态：**未测**，等 task-1）
+## 4. M6 逐项 → 证据映射（**已实测**，详见 `M6-report.md` §3）
 
-| M6 要证明什么 | 证据文件 | 判据 | 状态 |
-|---|---|---|---|
-| 宿主① 接入同一服务 | `evidence/opencode/mcp-list.txt` | `opencode mcp list` 显示 `openviking-mvp` 为连接成功（非 failed） | 未测 |
-| 宿主① 共享读取 | `evidence/opencode/agent-turn.jsonl` | 事件流里出现 `openviking-mvp` 的工具调用与返回正文 | 未测 |
-| 宿主① 一次允许的写 | 同上（`write` → `viking://resources/mvp-host-connect/opencode.md`） | 调用成功 + 返回 `Wrote N bytes` | 未测 |
-| 宿主② 接入同一服务 | `evidence/deeptutor/connect.json` → `probe_server(list_tools)` | `ok=true`，工具数 = 16（或白名单内数量） | 未测 |
-| 宿主② 共享读取 | `connect.json` → `tool_calls[search/read]` | search 命中另一宿主写的 marker；read 读回 opencode 写的正文 | 未测 |
-| 宿主② 一次允许的写 | `connect.json` → `tool_calls[write]` | 写成功；随后 `read` 读回一致 | 未测 |
-| 身份与范围生效 | 配置 `headers` + `enabled_tools`；服务端审计 | 两宿主不同 `X-OpenViking-User`；`forget`/`add_skill` 被白名单挡下（`tool_whitelist` 步） | 未测 |
-| 依赖/存储体积 | `evidence/cost/cost.json` → `dependencies` / `storage` | 数值记录即可 | 未测 |
-| 启动/常驻资源 | `cost.json` → `resident` | 记录，注明跨进程 RSS 不可信、以进程自报为准 | 未测 |
-| 模型调用与费用 | `cost.json` → `model_calls` + 会话事件流 | 云调用 0 / 费用 0；本地调用次数来自事件流 | 未测 |
-| 维护步骤 | 本文件 §3 + `cost.json` → `maintenance_steps` | 步骤可复现 | 就绪 |
+| M6 要证明什么 | 证据文件 | 实测结果 |
+|---|---|---|
+| 宿主① 接入同一服务 | `evidence/opencode/mcp-list.txt` | **PASS**：`✓ openviking-mvp connected http://127.0.0.1:8782/mcp` |
+| 宿主① 共享读取 | `evidence/opencode/agent-turn.jsonl` | **PASS**：agent 主动调用 `openviking-mvp_write`；同账户资源对宿主②可见 |
+| 宿主① 一次允许的写 | 同上 | **PASS**：`Wrote 75 bytes … semantic=complete`（模型随后循环重写，见 §3.1；判据是原始事件流） |
+| 宿主② 接入同一服务 | `evidence/deeptutor/connect.json` → `probe_server(list_tools)` | **PASS**：`ok=true`，**20 个工具**（服务器实际注册数；app.py 注释里的 16 是旧值） |
+| 宿主② 共享读取 | `connect.json` → `search` / `cross_host` | **PASS**：`search` 命中含宿主①条目；`read` 取回宿主①的字节，**byte_identical=true** |
+| 宿主② 一次允许的写 | `connect.json` → `tool_calls[write]` + `readback_matches_write` | **PASS**：写 82 B → 读回 82 B 内容一致 |
+| 身份与范围生效 | `evidence/scope-probe.json` + 配置 `headers`/`enabled_tools` | **PASS（部分）**：账户隔离 / 账户内共享 / 无身份拒绝 实测；只读身份强制**未测**（dev 恒 ROLE=root，`M6-report` §5.2） |
+| 依赖/存储体积 | `evidence/cost/cost.json` → `dependencies` / `storage` | **PASS**：venv-ov 1058 MB；隔离根 74 MB（宿主副本 65.4 / 服务数据 8.6） |
+| 启动/常驻资源 | `cost.json` → `resident` | **PASS**：服务 pid 25624 `PrivateMemorySize64` 1223.8 MB；opencode 轮次峰值 851 MB；注明跨进程 RSS 不可信 |
+| 模型调用与费用 | `cost.json` → `model_calls` + 事件流 | **PASS**：云调用 **0** / 费用 **0**（全本机 Ollama） |
+| 维护步骤 | 本文件 §3 + `cost.json` → `maintenance_steps` | **PASS**：步骤可复现 |
 
 ---
 
@@ -162,43 +173,44 @@ import/连接前做 `sanitize_no_proxy()`（记录 before/after 到证据），o
 
 ---
 
-## 6. 失败与未知项（先登记，跑完更新）
+## 6. 失败与未知项（**跑完已更新**；逐条原因见 `M6-report.md` §5）
 
-1. **opencode 的 remote MCP 报 `SSE error`**（隔离 HOME 实测，服务未启动时）：
-   opencode 1.18.35 对 `type: remote` 的探测信息以 SSE 措辞呈现。**服务起来后必须复核**它最终
-   走的是 streamable HTTP 还是 SSE 回退；若是 SSE 回退而我们只暴露 `/mcp`，需在 §3 记录改用
-   `--header`/URL 形态或换 `type`。
-   *（pre-flight：配置解析与 8782 寻址已确认；协议回退待服务就绪后复测。）*
-2. **DeepTutor 本地模型的工具调用**（见 §3.2 ①）：`binding` ∈
-   {`ollama`,`vllm`,`lm_studio`,`llama_cpp`} 被列入 `_NATIVE_TOOL_BLOCKED_BINDINGS`
-   （`runtime\agentic\client.py:52`）→ 本地模型不走原生 function-calling，走文本工具协议，3B 可能不稳。
-   **Lead 已裁决（2026-10-10）**：DeepTutor 主证据 = `host_deeptutor.py`（宿主自身 MCP 客户端路径），
-   `deeptutor run chat` 只作附加、跑不通就记「未测 + 原因」，**不得为此动用云凭据**。
-3. **服务端 authn 模式**：本线假设 localhost 零 key（dev/trusted）。**Lead 已裁决（2026-10-10）**：
-   按无 key 走，最终模式作为**事实**写进证据；若实例要求 key 才能区分身份/范围，按 task-1 给的注入方式
-   （只记变量名/头名）注入。**「没设 key」不得写成「已授权」。**
-4. **写入面选择**：M6 只要求「一次允许的写入」。默认用 `write` 工具写
-   `viking://resources/mvp-host-connect/<host>.md`，不用 `remember`（走会话抽取、有附带 LLM/解析成本）、
-   不用 `forget`/`add_skill`。**Lead 已裁决（2026-10-10）**：以 task-1 实例 conf 的实际可写域为准，
-   不一致就改路径并在证据里记差异（`--write-uri` 覆盖）。
-5. **DeepTutor 隔离 home 的最小性**：只放了 `mcp.json` + `model_catalog.json` + 目录骨架。
-   `probe_server`/`MCPConnectionManager` 只需 `mcp.json`；若 `deeptutor run` 还要求
-   `main.yaml`/`system.json` 等，按缺失报错逐项补（**仍是隔离副本，不复制真实文件**）。
-6. **同实例冲突**：本线只读 8782，不启动/不修改服务；若 task-1 需重启，本线证据必须重跑。
-7. **不可用错误（M4 与本线交集）**：服务停掉时宿主侧应报明确错误（opencode `failed`；
+1. ~~opencode 的 remote MCP 报 `SSE error`~~ → **已复核 PASS**：服务起来后 `opencode mcp list` 报
+   `✓ openviking-mvp connected http://127.0.0.1:8782/mcp`，未出现 SSE 回退问题；agent 轮次也正常派发工具。
+   （先前那段 `SSE error` 只是**服务未启动**时的连接失败措辞。）
+2. **DeepTutor 本地模型的工具调用**：`binding` ∈ {`ollama`,`vllm`,`lm_studio`,`llama_cpp`} 被列入
+   `_NATIVE_TOOL_BLOCKED_BINDINGS`（`runtime\agentic\client.py:52`）→ 本地模型不走原生 function-calling。
+   **Lead 已裁决（2026-10-10）**：DeepTutor 主证据 = `host_deeptutor.py`（宿主自身 MCP 客户端路径）；
+   `deeptutor run chat` 只作附加、跑不通就记「未测 + 原因」，**不得为此动用云凭据** → 本线**未跑**该项。
+3. **服务端 authn 模式**：实测 `/health` = `auth_mode=dev`（事实）。**Lead 已裁决（2026-10-10）**：
+   按无 key 走，模式作为**事实**写进证据。**「没设 key」未被写成「已授权」**；dev 恒 ROLE=root，
+   故只读身份强制记为**未测 + 原因**（`M6-report` §5.2）。
+4. **写入面**：实测 `viking://resources/**` 与服务器端 `write` 工具自述的可写域一致，**无需改路径**。
+   本线用 `write` 工具，不用 `remember`（走会话抽取、有附带成本）、不用 `forget`/`add_skill`。
+5. **DeepTutor 隔离 home 的最小性**：实测 `mcp.json` + `model_catalog.json` 足够跑通 `probe_server` /
+   `MCPConnectionManager`（宿主客户端路径），无需补真实 `main.yaml`/`system.json`。
+6. **模型侧的坑（照实记，非接入缺陷）**：3B 本地模型会**参数错配**与**成功后循环重写**；
+   `qwen3:8b` 在 opencode 下报 `Unexpected server error`（未定位）。opencode 侧**agent 主动性**证据成立，
+   但「一次干净可控的 agent 写入」受模型能力限制。
+7. **opencode 仍读全局 skill 目录**：隔离 HOME 下启动日志出现 `duplicate skill name`（来自
+   `~/.claude/skills`、`~/.agents/skills`）——只读、不写，但「隔离 HOME」≠「完全隔离所有输入」。
+8. **不可用错误（M4 与本线交集）**：服务停掉时宿主侧应报明确错误（opencode `failed`；
    DeepTutor `probe_server ok=false` + `describe_connect_failure`）。这一条本线可顺带取证，
    但 M4 的主证据归 task-1。
 
 ---
 
-## 7. 裁决状态与仍在等的事实
+## 7. 裁决与事实的落点（全部已闭环）
 
-**已由 Lead 裁决（2026-10-10）**：
-1. 宿主口径：opencode = agent 驱动（主证据）；DeepTutor = 宿主自身 MCP 客户端路径（主证据），
-   `deeptutor run chat` 仅作附加；**不得动用云凭据**。两宿主差别必须写进证据（见 §3.2 ①）。
-2. authn：localhost 无 key 走，身份用宿主自带头；**模式作为事实写进证据**，不把「没设 key」写成「已授权」。
-3. 写入口：默认 `viking://resources/mvp-host-connect/<host>.md`，**以实例 conf 实际可写域为准**，差异入证。
+**已由 Lead 裁决（2026-10-10）并已在实测中执行**：
+1. 宿主口径：opencode = agent 驱动（主证据）；DeepTutor = 宿主自身 MCP 客户端路径（主证据）；
+   `deeptutor run chat` 仅作附加、未跑；**未动用云凭据**。两宿主差别见 §3.2 ① / `M6-report` §2。
+2. authn：localhost 无 key 走，身份用宿主自带 `X-OpenViking-Account` / `X-OpenViking-User`；
+   **实测 `auth_mode=dev` 作为事实写进证据**，未把「没设 key」写成「已授权」。
+3. 写入口：实测与默认一致（`viking://resources/**` 可写，服务器 `write` 工具自述可写域相同）→ **无需改路径**。
 
-**仍在等 task-1 的两个事实（解阻时 Lead 会给）**：
-1. 隔离实例的实际 **authn 模式**（→ 传 `host_deeptutor.py --authn-mode`，并写进 opencode `run-meta.json`）。
-2. 实例 conf 的**实际可写域**（→ 决定 `--write-uri`，若与默认不同则在证据里记差异）。
+**task-1 给出的两个事实（已收到并落实）**：
+1. **authn** = 参考实例 `auth_mode=dev`（dev 恒 ROLE=root，无法表达只读身份）→ 已写进
+   `evidence/deeptutor/connect.json` 的 `authn.mode`；只读身份强制记为未测（原因见 `M6-report` §5.2）。
+2. **可写域** = 单账户下 `viking://resources/**` 账户内所有已认证用户默认可读且可写；`viking://user/<id>/**` 私有。
+   → 本线用 `scope_probe.py` 在同一实例上**实测**了这三条（`evidence/scope-probe.json`）。

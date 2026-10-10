@@ -21,6 +21,7 @@ from __future__ import annotations
 
 import argparse
 import asyncio
+import hashlib
 import json
 import os
 import re
@@ -79,6 +80,8 @@ def main() -> int:
                         help="不清理 NO_PROXY（诊断用；正常跑不要开）")
     parser.add_argument("--authn-mode", default="unknown",
                         help="task-1 实例的实际 authn 模式（事实字段，照实填；unknown 不等于已授权）")
+    parser.add_argument("--peer-disk-path", default=None,
+                        help="宿主①写的文件在实例 workspace 里的磁盘路径；给定时做逐字节比对")
     args = parser.parse_args()
 
     proxy_fix = {} if args.keep_proxy_env else sanitize_no_proxy()
@@ -138,6 +141,15 @@ def main() -> int:
     report["authn"]["credential_headers"] = [
         k for k in header_keys if "key" in k.lower() or "auth" in k.lower()
     ]
+    # Which identity this host's config carries (fact, from the isolated mcp.json).
+    # NOTE: MCPConnectionManager.ensure_started() re-reads mcp.json from disk, so an in-memory
+    # header override would silently not apply -- identity changes must go through the config
+    # file. Scope semantics are therefore measured separately by scope_probe.py over the HTTP API.
+    report["identity"] = {
+        "account": (cfg.headers or {}).get("X-OpenViking-Account", ""),
+        "user": (cfg.headers or {}).get("X-OpenViking-User", ""),
+        "source": "isolated mcp.json headers",
+    }
     step("load_mcp_config", True, {
         "servers": names,
         "type": cfg.resolved_type(),
@@ -195,20 +207,46 @@ def main() -> int:
 
         # 3a. 读：共享检索（另一宿主写的条目也应可见）
         await call("search", {"query": args.marker, "limit": 5}, "shared read (search)")
-        # 3b. 写：一次允许的内容写
-        uri = args.write_uri or f"viking://resources/mvp-host-connect/deeptutor.md"
+        # 3b. 写：一次允许的内容写（实例文档明示可写域 = viking://resources/）
+        uri = args.write_uri or "viking://resources/mvp-host-connect/deeptutor.md"
+        content = (f"# M6 DeepTutor host evidence\n\nmarker={args.marker}\n"
+                   f"written_by=deeptutor (isolated)\n")
         await call("write", {
             "uri": uri,
-            "content": f"# M6 DeepTutor host evidence\n\nmarker={args.marker}\n"
-                       f"written_by=deeptutor (isolated)\n",
+            "content": content,
             "mode": "replace",
             "wait": True,
         }, "allowed content write")
-        # 3c. 原文读回
-        await call("read", {"uri": uri}, "read-back own write")
-        # 3d. 跨宿主读：opencode 写的条目（若已存在）
-        for peer_uri in ("viking://resources/mvp-host-connect/opencode.md",):
-            await call("read", {"uri": peer_uri}, "read peer host write (may be absent)")
+        # 3c. 原文读回 + 逐字节比对（M6 要求「写入一次 + 共享读取」；读回必须一致）
+        #     NOTE: the read tool's parameter is `uris` (str | list[str]), not `uri` --
+        #     passing `uri` fails pydantic validation (measured 2026-10-10).
+        readback = await call("read", {"uris": uri}, "read-back own write")
+        readback_ok = content.strip() in (readback or "")
+        step("readback_matches_write", readback_ok,
+             {"uri": uri, "written_chars": len(content), "readback_chars": len(readback or ""),
+              "exact_substring": readback_ok})
+        # 3d. 枚举 + 跨宿主读：opencode 写的条目（若已存在）
+        await call("list", {"uri": "viking://resources/mvp-host-connect"}, "enumerate shared dir")
+        peer_uri = "viking://resources/mvp-host-connect/opencode.md"
+        peer = await call("read", {"uris": peer_uri}, "read peer host write (may be absent)")
+        report["cross_host"] = {
+            "peer_uri": peer_uri,
+            "visible": ("NOT_FOUND" not in (peer or "")) and not (peer or "").startswith("Error executing tool"),
+            "is_error": (peer or "").startswith("Error executing tool"),
+        }
+        # Byte-identity: what host #2 reads over MCP must equal the bytes host #1 wrote on disk.
+        if args.peer_disk_path and Path(args.peer_disk_path).is_file():
+            disk = Path(args.peer_disk_path).read_bytes()
+            readback = (peer or "").encode("utf-8")
+            report["cross_host"]["peer_disk_path"] = args.peer_disk_path
+            report["cross_host"]["disk_bytes"] = len(disk)
+            report["cross_host"]["mcp_read_bytes"] = len(readback)
+            report["cross_host"]["disk_sha256"] = hashlib.sha256(disk).hexdigest()
+            report["cross_host"]["mcp_read_sha256"] = hashlib.sha256(readback).hexdigest()
+            report["cross_host"]["byte_identical"] = disk == readback
+        step("cross_host_peer_read", report["cross_host"]["visible"],
+             f"opencode.md visible to DeepTutor: {report['cross_host']['visible']} "
+             f"(byte_identical={report['cross_host'].get('byte_identical', 'n/a')})")
 
         await manager.shutdown()
         ok = all(s["ok"] is not False for s in report["steps"])

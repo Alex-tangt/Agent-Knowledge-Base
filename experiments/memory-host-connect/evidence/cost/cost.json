@@ -1,5 +1,5 @@
 {
-    "captured_at_utc":  "2026-10-10T06:30:59.4003935Z",
+    "captured_at_utc":  "2026-10-10T07:42:40.4966020Z",
     "rss_caveat":  "working_set values are cross-process lower-bound observations and may be wrong; trust process self-report",
     "dependencies":  {
                          "openviking_python_package":  "0.4.23",
@@ -17,26 +17,53 @@
                                            ]
                      },
     "storage":  {
-                    "iso_root_mb":  0.5,
-                    "host_copies_mb":  0.5,
-                    "service_data_mb":  null,
+                    "iso_root_mb":  74,
+                    "host_copies_mb":  65.4,
+                    "service_data_mb":  8.6,
                     "index_like_dirs":  [
-
+                                            "C:\\Users\\Tan\\.openviking-mvp-host\\data\\vectordb\\context\\index",
+                                            "C:\\Users\\Tan\\.openviking-mvp-host\\data\\vectordb\\context\\store",
+                                            "C:\\Users\\Tan\\.openviking-mvp-host\\data\\vectordb\\context\\index\\default\\versions\\1791617296902996700\\scalar_index",
+                                            "C:\\Users\\Tan\\.openviking-mvp-host\\data\\vectordb\\context\\index\\default\\versions\\1791617296902996700\\vector_index",
+                                            "C:\\Users\\Tan\\.openviking-mvp-host\\data\\vectordb\\context\\index\\default\\versions\\1791618153115890300\\scalar_index",
+                                            "C:\\Users\\Tan\\.openviking-mvp-host\\data\\vectordb\\context\\index\\default\\versions\\1791618153115890300\\vector_index"
                                         ]
                 },
     "resident":  {
                      "note":  "lower-bound observation; cross-process RSS of detached processes is unreliable",
                      "per_port":  [
-
+                                      {
+                                          "port":  8782,
+                                          "pid":  25624,
+                                          "name":  "python",
+                                          "working_set_mb":  152.2,
+                                          "private_mb":  1223.8,
+                                          "start_time":  "2026-10-10T15:27:37.1165297+08:00"
+                                      }
                                   ],
                      "opencode":  [
 
                                   ],
                      "python312_any":  [
                                            {
-                                               "pid":  28384,
+                                               "pid":  25624,
                                                "name":  "python",
-                                               "working_set_mb":  498.1
+                                               "working_set_mb":  152.2
+                                           },
+                                           {
+                                               "pid":  34636,
+                                               "name":  "python",
+                                               "working_set_mb":  44.2
+                                           },
+                                           {
+                                               "pid":  37600,
+                                               "name":  "python",
+                                               "working_set_mb":  421
+                                           },
+                                           {
+                                               "pid":  37708,
+                                               "name":  "python",
+                                               "working_set_mb":  297.3
                                            }
                                        ]
                  },
@@ -45,7 +72,7 @@
                         "cloud_calls":  0,
                         "cloud_cost_cny":  0,
                         "local_evidence":  [
-
+                                               "D:\\python_work\\work2026-4\\wk-host\\experiments\\memory-host-connect\\evidence\\opencode\\agent-turn.jsonl"
                                            ]
                     },
     "maintenance_steps":  [

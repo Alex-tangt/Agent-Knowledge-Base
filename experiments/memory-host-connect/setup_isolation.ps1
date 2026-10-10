@@ -61,6 +61,15 @@ $opencodeConfig = [ordered]@{
             }
         }
     }
+    # Disable opencode's built-in file/shell tools for this run. Measured 2026-10-10: a 3B local
+    # model asked "use the MCP server" instead invented a local file at
+    # <project>\path\to\file.md with the built-in edit tool and never called the MCP server.
+    # Removing the wrong affordance is what makes the agent-driven tool call reproducible.
+    tools = [ordered]@{
+        bash = $false; edit = $false; write = $false; read = $false
+        grep = $false; glob = $false; list = $false; webfetch = $false
+        task = $false; todowrite = $false; todoread = $false; patch = $false
+    }
 }
 $target = Assert-UnderIso $script:OpencodeCfg
 Write-JsonNoBom -Path $target -Object $opencodeConfig

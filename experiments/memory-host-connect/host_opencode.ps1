@@ -28,10 +28,16 @@ if (-not $EvidenceDir) { $EvidenceDir = $script:EvidenceDir }
 if (-not (Test-Path -LiteralPath $EvidenceDir)) { New-Item -ItemType Directory -Force -Path $EvidenceDir | Out-Null }
 
 if (-not $Prompt) {
-    $Prompt = 'You have an MCP server named openviking-mvp. Do exactly this in order and report raw results: ' +
-              '(1) call its write tool with uri "viking://resources/mvp-host-connect/opencode.md" and content ' +
-              '"# M6 opencode evidence marker=M6-OPENCODE"; (2) call its read tool for that same uri; ' +
-              '(3) call its search tool with query "M6-OPENCODE". Print the three raw tool outputs verbatim.'
+    # Short on purpose: a local CPU model generates slowly and a long multi-step instruction made a
+    # 3B model conflate the arguments (measured 2026-10-10: it passed read's {"uris": ...} to write).
+    # One tool call only, and an explicit stop -- otherwise the model re-calls write with the tool's
+    # own output as the content and loops (measured 2026-10-10). The cross-host read is DeepTutor's.
+    $Prompt = 'Call the MCP tool openviking-mvp_write exactly once, with these arguments: ' +
+              '{"uri":"viking://resources/mvp-host-connect/opencode.md",' +
+              '"content":"M6-OPENCODE marker written by the opencode agent",' +
+              '"mode":"replace","wait":true}. ' +
+              'After the tool returns, reply with the single word DONE. ' +
+              'Never call any tool a second time.'
 }
 
 # ---- locate opencode ---------------------------------------------------------
