@@ -1,0 +1,91 @@
+{
+  "checks": [
+    {
+      "check": "source_tree_has_git_head",
+      "detail": {
+        "files": [
+          "a.md",
+          "b.md",
+          "sub/c.md"
+        ],
+        "git_head": "8a71297ff13ac229e0e702bb185d63092cf3af9c"
+      },
+      "ok": true
+    },
+    {
+      "check": "scan_negative_control",
+      "detail": {
+        "marker_hits": []
+      },
+      "ok": true
+    },
+    {
+      "check": "scan_positive_control",
+      "detail": {
+        "full_content_hits": [
+          "C:\\Users\\Tan\\.openviking-mvp-verify\\data\\_preflight_copy.md"
+        ],
+        "hit": {
+          "file_sha256": "dd0de0b1011f9a769526bc883445316924654a29c955776aef8fc80495e4585c",
+          "full_offset": 0,
+          "path": "C:\\Users\\Tan\\.openviking-mvp-verify\\data\\_preflight_copy.md",
+          "size": 72
+        }
+      },
+      "ok": true
+    },
+    {
+      "check": "scan_detects_rewrite",
+      "detail": {
+        "tampered_full_hits": [],
+        "tampered_marker_hits": [
+          "C:\\Users\\Tan\\.openviking-mvp-verify\\data\\_preflight_tampered.md"
+        ]
+      },
+      "ok": true
+    },
+    {
+      "check": "git_blob_positive_control",
+      "detail": {
+        "exact_blobs": [
+          {
+            "blob": "b3f92a2f51ac5d0ffcb7d2040f2c257bb55fa2ab",
+            "blob_sha256": "dd0de0b1011f9a769526bc883445316924654a29c955776aef8fc80495e4585c",
+            "exact_equal_to_input": true,
+            "path": "a.md",
+            "repo": "C:\\Users\\Tan\\.openviking-mvp-verify\\data\\_preflight_git",
+            "size": 72
+          }
+        ],
+        "examined": 1,
+        "repos": [
+          "C:\\Users\\Tan\\.openviking-mvp-verify\\data\\_preflight_git"
+        ]
+      },
+      "ok": true
+    },
+    {
+      "check": "snapshot_diff_detects_change",
+      "detail": {
+        "changed": [
+          "a.md"
+        ],
+        "git_head_same": true
+      },
+      "ok": true
+    },
+    {
+      "check": "cleanup_leaves_no_marker",
+      "detail": {
+        "remaining_marker_hits": []
+      },
+      "ok": true
+    }
+  ],
+  "criteria_sha256": "17d18b7bbe842da6059b341a41319c11fa2824f30817aa191bc96802174f2f4d",
+  "generated_at": "2026-10-10T14:25:12+0800",
+  "payload_sha256": "144958bfe5277252bce468942cb69d9e76d9889bb0d10d45c95a5d7ad4a9aaba",
+  "problems": [],
+  "stage": "preflight",
+  "verdict": "PASS"
+}

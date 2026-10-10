@@ -1,0 +1,306 @@
+{
+  "checks": [
+    {
+      "check": "criteria_structure",
+      "detail": [],
+      "ok": true
+    },
+    {
+      "check": "criteria_fingerprint",
+      "detail": {
+        "criteria_sha256": "17d18b7bbe842da6059b341a41319c11fa2824f30817aa191bc96802174f2f4d",
+        "criteria_version": "1.0.0"
+      },
+      "ok": true
+    },
+    {
+      "check": "hash_determinism",
+      "detail": {
+        "sha256": "ca1c06e42aa49ffddc23de5c4f183d961b90c4e77bd6aaf00437a395d640a244"
+      },
+      "ok": true
+    },
+    {
+      "check": "port_isolation",
+      "detail": {
+        "forbidden_ports": [
+          8765,
+          8781,
+          8782
+        ],
+        "port": 8783
+      },
+      "ok": true
+    },
+    {
+      "check": "verify_root_outside_repo",
+      "detail": {
+        "verify_root": "C:\\Users\\Tan\\.openviking-mvp-verify"
+      },
+      "ok": true
+    },
+    {
+      "check": "forbidden_paths_declared",
+      "detail": [
+        "C:\\Users\\Tan\\.config\\opencode\\knowledge",
+        "C:\\Users\\Tan\\.config\\opencode\\opencode.json",
+        "C:\\Users\\Tan\\.openviking",
+        "D:\\python_work\\work2026-4\\Agent-Knowledge-Base\\memory_agent\\vector_db"
+      ],
+      "ok": true
+    },
+    {
+      "check": "write_guard",
+      "detail": {
+        "main_tree_file": {
+          "allowed": false,
+          "expected": false,
+          "target": "D:\\python_work\\work2026-4\\Agent-Knowledge-Base\\AGENTS.md"
+        },
+        "module_dir": {
+          "allowed": true,
+          "expected": true,
+          "target": "D:\\python_work\\work2026-4\\wk-verify\\experiments\\memory-spike-verify\\guard_probe.txt"
+        },
+        "old_daemon_conf": {
+          "allowed": false,
+          "expected": false,
+          "target": "C:\\Users\\Tan\\.openviking"
+        },
+        "real_index": {
+          "allowed": false,
+          "expected": false,
+          "target": "D:\\python_work\\work2026-4\\Agent-Knowledge-Base\\memory_agent\\vector_db"
+        },
+        "real_kb": {
+          "allowed": false,
+          "expected": false,
+          "target": "C:\\Users\\Tan\\.config\\opencode\\knowledge"
+        },
+        "verify_root": {
+          "allowed": true,
+          "expected": true,
+          "target": "C:\\Users\\Tan\\.openviking-mvp-verify\\guard_probe.txt"
+        }
+      },
+      "ok": true
+    },
+    {
+      "check": "bom_detector",
+      "detail": {
+        "has_bom_on_bom_file": true,
+        "has_bom_on_clean_file": false
+      },
+      "ok": true
+    },
+    {
+      "check": "no_cloud_model_in_conf",
+      "detail": {
+        "embedding": {
+          "dense": {
+            "model": "bge-small-zh-v1.5-f16",
+            "provider": "local"
+          },
+          "text_source": "content_only"
+        },
+        "vlm_section_present": false
+      },
+      "ok": true
+    },
+    {
+      "check": "novproxy_sanitizer",
+      "detail": {
+        "NO_PROXY": "localhost,127.0.0.1,::1,volces.com,volcengine.com"
+      },
+      "ok": true
+    },
+    {
+      "check": "framework_static_expectations",
+      "detail": {
+        "add_resource_extra_forbid": true,
+        "add_resource_fields": [
+          "acl",
+          "add_type",
+          "args",
+          "create_parent",
+          "directly_upload_media",
+          "exclude",
+          "ignore_dirs",
+          "include",
+          "instruction",
+          "internal_task",
+          "is_active",
+          "model_config",
+          "parent",
+          "path",
+          "preserve_structure",
+          "processing_mode",
+          "reason",
+          "source_name",
+          "strict",
+          "tag_mode",
+          "tags",
+          "telemetry",
+          "temp_file_id",
+          "timeout",
+          "to",
+          "wait",
+          "watch_interval"
+        ],
+        "add_resource_has_idempotency_key": false,
+        "has_unavailable_error_class": true,
+        "http_rejects_local_paths": true,
+        "sdk_zips_local_dir_then_uploads": true,
+        "source_sha256": {
+          "content.py": "2b8ad8534a121384cbe8d2d7b56a29bf85a0b607c1d6939a85941a2ffe672172",
+          "local_input_guard.py": "1edb54144319de734c5c22984422dcf9738e021a1f508f884426f2be10c2ecb6",
+          "openviking_sdk/client.py": "de6ebafabff4b15a8900d556e0bf330f9cbc1ccd4239460fad81505644a83dc6",
+          "openviking_sdk/errors.py": "0c724b1db445f7d4f2293964aa4f269ebbb784db9490cc2bff5233ee2ebaff2e",
+          "resources.py": "ecbb19843c9e51947149dc8d7e54ce93a4ab861c75ae56e90b4bbd50002ddb7e"
+        },
+        "upload_watch_interval_rejected": true,
+        "write_request_extra_forbid": true,
+        "write_request_fields": [
+          "acl",
+          "content",
+          "mode",
+          "model_config",
+          "processing_mode",
+          "tag_mode",
+          "tags",
+          "telemetry",
+          "timeout",
+          "uri",
+          "wait"
+        ],
+        "write_request_has_idempotency_key": false
+      },
+      "ok": true
+    },
+    {
+      "check": "versions_recorded",
+      "detail": {
+        "openviking": "0.4.23",
+        "openviking-sdk": "0.1.13"
+      },
+      "ok": true
+    },
+    {
+      "check": "harness_pinned",
+      "detail": {
+        "run_verify.py": "20a08e3d6114c356c4f776386b7c65f4a9d29f0e9f01c3a2caedee0fa52852be",
+        "verify_checks.py": "cd486b68cfb5760af3ae847f759972dbbcb9e090ea16c124dfc40fa6b4afea8a",
+        "verify_criteria.py": "a0e4870f94e4e1623d1ed30ec04bc72bbbd10d59d0e58a1b516ce51cde5d6593",
+        "verify_env.py": "cf56598f59856a5f5e28c490fafda2616916d13c9ffc95ba61d746e26fc255b3",
+        "verify_probe.py": "89c3a7f744c19f777315e5d9fb36a03994cfc2fe352ab7bc733adab483967488"
+      },
+      "ok": true
+    }
+  ],
+  "criteria_file_sha256": "a0e4870f94e4e1623d1ed30ec04bc72bbbd10d59d0e58a1b516ce51cde5d6593",
+  "criteria_sha256": "17d18b7bbe842da6059b341a41319c11fa2824f30817aa191bc96802174f2f4d",
+  "criteria_version": "1.0.0",
+  "generated_at": "2026-10-10T14:25:10+0800",
+  "harness_sha256": {
+    "run_verify.py": "20a08e3d6114c356c4f776386b7c65f4a9d29f0e9f01c3a2caedee0fa52852be",
+    "verify_checks.py": "cd486b68cfb5760af3ae847f759972dbbcb9e090ea16c124dfc40fa6b4afea8a",
+    "verify_criteria.py": "a0e4870f94e4e1623d1ed30ec04bc72bbbd10d59d0e58a1b516ce51cde5d6593",
+    "verify_env.py": "cf56598f59856a5f5e28c490fafda2616916d13c9ffc95ba61d746e26fc255b3",
+    "verify_probe.py": "89c3a7f744c19f777315e5d9fb36a03994cfc2fe352ab7bc733adab483967488"
+  },
+  "isolation": {
+    "cli_config": "ovcli.conf",
+    "cloud_models": "disabled (embedding provider=local, 无 vlm 段)",
+    "forbidden_paths": [
+      "%USERPROFILE%\\.config\\opencode\\knowledge",
+      "%USERPROFILE%\\.config\\opencode\\opencode.json",
+      "%USERPROFILE%\\.openviking",
+      "<main>\\memory_agent\\vector_db",
+      "<wk-spike>",
+      "<wk-host>"
+    ],
+    "forbidden_ports": [
+      8765,
+      8781,
+      8782
+    ],
+    "host": "127.0.0.1",
+    "port": 8783,
+    "server_config": "ov.conf",
+    "service": "openviking-server (候选实现, 隔离实例)",
+    "verify_root_default": "%USERPROFILE%\\.openviking-mvp-verify",
+    "verify_root_env": "OV_VERIFY_ROOT"
+  },
+  "params": {
+    "CALL_TIMEOUT_S": 120,
+    "MARKER_PREFIX": "OVVERIFY-RT-MARKER",
+    "SERVER_READY_TIMEOUT_S": 300,
+    "SERVER_STOP_TIMEOUT_S": 60,
+    "UPDATE_POLL_S": 10,
+    "UPDATE_WINDOW_S": 120
+  },
+  "payload_sha256": "5fdc1aeb5817ec6d6489d27c55a0680627abbcc5b12dbe8e401835236c48a1cb",
+  "pre_registered_at": "2026-10-10T14:20:00+08:00",
+  "problems": [],
+  "stage": "static",
+  "static_expectations": {
+    "add_resource_extra_forbid": true,
+    "add_resource_fields": [
+      "acl",
+      "add_type",
+      "args",
+      "create_parent",
+      "directly_upload_media",
+      "exclude",
+      "ignore_dirs",
+      "include",
+      "instruction",
+      "internal_task",
+      "is_active",
+      "model_config",
+      "parent",
+      "path",
+      "preserve_structure",
+      "processing_mode",
+      "reason",
+      "source_name",
+      "strict",
+      "tag_mode",
+      "tags",
+      "telemetry",
+      "temp_file_id",
+      "timeout",
+      "to",
+      "wait",
+      "watch_interval"
+    ],
+    "add_resource_has_idempotency_key": false,
+    "has_unavailable_error_class": true,
+    "http_rejects_local_paths": true,
+    "sdk_zips_local_dir_then_uploads": true,
+    "source_sha256": {
+      "content.py": "2b8ad8534a121384cbe8d2d7b56a29bf85a0b607c1d6939a85941a2ffe672172",
+      "local_input_guard.py": "1edb54144319de734c5c22984422dcf9738e021a1f508f884426f2be10c2ecb6",
+      "openviking_sdk/client.py": "de6ebafabff4b15a8900d556e0bf330f9cbc1ccd4239460fad81505644a83dc6",
+      "openviking_sdk/errors.py": "0c724b1db445f7d4f2293964aa4f269ebbb784db9490cc2bff5233ee2ebaff2e",
+      "resources.py": "ecbb19843c9e51947149dc8d7e54ce93a4ab861c75ae56e90b4bbd50002ddb7e"
+    },
+    "upload_watch_interval_rejected": true,
+    "write_request_extra_forbid": true,
+    "write_request_fields": [
+      "acl",
+      "content",
+      "mode",
+      "model_config",
+      "processing_mode",
+      "tag_mode",
+      "tags",
+      "telemetry",
+      "timeout",
+      "uri",
+      "wait"
+    ],
+    "write_request_has_idempotency_key": false
+  },
+  "verdict": "PASS"
+}
