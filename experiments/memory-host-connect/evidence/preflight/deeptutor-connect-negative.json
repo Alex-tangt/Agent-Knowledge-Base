@@ -1,0 +1,76 @@
+{
+  "host": "deeptutor",
+  "deeptutor_version": "1.6.8",
+  "python": "3.12.2",
+  "deep_tutor_home": "C:\\Users\\Tan\\.openviking-mvp-host\\hosts\\deeptutor-home",
+  "mcp_config_path": "C:\\Users\\Tan\\.openviking-mvp-host\\hosts\\deeptutor-home\\data\\user\\settings\\mcp.json",
+  "server": "openviking-mvp",
+  "marker": "M6-DEEPTUTOR",
+  "proxy_env_sanitized": {
+    "NO_PROXY": {
+      "before": "localhost,127.0.0.1,::1,volces.com,volcengine.com,[::1]",
+      "after": "localhost,127.0.0.1,::1,volces.com,volcengine.com,::1"
+    }
+  },
+  "steps": [
+    {
+      "step": "load_mcp_config",
+      "ok": true,
+      "detail": {
+        "servers": [
+          "openviking-mvp"
+        ],
+        "type": "streamableHttp",
+        "url": "http://127.0.0.1:8782/mcp",
+        "enabled": true,
+        "enabled_tools": [
+          "search",
+          "find",
+          "read",
+          "list",
+          "tree",
+          "grep",
+          "glob",
+          "health",
+          "write"
+        ],
+        "disabled_tools": [
+          "forget",
+          "add_skill",
+          "add_resource"
+        ],
+        "headers_keys": [
+          "X-OpenViking-Account",
+          "X-OpenViking-User"
+        ]
+      }
+    },
+    {
+      "step": "tool_whitelist",
+      "ok": true,
+      "detail": {
+        "read_allowed": [
+          "search",
+          "read",
+          "find"
+        ],
+        "write_allowed": true,
+        "forbidden_allowed": {
+          "forget": false,
+          "add_skill": false
+        }
+      }
+    },
+    {
+      "step": "probe_server(list_tools)",
+      "ok": false,
+      "detail": "ok=False tools=0 err=ConnectError: All connection attempts failed"
+    }
+  ],
+  "probe": {
+    "ok": false,
+    "error": "ConnectError: All connection attempts failed",
+    "tool_count": 0,
+    "tools": []
+  }
+}

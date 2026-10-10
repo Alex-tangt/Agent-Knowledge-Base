@@ -1,0 +1,111 @@
+{
+  "base_url": "http://127.0.0.1:8782",
+  "account": "default",
+  "scope_root": "viking://resources/m6-scope",
+  "seed_uri": "viking://resources/m6-scope/seed.md",
+  "steps": [
+    {
+      "step": "server_auth_mode",
+      "ok": true,
+      "detail": "auth_mode='api_key' (need 'api_key' for身份/ACL)"
+    },
+    {
+      "step": "identity_host-rw",
+      "ok": true,
+      "detail": {
+        "role": "admin",
+        "key_prefix": "ZGVmYX...",
+        "register_status": 409,
+        "register_error": "{\"status\":\"error\",\"result\":null,\"error\":{\"code\":\"ALREADY_EXISTS\",\"message\":\"User already exists: host-rw\",\"details\":{\"resource\":\"host-rw\",\"type\":\"user\"}},\"telemetry\":null,\"profile\":null}"
+      }
+    },
+    {
+      "step": "identity_host-ro",
+      "ok": true,
+      "detail": {
+        "role": "user",
+        "key_prefix": "ZGVmYX...",
+        "register_status": 409,
+        "register_error": "{\"status\":\"error\",\"result\":null,\"error\":{\"code\":\"ALREADY_EXISTS\",\"message\":\"User already exists: host-ro\",\"details\":{\"resource\":\"host-ro\",\"type\":\"user\"}},\"telemetry\":null,\"profile\":null}"
+      }
+    },
+    {
+      "step": "account_acl_enabled",
+      "ok": true,
+      "detail": {
+        "patch_status": 200,
+        "acl_enabled": true
+      }
+    },
+    {
+      "step": "seed_written_by_writer",
+      "ok": true,
+      "detail": {
+        "status": 200,
+        "uri": "viking://resources/m6-scope/seed.md",
+        "error": ""
+      }
+    },
+    {
+      "step": "restricted_subtree",
+      "ok": true,
+      "detail": {
+        "set_mode_status": 200,
+        "grant_ro": 200,
+        "grant_rw": 200,
+        "acl": {
+          "uri": "viking://resources/m6-scope",
+          "acl_mode": "restricted",
+          "direct_entries": [
+            {
+              "principal": "user:host-ro",
+              "level": "read"
+            },
+            {
+              "principal": "user:host-rw",
+              "level": "write"
+            }
+          ],
+          "inherited_entries": [
+            {
+              "principal": "user:*",
+              "level": "manage"
+            }
+          ],
+          "effective_entries": [
+            {
+              "principal": "user:host-ro",
+              "level": "read"
+            },
+            {
+              "principal": "user:host-rw",
+              "level": "write"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "step": "secrets_stored_in_deeptutor",
+      "ok": true,
+      "detail": {
+        "owner": "_shared",
+        "server": "openviking-mvp",
+        "fields": [
+          "api_key_ro",
+          "api_key_rw"
+        ],
+        "note": "values live in DeepTutor's secret store, not in mcp.json/evidence"
+      }
+    }
+  ],
+  "auth_mode": "api_key",
+  "principals": {
+    "writer": "host-rw",
+    "reader": "host-ro",
+    "key_prefixes": {
+      "host-rw": "ZGVmYX...",
+      "host-ro": "ZGVmYX..."
+    }
+  }
+}

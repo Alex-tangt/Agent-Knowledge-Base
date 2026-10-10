@@ -1,0 +1,15 @@
+T  MCP Servers
+opencode.exe : [0m
+所在位置 D:\python_work\work2026-4\wk-host\experiments\memory-host-connect\host_opencode.ps1:112 字符: 10
++     $a = & $opencodeExe mcp list 2>&1 | Out-String
++          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ([0m:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+|
+•  ✗ openviking-mvp [90mfailed
+|      SSE error: Unable to connect. Is the computer able to access the url?
+|      [90mhttp://127.0.0.1:8782/mcp
+|
+—  1 server(s)
+
