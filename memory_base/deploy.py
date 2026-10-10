@@ -159,8 +159,11 @@ def install(home: Path, runtime_python: str | None = None, model: str | None = N
         versions = _versions(python)
     if versions != PINS:
         raise RuntimeError("Runtime versions do not match the deployment pins")
-    subprocess.run([str(python), "-m", "pip", "install", "--no-deps", "-e",
-                    str(Path(__file__).parent)], check=True)
+    source_dir = Path(__file__).parent
+    if (source_dir / "pyproject.toml").exists():
+        subprocess.run([str(python), "-m", "pip", "install", "--no-deps", "-e", str(source_dir)], check=True)
+    elif Path(sys.executable).resolve() != python:
+        raise RuntimeError("Installing into a new runtime requires the source checkout; this package was installed as a wheel")
     model_path = Path(model or previous.get("model") or DEFAULT_MODEL).expanduser().resolve()
     if not model_path.exists():
         # Upstream's pinned model specification supplies its public download URL.

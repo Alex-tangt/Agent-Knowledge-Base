@@ -15,3 +15,6 @@ memory-base = "memory_base.deploy:main"
 [tool.setuptools]
 packages = ["memory_base"]
 package-dir = {"memory_base" = "."}
+
+[tool.setuptools.package-data]
+memory_base = ["requirements.txt", "skill/SKILL.md"]

@@ -27,6 +27,22 @@ def test_upstream_config_uses_external_embedder_and_no_secret(tmp_path):
     assert not path.read_bytes().startswith(b"\xef\xbb\xbf")
 
 
+def test_fresh_runtime_switch_preserves_deployment_home_and_existing_model(tmp_path, monkeypatch):
+    runtime = tmp_path / "runtime" / ("Scripts/python.exe" if os.name == "nt" else "bin/python")
+    runtime.parent.mkdir(parents=True)
+    runtime.write_text("test runtime")
+    model = tmp_path / "embedding.gguf"
+    model.write_bytes(b"GGUFmodel")
+    (tmp_path / "deployment.json").write_text(json.dumps({"python": "/old/experimental/python", "model": str(model)}))
+    monkeypatch.setattr(deploy, "_versions", lambda _: deploy.PINS)
+    monkeypatch.setattr(deploy.subprocess, "run", lambda *_a, **_k: None)
+    monkeypatch.setattr(deploy, "_ensure_secret", lambda *_: "existing")
+    config = deploy.install(tmp_path, fresh_runtime=True)
+    assert config["python"] == str(runtime.resolve())
+    assert config["model"] == str(model.resolve())
+    assert json.loads((tmp_path / "openviking.conf").read_text())["storage"]["workspace"] == str(tmp_path / "data")
+
+
 def test_secrets_are_env_override_and_home_scoped(tmp_path, monkeypatch):
     monkeypatch.setenv(credentials.env_name("host-codex"), "process-secret")
     assert credentials.get_secret("host-codex", tmp_path) == "process-secret"
