@@ -152,7 +152,9 @@ def install(home: Path, runtime_python: str | None = None, model: str | None = N
     # Always let pip apply the verified constraints: matching direct versions
     # alone cannot detect a changed transitive dependency. Already satisfied
     # installations retain their packages.
-    subprocess.run([str(python), "-m", "pip", "install", "-r",
+    # The upstream cloud SDK ships many generated modules. Compile only modules
+    # actually imported by our runtime rather than all unused providers at install.
+    subprocess.run([str(python), "-m", "pip", "install", "--no-compile", "-r",
                     str(Path(__file__).with_name("requirements.txt"))], check=True)
     versions = _versions(python)
     if versions != PINS:
