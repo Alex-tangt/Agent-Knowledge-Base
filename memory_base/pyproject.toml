@@ -7,7 +7,7 @@ name = "agent-memory-base"
 version = "0.1.0"
 description = "Pinned OpenViking personal memory deployment and host gateway"
 requires-python = ">=3.12,<3.13"
-dependencies = ["openviking==0.4.23", "openviking-sdk==0.1.13", "mcp==1.30.0", "llama-cpp-python==0.3.36"]
+dependencies = ["openviking==0.4.23", "openviking-sdk==0.1.13", "mcp==1.30.0", "llama-cpp-python==0.3.36", "volcengine-python-sdk[ark]==5.0.51", "openai==2.54.0"]
 
 [project.scripts]
 memory-base = "memory_base.deploy:main"

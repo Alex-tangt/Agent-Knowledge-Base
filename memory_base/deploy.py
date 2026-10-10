@@ -25,7 +25,7 @@ from memory_base.credentials import env_name, get_secret, set_secret, state_home
 from memory_base.embed import DEFAULT_MODEL, MODEL_ID
 
 PINS = {"openviking": "0.4.23", "openviking-sdk": "0.1.13", "mcp": "1.30.0",
-        "llama-cpp-python": "0.3.36"}
+        "llama-cpp-python": "0.3.36", "volcengine-python-sdk": "5.0.51", "openai": "2.54.0"}
 PROFILES = {"agent-bubble": "writer", "codex": "writer", "dsh": "writer",
             "opencode": "writer", "reader": "reader"}
 COMPONENTS = ("embed", "upstream", "gateway")
