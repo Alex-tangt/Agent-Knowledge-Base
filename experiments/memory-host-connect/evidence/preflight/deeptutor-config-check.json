@@ -1,0 +1,59 @@
+{
+  "host": "deeptutor",
+  "deeptutor_version": "1.6.8",
+  "python": "3.12.2",
+  "deep_tutor_home": "C:\\Users\\Tan\\.openviking-mvp-host\\hosts\\deeptutor-home",
+  "mcp_config_path": "C:\\Users\\Tan\\.openviking-mvp-host\\hosts\\deeptutor-home\\data\\user\\settings\\mcp.json",
+  "server": "openviking-mvp",
+  "marker": "M6-DEEPTUTOR",
+  "steps": [
+    {
+      "step": "load_mcp_config",
+      "ok": true,
+      "detail": {
+        "servers": [
+          "openviking-mvp"
+        ],
+        "type": "streamableHttp",
+        "url": "http://127.0.0.1:8782/mcp",
+        "enabled": true,
+        "enabled_tools": [
+          "search",
+          "find",
+          "read",
+          "list",
+          "tree",
+          "grep",
+          "glob",
+          "health",
+          "write"
+        ],
+        "disabled_tools": [
+          "forget",
+          "add_skill",
+          "add_resource"
+        ],
+        "headers_keys": [
+          "X-OpenViking-Account",
+          "X-OpenViking-User"
+        ]
+      }
+    },
+    {
+      "step": "tool_whitelist",
+      "ok": true,
+      "detail": {
+        "read_allowed": [
+          "search",
+          "read",
+          "find"
+        ],
+        "write_allowed": true,
+        "forbidden_allowed": {
+          "forget": false,
+          "add_skill": false
+        }
+      }
+    }
+  ]
+}

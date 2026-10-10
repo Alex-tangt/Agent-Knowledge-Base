@@ -1,0 +1,57 @@
+{
+    "captured_at_utc":  "2026-10-10T06:30:59.4003935Z",
+    "rss_caveat":  "working_set values are cross-process lower-bound observations and may be wrong; trust process self-report",
+    "dependencies":  {
+                         "openviking_python_package":  "0.4.23",
+                         "openviking_ov_binary":  "openviking 0.4.24.dev0",
+                         "venv_ov_size_mb":  1058,
+                         "site_packages_top_dirs":  497,
+                         "deeptutor_version":  "1.6.8",
+                         "deeptutor_python":  "D:\\Users\\Tan\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+                         "opencode_version":  "1.18.35",
+                         "mcp_sdk_in_venv_ov":  "1.30.0",
+                         "ollama_models":  [
+                                               "qwen3:0.6B 7df6b6e09427 522",
+                                               "qwen2.5:3b-instruct-q4_k_m 357c53fb659c 1.9",
+                                               "qwen3:8b 500a1f067a9f 5.2"
+                                           ]
+                     },
+    "storage":  {
+                    "iso_root_mb":  0.5,
+                    "host_copies_mb":  0.5,
+                    "service_data_mb":  null,
+                    "index_like_dirs":  [
+
+                                        ]
+                },
+    "resident":  {
+                     "note":  "lower-bound observation; cross-process RSS of detached processes is unreliable",
+                     "per_port":  [
+
+                                  ],
+                     "opencode":  [
+
+                                  ],
+                     "python312_any":  [
+                                           {
+                                               "pid":  28384,
+                                               "name":  "python",
+                                               "working_set_mb":  498.1
+                                           }
+                                       ]
+                 },
+    "model_calls":  {
+                        "note":  "both hosts use local Ollama in this experiment; cloud calls = 0, cost = 0 (see README section 5)",
+                        "cloud_calls":  0,
+                        "cloud_cost_cny":  0,
+                        "local_evidence":  [
+
+                                           ]
+                    },
+    "maintenance_steps":  [
+                              "onboarding = write one isolated copy config (setup_isolation.ps1); restart the host to pick it up",
+                              "no per-host index: both hosts talk to one instance and one workspace",
+                              "service down shows up host-side as a connection failure (opencode mcp list = failed; DeepTutor probe_server ok=false)",
+                              "host upgrades only touch the isolated copy; syncing the real registration is the owner decision (this line never touches it)"
+                          ]
+}
