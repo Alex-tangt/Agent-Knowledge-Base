@@ -2,7 +2,13 @@
 
 [![CI](https://github.com/Alex-tangt/Agent-Knowledge-Base/actions/workflows/ci.yml/badge.svg)](https://github.com/Alex-tangt/Agent-Knowledge-Base/actions/workflows/ci.yml)
 
-**把 Markdown 知识库变成 agent 可安全读写、可检索的长期知识底座。**
+**让多个 agent 共享个人知识和文章、视频总结。**
+
+当前开发入口是 `memory_base/`：固定 OpenViking 0.4.23，统一安装、启动、停止与状态检查；HTTP / MCP 提供相同的追加、搜索与读取接口。Agent-bubble 的 pi 接入使用这一服务。部署方式与验收记录见 [正式部署说明](docs/memory-base-deployment.md) 和 [真实接入验收](experiments/memory-base-live/README.md)。
+
+Windows 新部署入口为 `install-memory-base.ps1`；POSIX 薄壳 `install-memory-base.sh` 的凭据持久化仍待补齐。原 `install.ps1` / `install.sh` 与下面的 `memory_agent` 内容保留旧自研实现的用法；旧引擎按 [ADR-0032](docs/adr/0032-personal-memory-base-adopt-then-productize.md) 冻结。`legal_web` 为已排除的历史产品。
+
+## 旧版资产记录
 
 三模块单仓：
 

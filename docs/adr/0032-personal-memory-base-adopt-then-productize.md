@@ -33,7 +33,7 @@ Relates: [需求与既定边界](../handoff-memory-base.md)、[架构咨询](../
 
 ## 实测补充（2026-10-10，阶段 1 执行完毕）
 
-验收口径与逐项判定见 [mvp-protocol.md](../experiments/memory-framework-spike/mvp-protocol.md) § 结论；证据见 [mvp/](../experiments/memory-framework-spike/mvp/README.md)、[memory-host-connect/](../experiments/memory-host-connect/M6-report.md)、[memory-spike-verify/](../experiments/memory-spike-verify/verify_conclusion.md)。**M0–M6 均有真实实测证据**（M5 为条件化通过：嵌入提供方必须进程外）。
+验收口径与逐项判定见 [mvp-protocol.md](../../experiments/memory-framework-spike/mvp-protocol.md) § 结论；证据见 [mvp/](../../experiments/memory-framework-spike/mvp/README.md)、[memory-host-connect/](../../experiments/memory-host-connect/M6-report.md)、[memory-spike-verify/](../../experiments/memory-spike-verify/verify_conclusion.md)。**M0–M6 均有真实实测证据**（M5 为条件化通过：嵌入提供方必须进程外）。
 
 与本文前述设想**不一致**的实测事实，登记在此，供阶段 2 收敛：
 

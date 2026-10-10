@@ -50,6 +50,10 @@ _Avoid_: 真相源、存储
 _See_: `docs/adr/0032-personal-memory-base-adopt-then-productize.md`、`experiments/memory-framework-spike/mvp-protocol.md`
 _Avoid_: 记忆能力包（`memory_agent` = 已冻结的旧自研实现）
 
+**正式接入层（`memory_base`）**：
+固定 OpenViking 的部署与宿主接缝。HTTP 与 MCP 共用追加、搜索、读取语义；凭据绑定调用身份，虚拟条目正文与追溯元数据分开保存，同一次请求重试不生成第二条。Agent-bubble 的 pi 首次总结由程序原样提交，知识库保存失败不丢弃本机总结。
+_See_: `docs/memory-base-deployment.md`、ADR-0032 D9–D12
+
 **视图（View）**：
 一份**具名谓词**，规定哪些**域**的哪些**条目**可见——"看什么"的范围定义；**只读**
 （写不经过视图，如数据库的 VIEW 与基表）。软件能看见哪些视图 = 授权；网关的 tenant/密级
