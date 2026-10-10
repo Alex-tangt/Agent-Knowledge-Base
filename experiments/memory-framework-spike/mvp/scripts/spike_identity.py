@@ -66,8 +66,22 @@ def _ensure_user(user_id: str, role: str) -> str:
 
 def enable_account_acl() -> dict:
     """Turn on ACL enforcement for the account (default is OFF)."""
+    return set_account_acl(True)
+
+
+def set_account_acl(enabled: bool) -> dict:
+    """Toggle the account-level ACL switch.
+
+    Storage layer: the account runtime-config document, kept by AGFS at
+    ``/local/{account_id}/_system/setting.json`` (see
+    ``openviking/config/source/file_source.py``), i.e. under the isolated
+    workspace at ``<workspace>/viking/{account}/_system/setting.json``.
+    Key path: ``acl.enabled``.  Enforcement reads it through
+    ``AclManager.is_enabled(account_id)``; when it is false every ACL record is
+    stored but never consulted.
+    """
     resp = api("PATCH", f"/api/v1/admin/accounts/{ACCOUNT}/settings",
-               body={"acl": {"enabled": True}}, headers=auth_headers(), timeout=60)
+               body={"acl": {"enabled": enabled}}, headers=auth_headers(), timeout=60)
     return resp["result"]
 
 

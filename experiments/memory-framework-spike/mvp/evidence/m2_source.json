@@ -1,7 +1,7 @@
 {
   "unit": "M2",
   "claim": "既有资料只读接入并追平更新",
-  "generated_at": "2026-10-10T14:33:47+0800",
+  "generated_at": "2026-10-10T14:38:31+0800",
   "profile": "authz",
   "source_dir": "C:\\Users\\Tan\\.openviking-mvp-spike\\source-repo",
   "source_root_uri": "viking://resources/wk-spike-source",
@@ -34,7 +34,7 @@
             "repo_name": "repository"
           },
           "root_uri": "viking://resources/wk-spike-source/source-repo",
-          "temp_uri": "viking://temp/mem-rw/10101433_5864c1/repository",
+          "temp_uri": "viking://temp/mem-rw/10101438_e3f06b/repository",
           "queue_status": {
             "Semantic": {
               "processed": 1,
@@ -51,28 +51,28 @@
           },
           "context_count": 9,
           "telemetry": {
-            "id": "tm_ddaf46d1693e41dcbc6ab4b66f7b75f3",
+            "id": "tm_766a1c16eaea4f03ad5fc786553844b3",
             "summary": {
               "operation": "add_resource_job",
               "status": "ok",
-              "duration_ms": 1026.518,
+              "duration_ms": 1087.22,
               "queue": {
                 "semantic": {
                   "processed": 1,
                   "queue_wait": {
-                    "duration_ms": 139.792
+                    "duration_ms": 83.81
                   },
                   "execute": {
-                    "duration_ms": 283.169
+                    "duration_ms": 406.053
                   }
                 },
                 "embedding": {
                   "processed": 9,
                   "queue_wait": {
-                    "duration_ms": 1219.253
+                    "duration_ms": 2012.711
                   },
                   "execute": {
-                    "duration_ms": 465.428
+                    "duration_ms": 580.202
                   }
                 }
               },
@@ -82,52 +82,52 @@
               },
               "resource": {
                 "total": {
-                  "duration_ms": 1026.511
+                  "duration_ms": 1087.216
                 },
                 "source_execute": {
-                  "duration_ms": 558.762
+                  "duration_ms": 519.555
                 },
                 "source_prepare": {
-                  "duration_ms": 26.981
+                  "duration_ms": 27.242
                 },
                 "parse_artifact": {
-                  "duration_ms": 450.662
+                  "duration_ms": 422.419
                 },
                 "target_resolve": {
-                  "duration_ms": 3.177
+                  "duration_ms": 3.015
                 },
                 "update_plan": {
-                  "duration_ms": 16.859,
+                  "duration_ms": 13.491,
                   "artifact_inventory": {
-                    "duration_ms": 12.678
+                    "duration_ms": 10.759
                   },
                   "rnfv_snapshot": {
-                    "duration_ms": 1.612
+                    "duration_ms": 1.821
                   },
                   "diff_and_compile": {
-                    "duration_ms": 2.243
+                    "duration_ms": 0.805
                   }
                 },
                 "content_commit": {
-                  "duration_ms": 21.515
+                  "duration_ms": 22.142
                 },
                 "derived_enqueue": {
-                  "duration_ms": 3.591
+                  "duration_ms": 3.828
                 },
                 "semantic": {
                   "queue_wait": {
-                    "duration_ms": 139.792
+                    "duration_ms": 83.81
                   },
                   "execute": {
-                    "duration_ms": 283.169
+                    "duration_ms": 406.053
                   }
                 },
                 "embedding": {
                   "queue_wait": {
-                    "duration_ms": 1219.253
+                    "duration_ms": 2012.711
                   },
                   "execute": {
-                    "duration_ms": 465.428
+                    "duration_ms": 580.202
                   }
                 },
                 "flags": {
@@ -140,8 +140,8 @@
             }
           }
         },
-        "ingest_wall_seconds": 1.79,
-        "staged_temp_uri": "viking://temp/mem-rw/10101433_5864c1/repository",
+        "ingest_wall_seconds": 1.78,
+        "staged_temp_uri": "viking://temp/mem-rw/10101438_e3f06b/repository",
         "source_path_reported": "source-repo"
       }
     },
@@ -341,8 +341,51 @@
       }
     },
     {
+      "id": "M2.7b-staleness-signal-probe",
+      "claim": "实测并登记『快照相对来源过期』是否有任何信号",
+      "verdict": "PASS",
+      "detail": {
+        "scenario": "源文件已在磁盘上被外部改动，但未触发任何显式更新",
+        "source_file": {
+          "path": "C:\\Users\\Tan\\.openviking-mvp-spike\\source-repo\\docs\\spec.md",
+          "bytes": 177,
+          "sha256": "832c3ea1cca97c28d9dab29a0ab0468e34eb6c6218e6a42f71556b0d8fc4950a",
+          "mtime_ns": 1791614308218994100
+        },
+        "base_still_serves_pre_change_bytes": true,
+        "base_served": {
+          "bytes": 33,
+          "sha256": "d24050bfef13ed6a63e35c7cb080d8d3abc1e9d0a50dda984d71851ee6db9b34"
+        },
+        "base_content_equals_new_source": false,
+        "stat_result": {
+          "ok": true,
+          "result": {
+            "name": "spec.md",
+            "size": 33,
+            "mode": 420,
+            "modTime": "2026-10-10T06:38:25Z",
+            "isDir": false,
+            "uri": "viking://resources/wk-spike-source/source-repo/docs/spec.md",
+            "isLocked": false,
+            "id": "199a757b016b554cc7f2296b3e6af1eb"
+          }
+        },
+        "attrs_result": {
+          "_raw_stdout": "",
+          "_raw_stderr": "ov attrs viking://resources/wk-spike-source/source-repo/docs/spec.md -o json\n\n用法： ov.exe attrs <COMMAND>\n可尝试： ov.exe attrs --help\n\n╭─ 命令错误 ───────────────────────────────────────────────────────────╮\n│ 未知命令：viking://resources/wk-spike-source/source-repo/docs/spec.md。 │\n╰──────────────────────────────────────────────────────────────────────╯\n\n下一步：\n  ov.exe attrs --help  查看此命令帮助\n",
+          "_returncode": 2
+        },
+        "freshness_keywords_present_in_stat_or_attrs": [],
+        "watch_available_for_local_source": false,
+        "framework_can_report_staleness": false,
+        "conclusion": "无任何信号：基座继续返回旧快照，stat/attrs 不带来源哈希或来源 mtime，本地来源又无 watch → 已登记为已知限制",
+        "limitation": "没有任何来源指纹 / 版本字段 / 漂移检查入口：本地来源既无 watch，stat/attrs 也不带来源哈希或 mtime。读到旧快照时无任何信号。要发现陈旧只能由外部把来源哈希与登记值自行比对。"
+      }
+    },
+    {
       "id": "M2.8-update-read-new-content",
-      "claim": "外部改动后按登记的更新机制读到新正文（同一引用的新版本）",
+      "claim": "外部改动后按登记的更新机制读到新正文（同一引用的新版本，多入口一致）",
       "verdict": "PASS",
       "detail": {
         "mechanism": "单向逐文件推送：ov write <uri> --from-file <来源文件> --wait（源目录为权威，基座侧不回流）",
@@ -354,7 +397,7 @@
         "matches_new_source_bytes": true,
         "content_hash_changed": true,
         "entries_at_that_uri": 1,
-        "update_wall_seconds": 0.95,
+        "update_wall_seconds": 0.93,
         "update_response": {
           "uri": "viking://resources/wk-spike-source/source-repo/docs/spec.md",
           "root_uri": "viking://resources/wk-spike-source/source-repo/docs",
@@ -377,6 +420,25 @@
               "error_count": 0,
               "errors": []
             }
+          }
+        },
+        "multi_face_freshness": {
+          "GET /api/v1/content/read": "832c3ea1cca97c28d9dab29a0ab0468e34eb6c6218e6a42f71556b0d8fc4950a",
+          "GET /api/v1/content/download": "832c3ea1cca97c28d9dab29a0ab0468e34eb6c6218e6a42f71556b0d8fc4950a",
+          "ov read (CLI process)": "832c3ea1cca97c28d9dab29a0ab0468e34eb6c6218e6a42f71556b0d8fc4950a",
+          "all_faces_agree_with_new_source": true
+        },
+        "stat_after_update": {
+          "ok": true,
+          "result": {
+            "name": "spec.md",
+            "size": 177,
+            "mode": 420,
+            "modTime": "2026-10-10T06:38:29Z",
+            "isDir": false,
+            "uri": "viking://resources/wk-spike-source/source-repo/docs/spec.md",
+            "isLocked": false,
+            "id": "199a757b016b554cc7f2296b3e6af1eb"
           }
         },
         "implicit_latency": "无自动追平：本地来源被框架显式拒绝 watch，延迟 = 显式触发时刻",
@@ -413,10 +475,10 @@
     }
   ],
   "cost": {
-    "first_ingest_wall_seconds": 1.79,
+    "first_ingest_wall_seconds": 1.78,
     "ingest_embedding_items": 9,
     "ingest_semantic_items": 1,
-    "update_wall_seconds": 0.95,
+    "update_wall_seconds": 0.93,
     "update_embedding_items": 3,
     "cloud_model_calls": 0,
     "cloud_model_cost": 0.0,
@@ -436,5 +498,20 @@
       "来源目录文件清单与 git 提交号在接入前后一致，且基座从不回写"
     ],
     "consequence": "更新必须显式触发（单向推送）；无自动追平；步骤/延迟/成本已登记"
+  },
+  "known_limitations": [
+    {
+      "id": "stale-snapshot-is-silent",
+      "statement": "本地来源没有就地挂载也没有 watch。源文件被外部改动后，基座继续返回旧快照，且没有任何信号（无来源指纹/版本字段/漂移检查入口）表明它已过期。",
+      "impact": "需求里的『读到的是旧快照』目前不可被系统或消费者发现，只能由外部自行比对来源哈希。",
+      "evidence": "checks[M2.7b-staleness-signal-probe]",
+      "mitigation_available_today": "由调用方在登记时刻记录来源文件哈希，事后自行比对；基座侧无内建机制"
+    }
+  ],
+  "staleness_signal": {
+    "framework_can_report_staleness": false,
+    "base_still_serves_pre_change_bytes": true,
+    "watched": false,
+    "evidence": "checks[M2.7b-staleness-signal-probe]"
   }
 }

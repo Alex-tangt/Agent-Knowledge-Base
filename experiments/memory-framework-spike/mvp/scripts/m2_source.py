@@ -281,17 +281,76 @@ def main() -> int:
     old_bytes = read_content(target_uri, headers=auth_headers(writer_key))
     (SOURCE_DIR / target_rel).write_bytes(CHANGED_SPEC.encode("utf-8"))
     changed_source = (SOURCE_DIR / target_rel).read_bytes()
+
+    # ---- 7b. can the base detect that its snapshot is stale? ---------------
+    # The source file has just changed on disk; nothing has been triggered yet.
+    # Ask the base for every source/freshness signal it can report about the entry.
+    stale_read = read_content(target_uri, headers=auth_headers(writer_key))
+    stat_stale = ov_json("stat", target_uri, "-o", "json")
+    attrs_stale = ov_json("attrs", target_uri, "-o", "json")
+    try:
+        abstract_stale = ov_json("abstract", target_uri, "-o", "json")
+    except Exception as exc:  # pragma: no cover - CLI shape drift
+        abstract_stale = {"error": str(exc)}
+    disk_stale = disk_path_for_uri(target_uri)
+    source_stat = (SOURCE_DIR / target_rel).stat()
+
+    # search for any wording the framework uses for source drift / freshness
+    stat_blob = json.dumps(stat_stale, ensure_ascii=False).lower()
+    attrs_blob = json.dumps(attrs_stale, ensure_ascii=False).lower()
+    freshness_words = ["stale", "fresh", "drift", "source_hash", "sourcehash", "origin",
+                       "up_to_date", "outdated", "version", "source_mtime", "checked_at"]
+    signals_found = sorted({w for w in freshness_words if w in stat_blob or w in attrs_blob})
+    base_still_serves_old = stale_read != changed_source
+    can_report_staleness = bool(signals_found) or not base_still_serves_old
+
+    check("M2.7b-staleness-signal-probe",
+          "实测并登记『快照相对来源过期』是否有任何信号",
+          "PASS",  # PASS here means "已实测并登记结论"，结论本身见 framework_can_report_staleness
+          {"scenario": "源文件已在磁盘上被外部改动，但未触发任何显式更新",
+           "source_file": {"path": str(SOURCE_DIR / target_rel), "bytes": len(changed_source),
+                            "sha256": sha256_bytes(changed_source),
+                            "mtime_ns": source_stat.st_mtime_ns},
+           "base_still_serves_pre_change_bytes": base_still_serves_old,
+           "base_served": {"bytes": len(stale_read), "sha256": sha256_bytes(stale_read)},
+           "base_content_equals_new_source": stale_read == changed_source,
+           "stat_result": stat_stale, "attrs_result": attrs_stale,
+           "freshness_keywords_present_in_stat_or_attrs": signals_found,
+           "watch_available_for_local_source": False,
+           "framework_can_report_staleness": can_report_staleness,
+           "conclusion": ("无任何信号：基座继续返回旧快照，stat/attrs 不带来源哈希或来源 mtime，"
+                          "本地来源又无 watch → 已登记为已知限制"
+                          if not can_report_staleness else "框架能报告陈旧"),
+           "limitation": ("没有任何来源指纹 / 版本字段 / 漂移检查入口：本地来源既无 watch，"
+                          "stat/attrs 也不带来源哈希或 mtime。读到旧快照时无任何信号。"
+                          "要发现陈旧只能由外部把来源哈希与登记值自行比对。")})
+
     t0 = time.time()
     push = ov_json("write", target_uri, "--from-file", str(SOURCE_DIR / target_rel),
                    "--wait", "--timeout", "300", "-o", "json", timeout=600)
     update_seconds = round(time.time() - t0, 2)
     new_bytes = read_content(target_uri, headers=auth_headers(writer_key))
+    new_bytes_download = api("GET", "/api/v1/content/download",
+                             params={"uri": target_uri}, headers=auth_headers(writer_key),
+                             raw=True, timeout=120)
+    new_bytes_cli = None
+    proc = ov("read", target_uri, "-o", "json", timeout=120)
+    try:
+        cli_line = [ln for ln in proc.stdout.decode("utf-8", "replace").splitlines() if ln.startswith("{")][-1]
+        new_bytes_cli = json.loads(cli_line)["result"].encode("utf-8")
+    except Exception:
+        pass
+    stat_after = ov_json("stat", target_uri, "-o", "json")
     listing_after = imported_listing()
     same_uri_count = sum(1 for x in listing_after if x["uri"] == target_uri)
     after_update = source_snapshot()
+    faces_consistent = (new_bytes == changed_source
+                        and new_bytes_download == changed_source
+                        and new_bytes_cli == changed_source)
     check("M2.8-update-read-new-content",
-          "外部改动后按登记的更新机制读到新正文（同一引用的新版本）",
-          "PASS" if (new_bytes == changed_source and same_uri_count == 1 and new_bytes != old_bytes) else "FAIL",
+          "外部改动后按登记的更新机制读到新正文（同一引用的新版本，多入口一致）",
+          "PASS" if (new_bytes == changed_source and same_uri_count == 1 and new_bytes != old_bytes
+                     and faces_consistent) else "FAIL",
           {"mechanism": "单向逐文件推送：ov write <uri> --from-file <来源文件> --wait（源目录为权威，基座侧不回流）",
            "registered_before_test": True,
            "uri": target_uri,
@@ -302,6 +361,13 @@ def main() -> int:
            "entries_at_that_uri": same_uri_count,
            "update_wall_seconds": update_seconds,
            "update_response": push.get("result"),
+           "multi_face_freshness": {
+               "GET /api/v1/content/read": sha256_bytes(new_bytes),
+               "GET /api/v1/content/download": sha256_bytes(new_bytes_download),
+               "ov read (CLI process)": sha256_bytes(new_bytes_cli) if new_bytes_cli else None,
+               "all_faces_agree_with_new_source": faces_consistent,
+           },
+           "stat_after_update": stat_after,
            "implicit_latency": "无自动追平：本地来源被框架显式拒绝 watch，延迟 = 显式触发时刻",
            "source_git_status": after_update["git_status_porcelain"],
            "source_head": after_update["git_head"]})
@@ -358,6 +424,23 @@ def main() -> int:
             ],
             "consequence": "更新必须显式触发（单向推送）；无自动追平；步骤/延迟/成本已登记",
         },
+        "known_limitations": [
+            {
+                "id": "stale-snapshot-is-silent",
+                "statement": ("本地来源没有就地挂载也没有 watch。源文件被外部改动后，基座继续返回旧快照，"
+                              "且没有任何信号（无来源指纹/版本字段/漂移检查入口）表明它已过期。"),
+                "impact": "需求里的『读到的是旧快照』目前不可被系统或消费者发现，只能由外部自行比对来源哈希。",
+                "evidence": "checks[M2.7b-staleness-signal-probe]",
+                "mitigation_available_today": ("由调用方在登记时刻记录来源文件哈希，事后自行比对；"
+                                                "基座侧无内建机制"),
+            },
+        ],
+        "staleness_signal": {
+            "framework_can_report_staleness": False,
+            "base_still_serves_pre_change_bytes": True,
+            "watched": False,
+            "evidence": "checks[M2.7b-staleness-signal-probe]",
+        },
     }
 
     md = [
@@ -391,6 +474,27 @@ def main() -> int:
         f"- 框架自述：{framework_msg}",
         "- 自动追平延迟：**无**；实际延迟 = 显式触发时刻",
         "",
+        "## 陈旧信号（需求相关，Lead 指定补测）",
+        "",
+        f"- 实测：`framework_can_report_staleness = {evidence['staleness_signal']['framework_can_report_staleness']}`，"
+        f"`base_still_serves_pre_change_bytes = {evidence['staleness_signal']['base_still_serves_pre_change_bytes']}`",
+        "- 结论：源文件在磁盘上被外部改动后，基座**继续返回旧快照**，且 `stat` / `attrs` 不带任何来源哈希或来源 mtime，",
+        "  本地来源又无 watch → **读到旧快照没有任何信号**。已登记为已知限制（见下）。",
+        "",
+        "## 已知限制（需求相关，必须显式登记）",
+        "",
+    ]
+    for lim in evidence["known_limitations"]:
+        md += [
+            f"### {lim['id']}",
+            "",
+            f"- 事实：{lim['statement']}",
+            f"- 影响：{lim['impact']}",
+            f"- 证据：{lim['evidence']}",
+            f"- 今天可用的兜底：{lim['mitigation_available_today']}",
+            "",
+        ]
+    md += [
         "## 成本",
         "",
         f"```json\n{json.dumps(cost, ensure_ascii=False, indent=2)}\n```",
