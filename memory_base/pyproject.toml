@@ -17,4 +17,4 @@ packages = ["memory_base"]
 package-dir = {"memory_base" = "."}
 
 [tool.setuptools.package-data]
-memory_base = ["requirements.txt", "skill/SKILL.md"]
+memory_base = ["requirements.txt", "constraints.txt", "skill/SKILL.md"]

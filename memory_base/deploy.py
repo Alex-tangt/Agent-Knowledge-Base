@@ -149,14 +149,12 @@ def install(home: Path, runtime_python: str | None = None, model: str | None = N
         if runtime_python:
             raise FileNotFoundError("Selected runtime Python does not exist")
         subprocess.run([sys.executable, "-m", "venv", str(home / "runtime")], check=True)
-    try:
-        versions = _versions(python)
-    except (subprocess.CalledProcessError, ValueError):
-        versions = {}
-    if versions != PINS:
-        subprocess.run([str(python), "-m", "pip", "install", "-r",
-                        str(Path(__file__).with_name("requirements.txt"))], check=True)
-        versions = _versions(python)
+    # Always let pip apply the verified constraints: matching direct versions
+    # alone cannot detect a changed transitive dependency. Already satisfied
+    # installations retain their packages.
+    subprocess.run([str(python), "-m", "pip", "install", "-r",
+                    str(Path(__file__).with_name("requirements.txt"))], check=True)
+    versions = _versions(python)
     if versions != PINS:
         raise RuntimeError("Runtime versions do not match the deployment pins")
     source_dir = Path(__file__).parent
