@@ -69,6 +69,12 @@ ov restore D:\backup\ov-<date>.ovpack --on-conflict overwrite --vector-mode auto
 #   2) 检索面：     ov grep <marker> -u viking://resources   命中；取回该引用的字节 == 恢复后正文
 #   3) 权限：       只读身份读 200、写 403 PERMISSION_DENIED；范围外私有命名空间读 403
 #   4) 损失范围：   备份点之后写入的条目在恢复后**不存在**（实测）
+#   5) **封存（必做）**：核验一结束，立刻把恢复出来的正文与「检索面返回的字节」另存为不可变副本
+#      （本次 <spike-root>/m5b/sealed/{restored-content.md,retrieval-returned-bytes.md,reference-v1-input.md}），
+#      记录 sha256；**此后不要再往被恢复的那条路径写任何东西**。
+#      权限类写探针一律打 scratch 路径（如 .../note/m5b-writeprobe.md），**不要打在被恢复的正文上**
+#      —— 否则落盘物被覆盖，第三方按路径复算会得到与证据不一致的哈希（本轮踩过）。
+#      复算： python verify_seal.py
 ```
 
 ## 3. 可恢复时间点与数据损失范围

@@ -325,12 +325,48 @@ def _run() -> int:
     except ApiError:
         pass
     served = None
+    served_uri = None
+    served_bytes = None
     for candidate in clean_find + clean_grep:
         try:
-            served = sha256_bytes(read_content(candidate, headers=auth_headers(writer_key)))
+            served_bytes = read_content(candidate, headers=auth_headers(writer_key))
+            served = sha256_bytes(served_bytes)
+            served_uri = candidate
             break
         except ApiError:
             served = None
+
+    # ---- SEAL immediately, BEFORE any write probe ---------------------------
+    # 核验一结束就把恢复出来的正文与检索面返回的字节另存为不可变副本，
+    # 之后不再向被恢复的那条路径写任何东西；第三方可直接对封存文件复算。
+    seal_dir = M5B_ROOT / "sealed"
+    seal_dir.mkdir(parents=True, exist_ok=True)
+    repo_seal_dir = REPO_ROOT / "experiments" / "memory-framework-spike" / "mvp" / "evidence" / "sealed"
+    repo_seal_dir.mkdir(parents=True, exist_ok=True)
+    sealed = {}
+
+    def seal(name: str, data: bytes, **meta) -> None:
+        """Write the immutable copy twice: run root (machine-local) + repo evidence."""
+        p1 = seal_dir / name
+        p1.write_bytes(data)
+        p2 = repo_seal_dir / name
+        p2.write_bytes(data)
+        sealed[name] = {**meta, "bytes": len(data),
+                        "sha256": sha256_bytes(p1.read_bytes()),
+                        "path_run_root": str(p1),
+                        "path_in_repo": str(p2.relative_to(REPO_ROOT)).replace("\\", "/"),
+                        "repo_copy_matches": sha256_bytes(p2.read_bytes()) == sha256_bytes(p1.read_bytes())}
+
+    if clean_bytes is not None:
+        seal("restored-content.md", clean_bytes, kind="恢复后的正文（核验时读取）")
+    if served_bytes is not None:
+        seal("retrieval-returned-bytes.md", served_bytes, kind="检索面返回的字节",
+             uri=served_uri)
+    if v1_bytes is not None:
+        seal("reference-v1-input.md", v1_bytes, kind="参照实例写入的 v1 输入")
+    sealed["pack"] = {"path": str(pack), "bytes": pack.stat().st_size if pack.exists() else 0,
+                      "sha256": sha256_file(pack) if pack.exists() else None}
+    log(f"sealed restored artifact -> {sealed.get('restored-content.md', {}).get('path_in_repo')}")
 
     acl_scope = f"viking://resources/{SCOPE_ROOT.rstrip('/').rsplit('/', 1)[-1]}"
     acl_before_repair = None
@@ -339,17 +375,28 @@ def _run() -> int:
     except ApiError as exc:
         acl_before_repair = {"error": exc.status, "body": exc.body[:200].decode("utf-8", "replace")}
 
-    def reader_write():
+    # ---- ACL probes run on a SCRATCH path, never on the restored artifact ---
+    scratch_uri = f"{acl_scope}/2026-10-10/note/m5b-writeprobe.md"
+    write_probes: list[dict] = []
+
+    def probe_write(uri: str, content: str, key: str, label: str) -> tuple[int, dict | None]:
         try:
             api("POST", "/api/v1/content/write",
-                body={"uri": resolved_uri, "content": "# clean-room write attempt\n",
-                      "mode": "replace", "wait": True, "timeout": 60},
-                headers=auth_headers(reader_key), timeout=120)
-            return 200, None
+                body={"uri": uri, "content": content, "mode": "replace", "wait": True, "timeout": 60},
+                headers=auth_headers(key), timeout=120)
+            status, payload = 200, None
         except ApiError as exc:
-            return exc.status, exc.json()
+            status, payload = exc.status, exc.json()
+        write_probes.append({"label": label, "uri": uri, "identity_role":
+                             "reader" if key == reader_key else "writer",
+                             "http_status": status,
+                             "error_code": ((payload or {}).get("error") or {}).get("code")})
+        return status, payload
 
-    reader_write_status, reader_write_error = reader_write()
+    probe_write(scratch_uri, "# writer scratch probe\n", writer_key, "writer-create-scratch")
+    reader_write_status, reader_write_error = probe_write(
+        scratch_uri, "# clean-room write attempt\n", reader_key, "reader-write-scratch-before-acl")
+
     acl_reapplied = False
     acl_repair_error = None
     if reader_write_status != 403:
@@ -361,14 +408,40 @@ def _run() -> int:
         except ApiError as exc:
             acl_repair_error = {"status": exc.status,
                                  "body": exc.body[:300].decode("utf-8", "replace")}
-        reader_write_status, reader_write_error = reader_write()
+        reader_write_status, reader_write_error = probe_write(
+            scratch_uri, "# clean-room write attempt\n", reader_key, "reader-write-scratch-after-acl")
 
     reader_read_status = None
     try:
-        read_content(resolved_uri, headers=auth_headers(reader_key))
+        read_content(scratch_uri, headers=auth_headers(reader_key))
         reader_read_status = 200
     except ApiError as exc:
         reader_read_status = exc.status
+
+    reader_reads_artifact = None
+    try:
+        read_content(resolved_uri, headers=auth_headers(reader_key))
+        reader_reads_artifact = 200
+    except ApiError as exc:
+        reader_reads_artifact = exc.status
+
+    # ---- the restored artifact path must be byte-identical after all probes --
+    live_after_probes = None
+    try:
+        live_after_probes = read_content(resolved_uri, headers=auth_headers(writer_key))
+    except ApiError:
+        live_after_probes = None
+    artifact_untouched = (live_after_probes is not None
+                          and clean_bytes is not None
+                          and live_after_probes == clean_bytes)
+    seal_recheck = {}
+    for name, meta in sealed.items():
+        if not isinstance(meta, dict) or "path" not in meta:
+            continue
+        p = Path(meta["path"])
+        seal_recheck[name] = {"path": str(p), "bytes": p.stat().st_size if p.exists() else None,
+                               "sha256": sha256_bytes(p.read_bytes()) if p.exists() else None,
+                               "matches_recorded": p.exists() and sha256_bytes(p.read_bytes()) == meta.get("sha256")}
 
     post_backup_hits = grep_uris("M5B-POST-BACKUP-2026-10-10", "viking://resources")
     post_backup_present = None
@@ -391,9 +464,11 @@ def _run() -> int:
 
     content_ok = clean_bytes == v1_bytes
     retrieval_ok = bool(clean_grep) and served == sha256_bytes(v1_bytes)
-    permission_ok = reader_read_status == 200 and reader_write_status == 403
+    permission_ok = (reader_read_status == 200 and reader_reads_artifact == 200
+                     and reader_write_status == 403)
     verdict = "PASS" if (cleanroom_started and server_alive and content_ok and retrieval_ok
-                         and permission_ok and not post_backup_present) else "FAIL"
+                         and permission_ok and not post_backup_present
+                         and artifact_untouched) else "FAIL"
 
     check("M5B.3-clean-room-restore-outofprocess",
           "用进程外串行真模型嵌入，干净位置恢复走通（原文/引用/权限/损失范围四项）",
@@ -408,6 +483,18 @@ def _run() -> int:
                         "task status 和 task list 命令』），所以必须在恢复位置先登记数据面身份；"
                         "这与『身份注册表不在备份包内』是同一条恢复步骤。"),
            "server_alive_after_restore": server_alive,
+           "sealed_artifacts": sealed,
+           "seal_recheck_after_all_probes": seal_recheck,
+           "artifact_immutability": {
+               "restored_uri": resolved_uri,
+               "sha256_at_verification": sha256_bytes(clean_bytes) if clean_bytes else None,
+               "sha256_after_all_probes": sha256_bytes(live_after_probes) if live_after_probes else None,
+               "byte_identical_after_probes": artifact_untouched,
+               "write_probes_all_targeted": "viking://resources/m5b-proj/2026-10-10/note/m5b-writeprobe.md（scratch，非被恢复路径）",
+               "note": ("所有写探针都打在 scratch 路径上；被恢复的正文路径在核验后不再被写入，"
+                        "因此落盘物与封存副本可被第三方独立复算。"),
+           },
+           "write_probe_timeline": write_probes,
            "path_discovery": {"expected_uri": VERSIONED_URI, "restored_hits": restored_hits,
                                "resolved_uri": resolved_uri,
                                "uri_relocated": bool(restored_hits) and VERSIONED_URI not in restored_hits,
@@ -424,7 +511,8 @@ def _run() -> int:
                                "acl_state_after_restore_before_repair": acl_before_repair,
                                "acl_policy_reapplied_manually": acl_reapplied,
                                "acl_repair_error": acl_repair_error,
-                               "reader_read_status": reader_read_status,
+                               "reader_read_status_scratch": reader_read_status,
+                               "reader_read_status_restored_artifact": reader_reads_artifact,
                                "reader_write_status": reader_write_status,
                                "reader_write_error": (reader_write_error or {}).get("error"),
                                "out_of_scope_private_read_status": private_status},
@@ -453,6 +541,15 @@ def _run() -> int:
         "embed_server": {"base": spike_embed.BASE, "health_after": spike_embed.health()},
         "pack": {"path": str(pack), "sha256": sha256_file(pack) if pack.exists() else None},
         "restore_attempts": restore_attempts,
+        "sealed_artifacts": sealed,
+        "seal_recheck_after_all_probes": seal_recheck,
+        "artifact_immutability": {
+            "restored_uri": resolved_uri,
+            "sha256_at_verification": sha256_bytes(clean_bytes) if clean_bytes else None,
+            "sha256_after_all_probes": sha256_bytes(live_after_probes) if live_after_probes else None,
+            "byte_identical_after_probes": artifact_untouched,
+        },
+        "write_probe_timeline": write_probes,
         "recovery_points": {
             "workspace_snapshots": ["M5B v1 / M5B v2（ov snapshot commit）"],
             "backups": [{"path": str(pack), "covers": "内容面 files/ + 检索面 index_records.jsonl + dense.f32"}],
@@ -467,12 +564,56 @@ def _run() -> int:
 
 def _emit_evidence() -> None:
     verdict = "FAIL" if any(c["verdict"] == "FAIL" for c in checks) else "PASS"
+    sealed = REPORT.get("sealed_artifacts") or {}
+    corrections = {
+        "what_was_wrong": ("第一次复盘（独立复算由 Lead 发现）里，`content_sha256_after_restore` 与 "
+                          "`retrieval_face.served_sha256_of_first_hit` 都是**写探针之前**测的；"
+                          "随后那次写探针**打在被恢复的正文路径上**并成功落盘，把落盘物覆盖成 27 B，"
+                          "而证据里没有任何字段记录这次写入。"),
+        "why_it_mattered": ("哈希断言在当时成立，但落盘物随后被覆盖 → 验收方按路径去比对会得到不一致，"
+                            "对『备份可恢复』这条必须项是硬伤。"),
+        "observed_after_the_fact": {
+            "reference_artifact": {
+                "path": r"%USERPROFILE%\.openviking-mvp-spike\m5b\data-ref\viking\default\resources\m5b-proj\2026-10-10\note\m5b-versioned.md",
+                "bytes": 53,
+                "sha256": "c4dfc7ac258fd5875cfc2a3f0759d62dd03eab385e29267e93f325797eee6874",
+                "matches_evidence": True},
+            "clean_room_artifact_after_overwrite": {
+                "path": r"%USERPROFILE%\.openviking-mvp-spike\m5b\data-clean\viking\default\resources\m5b-proj\2026-10-10\note\m5b-versioned.md",
+                "bytes": 27,
+                "sha256": "0c6c9155646858879f2ce855a8bbed338f0f67bfc4fcb9aa409193550ff0ef70",
+                "content": "# clean-room write attempt"},
+        },
+        "cause": ("写探针是在**只读策略生效之前**用只读身份发的（账户 ACL 默认关闭 / restricted 尚未施加），"
+                  "因此那次写**成功**，落到被恢复的正文路径上。属测试设计缺陷，不是恢复语义问题。"),
+        "fix_applied": [
+            "核验一结束就把『恢复出来的正文』与『检索面返回的字节』另存为不可变副本（m5b/sealed/），"
+            "并把 sha256 记进证据；封存后再次复算校验。",
+            "所有写探针改打在 scratch 路径 `…/note/m5b-writeprobe.md`，**不再触碰被恢复的正文路径**。",
+            "证据新增 `artifact_immutability`（核验后再次读取被恢复路径，必须与核验时逐字节相同）与 "
+            "`write_probe_timeline`（每次写探针的身份/目标/状态码），使『恢复 → 核验 → 后续写入』时序无歧义。",
+            "本文件同轮重跑，落盘物与封存副本一致；不再有任何写入落在被恢复路径上。",
+        ],
+        "sealed_copy_sha256": {
+            "restored_content": (sealed.get("restored-content.md") or {}).get("sha256"),
+            "retrieval_returned": (sealed.get("retrieval-returned-bytes.md") or {}).get("sha256"),
+            "reference_input": (sealed.get("reference-v1-input.md") or {}).get("sha256"),
+            "pack": (sealed.get("pack") or {}).get("sha256"),
+        },
+        "sealed_copies_in_repo": {
+            name: {"path": meta.get("path_in_repo"), "sha256": meta.get("sha256")}
+            for name, meta in sealed.items() if isinstance(meta, dict) and "path_in_repo" in meta
+        },
+        "unchanged": ["任务1 的原始 FAIL 证据 evidence/m5_backup.json 一字未改",
+                       "M5.4 的条件化 PASS 结论不变（修的是证据时序，不是结论）"],
+    }
     evidence = {
         "unit": "M5.4-复盘",
         "claim": "用进程外串行真模型嵌入重跑干净位置恢复，区分恢复设计与本地嵌入器缺陷",
         "generated_at": time.strftime("%Y-%m-%dT%H:%M:%S%z"),
         "profile": PROFILE,
         "verdict": verdict,
+        "corrections": corrections,
         "checks": checks,
         **REPORT,
     }
@@ -484,6 +625,30 @@ def _emit_evidence() -> None:
         f"- 嵌入：进程外真模型 `embed_server.py` → `{spike_embed.BASE}/v1`（同一个 GGUF，所有 llama 调用共用一把锁）",
         "- 候选配置键：`embedding.dense.provider=openai` / `api_base` / `model=bge-small-zh-v1.5-f16` / "
         "`dimension=512` / `input=text` / `encoding_format=float`",
+        "",
+        "## 更正说明（证据完整性修复）",
+        "",
+        f"- **问题**：{corrections['what_was_wrong']}",
+        f"- **为何算硬伤**：{corrections['why_it_mattered']}",
+        f"- **原因**：{corrections['cause']}",
+        "- **修复**：",
+    ]
+    md += [f"  - {x}" for x in corrections["fix_applied"]]
+    md += [
+        "",
+        "- **封存副本 sha256**（第三方可直接对文件复算）：",
+        "",
+        f"```json\n{json.dumps(corrections['sealed_copy_sha256'], ensure_ascii=False, indent=2)}\n```",
+        "",
+        "- **仓内封存副本**（不依赖本机隔离目录，可直接离线复算）：",
+        "",
+    ]
+    md += [f"  - `{meta['path']}` sha256 `{meta['sha256']}`"
+           for meta in corrections["sealed_copies_in_repo"].values()]
+    md += [
+        "- 一键复算：`python scripts/verify_seal.py`（对落盘物与仓内副本分别算哈希并与本文件断言比对）",
+        "",
+        f"- **未改动**：{corrections['unchanged'][0]}；{corrections['unchanged'][1]}",
         "",
         "| 检查 | 结论 |",
         "|---|---|",

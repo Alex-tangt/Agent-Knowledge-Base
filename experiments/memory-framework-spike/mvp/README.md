@@ -30,6 +30,12 @@
 - 复盘还暴露了我自己的一个**测试命令错误**：`ov restore` 不接受 `--sudo`（CLI 原文：『--sudo 只支持
   admin、system、reindex、task status 和 task list 命令』）。task-1 后期几轮 M5.4 失败是
   「嵌入崩溃」与「`--sudo` 误用」两个原因叠加；两者都已修正并复测。
+- **另一处测试设计缺陷（已修，证据补记）**：第一版复盘把写探针打在了**被恢复的正文路径**上，且发生在
+  只读策略生效**之前**（账户 ACL 默认关闭），于是写**成功**并覆盖了落盘物（27 B），而证据里没有记录这次写入
+  → 哈希断言当时成立、事后却无法由落盘物复算。现已改为：**核验后先封存**（`m5b/sealed/…` + sha256）、
+  **写探针只打 scratch 路径**、证据新增 `artifact_immutability` 与 `write_probe_timeline`；
+  `m5b_outofprocess_restore.md` 顶部有更正说明。第三方复算脚本 `scripts/verify_seal.py`：
+  落盘物 == 封存副本 == 证据哈希（53 B / `c4dfc7ac…6874`）。
 
 ### 已登记限制（保留，不淡化）
 
