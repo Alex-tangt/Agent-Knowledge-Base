@@ -342,6 +342,118 @@ def run_preflight() -> Dict[str, Any]:
 
 
 # ===========================================================================
+# 附加：CLI 读回模式（执行方 M1.5 用的是 `ov read -o json`）
+# ===========================================================================
+
+def run_cli_read_modes() -> Dict[str, Any]:
+    """核对独立进程 `ov read` 两种输出模式的字节口径。
+
+    执行方 M1.5 声称"独立进程 ov read 逐字节相同"，其命令是 `ov read <uri> -o json`；
+    我方实测默认（人读）输出会**多一个尾随换行**。这里把两种模式都测出来，
+    以便把"逐字节相同"这句话限定到正确的口径上。
+    """
+    run_id = time.strftime("%Y%m%dT%H%M%S") + "-" + secrets.token_hex(3)
+    marker = f"{C.MARKER_PREFIX}-CLI-{run_id}"
+    text = P.make_roundtrip_text(marker)
+    uri = f"viking://user/default/verify-cli/{run_id}/cli.md"
+    obs: Dict[str, Any] = {
+        "run_id": run_id,
+        "uri": uri,
+        "input_bytes": len(text.encode("utf-8")),
+        "input_sha256": E.sha256_text(text),
+    }
+    E.ensure_dirs()
+    E.write_conf_files()
+    E.pin_process_env()  # 必须在任何 SDK 客户端之前：别读到真实 ~/.openviking/ovcli.conf
+    started = E.start_server()
+    obs["start"] = started
+    if not started.get("started"):
+        obs["fatal"] = "实例未启动"
+        return _cli_finish(obs)
+    obs["ready"] = wait_ready()
+    if not obs["ready"].get("ready"):
+        obs["fatal"] = "实例未就绪"
+        return _cli_finish(obs, started)
+
+    consumer = P.Consumer("cli-verify")
+    try:
+        consumer.open()
+        try:
+            obs["write"] = consumer.write(uri, text, mode="create", wait=True)
+            obs["sdk_read_raw_equal"] = consumer.read_raw(uri) == text
+        except Exception as exc:
+            obs["write_error"] = _err(exc)
+    except Exception as exc:
+        obs["fatal"] = f"消费者不可用: {type(exc).__name__}: {exc}"
+        return _cli_finish(obs, started)
+    finally:
+        import contextlib
+
+        with contextlib.suppress(Exception):
+            consumer.close()
+
+    for label, args in (
+        ("default", ["read", uri]),
+        ("json", ["read", uri, "-o", "json"]),
+    ):
+        try:
+            res = run_ov(args)
+        except Exception as exc:
+            obs[f"ov_read_{label}"] = {"error": _err(exc)}
+            continue
+        out = res.get("stdout") or ""
+        raw = out.encode("utf-8")
+        entry: Dict[str, Any] = {
+            "argv": res.get("args"),
+            "rc": res.get("rc"),
+            "stdout_bytes": len(raw),
+            "stdout_sha256": E.sha256_bytes(raw),
+            "byte_identical_to_input": raw == text.encode("utf-8"),
+            "stdout_head": out[:160],
+            "stderr_head": (res.get("stderr") or "")[:160],
+        }
+        if label == "json":
+            try:
+                obj = json.loads(out)
+                entry["json_keys"] = sorted(obj.keys()) if isinstance(obj, dict) else None
+                content = None
+                if isinstance(obj, dict):
+                    for key in ("content", "result", "text", "data"):
+                        val = obj.get(key)
+                        if isinstance(val, str):
+                            content = val
+                            break
+                        if isinstance(val, dict) and isinstance(val.get("content"), str):
+                            content = val["content"]
+                            break
+                if content is not None:
+                    entry["extracted_bytes"] = len(content.encode("utf-8"))
+                    entry["extracted_sha256"] = E.sha256_text(content)
+                    entry["extracted_byte_identical"] = content == text
+            except Exception as exc:
+                entry["json_parse_error"] = f"{type(exc).__name__}: {exc}"
+        obs[f"ov_read_{label}"] = entry
+
+    return _cli_finish(obs, started)
+
+
+def _cli_finish(obs: Dict[str, Any], started: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+    if started and started.get("started"):
+        obs["stop"] = E.stop_server(started.get("pid"), started.get("listener_pid"))
+    payload = {
+        "stage": "cli",
+        "generated_at": time.strftime("%Y-%m-%dT%H:%M:%S%z"),
+        "criteria_sha256": C.criteria_sha256(),
+        "observation": obs,
+    }
+    payload["payload_sha256"] = E.sha256_text(
+        json.dumps({k: v for k, v in payload.items() if k != "payload_sha256"},
+                   ensure_ascii=False, sort_keys=True, default=str)
+    )
+    return payload
+
+
+# ===========================================================================
 # 实跑（隔离实例）
 # ===========================================================================
 
@@ -419,15 +531,7 @@ def run_live(auto_start: bool = True) -> Dict[str, Any]:
     conf = E.write_conf_files()
     obs["conf"] = {k: v for k, v in conf.items()}
     # 驱动器自身的进程环境也钉到隔离配置：SDK/CLI 解析绝不能读到 ~/.openviking 的真实配置
-    import os
-
-    os.environ["OPENVIKING_CONFIG_FILE"] = str(E.SERVER_CONF)
-    os.environ["OPENVIKING_CLI_CONFIG_FILE"] = str(E.CLI_CONF)
-    for key in ("NO_PROXY", "no_proxy"):
-        if key in os.environ:
-            os.environ[key] = ",".join(
-                s for s in os.environ[key].split(",") if s.strip() and "[" not in s and "]" not in s
-            )
+    obs["proxy_env_sanitized"] = E.pin_process_env()
 
     if auto_start:
         started = E.start_server()
@@ -1017,4 +1121,5 @@ def render_markdown(payload: Dict[str, Any]) -> str:
     return "\n".join(lines) + "\n"
 
 
-__all__ = ["run_static", "run_preflight", "run_live", "render_markdown", "wait_ready"]
+__all__ = ["run_static", "run_preflight", "run_live", "run_cli_read_modes",
+           "render_markdown", "wait_ready"]

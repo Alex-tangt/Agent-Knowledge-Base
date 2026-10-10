@@ -124,8 +124,13 @@ def write_text(path: Path, text: str) -> Path:
 # 配置文件（必须无 BOM）
 # ---------------------------------------------------------------------------
 
-def build_conf(workspace: Path) -> Dict[str, Any]:
+def build_conf(
+    workspace: Path, *, auth_mode: str = "dev", root_api_key: Optional[str] = None
+) -> Dict[str, Any]:
     """隔离配置：本机已有缓存的 local embedding，无 vlm 段（不启用云模型）。"""
+    server: Dict[str, Any] = {"host": HOST, "port": PORT, "auth_mode": auth_mode, "workers": 1}
+    if root_api_key is not None:
+        server["root_api_key"] = root_api_key
     return {
         "default_account": "default",
         "default_user": "default",
@@ -140,13 +145,19 @@ def build_conf(workspace: Path) -> Dict[str, Any]:
         "auto_generate_l0": False,
         "auto_generate_l1": False,
         "allow_private_networks": False,
-        "server": {
-            "host": HOST,
-            "port": PORT,
-            "auth_mode": "dev",
-            "workers": 1,
-        },
+        "server": server,
     }
+
+
+def write_authz_conf(path: Path, root_api_key: str) -> Path:
+    """写授权线配置（api_key 模式）。root_api_key 只写进仓外隔离 conf，绝不进证据。"""
+    p = assert_writable(path)
+    p.parent.mkdir(parents=True, exist_ok=True)
+    conf = build_conf(WORKSPACE, auth_mode="api_key", root_api_key=root_api_key)
+    p.write_text(json.dumps(conf, ensure_ascii=False, indent=2), encoding="utf-8")
+    if has_bom(p):
+        raise RuntimeError("授权线配置文件带 BOM")
+    return p
 
 
 def build_cli_conf() -> Dict[str, Any]:
@@ -174,18 +185,48 @@ def write_conf_files() -> Dict[str, str]:
     }
 
 
+def sanitize_proxy_env() -> Dict[str, str]:
+    """按进程去掉 NO_PROXY / no_proxy 里的方括号项，并回写 os.environ。
+
+    已知坑②（交接与 mvp-protocol.md 都记过，本次复核实测又撞上）：宿主 NO_PROXY 含
+    带方括号的 IPv6（如 `[::1]`）时，httpx 建 client 会报 `Invalid port: ':1]'` ——
+    与网络无关，纯粹是 httpx 解析这个语法。隔离实例与驱动器一律先净化。
+    """
+    changed: Dict[str, str] = {}
+    for key in ("NO_PROXY", "no_proxy"):
+        raw = os.environ.get(key)
+        if raw is None:
+            continue
+        kept = [s for s in raw.split(",") if s.strip() and "[" not in s and "]" not in s]
+        cleaned = ",".join(kept)
+        os.environ[key] = cleaned
+        changed[key] = cleaned
+    return changed
+
+
+def pin_process_env(conf_path: Optional[Path] = None) -> Dict[str, str]:
+    """把**驱动器自身进程**也钉到隔离配置，并净化代理环境变量。
+
+    必须做，且必须在创建任何 SDK 客户端**之前**做：
+    - 否则 `openviking_sdk.resolve_client_config` 会去读真实用户配置
+      `~/.openviking/ovcli.conf`（本机实测该文件解析失败 → ValueError: Invalid CLI config）；
+    - NO_PROXY 含方括号 IPv6 会让 httpx 建 client 报 `Invalid port`（已知坑②）。
+    """
+    os.environ["OPENVIKING_CONFIG_FILE"] = str(conf_path or SERVER_CONF)
+    os.environ["OPENVIKING_CLI_CONFIG_FILE"] = str(CLI_CONF)
+    return sanitize_proxy_env()
+
+
 def child_env() -> Dict[str, str]:
     env = dict(os.environ)
     env["OPENVIKING_CONFIG_FILE"] = str(SERVER_CONF)
     env["OPENVIKING_CLI_CONFIG_FILE"] = str(CLI_CONF)
     # 已知坑②：宿主 NO_PROXY 含带方括号的 IPv6 → 内置客户端报 Invalid port。
-    # 按进程去掉方括号项（只影响本次隔离实例）。
-    if "NO_PROXY" in env:
-        kept = [s for s in env["NO_PROXY"].split(",") if s.strip() and "[" not in s and "]" not in s]
-        env["NO_PROXY"] = ",".join(kept)
-    if "no_proxy" in env:
-        kept = [s for s in env["no_proxy"].split(",") if s.strip() and "[" not in s and "]" not in s]
-        env["no_proxy"] = ",".join(kept)
+    for key in ("NO_PROXY", "no_proxy"):
+        if key in env:
+            env[key] = ",".join(
+                s for s in env[key].split(",") if s.strip() and "[" not in s and "]" not in s
+            )
     return env
 
 
@@ -225,13 +266,14 @@ def process_cmdline(pid: int) -> str:
         return f"<cmdline unavailable: {exc}>"
 
 
-def owns_instance(pid: int) -> Dict[str, Any]:
-    """该 PID 是否属于本线隔离实例：命令行必须同时提到本线端口或本线 conf。"""
+def owns_instance(pid: int, conf_path: Optional[Path] = None) -> Dict[str, Any]:
+    """该 PID 是否属于本线隔离实例：命令行必须提到本线端口或指定的本线 conf。"""
     cmd = process_cmdline(pid)
+    conf = str(conf_path or SERVER_CONF)
     return {
         "pid": pid,
         "cmdline": cmd[:600],
-        "owns": (f"--port {PORT}" in cmd) or (str(SERVER_CONF) in cmd)
+        "owns": (f"--port {PORT}" in cmd) or (conf in cmd)
         or (f"port={PORT}" in cmd) or (f":{PORT}" in cmd),
     }
 
@@ -251,9 +293,11 @@ def wait_listener_pid(timeout: int = C.SERVER_READY_TIMEOUT_S) -> Optional[int]:
     return None
 
 
-def start_server() -> Dict[str, Any]:
+def start_server(conf_path: Optional[Path] = None) -> Dict[str, Any]:
     """启动隔离实例；只在本线端口/根上操作。返回 launcher/监听 PID 与日志路径。"""
     ensure_dirs()
+    conf = Path(conf_path) if conf_path else SERVER_CONF
+    assert_writable(conf)
     if port_open():
         return {
             "started": False,
@@ -268,7 +312,7 @@ def start_server() -> Dict[str, Any]:
     if os.name == "nt":
         creationflags = subprocess.CREATE_NEW_PROCESS_GROUP  # type: ignore[attr-defined]
     proc = subprocess.Popen(
-        [str(SERVER_EXE), "--config", str(SERVER_CONF), "--host", HOST, "--port", str(PORT)],
+        [str(SERVER_EXE), "--config", str(conf), "--host", HOST, "--port", str(PORT)],
         cwd=str(VERIFY_ROOT),
         env=child_env(),
         stdout=logf,
@@ -283,6 +327,7 @@ def start_server() -> Dict[str, Any]:
         "launcher_pid": proc.pid,
         "listener_pid": listener,
         "pid_match": listener == proc.pid,
+        "conf": str(conf),
         "log": str(SERVER_LOG),
         "cmd": str(SERVER_EXE),
     }
@@ -291,6 +336,7 @@ def start_server() -> Dict[str, Any]:
 def stop_server(
     expected_pid: Optional[int] = None,
     listener_pid: Optional[int] = None,
+    conf_path: Optional[Path] = None,
 ) -> Dict[str, Any]:
     """停本线隔离实例。
 
@@ -309,7 +355,7 @@ def stop_server(
     if owner is None:
         result.update({"stopped": True, "note": "端口本来就未监听"})
         return result
-    ownership = owns_instance(owner)
+    ownership = owns_instance(owner, conf_path)
     result["ownership"] = ownership
     if not ownership["owns"]:
         result.update(
@@ -329,7 +375,7 @@ def stop_server(
             result.update({"stopped": True, "killed_pids": killed})
             return result
         still = port_listening_pid()
-        if still and still not in killed and owns_instance(still)["owns"]:
+        if still and still not in killed and owns_instance(still, conf_path)["owns"]:
             subprocess.run(["taskkill", "/PID", str(still), "/T", "/F"],
                            capture_output=True, text=True)
             killed.append(still)
@@ -344,7 +390,9 @@ __all__ = [
     "LOGDIR", "EVIDENCE_DIR", "PID_FILE", "SERVER_LOG", "HOST", "PORT", "BASE_URL",
     "assert_writable", "ensure_dirs", "sha256_bytes", "sha256_text", "first_divergence",
     "write_json", "write_text", "build_conf", "build_cli_conf", "has_bom",
-    "write_conf_files", "child_env", "port_listening_pid", "port_open",
+    "write_conf_files", "write_authz_conf", "child_env", "sanitize_proxy_env",
+    "pin_process_env",
+    "port_listening_pid", "port_open",
     "process_cmdline", "owns_instance", "wait_listener_pid",
     "start_server", "stop_server",
 ]

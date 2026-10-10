@@ -33,9 +33,11 @@
 | `verify_criteria.py` | **预注册判定标准**（冻结常量、五条检查逐 probe 规则、机械汇总） |
 | `verify_env.py` | 隔离面：绝对路径、写域守卫 `assert_writable()`、无 BOM 配置、启停（按精确 PID + 端口所有权） |
 | `verify_probe.py` | 观测原语：官方 SDK 消费者、磁盘/git 字节核对、源目录快照、测试内容生成 |
-| `verify_checks.py` | 静态自检 + 仪器预检 + 实跑实现 + Markdown 渲染 |
-| `run_verify.py` | 驱动器（`--stage static` / `--stage preflight` / `--stage live`） |
-| `evidence/` | 落盘证据（静态自检、仪器预检、实跑 JSON、报告） |
+| `verify_checks.py` | 静态自检 + 仪器预检 + CLI 读回模式 + 实跑实现 + Markdown 渲染 |
+| `verify_acl.py` | 授权面独立复核（api_key 模式，自建账户/身份/ACL；ACL-a…e） |
+| `run_verify.py` | 驱动器（`--stage static` / `preflight` / `live` / `acl` / `cli`） |
+| `verify_conclusion.md` | **与执行方证据的逐条比对结论**（一致/不一致/无法复核 + 可能误报点） |
+| `evidence/` | 落盘证据（静态自检、仪器预检、实跑 JSON、ACL、CLI、报告） |
 
 ## 运行
 
@@ -49,12 +51,19 @@ $d  = 'D:\python_work\work2026-4\wk-verify\experiments\memory-spike-verify'
 # 2) 仪器预检（不启服务）：证明扫描/比对工具能测出阳性与阴性（正控 + 负控）
 & $py "$d\run_verify.py" --stage preflight
 
-# 3) 隔离实例实跑（task-1 完成后）
+# 3) 隔离实例实跑五条检查（C1–C5）+ 附加观测（download / 独立进程 ov read）
 & $py "$d\run_verify.py" --stage live
+
+# 4) 授权面独立复核（api_key 模式，自建账户与只读身份）
+& $py "$d\run_verify.py" --stage acl
+
+# 5) CLI 读回模式字节口径（默认 vs -o json）
+& $py "$d\run_verify.py" --stage cli
 ```
 
-> 顺序：`static` → `preflight` → `live`。**预检必须在实跑之前**：它证明"能测出改写、
-> 能测出找不到、git blob 逐字节相等可判、探针清理干净"，否则实跑报 PASS 没有意义。
+> 顺序：`static` → `preflight` → `live`（`acl`/`cli` 独立可跑，各自起停本线实例）。
+> **预检必须在实跑之前**：它证明"能测出改写、能测出找不到、git blob 逐字节相等可判、探针清理干净"，
+> 否则实跑报 PASS 没有意义。
 
 ## 隔离配方（本线专用，绝不与另两条线共用）
 
@@ -111,5 +120,13 @@ $d  = 'D:\python_work\work2026-4\wk-verify\experiments\memory-spike-verify'
 3. `add_resource(parent=...)` 要求 parent 已存在，两次接入都失败却因 `counts [0,0]` 相等被判**空洞 PASS**。修正：要求至少一次接入成功且 ls 成功，否则记 INCONCLUSIVE。
 4. C4b 用了"接入前"的快照作基线，把**我自己**在 C2a 改动源文件造成的 diff 误判成"基座写坏了来源"。修正：基线改为写请求前的即时快照。
 5. C5d 实现比冻结规则更宽（`unavailable` 缺失时仍能 PASS）。修正：严格按规则要求两档同时存在且类型不同。
+6. **证据脱敏函数被用来取凭据**：`_call()` 会把 `user_key` 脱敏成 `"<redacted>"`，我又拿它当 API key 用 ⇒ 一律 `Invalid API Key`。修正：`_call_raw()` 取原值、`_redact()` 只用于写证据。
+7. **账户复用污染"默认值"测量**：ACL 开关是账户级持久设置，复用账户会让第二次运行读到上一次留下的 `acl.enabled=true`，"默认关闭"根本测不到。修正：每次运行用**全新账户**。
+8. **进程环境未钉定**：`openviking_sdk` 会去读**真实** `~/.openviking/ovcli.conf`（本机实测该文件解析失败 → `ValueError: Invalid CLI config … Expecting value`）。修正：抽出 `pin_process_env()`，在任何 SDK 客户端创建**之前**钉定 `OPENVIKING_CONFIG_FILE` / `OPENVIKING_CLI_CONFIG_FILE` 并净化 `NO_PROXY`。
 
-第一轮与第二轮的结果都留在 `evidence/` 里；**只有第二轮（修正后）的结果参与结论**。
+第一轮与第二轮的结果都留在 `evidence/` 里；**只有修正后（第二轮起）的结果参与结论**。
+
+## 交付结论
+
+见 [`verify_conclusion.md`](verify_conclusion.md)：逐条给出"一致 / 不一致 / 无法复核"、
+双方原始证据与"我方发现的执行方可能误报点"。

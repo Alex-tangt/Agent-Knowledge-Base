@@ -188,10 +188,10 @@
     {
       "check": "harness_pinned",
       "detail": {
-        "run_verify.py": "20a08e3d6114c356c4f776386b7c65f4a9d29f0e9f01c3a2caedee0fa52852be",
-        "verify_checks.py": "9b8019a9b01825178df7194b05bb29273f6f8a1f62ee85417236418517ef0152",
+        "run_verify.py": "4d748f760900a7c0f282309300b0d5617d7ef52a49a87e40bc43937c826acd7a",
+        "verify_checks.py": "6808fe1234e6dd8eae7ad0aa52eec1eaf90f2fb74ab7c495a676e29fa3d65049",
         "verify_criteria.py": "a0e4870f94e4e1623d1ed30ec04bc72bbbd10d59d0e58a1b516ce51cde5d6593",
-        "verify_env.py": "c8884f9c3e6f2e29354c137744fee4506b57fb7028b4b4a1098b7a8ebcdbe5ab",
+        "verify_env.py": "237d756458db852945a48835699c9909a9a4aed9930bd5a2be7c7a6cdb9223dc",
         "verify_probe.py": "9c4f464133bee3b569ae58efc193aa075fb6bfac6b6f756e2655a4cf7f9b932b"
       },
       "ok": true
@@ -200,12 +200,12 @@
   "criteria_file_sha256": "a0e4870f94e4e1623d1ed30ec04bc72bbbd10d59d0e58a1b516ce51cde5d6593",
   "criteria_sha256": "17d18b7bbe842da6059b341a41319c11fa2824f30817aa191bc96802174f2f4d",
   "criteria_version": "1.0.0",
-  "generated_at": "2026-10-10T15:43:36+0800",
+  "generated_at": "2026-10-10T16:00:58+0800",
   "harness_sha256": {
-    "run_verify.py": "20a08e3d6114c356c4f776386b7c65f4a9d29f0e9f01c3a2caedee0fa52852be",
-    "verify_checks.py": "9b8019a9b01825178df7194b05bb29273f6f8a1f62ee85417236418517ef0152",
+    "run_verify.py": "4d748f760900a7c0f282309300b0d5617d7ef52a49a87e40bc43937c826acd7a",
+    "verify_checks.py": "6808fe1234e6dd8eae7ad0aa52eec1eaf90f2fb74ab7c495a676e29fa3d65049",
     "verify_criteria.py": "a0e4870f94e4e1623d1ed30ec04bc72bbbd10d59d0e58a1b516ce51cde5d6593",
-    "verify_env.py": "c8884f9c3e6f2e29354c137744fee4506b57fb7028b4b4a1098b7a8ebcdbe5ab",
+    "verify_env.py": "237d756458db852945a48835699c9909a9a4aed9930bd5a2be7c7a6cdb9223dc",
     "verify_probe.py": "9c4f464133bee3b569ae58efc193aa075fb6bfac6b6f756e2655a4cf7f9b932b"
   },
   "isolation": {
@@ -239,7 +239,7 @@
     "UPDATE_POLL_S": 10,
     "UPDATE_WINDOW_S": 120
   },
-  "payload_sha256": "8004b3201273bbe38c229e2bf84759f4cff83ed1f6c0d6a47cc8484041f23f17",
+  "payload_sha256": "0971f5cf0a88accc34f7ee0bd788d67f7769ca1434e4afc974b6e7c4440fe885",
   "pre_registered_at": "2026-10-10T14:20:00+08:00",
   "problems": [],
   "stage": "static",

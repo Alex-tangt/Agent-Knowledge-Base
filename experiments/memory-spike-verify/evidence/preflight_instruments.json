@@ -8,7 +8,7 @@
           "b.md",
           "sub/c.md"
         ],
-        "git_head": "292e7fb966633b60e0db80b261f53d56793eb9c5"
+        "git_head": "300843a849f60347fbbdc7770e14fdabca147bfa"
       },
       "ok": true
     },
@@ -26,7 +26,7 @@
           "C:\\Users\\Tan\\.openviking-mvp-verify\\data\\_preflight_copy.md"
         ],
         "hit": {
-          "file_sha256": "59e5184442ff8260fa1a8a79483aa90ea0d5d5c60c464e8c9526a195705a08c0",
+          "file_sha256": "8bc1fa9040dc99d92f4f3bbddb415f2bb4aefce1f1dbcbfaa00df502dab0c17d",
           "full_offset": 0,
           "path": "C:\\Users\\Tan\\.openviking-mvp-verify\\data\\_preflight_copy.md",
           "size": 72
@@ -49,8 +49,8 @@
       "detail": {
         "exact_blobs": [
           {
-            "blob": "fc0807455d0b5886584512013daf9261384eb054",
-            "blob_sha256": "59e5184442ff8260fa1a8a79483aa90ea0d5d5c60c464e8c9526a195705a08c0",
+            "blob": "8d10525db92bcec2b965a45c43dc707a8bb2d4d5",
+            "blob_sha256": "8bc1fa9040dc99d92f4f3bbddb415f2bb4aefce1f1dbcbfaa00df502dab0c17d",
             "exact_equal_to_input": true,
             "path": "a.md",
             "repo": "C:\\Users\\Tan\\.openviking-mvp-verify\\data\\_preflight_git",
@@ -83,8 +83,8 @@
     }
   ],
   "criteria_sha256": "17d18b7bbe842da6059b341a41319c11fa2824f30817aa191bc96802174f2f4d",
-  "generated_at": "2026-10-10T15:43:39+0800",
-  "payload_sha256": "51059948549be16fdf774717f19646fc2f37c9de705b8a4aa1c574e7074889cd",
+  "generated_at": "2026-10-10T16:01:03+0800",
+  "payload_sha256": "6bac22401fc0f18cfd605f2c73ed112616cfa4dca7fddabe1903d59b1ba702ce",
   "problems": [],
   "stage": "preflight",
   "verdict": "PASS"

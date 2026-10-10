@@ -27,10 +27,40 @@ import verify_env as E  # noqa: E402
 
 def main() -> int:
     ap = argparse.ArgumentParser(description="独立复核：MVP 阶段 1–3 关键结论")
-    ap.add_argument("--stage", choices=["static", "preflight", "live"], default="static")
+    ap.add_argument("--stage", choices=["static", "preflight", "live", "acl", "cli"], default="static")
     ap.add_argument("--no-start", action="store_true",
                     help="live 阶段不自行启服务（假定已在 8783 运行）")
     args = ap.parse_args()
+
+    if args.stage == "cli":
+        payload = V.run_cli_read_modes()
+        out = E.write_json(E.EVIDENCE_DIR / "cli_read_modes.json", payload)
+        obs = payload["observation"]
+        print(json.dumps({"stage": "cli",
+                          "default": {k: v for k, v in (obs.get("ov_read_default") or {}).items()
+                                      if k in ("rc", "stdout_bytes", "byte_identical_to_input")},
+                          "json": {k: v for k, v in (obs.get("ov_read_json") or {}).items()
+                                   if k in ("rc", "stdout_bytes", "byte_identical_to_input",
+                                            "extracted_bytes", "extracted_byte_identical")},
+                          "fatal": obs.get("fatal"),
+                          "payload_sha256": payload["payload_sha256"],
+                          "stop": obs.get("stop"),
+                          "out": str(out)}, ensure_ascii=False, indent=2))
+        return 0 if not obs.get("fatal") else 1
+
+    if args.stage == "acl":
+        import verify_acl as A  # noqa: PLC0415
+
+        payload = A.run_acl()
+        out = E.write_json(E.EVIDENCE_DIR / "acl_independent.json", payload)
+        md = E.write_text(E.EVIDENCE_DIR / "acl_independent.md", A.render_markdown(payload))
+        claims = {c["claim"]: c["verdict"] for c in payload["observation"].get("claims", [])}
+        print(json.dumps({"stage": "acl", "claims": claims,
+                          "fatal": payload["observation"].get("fatal"),
+                          "payload_sha256": payload["payload_sha256"],
+                          "stop": payload["observation"].get("stop"),
+                          "out": str(out), "md": str(md)}, ensure_ascii=False, indent=2))
+        return 0 if claims and all(v == "PASS" for v in claims.values()) else 2
 
     if args.stage == "preflight":
         payload = V.run_preflight()
