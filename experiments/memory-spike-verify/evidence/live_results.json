@@ -1,0 +1,1545 @@
+{
+  "criteria_file_sha256": "a0e4870f94e4e1623d1ed30ec04bc72bbbd10d59d0e58a1b516ce51cde5d6593",
+  "criteria_sha256": "17d18b7bbe842da6059b341a41319c11fa2824f30817aa191bc96802174f2f4d",
+  "criteria_version": "1.0.0",
+  "generated_at": "2026-10-10T15:43:13+0800",
+  "harness_sha256": {
+    "run_verify.py": "20a08e3d6114c356c4f776386b7c65f4a9d29f0e9f01c3a2caedee0fa52852be",
+    "verify_checks.py": "9b8019a9b01825178df7194b05bb29273f6f8a1f62ee85417236418517ef0152",
+    "verify_criteria.py": "a0e4870f94e4e1623d1ed30ec04bc72bbbd10d59d0e58a1b516ce51cde5d6593",
+    "verify_env.py": "c8884f9c3e6f2e29354c137744fee4506b57fb7028b4b4a1098b7a8ebcdbe5ab",
+    "verify_probe.py": "9c4f464133bee3b569ae58efc193aa075fb6bfac6b6f756e2655a4cf7f9b932b"
+  },
+  "isolation": {
+    "cli_config": "ovcli.conf",
+    "cloud_models": "disabled (embedding provider=local, 无 vlm 段)",
+    "forbidden_paths": [
+      "%USERPROFILE%\\.config\\opencode\\knowledge",
+      "%USERPROFILE%\\.config\\opencode\\opencode.json",
+      "%USERPROFILE%\\.openviking",
+      "<main>\\memory_agent\\vector_db",
+      "<wk-spike>",
+      "<wk-host>"
+    ],
+    "forbidden_ports": [
+      8765,
+      8781,
+      8782
+    ],
+    "host": "127.0.0.1",
+    "port": 8783,
+    "server_config": "ov.conf",
+    "service": "openviking-server (候选实现, 隔离实例)",
+    "verify_root_default": "%USERPROFILE%\\.openviking-mvp-verify",
+    "verify_root_env": "OV_VERIFY_ROOT"
+  },
+  "observation": {
+    "C1": {
+      "default_equal": true,
+      "default_sha256": "7889b2ade8fd1767894ec397b5d88ab8befca137d13bc9c20853b71078dbd605",
+      "disk": {
+        "files_scanned": 143,
+        "files_skipped_over_limit": 0,
+        "full_content_hits": [
+          {
+            "file_sha256": "7889b2ade8fd1767894ec397b5d88ab8befca137d13bc9c20853b71078dbd605",
+            "full_offset": 0,
+            "path": "C:\\Users\\Tan\\.openviking-mvp-verify\\data\\viking\\default\\user\\default\\verify\\20261010T153910-e48bc7\\roundtrip.md",
+            "size": 519
+          }
+        ],
+        "marker_hits": [
+          {
+            "file_sha256": "7889b2ade8fd1767894ec397b5d88ab8befca137d13bc9c20853b71078dbd605",
+            "marker_offset": 21,
+            "path": "C:\\Users\\Tan\\.openviking-mvp-verify\\data\\viking\\default\\user\\default\\verify\\20261010T153910-e48bc7\\roundtrip.md",
+            "size": 519,
+            "window_utf8": "# 原文往返核验 OVVERIFY-RT-MARKER-20261010T153910-e48bc7\n\n这是一条用于独立复核的中文原文，包含 Markdown 语法与唯一标记。\n\n- 唯一标记：`OVVERIFY-R"
+          }
+        ],
+        "root": "C:\\Users\\Tan\\.openviking-mvp-verify\\data"
+      },
+      "git": {
+        "blobs": [],
+        "examined": 0,
+        "repos": [],
+        "truncated": false
+      },
+      "input_bytes": 519,
+      "input_sha256": "7889b2ade8fd1767894ec397b5d88ab8befca137d13bc9c20853b71078dbd605",
+      "raw_equal": true,
+      "raw_sha256": "7889b2ade8fd1767894ec397b5d88ab8befca137d13bc9c20853b71078dbd605",
+      "uri": "viking://user/default/verify/20261010T153910-e48bc7/roundtrip.md",
+      "write_result": {
+        "content_updated": true,
+        "context_type": "resource",
+        "mode": "create",
+        "queue_status": {
+          "Embedding": {
+            "error_count": 0,
+            "errors": [],
+            "processed": 3,
+            "requeue_count": 0
+          },
+          "Semantic": {
+            "error_count": 0,
+            "errors": [],
+            "processed": 1,
+            "requeue_count": 0
+          }
+        },
+        "root_uri": "viking://user/default/verify/20261010T153910-e48bc7",
+        "semantic_status": "complete",
+        "uri": "viking://user/default/verify/20261010T153910-e48bc7/roundtrip.md",
+        "vector_status": "complete",
+        "written_bytes": 519
+      }
+    },
+    "C1_evidence": "D:\\python_work\\work2026-4\\wk-verify\\experiments\\memory-spike-verify\\evidence\\live\\C1_roundtrip.json",
+    "C1d": {
+      "equal": true,
+      "sha256": "7889b2ade8fd1767894ec397b5d88ab8befca137d13bc9c20853b71078dbd605"
+    },
+    "C2": {
+      "add_result": {
+        "context_count": 7,
+        "errors": [],
+        "meta": {
+          "file_count": 3,
+          "repo_name": "repository"
+        },
+        "queue_status": {
+          "Embedding": {
+            "error_count": 0,
+            "errors": [],
+            "processed": 7,
+            "requeue_count": 0
+          },
+          "Semantic": {
+            "error_count": 0,
+            "errors": [],
+            "processed": 1,
+            "requeue_count": 0
+          }
+        },
+        "root_uri": "viking://resources/verify-20261010T153910-e48bc7/src",
+        "source_path": "source-tree",
+        "status": "success",
+        "telemetry": {
+          "id": "tm_6a068c65c969487982d3bbae85ebf201",
+          "summary": {
+            "duration_ms": 842.095,
+            "operation": "add_resource_job",
+            "queue": {
+              "embedding": {
+                "execute": {
+                  "duration_ms": 525.82
+                },
+                "processed": 7,
+                "queue_wait": {
+                  "duration_ms": 1538.457
+                }
+              },
+              "semantic": {
+                "execute": {
+                  "duration_ms": 386.861
+                },
+                "processed": 1,
+                "queue_wait": {
+                  "duration_ms": 68.009
+                }
+              }
+            },
+            "resource": {
+              "content_commit": {
+                "duration_ms": 11.827
+              },
+              "derived_enqueue": {
+                "duration_ms": 2.165
+              },
+              "embedding": {
+                "execute": {
+                  "duration_ms": 525.82
+                },
+                "queue_wait": {
+                  "duration_ms": 1538.457
+                }
+              },
+              "flags": {
+                "build_index": true,
+                "summarize": false,
+                "wait": false,
+                "watch_enabled": false
+              },
+              "parse_artifact": {
+                "duration_ms": 255.617
+              },
+              "semantic": {
+                "execute": {
+                  "duration_ms": 386.861
+                },
+                "queue_wait": {
+                  "duration_ms": 68.009
+                }
+              },
+              "source_execute": {
+                "duration_ms": 332.223
+              },
+              "source_prepare": {
+                "duration_ms": 21.972
+              },
+              "target_resolve": {
+                "duration_ms": 2.102
+              },
+              "total": {
+                "duration_ms": 842.091
+              },
+              "update_plan": {
+                "artifact_inventory": {
+                  "duration_ms": 19.049
+                },
+                "diff_and_compile": {
+                  "duration_ms": 1.048
+                },
+                "duration_ms": 21.557,
+                "rnfv_snapshot": {
+                  "duration_ms": 1.088
+                }
+              }
+            },
+            "semantic_nodes": {
+              "done": 5,
+              "total": 5
+            },
+            "status": "ok"
+          }
+        },
+        "temp_uri": "viking://temp/default/10101540_ba55ce/repository"
+      },
+      "disk_copy_scan": {
+        "files_scanned": 155,
+        "files_skipped_over_limit": 0,
+        "full_content_hits": [
+          {
+            "file_sha256": "5b687743ed4da48d8caf34ca519c8772f39d99323168101db0994f6d34d53953",
+            "full_offset": 0,
+            "path": "C:\\Users\\Tan\\.openviking-mvp-verify\\data\\viking\\default\\resources\\verify-20261010T153910-e48bc7\\src\\a.md",
+            "size": 78
+          }
+        ],
+        "marker_hits": [
+          {
+            "file_sha256": "5b687743ed4da48d8caf34ca519c8772f39d99323168101db0994f6d34d53953",
+            "marker_offset": 17,
+            "path": "C:\\Users\\Tan\\.openviking-mvp-verify\\data\\viking\\default\\resources\\verify-20261010T153910-e48bc7\\src\\a.md",
+            "size": 78,
+            "window_utf8": "# 来源文件 A OVVERIFY-RT-MARKER-20261010T153910-e48bc7\n\n原始正文 A。\n"
+          },
+          {
+            "file_sha256": "6720a7542bfbbdcfc492bfac4f5fb546a6310ea2589fc5a398a71c616fd8f06f",
+            "marker_offset": 17,
+            "path": "C:\\Users\\Tan\\.openviking-mvp-verify\\data\\viking\\default\\resources\\verify-20261010T153910-e48bc7\\src\\b.md",
+            "size": 78,
+            "window_utf8": "# 来源文件 B OVVERIFY-RT-MARKER-20261010T153910-e48bc7\n\n原始正文 B。\n"
+          },
+          {
+            "file_sha256": "ecbfbe18056b31a07de988c5116970b3d5a539470a94c0b2075e9b3fd9307de2",
+            "marker_offset": 17,
+            "path": "C:\\Users\\Tan\\.openviking-mvp-verify\\data\\viking\\default\\resources\\verify-20261010T153910-e48bc7\\src\\sub\\c.md",
+            "size": 78,
+            "window_utf8": "# 来源文件 C OVVERIFY-RT-MARKER-20261010T153910-e48bc7\n\n原始正文 C。\n"
+          },
+          {
+            "file_sha256": "7889b2ade8fd1767894ec397b5d88ab8befca137d13bc9c20853b71078dbd605",
+            "marker_offset": 21,
+            "path": "C:\\Users\\Tan\\.openviking-mvp-verify\\data\\viking\\default\\user\\default\\verify\\20261010T153910-e48bc7\\roundtrip.md",
+            "size": 519,
+            "window_utf8": "# 原文往返核验 OVVERIFY-RT-MARKER-20261010T153910-e48bc7\n\n这是一条用于独立复核的中文原文，包含 Markdown 语法与唯一标记。\n\n- 唯一标记：`OVVERIFY-R"
+          }
+        ],
+        "root": "C:\\Users\\Tan\\.openviking-mvp-verify\\data"
+      },
+      "imported_a_bytes": 78,
+      "imported_a_equal_source_bytes": true,
+      "imported_a_read_sha256": "5b687743ed4da48d8caf34ca519c8772f39d99323168101db0994f6d34d53953",
+      "ls_imported": [
+        "viking://resources/verify-20261010T153910-e48bc7/src/sub",
+        "viking://resources/verify-20261010T153910-e48bc7/src/.abstract.md",
+        "viking://resources/verify-20261010T153910-e48bc7/src/.overview.md",
+        "viking://resources/verify-20261010T153910-e48bc7/src/a.md",
+        "viking://resources/verify-20261010T153910-e48bc7/src/b.md"
+      ],
+      "modified_sha256": "709a487f411de9de6807f2a4e407638c0cc615b7f52980bc04eeb57434d1a17c",
+      "propagated_within_window": false,
+      "propagation": [
+        {
+          "equal_to_source_bytes": false,
+          "read_bytes": 78,
+          "read_sha256": "5b687743ed4da48d8caf34ca519c8772f39d99323168101db0994f6d34d53953",
+          "t": 0
+        },
+        {
+          "equal_to_source_bytes": false,
+          "read_bytes": 78,
+          "read_sha256": "5b687743ed4da48d8caf34ca519c8772f39d99323168101db0994f6d34d53953",
+          "t": 10
+        },
+        {
+          "equal_to_source_bytes": false,
+          "read_bytes": 78,
+          "read_sha256": "5b687743ed4da48d8caf34ca519c8772f39d99323168101db0994f6d34d53953",
+          "t": 20
+        },
+        {
+          "equal_to_source_bytes": false,
+          "read_bytes": 78,
+          "read_sha256": "5b687743ed4da48d8caf34ca519c8772f39d99323168101db0994f6d34d53953",
+          "t": 30
+        },
+        {
+          "equal_to_source_bytes": false,
+          "read_bytes": 78,
+          "read_sha256": "5b687743ed4da48d8caf34ca519c8772f39d99323168101db0994f6d34d53953",
+          "t": 40
+        },
+        {
+          "equal_to_source_bytes": false,
+          "read_bytes": 78,
+          "read_sha256": "5b687743ed4da48d8caf34ca519c8772f39d99323168101db0994f6d34d53953",
+          "t": 50
+        },
+        {
+          "equal_to_source_bytes": false,
+          "read_bytes": 78,
+          "read_sha256": "5b687743ed4da48d8caf34ca519c8772f39d99323168101db0994f6d34d53953",
+          "t": 60
+        },
+        {
+          "equal_to_source_bytes": false,
+          "read_bytes": 78,
+          "read_sha256": "5b687743ed4da48d8caf34ca519c8772f39d99323168101db0994f6d34d53953",
+          "t": 70
+        },
+        {
+          "equal_to_source_bytes": false,
+          "read_bytes": 78,
+          "read_sha256": "5b687743ed4da48d8caf34ca519c8772f39d99323168101db0994f6d34d53953",
+          "t": 80
+        },
+        {
+          "equal_to_source_bytes": false,
+          "read_bytes": 78,
+          "read_sha256": "5b687743ed4da48d8caf34ca519c8772f39d99323168101db0994f6d34d53953",
+          "t": 90
+        },
+        {
+          "equal_to_source_bytes": false,
+          "read_bytes": 78,
+          "read_sha256": "5b687743ed4da48d8caf34ca519c8772f39d99323168101db0994f6d34d53953",
+          "t": 100
+        },
+        {
+          "equal_to_source_bytes": false,
+          "read_bytes": 78,
+          "read_sha256": "5b687743ed4da48d8caf34ca519c8772f39d99323168101db0994f6d34d53953",
+          "t": 110
+        },
+        {
+          "equal_to_source_bytes": false,
+          "read_bytes": 78,
+          "read_sha256": "5b687743ed4da48d8caf34ca519c8772f39d99323168101db0994f6d34d53953",
+          "t": 120
+        }
+      ],
+      "read_a_imported": "# 来源文件 A OVVERIFY-RT-MARKER-20261010T153910-e48bc7\n\n原始正文 A。\n",
+      "source": "C:\\Users\\Tan\\.openviking-mvp-verify\\source-tree",
+      "source_a_bytes_sha256": "5b687743ed4da48d8caf34ca519c8772f39d99323168101db0994f6d34d53953",
+      "to": "viking://resources/verify-20261010T153910-e48bc7/src"
+    },
+    "C2_evidence": "D:\\python_work\\work2026-4\\wk-verify\\experiments\\memory-spike-verify\\evidence\\live\\C2_form.json",
+    "C2c": {
+      "add_1": {
+        "context_count": 7,
+        "errors": [],
+        "meta": {
+          "file_count": 3,
+          "repo_name": "repository"
+        },
+        "queue_status": {
+          "Embedding": {
+            "error_count": 0,
+            "errors": [],
+            "processed": 7,
+            "requeue_count": 0
+          },
+          "Semantic": {
+            "error_count": 0,
+            "errors": [],
+            "processed": 1,
+            "requeue_count": 0
+          }
+        },
+        "root_uri": "viking://resources/verify-20261010T153910-e48bc7/dup-parent/source-tree",
+        "source_path": "source-tree",
+        "status": "success",
+        "telemetry": {
+          "id": "tm_5642f463714043f38211e0ad70f85b1f",
+          "summary": {
+            "duration_ms": 828.003,
+            "operation": "add_resource_job",
+            "queue": {
+              "embedding": {
+                "execute": {
+                  "duration_ms": 510.993
+                },
+                "processed": 7,
+                "queue_wait": {
+                  "duration_ms": 1669.581
+                }
+              },
+              "semantic": {
+                "execute": {
+                  "duration_ms": 387.119
+                },
+                "processed": 1,
+                "queue_wait": {
+                  "duration_ms": 20.302
+                }
+              }
+            },
+            "resource": {
+              "content_commit": {
+                "duration_ms": 10.891
+              },
+              "derived_enqueue": {
+                "duration_ms": 1.883
+              },
+              "embedding": {
+                "execute": {
+                  "duration_ms": 510.993
+                },
+                "queue_wait": {
+                  "duration_ms": 1669.581
+                }
+              },
+              "flags": {
+                "build_index": true,
+                "summarize": false,
+                "wait": false,
+                "watch_enabled": false
+              },
+              "parse_artifact": {
+                "duration_ms": 303.974
+              },
+              "semantic": {
+                "execute": {
+                  "duration_ms": 387.119
+                },
+                "queue_wait": {
+                  "duration_ms": 20.302
+                }
+              },
+              "source_execute": {
+                "duration_ms": 372.185
+              },
+              "source_prepare": {
+                "duration_ms": 17.486
+              },
+              "target_resolve": {
+                "duration_ms": 1.333
+              },
+              "total": {
+                "duration_ms": 827.994
+              },
+              "update_plan": {
+                "artifact_inventory": {
+                  "duration_ms": 18.613
+                },
+                "diff_and_compile": {
+                  "duration_ms": 0.738
+                },
+                "duration_ms": 20.341,
+                "rnfv_snapshot": {
+                  "duration_ms": 0.91
+                }
+              }
+            },
+            "semantic_nodes": {
+              "done": 5,
+              "total": 5
+            },
+            "status": "ok"
+          }
+        },
+        "temp_uri": "viking://temp/default/10101542_51d391/repository"
+      },
+      "add_2": {
+        "context_count": 7,
+        "errors": [],
+        "meta": {
+          "file_count": 3,
+          "repo_name": "repository"
+        },
+        "queue_status": {
+          "Embedding": {
+            "error_count": 0,
+            "errors": [],
+            "processed": 7,
+            "requeue_count": 0
+          },
+          "Semantic": {
+            "error_count": 0,
+            "errors": [],
+            "processed": 1,
+            "requeue_count": 0
+          }
+        },
+        "root_uri": "viking://resources/verify-20261010T153910-e48bc7/dup-parent/source-tree_1",
+        "source_path": "source-tree",
+        "status": "success",
+        "telemetry": {
+          "id": "tm_96897aafb76f467da4a31825bc2f7707",
+          "summary": {
+            "duration_ms": 844.677,
+            "operation": "add_resource_job",
+            "queue": {
+              "embedding": {
+                "execute": {
+                  "duration_ms": 530.129
+                },
+                "processed": 7,
+                "queue_wait": {
+                  "duration_ms": 1648.945
+                }
+              },
+              "semantic": {
+                "execute": {
+                  "duration_ms": 372.636
+                },
+                "processed": 1,
+                "queue_wait": {
+                  "duration_ms": 97.449
+                }
+              }
+            },
+            "resource": {
+              "content_commit": {
+                "duration_ms": 11.693
+              },
+              "derived_enqueue": {
+                "duration_ms": 2.318
+              },
+              "embedding": {
+                "execute": {
+                  "duration_ms": 530.129
+                },
+                "queue_wait": {
+                  "duration_ms": 1648.945
+                }
+              },
+              "flags": {
+                "build_index": true,
+                "summarize": false,
+                "wait": false,
+                "watch_enabled": false
+              },
+              "parse_artifact": {
+                "duration_ms": 266.129
+              },
+              "semantic": {
+                "execute": {
+                  "duration_ms": 372.636
+                },
+                "queue_wait": {
+                  "duration_ms": 97.449
+                }
+              },
+              "source_execute": {
+                "duration_ms": 324.757
+              },
+              "source_prepare": {
+                "duration_ms": 19.466
+              },
+              "target_resolve": {
+                "duration_ms": 1.432
+              },
+              "total": {
+                "duration_ms": 844.673
+              },
+              "update_plan": {
+                "artifact_inventory": {
+                  "duration_ms": 5.627
+                },
+                "diff_and_compile": {
+                  "duration_ms": 0.684
+                },
+                "duration_ms": 7.873,
+                "rnfv_snapshot": {
+                  "duration_ms": 1.486
+                }
+              }
+            },
+            "semantic_nodes": {
+              "done": 5,
+              "total": 5
+            },
+            "status": "ok"
+          }
+        },
+        "temp_uri": "viking://temp/default/10101542_2e5ba2/repository"
+      },
+      "adds_succeeded": 2,
+      "counts": [
+        3,
+        4
+      ],
+      "ls_after_1": [
+        "viking://resources/verify-20261010T153910-e48bc7/dup-parent/source-tree",
+        "viking://resources/verify-20261010T153910-e48bc7/dup-parent/.abstract.md",
+        "viking://resources/verify-20261010T153910-e48bc7/dup-parent/.overview.md"
+      ],
+      "ls_after_2": [
+        "viking://resources/verify-20261010T153910-e48bc7/dup-parent/source-tree",
+        "viking://resources/verify-20261010T153910-e48bc7/dup-parent/source-tree_1",
+        "viking://resources/verify-20261010T153910-e48bc7/dup-parent/.abstract.md",
+        "viking://resources/verify-20261010T153910-e48bc7/dup-parent/.overview.md"
+      ],
+      "ls_succeeded": 2,
+      "mkdir": null,
+      "parent": "viking://resources/verify-20261010T153910-e48bc7/dup-parent"
+    },
+    "C3": {
+      "create_first": {
+        "content_updated": true,
+        "context_type": "resource",
+        "mode": "create",
+        "queue_status": {
+          "Embedding": {
+            "error_count": 0,
+            "errors": [],
+            "processed": 3,
+            "requeue_count": 0
+          },
+          "Semantic": {
+            "error_count": 0,
+            "errors": [],
+            "processed": 1,
+            "requeue_count": 0
+          }
+        },
+        "root_uri": "viking://user/default/verify/20261010T153910-e48bc7/idem",
+        "semantic_status": "complete",
+        "uri": "viking://user/default/verify/20261010T153910-e48bc7/idem/create-twice.md",
+        "vector_status": "complete",
+        "written_bytes": 519
+      },
+      "create_name_count": 1,
+      "create_second_error": {
+        "exception": "AlreadyExistsError",
+        "message": "File already exists: viking://user/default/verify/20261010T153910-e48bc7/idem/create-twice.md",
+        "module": "openviking_sdk.errors"
+      },
+      "ls_idem_parent": [
+        "viking://user/default/verify/20261010T153910-e48bc7/idem/.abstract.md",
+        "viking://user/default/verify/20261010T153910-e48bc7/idem/.overview.md",
+        "viking://user/default/verify/20261010T153910-e48bc7/idem/replace-twice.md"
+      ],
+      "ls_idem_parent_2": [
+        "viking://user/default/verify/20261010T153910-e48bc7/idem/.abstract.md",
+        "viking://user/default/verify/20261010T153910-e48bc7/idem/.overview.md",
+        "viking://user/default/verify/20261010T153910-e48bc7/idem/create-twice.md",
+        "viking://user/default/verify/20261010T153910-e48bc7/idem/replace-twice.md"
+      ],
+      "ls_to_parent": [
+        "viking://resources/verify-20261010T153910-e48bc7/dup-parent",
+        "viking://resources/verify-20261010T153910-e48bc7/idem-src",
+        "viking://resources/verify-20261010T153910-e48bc7/src",
+        "viking://resources/verify-20261010T153910-e48bc7/.abstract.md",
+        "viking://resources/verify-20261010T153910-e48bc7/.overview.md"
+      ],
+      "replace_name_count": 1,
+      "replace_write_1": {
+        "content_updated": true,
+        "context_type": "resource",
+        "mode": "replace",
+        "queue_status": {
+          "Embedding": {
+            "error_count": 0,
+            "errors": [],
+            "processed": 3,
+            "requeue_count": 0
+          },
+          "Semantic": {
+            "error_count": 0,
+            "errors": [],
+            "processed": 1,
+            "requeue_count": 0
+          }
+        },
+        "root_uri": "viking://user/default/verify/20261010T153910-e48bc7/idem",
+        "semantic_status": "complete",
+        "uri": "viking://user/default/verify/20261010T153910-e48bc7/idem/replace-twice.md",
+        "vector_status": "complete",
+        "written_bytes": 519
+      },
+      "replace_write_2": {
+        "content_updated": true,
+        "context_type": "resource",
+        "mode": "replace",
+        "queue_status": {
+          "Embedding": {
+            "error_count": 0,
+            "errors": [],
+            "processed": 3,
+            "requeue_count": 0
+          },
+          "Semantic": {
+            "error_count": 0,
+            "errors": [],
+            "processed": 1,
+            "requeue_count": 0
+          }
+        },
+        "root_uri": "viking://user/default/verify/20261010T153910-e48bc7/idem",
+        "semantic_status": "complete",
+        "uri": "viking://user/default/verify/20261010T153910-e48bc7/idem/replace-twice.md",
+        "vector_status": "complete",
+        "written_bytes": 519
+      },
+      "request_id_probe": {
+        "body": "{\"status\":\"error\",\"error\":{\"code\":\"INVALID_ARGUMENT\",\"message\":\"Invalid request parameters: body.request_id: Extra inputs are not permitted\",\"details\":{\"validation_errors\":[{\"loc\":[\"body\",\"request_id\"],\"message\":\"Extra inputs are not permitted\",\"type\":\"extra_forbidden\"}]}}}",
+        "status": 400
+      },
+      "to": "viking://resources/verify-20261010T153910-e48bc7/idem-src",
+      "to_add_1": {
+        "context_count": 7,
+        "errors": [],
+        "meta": {
+          "file_count": 3,
+          "repo_name": "repository"
+        },
+        "queue_status": {
+          "Embedding": {
+            "error_count": 0,
+            "errors": [],
+            "processed": 7,
+            "requeue_count": 0
+          },
+          "Semantic": {
+            "error_count": 0,
+            "errors": [],
+            "processed": 1,
+            "requeue_count": 0
+          }
+        },
+        "root_uri": "viking://resources/verify-20261010T153910-e48bc7/idem-src",
+        "source_path": "source-tree",
+        "status": "success",
+        "telemetry": {
+          "id": "tm_26fe5c6e4628498ab4c9a5ff3f58e648",
+          "summary": {
+            "duration_ms": 586.513,
+            "operation": "add_resource_job",
+            "queue": {
+              "embedding": {
+                "execute": {
+                  "duration_ms": 472.674
+                },
+                "processed": 7,
+                "queue_wait": {
+                  "duration_ms": 218.949
+                }
+              },
+              "semantic": {
+                "execute": {
+                  "duration_ms": 145.742
+                },
+                "processed": 1,
+                "queue_wait": {
+                  "duration_ms": 56.698
+                }
+              }
+            },
+            "resource": {
+              "content_commit": {
+                "duration_ms": 11.488
+              },
+              "derived_enqueue": {
+                "duration_ms": 1.732
+              },
+              "embedding": {
+                "execute": {
+                  "duration_ms": 472.674
+                },
+                "queue_wait": {
+                  "duration_ms": 218.949
+                }
+              },
+              "flags": {
+                "build_index": true,
+                "summarize": false,
+                "wait": false,
+                "watch_enabled": false
+              },
+              "parse_artifact": {
+                "duration_ms": 265.755
+              },
+              "semantic": {
+                "execute": {
+                  "duration_ms": 145.742
+                },
+                "queue_wait": {
+                  "duration_ms": 56.698
+                }
+              },
+              "source_execute": {
+                "duration_ms": 320.903
+              },
+              "source_prepare": {
+                "duration_ms": 25.462
+              },
+              "target_resolve": {
+                "duration_ms": 1.543
+              },
+              "total": {
+                "duration_ms": 586.509
+              },
+              "update_plan": {
+                "artifact_inventory": {
+                  "duration_ms": 7.266
+                },
+                "diff_and_compile": {
+                  "duration_ms": 0.803
+                },
+                "duration_ms": 9.364,
+                "rnfv_snapshot": {
+                  "duration_ms": 1.198
+                }
+              }
+            },
+            "semantic_nodes": {
+              "done": 5,
+              "total": 5
+            },
+            "status": "ok"
+          }
+        },
+        "temp_uri": "viking://temp/default/10101542_d4817d/repository"
+      },
+      "to_add_2": {
+        "context_count": 0,
+        "errors": [],
+        "meta": {
+          "file_count": 3,
+          "repo_name": "repository"
+        },
+        "queue_status": {
+          "Embedding": {
+            "error_count": 0,
+            "errors": [],
+            "processed": 0,
+            "requeue_count": 0
+          },
+          "Semantic": {
+            "error_count": 0,
+            "errors": [],
+            "processed": 0,
+            "requeue_count": 0
+          }
+        },
+        "root_uri": "viking://resources/verify-20261010T153910-e48bc7/idem-src",
+        "source_path": "source-tree",
+        "status": "success",
+        "telemetry": {
+          "id": "tm_2e4c969da16e47059feab103bc8eb67b",
+          "summary": {
+            "duration_ms": 341.437,
+            "operation": "add_resource_job",
+            "resource": {
+              "content_commit": {
+                "duration_ms": 0.011
+              },
+              "derived_enqueue": {
+                "duration_ms": 2.667
+              },
+              "flags": {
+                "build_index": true,
+                "summarize": false,
+                "wait": false,
+                "watch_enabled": false
+              },
+              "parse_artifact": {
+                "duration_ms": 262.496
+              },
+              "source_execute": {
+                "duration_ms": 311.139
+              },
+              "source_prepare": {
+                "duration_ms": 18.742
+              },
+              "target_resolve": {
+                "duration_ms": 1.867
+              },
+              "total": {
+                "duration_ms": 341.434
+              },
+              "update_plan": {
+                "artifact_inventory": {
+                  "duration_ms": 6.754
+                },
+                "diff_and_compile": {
+                  "duration_ms": 0.558
+                },
+                "duration_ms": 11.064,
+                "rnfv_snapshot": {
+                  "duration_ms": 3.651
+                }
+              }
+            },
+            "status": "ok"
+          }
+        },
+        "temp_uri": "viking://temp/default/10101542_4eaea5/repository"
+      },
+      "to_entry_count": 1
+    },
+    "C3_evidence": "D:\\python_work\\work2026-4\\wk-verify\\experiments\\memory-spike-verify\\evidence\\live\\C3_duplicate.json",
+    "C4b": {
+      "accepted": true,
+      "baseline": "32d60c24a4d60119efa5aece883946cf1b66f941ce4bafb0200672773e7611cd",
+      "read_back": "INJECTED-BY-VERIFY\n",
+      "source_diff_vs_before_write": {
+        "added": [],
+        "after": {
+          "file_count": 3,
+          "files": {
+            "a.md": "709a487f411de9de6807f2a4e407638c0cc615b7f52980bc04eeb57434d1a17c",
+            "b.md": "6720a7542bfbbdcfc492bfac4f5fb546a6310ea2589fc5a398a71c616fd8f06f",
+            "sub/c.md": "ecbfbe18056b31a07de988c5116970b3d5a539470a94c0b2075e9b3fd9307de2"
+          },
+          "git_head": "5e2921fb238b6b4467ddc0c21c910053ae4b75eb",
+          "git_status_porcelain": "",
+          "listing_sha256": "32d60c24a4d60119efa5aece883946cf1b66f941ce4bafb0200672773e7611cd",
+          "root": "C:\\Users\\Tan\\.openviking-mvp-verify\\source-tree"
+        },
+        "before": {
+          "file_count": 3,
+          "files": {
+            "a.md": "709a487f411de9de6807f2a4e407638c0cc615b7f52980bc04eeb57434d1a17c",
+            "b.md": "6720a7542bfbbdcfc492bfac4f5fb546a6310ea2589fc5a398a71c616fd8f06f",
+            "sub/c.md": "ecbfbe18056b31a07de988c5116970b3d5a539470a94c0b2075e9b3fd9307de2"
+          },
+          "git_head": "5e2921fb238b6b4467ddc0c21c910053ae4b75eb",
+          "git_status_porcelain": "",
+          "listing_sha256": "32d60c24a4d60119efa5aece883946cf1b66f941ce4bafb0200672773e7611cd",
+          "root": "C:\\Users\\Tan\\.openviking-mvp-verify\\source-tree"
+        },
+        "changed": [],
+        "git_head_same": true,
+        "git_status_same": true,
+        "identical": true,
+        "removed": []
+      },
+      "target": "viking://resources/verify-20261010T153910-e48bc7/src/a.md",
+      "write_result": {
+        "content_updated": true,
+        "context_type": "resource",
+        "mode": "replace",
+        "queue_status": {
+          "Embedding": {
+            "error_count": 0,
+            "errors": [],
+            "processed": 3,
+            "requeue_count": 0
+          },
+          "Semantic": {
+            "error_count": 0,
+            "errors": [],
+            "processed": 1,
+            "requeue_count": 0
+          }
+        },
+        "root_uri": "viking://resources/verify-20261010T153910-e48bc7/src",
+        "semantic_status": "complete",
+        "uri": "viking://resources/verify-20261010T153910-e48bc7/src/a.md",
+        "vector_status": "complete",
+        "written_bytes": 19
+      }
+    },
+    "C4c": {
+      "body": "{\"status\":\"error\",\"result\":null,\"error\":{\"code\":\"PERMISSION_DENIED\",\"message\":\"HTTP server only accepts remote resource URLs or temp-uploaded files; direct host filesystem paths are not allowed.\",\"details\":{}},\"telemetry\":null,\"profile\":null}",
+      "status": 403
+    },
+    "C5": {
+      "down": {
+        "find_error": {
+          "exception": "ConnectError",
+          "message": "All connection attempts failed",
+          "module": "httpx"
+        },
+        "find_raised": true,
+        "read_error": {
+          "exception": "ConnectError",
+          "message": "All connection attempts failed",
+          "module": "httpx"
+        },
+        "read_raised": true,
+        "stop": {
+          "expected_launcher_pid": 34252,
+          "killed_pids": [
+            15268,
+            34252
+          ],
+          "ownership": {
+            "cmdline": "\"D:\\Users\\Tan\\AppData\\Local\\Programs\\Python\\Python312\\python.exe\" \"D:\\python_work\\work2026-4\\Agent-Knowledge-Base\\venv-ov\\Scripts\\openviking-server.exe\" --config C:\\Users\\Tan\\.openviking-mvp-verify\\ov.conf --host 127.0.0.1 --port 8783",
+            "owns": true,
+            "pid": 15268
+          },
+          "port_owner_pid": 15268,
+          "recorded_listener_pid": 15268,
+          "stopped": true
+        }
+      },
+      "missing": {
+        "exception": "NotFoundError",
+        "message": "File not found: viking://user/default/verify/20261010T153910-e48bc7/definitely-missing-20261010T153910-e48bc7.md",
+        "module": "openviking_sdk.errors"
+      },
+      "online_read_ok": true
+    },
+    "C5_evidence": "D:\\python_work\\work2026-4\\wk-verify\\experiments\\memory-spike-verify\\evidence\\live\\C5_down.json",
+    "conf": {
+      "ov.conf": "f28ca8265cefcd6ca336faaf0f70955d716ae97bf9e5c399612a982ad77d41c2",
+      "ov.conf_path": "C:\\Users\\Tan\\.openviking-mvp-verify\\ov.conf",
+      "ovcli.conf": "d7cfa16a32af4c1228566fb19d429b7b9aa9598a51466518d7395228f01abbfd",
+      "ovcli.conf_path": "C:\\Users\\Tan\\.openviking-mvp-verify\\ovcli.conf"
+    },
+    "final_stop": {
+      "expected_launcher_pid": 31496,
+      "killed_pids": [
+        37708,
+        31496
+      ],
+      "ownership": {
+        "cmdline": "\"D:\\Users\\Tan\\AppData\\Local\\Programs\\Python\\Python312\\python.exe\" \"D:\\python_work\\work2026-4\\Agent-Knowledge-Base\\venv-ov\\Scripts\\openviking-server.exe\" --config C:\\Users\\Tan\\.openviking-mvp-verify\\ov.conf --host 127.0.0.1 --port 8783",
+        "owns": true,
+        "pid": 37708
+      },
+      "port_owner_pid": 37708,
+      "recorded_listener_pid": 37708,
+      "stopped": true
+    },
+    "marker": "OVVERIFY-RT-MARKER-20261010T153910-e48bc7",
+    "ready": {
+      "health": 200,
+      "ready": 200,
+      "ready_body": "{\"status\":\"ready\",\"checks\":{\"agfs\":{\"status\":\"ok\",\"checks\":{\"filesystem\":\"ok\",\"multiwrite_sync\":\"not_supported\"}},\"vectordb\":\"ok\",\"api_key_manager\":\"not_configured\",\"embedding\":\"ok\",\"ollama\":\"not_configured\"}}"
+    },
+    "restart": {
+      "cmd": "D:\\python_work\\work2026-4\\Agent-Knowledge-Base\\venv-ov\\Scripts\\openviking-server.exe",
+      "launcher_pid": 31496,
+      "listener_pid": 37708,
+      "log": "C:\\Users\\Tan\\.openviking-mvp-verify\\logs\\openviking-server.log",
+      "pid": 31496,
+      "pid_match": false,
+      "started": true
+    },
+    "restart_ready": {
+      "health": 200,
+      "ready": 200,
+      "ready_body": "{\"status\":\"ready\",\"checks\":{\"agfs\":{\"status\":\"ok\",\"checks\":{\"filesystem\":\"ok\",\"multiwrite_sync\":\"not_supported\"}},\"vectordb\":\"ok\",\"api_key_manager\":\"not_configured\",\"embedding\":\"ok\",\"ollama\":\"not_configured\"}}"
+    },
+    "run_id": "20261010T153910-e48bc7",
+    "source_after_import_diff": {
+      "added": [],
+      "after": {
+        "file_count": 3,
+        "files": {
+          "a.md": "5b687743ed4da48d8caf34ca519c8772f39d99323168101db0994f6d34d53953",
+          "b.md": "6720a7542bfbbdcfc492bfac4f5fb546a6310ea2589fc5a398a71c616fd8f06f",
+          "sub/c.md": "ecbfbe18056b31a07de988c5116970b3d5a539470a94c0b2075e9b3fd9307de2"
+        },
+        "git_head": "f3d51436c5ce06eb8955f90d989051966d410f43",
+        "git_status_porcelain": "",
+        "listing_sha256": "0d574d5acf9c735f86081228f085de3a29ab5c959e7ec096f8e219ee55dff269",
+        "root": "C:\\Users\\Tan\\.openviking-mvp-verify\\source-tree"
+      },
+      "before": {
+        "file_count": 3,
+        "files": {
+          "a.md": "5b687743ed4da48d8caf34ca519c8772f39d99323168101db0994f6d34d53953",
+          "b.md": "6720a7542bfbbdcfc492bfac4f5fb546a6310ea2589fc5a398a71c616fd8f06f",
+          "sub/c.md": "ecbfbe18056b31a07de988c5116970b3d5a539470a94c0b2075e9b3fd9307de2"
+        },
+        "git_head": "f3d51436c5ce06eb8955f90d989051966d410f43",
+        "git_status_porcelain": "",
+        "listing_sha256": "0d574d5acf9c735f86081228f085de3a29ab5c959e7ec096f8e219ee55dff269",
+        "root": "C:\\Users\\Tan\\.openviking-mvp-verify\\source-tree"
+      },
+      "changed": [],
+      "git_head_same": true,
+      "git_status_same": true,
+      "identical": true,
+      "removed": []
+    },
+    "source_before": {
+      "file_count": 3,
+      "files": {
+        "a.md": "5b687743ed4da48d8caf34ca519c8772f39d99323168101db0994f6d34d53953",
+        "b.md": "6720a7542bfbbdcfc492bfac4f5fb546a6310ea2589fc5a398a71c616fd8f06f",
+        "sub/c.md": "ecbfbe18056b31a07de988c5116970b3d5a539470a94c0b2075e9b3fd9307de2"
+      },
+      "git_head": "f3d51436c5ce06eb8955f90d989051966d410f43",
+      "git_status_porcelain": "",
+      "listing_sha256": "0d574d5acf9c735f86081228f085de3a29ab5c959e7ec096f8e219ee55dff269",
+      "root": "C:\\Users\\Tan\\.openviking-mvp-verify\\source-tree"
+    },
+    "source_modified": {
+      "bytes": 147,
+      "path": "C:\\Users\\Tan\\.openviking-mvp-verify\\source-tree\\a.md",
+      "sha256": "709a487f411de9de6807f2a4e407638c0cc615b7f52980bc04eeb57434d1a17c"
+    },
+    "start": {
+      "cmd": "D:\\python_work\\work2026-4\\Agent-Knowledge-Base\\venv-ov\\Scripts\\openviking-server.exe",
+      "launcher_pid": 34252,
+      "listener_pid": 15268,
+      "log": "C:\\Users\\Tan\\.openviking-mvp-verify\\logs\\openviking-server.log",
+      "pid": 34252,
+      "pid_match": false,
+      "started": true
+    },
+    "stop_for_C5": {
+      "expected_launcher_pid": 34252,
+      "killed_pids": [
+        15268,
+        34252
+      ],
+      "ownership": {
+        "cmdline": "\"D:\\Users\\Tan\\AppData\\Local\\Programs\\Python\\Python312\\python.exe\" \"D:\\python_work\\work2026-4\\Agent-Knowledge-Base\\venv-ov\\Scripts\\openviking-server.exe\" --config C:\\Users\\Tan\\.openviking-mvp-verify\\ov.conf --host 127.0.0.1 --port 8783",
+        "owns": true,
+        "pid": 15268
+      },
+      "port_owner_pid": 15268,
+      "recorded_listener_pid": 15268,
+      "stopped": true
+    },
+    "supplementary": {
+      "download": {
+        "bytes": 519,
+        "equal_to_input_bytes": true,
+        "sha256": "7889b2ade8fd1767894ec397b5d88ab8befca137d13bc9c20853b71078dbd605",
+        "status": 200
+      },
+      "ov_read": {
+        "args": [
+          "read",
+          "viking://user/default/verify/20261010T153910-e48bc7/roundtrip.md"
+        ],
+        "equal_after_strip": true,
+        "equal_to_input": false,
+        "rc": 0,
+        "stderr": "",
+        "stdout": "# 原文往返核验 OVVERIFY-RT-MARKER-20261010T153910-e48bc7\n\n这是一条用于独立复核的中文原文，包含 Markdown 语法与唯一标记。\n\n- 唯一标记：`OVVERIFY-RT-MARKER-20261010T153910-e48bc7`\n- 用途：验证提交 → 落盘 → 原文读回是否逐字节一致\n- 期望：任何摘要/解析/清洗都不得改写本正文\n\n```text\nOVVERIFY-RT-MARKER-20261010T153910-e48bc7:code-block-payload-0123456789\n```\n\n结尾无多余空行，末尾带一个制表符\t与一个全角空格　结束。\n\n",
+        "stdout_sha256": "9fb0905fd6dfc01f5f1f4b78843a8ca6150d3db5ebb08a17411fb8c1bb45a5c2"
+      },
+      "ov_version": {
+        "args": [
+          "--version"
+        ],
+        "rc": 0,
+        "stderr": "",
+        "stdout": "openviking 0.4.24.dev0\n"
+      }
+    }
+  },
+  "payload_sha256": "5730a1269e1bf409e25315aae0c9fe5ffc38f1376f70a800869f5760093db38c",
+  "results": {
+    "C1": {
+      "probes": {
+        "C1a": {
+          "note": "",
+          "observed": {
+            "input_sha256": "7889b2ade8fd1767894ec397b5d88ab8befca137d13bc9c20853b71078dbd605",
+            "raw_sha256": "7889b2ade8fd1767894ec397b5d88ab8befca137d13bc9c20853b71078dbd605"
+          },
+          "probe": "C1a",
+          "verdict": "PASS"
+        },
+        "C1b": {
+          "note": "磁盘/ git 对象中找到与输入逐字节相等的持久化正文",
+          "observed": {
+            "disk_full_hits": 1,
+            "disk_marker_hits": 1,
+            "files_scanned": 143,
+            "git_blobs": [],
+            "git_examined": 0,
+            "git_truncated": false
+          },
+          "probe": "C1b",
+          "verdict": "PASS"
+        },
+        "C1c": {
+          "note": "默认读回接口若与输入不等，M1 的『原文读回一致』不成立",
+          "observed": {
+            "default_equal": true,
+            "default_sha256": "7889b2ade8fd1767894ec397b5d88ab8befca137d13bc9c20853b71078dbd605"
+          },
+          "probe": "C1c",
+          "verdict": "PASS"
+        },
+        "C1d": {
+          "note": "重启后原文仍可读回同一内容",
+          "observed": {
+            "equal": true,
+            "sha256": "7889b2ade8fd1767894ec397b5d88ab8befca137d13bc9c20853b71078dbd605"
+          },
+          "probe": "C1d",
+          "verdict": "PASS"
+        }
+      },
+      "title": "原文往返：原样保存与读回（同时核磁盘字节与读取接口正文）",
+      "verdict": "PASS"
+    },
+    "C2": {
+      "probes": {
+        "C2a": {
+          "note": "外部改源文件后应在上限内读到新正文（PASS=指过去；FAIL=拷贝/快照未追平）",
+          "observed": {
+            "propagated": false,
+            "samples": [
+              {
+                "equal_to_source_bytes": false,
+                "read_bytes": 78,
+                "read_sha256": "5b687743ed4da48d8caf34ca519c8772f39d99323168101db0994f6d34d53953",
+                "t": 0
+              },
+              {
+                "equal_to_source_bytes": false,
+                "read_bytes": 78,
+                "read_sha256": "5b687743ed4da48d8caf34ca519c8772f39d99323168101db0994f6d34d53953",
+                "t": 10
+              },
+              {
+                "equal_to_source_bytes": false,
+                "read_bytes": 78,
+                "read_sha256": "5b687743ed4da48d8caf34ca519c8772f39d99323168101db0994f6d34d53953",
+                "t": 20
+              },
+              {
+                "equal_to_source_bytes": false,
+                "read_bytes": 78,
+                "read_sha256": "5b687743ed4da48d8caf34ca519c8772f39d99323168101db0994f6d34d53953",
+                "t": 30
+              },
+              {
+                "equal_to_source_bytes": false,
+                "read_bytes": 78,
+                "read_sha256": "5b687743ed4da48d8caf34ca519c8772f39d99323168101db0994f6d34d53953",
+                "t": 40
+              },
+              {
+                "equal_to_source_bytes": false,
+                "read_bytes": 78,
+                "read_sha256": "5b687743ed4da48d8caf34ca519c8772f39d99323168101db0994f6d34d53953",
+                "t": 50
+              },
+              {
+                "equal_to_source_bytes": false,
+                "read_bytes": 78,
+                "read_sha256": "5b687743ed4da48d8caf34ca519c8772f39d99323168101db0994f6d34d53953",
+                "t": 60
+              },
+              {
+                "equal_to_source_bytes": false,
+                "read_bytes": 78,
+                "read_sha256": "5b687743ed4da48d8caf34ca519c8772f39d99323168101db0994f6d34d53953",
+                "t": 70
+              },
+              {
+                "equal_to_source_bytes": false,
+                "read_bytes": 78,
+                "read_sha256": "5b687743ed4da48d8caf34ca519c8772f39d99323168101db0994f6d34d53953",
+                "t": 80
+              },
+              {
+                "equal_to_source_bytes": false,
+                "read_bytes": 78,
+                "read_sha256": "5b687743ed4da48d8caf34ca519c8772f39d99323168101db0994f6d34d53953",
+                "t": 90
+              },
+              {
+                "equal_to_source_bytes": false,
+                "read_bytes": 78,
+                "read_sha256": "5b687743ed4da48d8caf34ca519c8772f39d99323168101db0994f6d34d53953",
+                "t": 100
+              },
+              {
+                "equal_to_source_bytes": false,
+                "read_bytes": 78,
+                "read_sha256": "5b687743ed4da48d8caf34ca519c8772f39d99323168101db0994f6d34d53953",
+                "t": 110
+              },
+              {
+                "equal_to_source_bytes": false,
+                "read_bytes": 78,
+                "read_sha256": "5b687743ed4da48d8caf34ca519c8772f39d99323168101db0994f6d34d53953",
+                "t": 120
+              }
+            ],
+            "window_s": 120
+          },
+          "probe": "C2a",
+          "verdict": "FAIL"
+        },
+        "C2b": {
+          "note": "workspace 内出现源文件正文的独立副本即判『拷贝』",
+          "observed": {
+            "marker_hits": [
+              "C:\\Users\\Tan\\.openviking-mvp-verify\\data\\viking\\default\\resources\\verify-20261010T153910-e48bc7\\src\\a.md",
+              "C:\\Users\\Tan\\.openviking-mvp-verify\\data\\viking\\default\\resources\\verify-20261010T153910-e48bc7\\src\\b.md",
+              "C:\\Users\\Tan\\.openviking-mvp-verify\\data\\viking\\default\\resources\\verify-20261010T153910-e48bc7\\src\\sub\\c.md",
+              "C:\\Users\\Tan\\.openviking-mvp-verify\\data\\viking\\default\\user\\default\\verify\\20261010T153910-e48bc7\\roundtrip.md"
+            ],
+            "source_a": {
+              "path": "C:\\Users\\Tan\\.openviking-mvp-verify\\source-tree\\a.md",
+              "sha256": "5b687743ed4da48d8caf34ca519c8772f39d99323168101db0994f6d34d53953"
+            },
+            "workspace_full_content_hits": [
+              {
+                "file_sha256": "5b687743ed4da48d8caf34ca519c8772f39d99323168101db0994f6d34d53953",
+                "full_offset": 0,
+                "path": "C:\\Users\\Tan\\.openviking-mvp-verify\\data\\viking\\default\\resources\\verify-20261010T153910-e48bc7\\src\\a.md",
+                "size": 78
+              }
+            ]
+          },
+          "probe": "C2b",
+          "verdict": "FAIL"
+        },
+        "C2c": {
+          "note": "同一源重复接入不应新增第二条（条目数 3 → 4）",
+          "observed": {
+            "add_errors": [
+              null,
+              null
+            ],
+            "adds_succeeded": 2,
+            "count_after_first": 3,
+            "count_after_second": 4,
+            "ls_after_1": [
+              "viking://resources/verify-20261010T153910-e48bc7/dup-parent/source-tree",
+              "viking://resources/verify-20261010T153910-e48bc7/dup-parent/.abstract.md",
+              "viking://resources/verify-20261010T153910-e48bc7/dup-parent/.overview.md"
+            ],
+            "ls_after_2": [
+              "viking://resources/verify-20261010T153910-e48bc7/dup-parent/source-tree",
+              "viking://resources/verify-20261010T153910-e48bc7/dup-parent/source-tree_1",
+              "viking://resources/verify-20261010T153910-e48bc7/dup-parent/.abstract.md",
+              "viking://resources/verify-20261010T153910-e48bc7/dup-parent/.overview.md"
+            ],
+            "ls_succeeded": 2,
+            "mkdir_error": null
+          },
+          "probe": "C2c",
+          "verdict": "FAIL"
+        }
+      },
+      "title": "形态：接入的项目文件是「指过去」还是「拷一份进来」",
+      "verdict": "FAIL"
+    },
+    "C3": {
+      "probes": {
+        "C3a": {
+          "note": "同一 URI 同正文 write 两次（replace）后应只有 1 条",
+          "observed": {
+            "ls": [
+              "viking://user/default/verify/20261010T153910-e48bc7/idem/.abstract.md",
+              "viking://user/default/verify/20261010T153910-e48bc7/idem/.overview.md",
+              "viking://user/default/verify/20261010T153910-e48bc7/idem/replace-twice.md"
+            ],
+            "name_count": 1
+          },
+          "probe": "C3a",
+          "verdict": "PASS"
+        },
+        "C3b": {
+          "note": "create 重复提交必须幂等或显式冲突，不得产生第二条",
+          "observed": {
+            "ls": [
+              "viking://user/default/verify/20261010T153910-e48bc7/idem/.abstract.md",
+              "viking://user/default/verify/20261010T153910-e48bc7/idem/.overview.md",
+              "viking://user/default/verify/20261010T153910-e48bc7/idem/create-twice.md",
+              "viking://user/default/verify/20261010T153910-e48bc7/idem/replace-twice.md"
+            ],
+            "name_count": 1,
+            "second_error": {
+              "exception": "AlreadyExistsError",
+              "message": "File already exists: viking://user/default/verify/20261010T153910-e48bc7/idem/create-twice.md",
+              "module": "openviking_sdk.errors"
+            },
+            "second_rejected": true
+          },
+          "probe": "C3b",
+          "verdict": "PASS"
+        },
+        "C3c": {
+          "note": "同一源 + 同一显式 to 重复提交不得新增条目",
+          "observed": {
+            "entry_count": 1,
+            "ls": [
+              "viking://resources/verify-20261010T153910-e48bc7/dup-parent",
+              "viking://resources/verify-20261010T153910-e48bc7/idem-src",
+              "viking://resources/verify-20261010T153910-e48bc7/src",
+              "viking://resources/verify-20261010T153910-e48bc7/.abstract.md",
+              "viking://resources/verify-20261010T153910-e48bc7/.overview.md"
+            ],
+            "second_error": null
+          },
+          "probe": "C3c",
+          "verdict": "PASS"
+        },
+        "C3d": {
+          "note": "公开写入接口无 request_id 幂等键（携带该字段被 extra=forbid 拒绝）→ 无法按 request_id 判重",
+          "observed": {
+            "body": "{\"status\":\"error\",\"error\":{\"code\":\"INVALID_ARGUMENT\",\"message\":\"Invalid request parameters: body.request_id: Extra inputs are not permitted\",\"details\":{\"validation_errors\":[{\"loc\":[\"body\",\"request_id\"],\"message\":\"Extra inputs are not permitted\",\"type\":\"extra_forbidden\"}]}}}",
+            "status": 400
+          },
+          "probe": "C3d",
+          "verdict": "FAIL"
+        }
+      },
+      "title": "重复提交：同一请求提交两次不得产生第二条",
+      "verdict": "FAIL"
+    },
+    "C4": {
+      "probes": {
+        "C4a": {
+          "note": "接入前后源目录文件清单与 git 提交号必须一致",
+          "observed": {
+            "added": [],
+            "after_listing_sha256": "0d574d5acf9c735f86081228f085de3a29ab5c959e7ec096f8e219ee55dff269",
+            "before_listing_sha256": "0d574d5acf9c735f86081228f085de3a29ab5c959e7ec096f8e219ee55dff269",
+            "changed": [],
+            "git_head_same": true,
+            "git_status_same": true,
+            "removed": []
+          },
+          "probe": "C4a",
+          "verdict": "PASS"
+        },
+        "C4b": {
+          "note": "基座只持有导入副本：副本可写、且写不改动真实源目录 —— 物理上没有『写来源』这个动作，无法给出『写来源被拒』的证据（不得记 PASS）",
+          "observed": {
+            "accepted": true,
+            "imported_copy_changed": true,
+            "read_back": "INJECTED-BY-VERIFY\n",
+            "source_dir_unchanged": true
+          },
+          "probe": "C4b",
+          "verdict": "INCONCLUSIVE"
+        },
+        "C4c": {
+          "note": "本地文件系统路径作为来源的 HTTP 请求应被显式拒绝",
+          "observed": {
+            "body": "{\"status\":\"error\",\"result\":null,\"error\":{\"code\":\"PERMISSION_DENIED\",\"message\":\"HTTP server only accepts remote resource URLs or temp-uploaded files; direct host filesystem paths are not allowed.\",\"details\":{}},\"telemetry\":null,\"profile\":null}",
+            "status": 403
+          },
+          "probe": "C4c",
+          "verdict": "PASS"
+        }
+      },
+      "title": "来源只读：接入前后源目录清单与提交号一致；通过基座写来源被拒",
+      "verdict": "INCONCLUSIVE"
+    },
+    "C5": {
+      "probes": {
+        "C5a": {
+          "note": "在线对照必须成功",
+          "observed": {
+            "online_read_ok": true
+          },
+          "probe": "C5a",
+          "verdict": "PASS"
+        },
+        "C5b": {
+          "note": "停机后读取必须抛显式错误，不能返回空结果",
+          "observed": {
+            "error": {
+              "exception": "ConnectError",
+              "message": "All connection attempts failed",
+              "module": "httpx"
+            },
+            "raised": true,
+            "returned": null,
+            "stop": {
+              "expected_launcher_pid": 34252,
+              "killed_pids": [
+                15268,
+                34252
+              ],
+              "ownership": {
+                "cmdline": "\"D:\\Users\\Tan\\AppData\\Local\\Programs\\Python\\Python312\\python.exe\" \"D:\\python_work\\work2026-4\\Agent-Knowledge-Base\\venv-ov\\Scripts\\openviking-server.exe\" --config C:\\Users\\Tan\\.openviking-mvp-verify\\ov.conf --host 127.0.0.1 --port 8783",
+                "owns": true,
+                "pid": 15268
+              },
+              "port_owner_pid": 15268,
+              "recorded_listener_pid": 15268,
+              "stopped": true
+            }
+          },
+          "probe": "C5b",
+          "verdict": "PASS"
+        },
+        "C5c": {
+          "note": "停机后检索必须抛显式错误，不能返回空命中",
+          "observed": {
+            "error": {
+              "exception": "ConnectError",
+              "message": "All connection attempts failed",
+              "module": "httpx"
+            },
+            "raised": true,
+            "returned": null,
+            "stop": {
+              "expected_launcher_pid": 34252,
+              "killed_pids": [
+                15268,
+                34252
+              ],
+              "ownership": {
+                "cmdline": "\"D:\\Users\\Tan\\AppData\\Local\\Programs\\Python\\Python312\\python.exe\" \"D:\\python_work\\work2026-4\\Agent-Knowledge-Base\\venv-ov\\Scripts\\openviking-server.exe\" --config C:\\Users\\Tan\\.openviking-mvp-verify\\ov.conf --host 127.0.0.1 --port 8783",
+                "owns": true,
+                "pid": 15268
+              },
+              "port_owner_pid": 15268,
+              "recorded_listener_pid": 15268,
+              "stopped": true
+            }
+          },
+          "probe": "C5c",
+          "verdict": "PASS"
+        },
+        "C5d": {
+          "note": "需要『无匹配』与『服务不可用』两档同时存在且类型不同；『拒绝访问』一档需非 ROOT 身份，本实例无法构造（如实标为无法核实）",
+          "observed": {
+            "classes": {
+              "not_found": "NotFoundError",
+              "unavailable": "ConnectError"
+            },
+            "distinct": true,
+            "permission_denied_evidence": {
+              "body": "{\"status\":\"error\",\"result\":null,\"error\":{\"code\":\"PERMISSION_DENIED\",\"message\":\"HTTP server only accepts remote resource URLs or temp-uploaded files; direct host filesystem paths are not allowed.\",\"details\":{}},\"telemetry\":null,\"profile\":null}",
+              "status": 403
+            },
+            "permission_denied_unreachable_with_dev_identity": true
+          },
+          "probe": "C5d",
+          "verdict": "PASS"
+        }
+      },
+      "title": "停机报错：停隔离服务后消费者收到显式不可用错误，而非静默空结果",
+      "verdict": "PASS"
+    }
+  },
+  "stage": "live"
+}

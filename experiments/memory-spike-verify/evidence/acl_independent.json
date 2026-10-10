@@ -1,0 +1,478 @@
+{
+  "criteria_sha256": "17d18b7bbe842da6059b341a41319c11fa2824f30817aa191bc96802174f2f4d",
+  "generated_at": "2026-10-10T15:56:46+0800",
+  "observation": {
+    "account": "mvpverifyb0adaa",
+    "acl_get": {
+      "ok": true,
+      "result": {
+        "acl_mode": "restricted",
+        "direct_entries": [
+          {
+            "level": "write",
+            "principal": "user:vadmin"
+          },
+          {
+            "level": "read",
+            "principal": "user:vro"
+          }
+        ],
+        "effective_entries": [
+          {
+            "level": "write",
+            "principal": "user:vadmin"
+          },
+          {
+            "level": "read",
+            "principal": "user:vro"
+          }
+        ],
+        "inherited_entries": [
+          {
+            "level": "manage",
+            "principal": "user:*"
+          }
+        ],
+        "uri": "viking://resources/mvpverifyb0adaa"
+      }
+    },
+    "acl_grant_read": {
+      "ok": true,
+      "result": {
+        "acl_mode": "restricted",
+        "direct_entries": [
+          {
+            "level": "read",
+            "principal": "user:vro"
+          }
+        ],
+        "effective_entries": [
+          {
+            "level": "read",
+            "principal": "user:vro"
+          }
+        ],
+        "inherited_entries": [
+          {
+            "level": "manage",
+            "principal": "user:*"
+          }
+        ],
+        "uri": "viking://resources/mvpverifyb0adaa"
+      }
+    },
+    "acl_grant_write_admin": {
+      "ok": true,
+      "result": {
+        "acl_mode": "restricted",
+        "direct_entries": [
+          {
+            "level": "write",
+            "principal": "user:vadmin"
+          },
+          {
+            "level": "read",
+            "principal": "user:vro"
+          }
+        ],
+        "effective_entries": [
+          {
+            "level": "write",
+            "principal": "user:vadmin"
+          },
+          {
+            "level": "read",
+            "principal": "user:vro"
+          }
+        ],
+        "inherited_entries": [
+          {
+            "level": "manage",
+            "principal": "user:*"
+          }
+        ],
+        "uri": "viking://resources/mvpverifyb0adaa"
+      }
+    },
+    "acl_grant_write_outside": {
+      "ok": true,
+      "result": {
+        "acl_mode": "restricted",
+        "direct_entries": [
+          {
+            "level": "write",
+            "principal": "user:vadmin"
+          }
+        ],
+        "effective_entries": [
+          {
+            "level": "write",
+            "principal": "user:vadmin"
+          }
+        ],
+        "inherited_entries": [
+          {
+            "level": "manage",
+            "principal": "user:*"
+          }
+        ],
+        "uri": "viking://resources/mvpverifyb0adaa-outside"
+      }
+    },
+    "acl_set_restricted": {
+      "ok": true,
+      "result": {
+        "acl_mode": "restricted",
+        "direct_entries": [],
+        "effective_entries": [],
+        "inherited_entries": [
+          {
+            "level": "manage",
+            "principal": "user:*"
+          }
+        ],
+        "uri": "viking://resources/mvpverifyb0adaa"
+      }
+    },
+    "acl_set_restricted_outside": {
+      "ok": true,
+      "result": {
+        "acl_mode": "restricted",
+        "direct_entries": [],
+        "effective_entries": [],
+        "inherited_entries": [
+          {
+            "level": "manage",
+            "principal": "user:*"
+          }
+        ],
+        "uri": "viking://resources/mvpverifyb0adaa-outside"
+      }
+    },
+    "admin_write": {
+      "ok": true,
+      "result": {
+        "content_updated": true,
+        "context_type": "resource",
+        "mode": "create",
+        "queue_status": {
+          "Embedding": {
+            "error_count": 0,
+            "errors": [],
+            "processed": 3,
+            "requeue_count": 0
+          },
+          "Semantic": {
+            "error_count": 0,
+            "errors": [],
+            "processed": 1,
+            "requeue_count": 0
+          }
+        },
+        "root_uri": "viking://resources/mvpverifyb0adaa",
+        "semantic_status": "complete",
+        "uri": "viking://resources/mvpverifyb0adaa/doc.md",
+        "vector_status": "complete",
+        "written_bytes": 92
+      }
+    },
+    "admin_write_after_acl_on": {
+      "ok": true,
+      "result": {
+        "content_updated": true,
+        "context_type": "resource",
+        "mode": "create",
+        "queue_status": {
+          "Embedding": {
+            "error_count": 0,
+            "errors": [],
+            "processed": 3,
+            "requeue_count": 0
+          },
+          "Semantic": {
+            "error_count": 0,
+            "errors": [],
+            "processed": 1,
+            "requeue_count": 0
+          }
+        },
+        "root_uri": "viking://resources/mvpverifyb0adaa",
+        "semantic_status": "complete",
+        "uri": "viking://resources/mvpverifyb0adaa/admin-ok.md",
+        "vector_status": "complete",
+        "written_bytes": 19
+      }
+    },
+    "admin_write_outside": {
+      "ok": true,
+      "result": {
+        "content_updated": true,
+        "context_type": "resource",
+        "mode": "create",
+        "queue_status": {
+          "Embedding": {
+            "error_count": 0,
+            "errors": [],
+            "processed": 3,
+            "requeue_count": 0
+          },
+          "Semantic": {
+            "error_count": 0,
+            "errors": [],
+            "processed": 1,
+            "requeue_count": 0
+          }
+        },
+        "root_uri": "viking://resources/mvpverifyb0adaa-outside",
+        "semantic_status": "complete",
+        "uri": "viking://resources/mvpverifyb0adaa-outside/secret.md",
+        "vector_status": "complete",
+        "written_bytes": 13
+      }
+    },
+    "authz_conf": {
+      "bom": false,
+      "path": "C:\\Users\\Tan\\.openviking-mvp-verify\\ov-authz.conf",
+      "sha256": "b4edc46a4b5ab5f703c210e7d9dee1f3410a54096afa233c58f31d43563ed1cd"
+    },
+    "claims": [
+      {
+        "claim": "ACL-a-default-off",
+        "detail": {
+          "acl_enabled_observed": false,
+          "static_source": {
+            "enabled_default_false": true,
+            "file": "D:\\python_work\\work2026-4\\Agent-Knowledge-Base\\venv-ov\\Lib\\site-packages\\openviking\\config\\account_config.py",
+            "file_sha256": "cfa2cd2ced5240ade1b5650c57475effad2bb24c2fcd921e6c0d7b52cfe81498",
+            "segment": "class AccountAclSettings(BaseModel):\n    \"\"\"Account-scoped ACL switch.\"\"\"\n\n    enabled: bool = RuntimeField(default=False)\n\n\nclass AccountFeishuConfig(BaseModel):\n    \"\"\"Account-level Feishu settings.\n\n    ``domain`` intentionally does not exist here. It is a cluster deployment\n    setting and is se"
+          }
+        },
+        "statement": "账户级 ACL 默认关闭（acl.enabled 默认 false）",
+        "verdict": "PASS"
+      },
+      {
+        "claim": "ACL-b-off-means-ro-can-write",
+        "detail": {
+          "error": null,
+          "readonly_read_ok": true,
+          "write_accepted_with_acl_off": true
+        },
+        "statement": "ACL 未打开时，只读身份（role=user + ACL read）仍能写入",
+        "verdict": "PASS"
+      },
+      {
+        "claim": "ACL-c-on-means-403",
+        "detail": {
+          "admin_write_still_ok": true,
+          "error": {
+            "exception": "PermissionDeniedError",
+            "message": "Access denied for viking://resources/mvpverifyb0adaa/doc.md: write permission required",
+            "module": "openviking_sdk.errors"
+          },
+          "error_code": "PERMISSION_DENIED",
+          "readonly_read_still_ok": true,
+          "write_rejected_with_acl_on": true
+        },
+        "statement": "打开 ACL 后，同一身份同一操作被拒（403 PERMISSION_DENIED）",
+        "verdict": "PASS"
+      },
+      {
+        "claim": "ACL-d-outside-denied",
+        "detail": {
+          "ls": {
+            "error": {
+              "exception": "PermissionDeniedError",
+              "message": "Access denied for viking://resources/mvpverifyb0adaa-outside: read permission required",
+              "module": "openviking_sdk.errors"
+            },
+            "ok": false
+          },
+          "read": {
+            "error": {
+              "exception": "PermissionDeniedError",
+              "message": "Access denied for viking://resources/mvpverifyb0adaa-outside/secret.md: read permission required",
+              "module": "openviking_sdk.errors"
+            },
+            "ok": false
+          }
+        },
+        "statement": "范围外（未授权 restricted 子树）的直接读取被拒且不泄露正文",
+        "verdict": "PASS"
+      },
+      {
+        "claim": "ACL-e-ro-write-scope",
+        "detail": {
+          "error_code": "PERMISSION_DENIED",
+          "target": "viking://resources/mvpverifyb0adaa/doc.md"
+        },
+        "statement": "（补 C4b）非 ROOT 身份通过基座写受限范围被显式拒绝",
+        "verdict": "PASS"
+      }
+    ],
+    "create_account": {
+      "ok": true,
+      "result": {
+        "account_id": "mvpverifyb0adaa",
+        "admin_user_id": "vadmin",
+        "user_key": "<redacted>"
+      }
+    },
+    "doc_uri": "viking://resources/mvpverifyb0adaa/doc.md",
+    "identities": {
+      "admin": "user:vadmin (role=admin)",
+      "readonly": "user:vro (role=user)"
+    },
+    "input_bytes": 92,
+    "input_sha256": "ef14c08b188ad9bd2d91202e95a4fdb7e1a4a97669117879d8d4c97d2b7e4f13",
+    "patch_acl_enabled": {
+      "body": "{\"status\":\"ok\",\"result\":{\"account_id\":\"mvpverifyb0adaa\",\"settings\":{\"agent_evolution\":{\"enabled\":false},\"acl\":{\"enabled\":true}},\"overrides\":{\"acl\":{\"enabled\":true}}},\"error\":null,\"telemetry\":null,\"profile\":null}",
+      "status": 200
+    },
+    "profile": "api_key（root_api_key 随运行随机生成，仅写仓外隔离 conf，证据不含值）",
+    "proxy_env_sanitized": {
+      "NO_PROXY": "localhost,127.0.0.1,::1,volces.com,volcengine.com",
+      "no_proxy": "localhost,127.0.0.1,::1,volces.com,volcengine.com"
+    },
+    "readonly_ls_outside": {
+      "error": {
+        "exception": "PermissionDeniedError",
+        "message": "Access denied for viking://resources/mvpverifyb0adaa-outside: read permission required",
+        "module": "openviking_sdk.errors"
+      },
+      "ok": false
+    },
+    "readonly_read": {
+      "ok": true,
+      "result": "# ACL 独立复核 20261010T155557-ebc650\n\n原文正文，用于只读身份的写尝试。\n"
+    },
+    "readonly_read_acl_on": {
+      "ok": true,
+      "result": "# ACL 独立复核 20261010T155557-ebc650\n\n原文正文，用于只读身份的写尝试。\n\n只读身份的写入尝试（ACL 关闭时）\n"
+    },
+    "readonly_read_outside": {
+      "error": {
+        "exception": "PermissionDeniedError",
+        "message": "Access denied for viking://resources/mvpverifyb0adaa-outside/secret.md: read permission required",
+        "module": "openviking_sdk.errors"
+      },
+      "ok": false
+    },
+    "readonly_write_acl_off": {
+      "ok": true,
+      "result": {
+        "content_updated": true,
+        "context_type": "resource",
+        "mode": "replace",
+        "queue_status": {
+          "Embedding": {
+            "error_count": 0,
+            "errors": [],
+            "processed": 3,
+            "requeue_count": 0
+          },
+          "Semantic": {
+            "error_count": 0,
+            "errors": [],
+            "processed": 1,
+            "requeue_count": 0
+          }
+        },
+        "root_uri": "viking://resources/mvpverifyb0adaa",
+        "semantic_status": "complete",
+        "uri": "viking://resources/mvpverifyb0adaa/doc.md",
+        "vector_status": "complete",
+        "written_bytes": 140
+      }
+    },
+    "readonly_write_acl_on": {
+      "error": {
+        "exception": "PermissionDeniedError",
+        "message": "Access denied for viking://resources/mvpverifyb0adaa/doc.md: write permission required",
+        "module": "openviking_sdk.errors"
+      },
+      "ok": false
+    },
+    "ready": {
+      "health": 200,
+      "ready": 200,
+      "ready_body": "{\"status\":\"ready\",\"checks\":{\"agfs\":{\"status\":\"ok\",\"checks\":{\"filesystem\":\"ok\",\"multiwrite_sync\":\"not_supported\"}},\"vectordb\":\"ok\",\"api_key_manager\":\"ok\",\"embedding\":\"ok\",\"ollama\":\"not_configured\"}}"
+    },
+    "register_readonly_user": {
+      "ok": true,
+      "result": {
+        "account_id": "mvpverifyb0adaa",
+        "user_id": "vro",
+        "user_key": "<redacted>"
+      }
+    },
+    "run_id": "20261010T155557-ebc650",
+    "scope": "viking://resources/mvpverifyb0adaa",
+    "settings_after": {
+      "ok": true,
+      "result": {
+        "account_id": "mvpverifyb0adaa",
+        "overrides": {
+          "acl": {
+            "enabled": true
+          }
+        },
+        "settings": {
+          "acl": {
+            "enabled": true
+          },
+          "agent_evolution": {
+            "enabled": false
+          }
+        }
+      }
+    },
+    "settings_before": {
+      "ok": true,
+      "result": {
+        "account_id": "mvpverifyb0adaa",
+        "overrides": {},
+        "settings": {
+          "acl": {
+            "enabled": false
+          },
+          "agent_evolution": {
+            "enabled": false
+          }
+        }
+      }
+    },
+    "start": {
+      "cmd": "D:\\python_work\\work2026-4\\Agent-Knowledge-Base\\venv-ov\\Scripts\\openviking-server.exe",
+      "conf": "C:\\Users\\Tan\\.openviking-mvp-verify\\ov-authz.conf",
+      "launcher_pid": 9972,
+      "listener_pid": 36672,
+      "log": "C:\\Users\\Tan\\.openviking-mvp-verify\\logs\\openviking-server.log",
+      "pid": 9972,
+      "pid_match": false,
+      "started": true
+    },
+    "static_default": {
+      "enabled_default_false": true,
+      "file": "D:\\python_work\\work2026-4\\Agent-Knowledge-Base\\venv-ov\\Lib\\site-packages\\openviking\\config\\account_config.py",
+      "file_sha256": "cfa2cd2ced5240ade1b5650c57475effad2bb24c2fcd921e6c0d7b52cfe81498",
+      "segment": "class AccountAclSettings(BaseModel):\n    \"\"\"Account-scoped ACL switch.\"\"\"\n\n    enabled: bool = RuntimeField(default=False)\n\n\nclass AccountFeishuConfig(BaseModel):\n    \"\"\"Account-level Feishu settings.\n\n    ``domain`` intentionally does not exist here. It is a cluster deployment\n    setting and is se"
+    },
+    "stop": {
+      "expected_launcher_pid": 9972,
+      "killed_pids": [
+        36672,
+        9972
+      ],
+      "ownership": {
+        "cmdline": "\"D:\\Users\\Tan\\AppData\\Local\\Programs\\Python\\Python312\\python.exe\" \"D:\\python_work\\work2026-4\\Agent-Knowledge-Base\\venv-ov\\Scripts\\openviking-server.exe\" --config C:\\Users\\Tan\\.openviking-mvp-verify\\ov-authz.conf --host 127.0.0.1 --port 8783",
+        "owns": true,
+        "pid": 36672
+      },
+      "port_owner_pid": 36672,
+      "recorded_listener_pid": 36672,
+      "stopped": true
+    }
+  },
+  "payload_sha256": "0e12b1c2bc20a04e81378032af571299461ed9256c429d7b7f261eb5d85b1d4b",
+  "stage": "acl"
+}

@@ -1,0 +1,100 @@
+{
+  "criteria_sha256": "17d18b7bbe842da6059b341a41319c11fa2824f30817aa191bc96802174f2f4d",
+  "generated_at": "2026-10-10T15:59:40+0800",
+  "observation": {
+    "input_bytes": 531,
+    "input_sha256": "da43071942417d7a122aea0aa5dd7e6226d76c0b16df0460714dd6c2c153e559",
+    "ov_read_default": {
+      "argv": [
+        "read",
+        "viking://user/default/verify-cli/20261010T155859-1030b2/cli.md"
+      ],
+      "byte_identical_to_input": false,
+      "rc": 0,
+      "stderr_head": "",
+      "stdout_bytes": 532,
+      "stdout_head": "# 原文往返核验 OVVERIFY-RT-MARKER-CLI-20261010T155859-1030b2\n\n这是一条用于独立复核的中文原文，包含 Markdown 语法与唯一标记。\n\n- 唯一标记：`OVVERIFY-RT-MARKER-CLI-20261010T155859-1030b2`\n- 用途：验证提交 →",
+      "stdout_sha256": "b07a68d3be5d3e71f1e24db2f1b00d3fb50b6ce29beb0ed9b2204a9c944afb94"
+    },
+    "ov_read_json": {
+      "argv": [
+        "read",
+        "viking://user/default/verify-cli/20261010T155859-1030b2/cli.md",
+        "-o",
+        "json"
+      ],
+      "byte_identical_to_input": false,
+      "extracted_byte_identical": true,
+      "extracted_bytes": 531,
+      "extracted_sha256": "da43071942417d7a122aea0aa5dd7e6226d76c0b16df0460714dd6c2c153e559",
+      "json_keys": [
+        "ok",
+        "result"
+      ],
+      "rc": 0,
+      "stderr_head": "",
+      "stdout_bytes": 569,
+      "stdout_head": "{\"ok\":true,\"result\":\"# 原文往返核验 OVVERIFY-RT-MARKER-CLI-20261010T155859-1030b2\\n\\n这是一条用于独立复核的中文原文，包含 Markdown 语法与唯一标记。\\n\\n- 唯一标记：`OVVERIFY-RT-MARKER-CLI-20261010T1",
+      "stdout_sha256": "e4c09c34e7fe020fbcdcd775c0c3d883d576b6fec5c519991ba3ce65ccf76f48"
+    },
+    "ready": {
+      "health": 200,
+      "ready": 200,
+      "ready_body": "{\"status\":\"ready\",\"checks\":{\"agfs\":{\"status\":\"ok\",\"checks\":{\"filesystem\":\"ok\",\"multiwrite_sync\":\"not_supported\"}},\"vectordb\":\"ok\",\"api_key_manager\":\"not_configured\",\"embedding\":\"ok\",\"ollama\":\"not_configured\"}}"
+    },
+    "run_id": "20261010T155859-1030b2",
+    "sdk_read_raw_equal": true,
+    "start": {
+      "cmd": "D:\\python_work\\work2026-4\\Agent-Knowledge-Base\\venv-ov\\Scripts\\openviking-server.exe",
+      "conf": "C:\\Users\\Tan\\.openviking-mvp-verify\\ov.conf",
+      "launcher_pid": 8636,
+      "listener_pid": 32832,
+      "log": "C:\\Users\\Tan\\.openviking-mvp-verify\\logs\\openviking-server.log",
+      "pid": 8636,
+      "pid_match": false,
+      "started": true
+    },
+    "stop": {
+      "expected_launcher_pid": 8636,
+      "killed_pids": [
+        32832,
+        8636
+      ],
+      "ownership": {
+        "cmdline": "\"D:\\Users\\Tan\\AppData\\Local\\Programs\\Python\\Python312\\python.exe\" \"D:\\python_work\\work2026-4\\Agent-Knowledge-Base\\venv-ov\\Scripts\\openviking-server.exe\" --config C:\\Users\\Tan\\.openviking-mvp-verify\\ov.conf --host 127.0.0.1 --port 8783",
+        "owns": true,
+        "pid": 32832
+      },
+      "port_owner_pid": 32832,
+      "recorded_listener_pid": 32832,
+      "stopped": true
+    },
+    "uri": "viking://user/default/verify-cli/20261010T155859-1030b2/cli.md",
+    "write": {
+      "content_updated": true,
+      "context_type": "resource",
+      "mode": "create",
+      "queue_status": {
+        "Embedding": {
+          "error_count": 0,
+          "errors": [],
+          "processed": 3,
+          "requeue_count": 0
+        },
+        "Semantic": {
+          "error_count": 0,
+          "errors": [],
+          "processed": 1,
+          "requeue_count": 0
+        }
+      },
+      "root_uri": "viking://user/default/verify-cli/20261010T155859-1030b2",
+      "semantic_status": "complete",
+      "uri": "viking://user/default/verify-cli/20261010T155859-1030b2/cli.md",
+      "vector_status": "complete",
+      "written_bytes": 531
+    }
+  },
+  "payload_sha256": "8c09ebf8f5b9dbb9517974a33737991c2187a0f96bd3e214bbd5d55bcaf046d3",
+  "stage": "cli"
+}

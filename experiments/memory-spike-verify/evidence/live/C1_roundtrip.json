@@ -1,0 +1,61 @@
+{
+  "default_equal": true,
+  "default_sha256": "7889b2ade8fd1767894ec397b5d88ab8befca137d13bc9c20853b71078dbd605",
+  "disk": {
+    "files_scanned": 143,
+    "files_skipped_over_limit": 0,
+    "full_content_hits": [
+      {
+        "file_sha256": "7889b2ade8fd1767894ec397b5d88ab8befca137d13bc9c20853b71078dbd605",
+        "full_offset": 0,
+        "path": "C:\\Users\\Tan\\.openviking-mvp-verify\\data\\viking\\default\\user\\default\\verify\\20261010T153910-e48bc7\\roundtrip.md",
+        "size": 519
+      }
+    ],
+    "marker_hits": [
+      {
+        "file_sha256": "7889b2ade8fd1767894ec397b5d88ab8befca137d13bc9c20853b71078dbd605",
+        "marker_offset": 21,
+        "path": "C:\\Users\\Tan\\.openviking-mvp-verify\\data\\viking\\default\\user\\default\\verify\\20261010T153910-e48bc7\\roundtrip.md",
+        "size": 519,
+        "window_utf8": "# 原文往返核验 OVVERIFY-RT-MARKER-20261010T153910-e48bc7\n\n这是一条用于独立复核的中文原文，包含 Markdown 语法与唯一标记。\n\n- 唯一标记：`OVVERIFY-R"
+      }
+    ],
+    "root": "C:\\Users\\Tan\\.openviking-mvp-verify\\data"
+  },
+  "git": {
+    "blobs": [],
+    "examined": 0,
+    "repos": [],
+    "truncated": false
+  },
+  "input_bytes": 519,
+  "input_sha256": "7889b2ade8fd1767894ec397b5d88ab8befca137d13bc9c20853b71078dbd605",
+  "raw_equal": true,
+  "raw_sha256": "7889b2ade8fd1767894ec397b5d88ab8befca137d13bc9c20853b71078dbd605",
+  "uri": "viking://user/default/verify/20261010T153910-e48bc7/roundtrip.md",
+  "write_result": {
+    "content_updated": true,
+    "context_type": "resource",
+    "mode": "create",
+    "queue_status": {
+      "Embedding": {
+        "error_count": 0,
+        "errors": [],
+        "processed": 3,
+        "requeue_count": 0
+      },
+      "Semantic": {
+        "error_count": 0,
+        "errors": [],
+        "processed": 1,
+        "requeue_count": 0
+      }
+    },
+    "root_uri": "viking://user/default/verify/20261010T153910-e48bc7",
+    "semantic_status": "complete",
+    "uri": "viking://user/default/verify/20261010T153910-e48bc7/roundtrip.md",
+    "vector_status": "complete",
+    "written_bytes": 519
+  }
+}
