@@ -1,0 +1,4 @@
+openviking==0.4.23
+openviking-sdk==0.1.13
+mcp==1.30.0
+llama-cpp-python==0.3.36
