@@ -199,6 +199,12 @@ def main() -> None:
                                                          "--formal-python", args.formal_python],
                                                         cwd=foreign_cwds[0]).stdout)
         result["checks"]["installer_interpreter_boundary_observed"] = "PASS"
+        reproduction = run([python, HERE / "reproduce_default_install.py", "--store", store],
+                           cwd=foreign_cwds[0])
+        result["default_install_reproduction"] = json.loads(reproduction.stdout)
+        # Observing the rejection is a successful probe, but the default product
+        # entrypoint still fails to deploy the wheel into its selected runtime.
+        result["checks"]["wheel_default_and_fresh_runtime_bootstrap"] = result["default_install_reproduction"]["product_gate"]
         checked = run([args.formal_python, "-m", "pip", "check"], cwd=foreign_cwds[0], expected=None)
         result["formal_pip_check"] = {"exit_code": checked.returncode, "stdout": checked.stdout,
                                       "stderr": checked.stderr, "readonly": True}
@@ -213,6 +219,8 @@ def main() -> None:
         (HERE / "results.json").write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
         print(json.dumps({"overall": result.get("overall"), "checks": result["checks"],
                           "store": str(store), "wheel_sha256": result.get("wheel", {}).get("sha256")}, indent=2))
+    if result["overall"] == "FAIL":
+        raise SystemExit(1)
 
 
 if __name__ == "__main__":
