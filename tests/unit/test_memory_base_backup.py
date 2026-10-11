@@ -187,7 +187,7 @@ def test_restore_rejects_unsafe_manifest_paths(deployment, tmp_path, name):
     assert events == []
 
 
-@pytest.mark.parametrize("damage", ["body", "missing", "extra", "duplicate", "version", "model"])
+@pytest.mark.parametrize("damage", ["body", "missing", "extra", "duplicate", "version", "model", "schema-bool"])
 def test_restore_rejects_damage_without_target_mutation(deployment, tmp_path, damage):
     home, config, events = deployment
     fill(home)
@@ -205,8 +205,10 @@ def test_restore_rejects_damage_without_target_mutation(deployment, tmp_path, da
         manifest["files"].append(manifest["files"][0])
     elif damage == "version":
         manifest["versions"] = {"openviking": "new-version"}
-    else:
+    elif damage == "model":
         manifest["model_sha256"] = "b" * 64
+    else:
+        manifest["schema"] = True
     deploy._write_json(destination / "manifest.json", manifest)
     restored = target(tmp_path, config)
     events.clear()
@@ -240,19 +242,49 @@ def test_restore_publication_failure_rolls_back_empty_target(deployment, tmp_pat
     backup.create_backup(home, destination)
     restored = target(tmp_path, config)
     (restored / "data").mkdir()
-    rename = Path.rename
+    link = backup.os.link
 
-    def fail_state(path, target):
+    def fail_state(path, target, **kwargs):
         if path.name == "restore-state.json":
             raise OSError("metadata disk error")
-        return rename(path, target)
+        return link(path, target, **kwargs)
 
-    monkeypatch.setattr(Path, "rename", fail_state)
+    monkeypatch.setattr(backup.os, "link", fail_state)
     with pytest.raises(OSError, match="metadata disk error"):
         backup.restore_backup(restored, destination)
     assert list((restored / "data").iterdir()) == []
     assert not (restored / "restore-state.json").exists()
     assert not list(restored.glob(".restore-*"))
+
+
+def test_restore_late_existing_control_file_is_preserved_on_rollback(deployment, tmp_path, monkeypatch):
+    home, config, _ = deployment
+    fill(home)
+    destination = tmp_path / "snapshot"
+    backup.create_backup(home, destination)
+    restored = target(tmp_path, config)
+    link = backup.os.link
+
+    def racing_file(path, target, **kwargs):
+        Path(target).write_text("new owner state")
+        return link(path, target, **kwargs)
+
+    monkeypatch.setattr(backup.os, "link", racing_file)
+    with pytest.raises(FileExistsError):
+        backup.restore_backup(restored, destination)
+    assert (restored / "restore-state.json").read_text() == "new owner state"
+    assert not (restored / "data").exists()
+
+
+def test_cleanup_refuses_paths_outside_operation_parent(tmp_path):
+    intended, foreign = tmp_path / "intended", tmp_path / "foreign"
+    intended.mkdir()
+    foreign.mkdir()
+    marker = foreign / "owner-data"
+    marker.write_text("keep")
+    with pytest.raises(ValueError, match="outside"):
+        backup._remove_created(foreign, intended)
+    assert marker.read_text() == "keep"
 
 
 def test_symlink_data_is_rejected_and_original_stopped_set_restarted(deployment, tmp_path, monkeypatch):

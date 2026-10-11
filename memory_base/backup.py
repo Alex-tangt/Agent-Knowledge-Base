@@ -36,6 +36,17 @@ def _overlaps(left: Path, right: Path) -> bool:
     return left.is_relative_to(right) or right.is_relative_to(left)
 
 
+def _remove_created(path: Path, parent: Path) -> None:
+    """Clean only a path this operation created inside its verified parent."""
+    checked, parent = _path(path), _path(parent)
+    if checked == parent or not checked.is_relative_to(parent):
+        raise ValueError("Refusing cleanup outside the operation directory")
+    if checked.is_dir():
+        shutil.rmtree(checked)
+    else:
+        checked.unlink()
+
+
 def _registry(home: Path) -> tuple[bytes | None, list[Path]]:
     path = _path(home / "sources.json")
     if not path.exists():
@@ -143,7 +154,9 @@ def create_backup(home: Path, destination: Path, *, timeout: float = 180) -> dic
             raise ValueError("Backup destination must be a new directory with an existing parent")
         with _cold(home, config, timeout):
             with tempfile.TemporaryDirectory(prefix=".memory-base-backup-", dir=destination.parent) as temporary:
-                staged = Path(temporary)
+                staged = _path(temporary)
+                if staged.parent != destination.parent:
+                    raise ValueError("Backup staging directory escaped its selected parent")
                 (staged / "data").mkdir()
                 files, directories = _inventory(data)
                 _copy_tree(data, staged / "data", files, directories)
@@ -167,7 +180,7 @@ def create_backup(home: Path, destination: Path, *, timeout: float = 180) -> dic
                         if (staged / name).exists():
                             (staged / name).rename(destination / name)
                 except BaseException:
-                    shutil.rmtree(destination)
+                    _remove_created(destination, destination.parent)
                     raise
                 return {"status": "backed_up", "destination": str(destination),
                         "files": len(payload_files), "manifest_sha256": _hash(destination / "manifest.json")}
@@ -180,7 +193,8 @@ def _validate_backup(backup: Path, config: dict) -> tuple[str, list[dict], list[
     _path(manifest_path)
     manifest_raw = manifest_path.read_bytes()
     manifest = json.loads(manifest_raw)
-    if not isinstance(manifest, dict) or manifest.get("schema") != 1 or manifest.get("format") != FORMAT:
+    if (not isinstance(manifest, dict) or type(manifest.get("schema")) is not int or
+            manifest["schema"] != 1 or manifest.get("format") != FORMAT):
         raise ValueError("Unsupported backup manifest")
     if manifest.get("versions") != config["versions"] or config["versions"] != deploy.PINS:
         raise ValueError("Backup and installed runtime dependency versions must match the deployment pins")
@@ -228,7 +242,9 @@ def restore_backup(home: Path, backup: Path, *, timeout: float = 180) -> dict:
             raise ValueError("Restore deployment cannot overlap a registered source root")
         with _cold(home, config, timeout):
             with tempfile.TemporaryDirectory(prefix=".restore-", dir=home) as temporary:
-                staged = Path(temporary)
+                staged = _path(temporary)
+                if staged.parent != home:
+                    raise ValueError("Restore staging directory escaped the deployment home")
                 _copy_tree(backup, staged, files, directories)
                 if _inventory(staged) != (sorted(files, key=lambda item: item["path"]), sorted(directories)):
                     raise ValueError("Staged restore checksum verification failed")
@@ -249,14 +265,13 @@ def restore_backup(home: Path, backup: Path, *, timeout: float = 180) -> dict:
                     published.append(data)
                     for name in ("sources.json", "restore-state.json"):
                         if (staged / name).exists():
-                            (staged / name).rename(home / name)
+                            # Hard-link publication is atomic and exclusive:
+                            # a file appearing since preflight is never replaced.
+                            os.link(staged / name, home / name, follow_symlinks=False)
                             published.append(home / name)
                 except BaseException:
                     for path in reversed(published):
-                        if path.is_dir():
-                            shutil.rmtree(path)
-                        else:
-                            path.unlink()
+                        _remove_created(path, home)
                     if empty_data:
                         data.mkdir(exist_ok=True)
                     raise
