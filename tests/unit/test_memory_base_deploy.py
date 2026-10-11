@@ -2,6 +2,8 @@
 
 import json
 import os
+import subprocess
+import sys
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 import threading
@@ -66,6 +68,7 @@ def test_spawn_refuses_unowned_healthy_service(tmp_path, monkeypatch):
 
 
 def test_stop_refuses_reused_pid_without_killing(tmp_path, monkeypatch):
+    monkeypatch.setattr(deploy, "load_config", lambda _: {"ports": {"upstream": 17886}})
     monkeypatch.setattr(deploy, "_records", lambda _: {"upstream": {"pid": 42, "port": 17886}})
     monkeypatch.setattr(deploy, "owned_process", lambda _: False)
     monkeypatch.setattr(deploy, "_port_busy", lambda _: True)
@@ -82,6 +85,47 @@ def test_ownership_binds_pid_creation_and_exact_command(monkeypatch):
     assert not deploy.owned_process(record)
     monkeypatch.setattr(deploy, "_process_info", lambda _: {"created": "first", "command": "owned-command"})
     assert deploy.owned_process(record)
+
+
+def _command_text(command):
+    return subprocess.list2cmdline(command) if os.name == "nt" else " ".join(command)
+
+
+def test_component_ownership_binds_real_command_to_home_with_shared_runtime(tmp_path, monkeypatch):
+    left, right = tmp_path / "left", tmp_path / "right"
+    config = {"python": sys.executable, "ports": {"gateway": 17888}}
+    command = _command_text(deploy._component_command("gateway", left, config))
+    record = {"pid": 42, "created": "now", "command": command, "port": 17888, "home": str(right)}
+    monkeypatch.setattr(deploy, "_process_info", lambda _: {"created": "now", "command": command})
+    assert deploy.owned_component("gateway", left, config, record)
+    assert not deploy.owned_component("gateway", right, config, record)
+    record["command"] += " --other"
+    assert not deploy.owned_component("gateway", left, config, record)
+
+
+def test_legacy_component_ownership_requires_home_local_runtime(tmp_path, monkeypatch):
+    config = {"python": str(tmp_path / "runtime" / "python"), "ports": {"gateway": 17888}}
+    command = _command_text(deploy._component_command("gateway", tmp_path, config, legacy=True))
+    record = {"pid": 42, "created": "now", "command": command, "port": 17888}
+    monkeypatch.setattr(deploy, "_process_info", lambda _: {"created": "now", "command": record["command"]})
+    assert deploy.owned_component("gateway", tmp_path, config, record)
+    config["python"] = sys.executable
+    record["command"] = _command_text(deploy._component_command("gateway", tmp_path, config, legacy=True))
+    assert not deploy.owned_component("gateway", tmp_path, config, record)
+
+
+def test_component_wrapper_sets_home_and_preserves_module_arguments(tmp_path):
+    package = tmp_path / "memory_base"
+    package.mkdir()
+    (package / "__init__.py").write_text("")
+    (package / "embed.py").write_text("import json,os,sys;print(json.dumps([os.environ['MEMORY_BASE_HOME'],sys.argv]))")
+    config = {"python": sys.executable, "ports": {"embed": 17996}, "model": "/test/model.gguf"}
+    env = {**os.environ, "PYTHONPATH": str(tmp_path)}
+    result = subprocess.run(deploy._component_command("embed", tmp_path, config), cwd=tmp_path,
+                            env=env, capture_output=True, text=True, check=True)
+    home, arguments = json.loads(result.stdout)
+    assert home == str(tmp_path)
+    assert arguments[1:] == ["--port", "17996", "--model", "/test/model.gguf"]
 
 
 def test_upstream_health_rejects_dev_mode_and_wrong_version(monkeypatch):
@@ -127,6 +171,39 @@ def test_restart_reuses_upstream_identity_and_enables_acl(tmp_path, monkeypatch)
     assert calls[0][0].endswith("/settings")
     assert calls[0][1] == ("PATCH", {"acl": {"enabled": True}})
     assert calls[1][2]["key"] == "existing-upstream"
+
+
+def test_restored_identity_is_reissued_even_when_target_vault_has_old_key(tmp_path, monkeypatch):
+    calls, secrets = [], []
+    deploy._write_json(tmp_path / "restore-state.json", {"identity_reissue_pending": True, "manifest_sha256": "a" * 64})
+    monkeypatch.setattr(deploy, "_ensure_secret", lambda *_: "target-root")
+    monkeypatch.setattr(deploy, "get_secret", lambda *_: "stale-target-key")
+    monkeypatch.setattr(deploy, "set_secret", lambda *args: secrets.append(args))
+
+    def api(config, path, *args, **kwargs):
+        calls.append((path, args, kwargs))
+        if path == "/api/v1/admin/accounts":
+            return [{"account_id": "personal"}]
+        if path.endswith("/key"):
+            return {"user_key": "fresh-restored-key"}
+        return {}
+
+    monkeypatch.setattr(deploy, "_api", api)
+    deploy.ensure_identity(tmp_path, {"ports": {"upstream": 17886}})
+    assert secrets == [("upstream-key", "fresh-restored-key", tmp_path)]
+    assert calls[-1][2]["key"] == "fresh-restored-key"
+    assert json.loads((tmp_path / "restore-state.json").read_text())["identity_reissue_pending"] is False
+
+
+def test_restored_identity_failure_keeps_reissue_marker(tmp_path, monkeypatch):
+    deploy._write_json(tmp_path / "restore-state.json", {"identity_reissue_pending": True})
+    monkeypatch.setattr(deploy, "_ensure_secret", lambda *_: "root")
+    monkeypatch.setattr(deploy, "get_secret", lambda *_: "stale-key")
+    monkeypatch.setattr(deploy, "_api", lambda *_a, **_k: [{"account_id": "personal"}] if _a[1].endswith("/accounts")
+                        else (_ for _ in ()).throw(RuntimeError("regeneration failed")))
+    with pytest.raises(RuntimeError, match="regeneration failed"):
+        deploy.ensure_identity(tmp_path, {"ports": {"upstream": 17886}})
+    assert json.loads((tmp_path / "restore-state.json").read_text())["identity_reissue_pending"] is True
 
 
 def test_llama_context_is_serialized_across_parallel_requests():

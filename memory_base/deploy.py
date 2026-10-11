@@ -30,6 +30,9 @@ PROFILES = {"agent-bubble": "writer", "codex": "writer", "dsh": "writer",
             "opencode": "writer", "reader": "reader"}
 COMPONENTS = ("embed", "upstream", "gateway")
 ROOT_KEY_ENV = "MEMORY_BASE_ROOT_KEY"
+_RUN_COMPONENT = ("import os,runpy,sys;os.environ['MEMORY_BASE_HOME']=sys.argv[1];"
+                  "module=sys.argv[2];sys.argv=[module,*sys.argv[3:]];"
+                  "runpy.run_module(module,run_name='__main__')")
 
 
 def _write_json(path: Path, value: dict) -> None:
@@ -243,6 +246,35 @@ def owned_process(record: dict | None) -> bool:
                 and actual.get("command") == record.get("command"))
 
 
+def _component_command(component: str, home: Path, config: dict, *, legacy=False) -> list[str]:
+    if component == "embed":
+        module = "memory_base.embed"
+        args = ["--port", str(config["ports"][component]), "--model", config["model"]]
+    elif component == "upstream":
+        module = "openviking_cli.server_bootstrap"
+        args = ["--config", str(home / "openviking.conf"), "--host", "127.0.0.1",
+                "--port", str(config["ports"][component])]
+    else:
+        module, args = "memory_base.gateway", []
+    if legacy:
+        return [config["python"], "-m", module, *args]
+    # The home appears in the real command line, even with a shared runtime.
+    # No credential is passed as a command argument.
+    return [config["python"], "-c", _RUN_COMPONENT, str(home), module, *args]
+
+
+def owned_component(component: str, home: Path, config: dict, record: dict | None) -> bool:
+    """Bind process creation and command to this deployment, not just a PID file."""
+    if not owned_process(record) or record.get("port") != config["ports"][component]:
+        return False
+    actual = record.get("command", "").strip()
+    commands = [_component_command(component, home, config)]
+    if Path(config["python"]).resolve().is_relative_to(home.resolve()):
+        commands.append(_component_command(component, home, config, legacy=True))
+    return any(actual == (subprocess.list2cmdline(command) if os.name == "nt" else " ".join(command))
+               for command in commands)
+
+
 def _port_busy(port: int) -> bool:
     with socket.socket() as sock:
         sock.settimeout(0.3)
@@ -276,8 +308,10 @@ def ensure_identity(home: Path, config: dict) -> None:
                       {"account_id": "personal", "admin_user_id": "gateway",
                        "settings": {"acl": {"enabled": True}}}, key=root_key)
         set_secret("upstream-key", result["user_key"], home)
+    restore_state = home / "restore-state.json"
+    reissue = restore_state.exists() and json.loads(restore_state.read_text(encoding="utf-8")).get("identity_reissue_pending")
     key = get_secret("upstream-key", home)
-    if not key:
+    if not key or reissue:
         # A restored account may outlive its local protected credential. Key
         # regeneration is limited to this deployment's own gateway identity.
         result = _api(config, "/api/v1/admin/accounts/personal/users/gateway/key", "POST", {}, key=root_key)
@@ -285,27 +319,26 @@ def ensure_identity(home: Path, config: dict) -> None:
         set_secret("upstream-key", key, home)
     _api(config, "/api/v1/admin/accounts/personal/settings", "PATCH", {"acl": {"enabled": True}}, key=root_key)
     _api(config, "/api/v1/fs/ls?uri=viking%3A%2F%2Fresources", key=key, user="gateway")
+    if reissue:
+        state = json.loads(restore_state.read_text(encoding="utf-8"))
+        state["identity_reissue_pending"] = False
+        _write_json(restore_state, state)
 
 
 def _spawn(component: str, home: Path, config: dict, records: dict, timeout: float) -> None:
     existing = records.get(component)
-    if owned_process(existing):
+    if owned_component(component, home, config, existing):
         if _health(component, config):
             return
         raise RuntimeError(f"Owned {component} process is running but unhealthy; inspect memory-base logs")
     if _port_busy(config["ports"][component]):
         raise RuntimeError(f"Port {config['ports'][component]} is occupied by an unowned service")
     env = clean_env({"MEMORY_BASE_HOME": str(home), "PYTHONPATH": config["source"]})
-    python = config["python"]
-    if component == "embed":
-        command = [python, "-m", "memory_base.embed", "--port", str(config["ports"][component]), "--model", config["model"]]
-    elif component == "upstream":
+    command = _component_command(component, home, config)
+    if component == "upstream":
         env[ROOT_KEY_ENV] = _ensure_secret("root-key", home)
-        command = [python, "-m", "openviking_cli.server_bootstrap", "--config", str(home / "openviking.conf"),
-                   "--host", "127.0.0.1", "--port", str(config["ports"][component])]
-    else:
+    elif component == "gateway":
         env.update(gateway_env(home, config))
-        command = [python, "-m", "memory_base.gateway"]
     logs = home / "logs"
     logs.mkdir(parents=True, exist_ok=True)
     with (logs / (component + ".out.log")).open("ab") as out, (logs / (component + ".err.log")).open("ab") as err:
@@ -355,12 +388,13 @@ def start(home: Path, components=COMPONENTS, timeout: float = 180) -> dict:
 
 
 def stop(home: Path, components=COMPONENTS) -> dict:
+    config = load_config(home)
     records = _records(home)
     for component in reversed(COMPONENTS):
         if component not in components or component not in records:
             continue
         record = records[component]
-        if owned_process(record):
+        if owned_component(component, home, config, record):
             if os.name == "nt":
                 subprocess.run(["taskkill", "/PID", str(record["pid"]), "/T", "/F"],
                                capture_output=True, check=True,
@@ -368,10 +402,10 @@ def stop(home: Path, components=COMPONENTS) -> dict:
             else:
                 os.killpg(record["pid"], signal.SIGTERM)
             deadline = time.monotonic() + 20
-            while _port_busy(record["port"]) and time.monotonic() < deadline:
+            while (owned_process(record) or _port_busy(record["port"])) and time.monotonic() < deadline:
                 time.sleep(0.2)
-            if _port_busy(record["port"]):
-                raise RuntimeError(f"{component} port is still occupied after stopping the owned process")
+            if owned_process(record) or _port_busy(record["port"]):
+                raise RuntimeError(f"{component} process or port is still active after stopping the owned process")
         elif _port_busy(record["port"]):
             raise RuntimeError(f"Refusing to stop {component}: recorded process ownership no longer matches")
         records.pop(component)
@@ -383,7 +417,7 @@ def status(home: Path) -> dict:
     config = load_config(home)
     records = _records(home)
     services = {component: {"pid": records.get(component, {}).get("pid"),
-                            "owned": owned_process(records.get(component)),
+                            "owned": owned_component(component, home, config, records.get(component)),
                             "port": config["ports"][component], "health": _health(component, config)}
                 for component in COMPONENTS}
     return {"status": "ready" if all(s["owned"] and s["health"] for s in services.values()) else "unavailable",
@@ -401,7 +435,8 @@ def redact(text: str, home: Path) -> str:
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(prog="memory-base")
-    parser.add_argument("command", choices=("install", "start", "stop", "restart", "status", "logs", "host-token"))
+    parser.add_argument("command", choices=("install", "start", "stop", "restart", "status", "logs", "host-token",
+                                             "backup", "restore"))
     parser.add_argument("--home")
     parser.add_argument("--runtime-python", help="Explicit existing runtime; versions are checked against pins")
     parser.add_argument("--fresh-runtime", action="store_true", help="Select the dedicated <home>/runtime venv instead of an adopted runtime")
@@ -410,11 +445,17 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--components", default=",".join(COMPONENTS))
     parser.add_argument("--lines", type=int, default=80)
     parser.add_argument("--timeout", type=float, default=180)
+    parser.add_argument("--destination", help="New backup directory outside deployment and source roots")
+    parser.add_argument("--backup", help="Verified cold backup to restore into this installed empty deployment")
     args = parser.parse_args(argv)
     home = state_home(args.home)
     components = tuple(args.components.split(","))
     if any(component not in COMPONENTS for component in components):
         parser.error("Unknown service component")
+    if args.command == "backup" and not args.destination:
+        parser.error("backup requires --destination")
+    if args.command == "restore" and not args.backup:
+        parser.error("restore requires --backup")
     try:
         if args.command == "host-token":
             token = get_secret("host-" + args.profile, home)
@@ -424,7 +465,11 @@ def main(argv: list[str] | None = None) -> int:
             # secret. Hosts capture it directly into their process environment.
             print(token)
             return 0
-        if args.command == "status":
+        if args.command in ("backup", "restore"):
+            from memory_base.backup import create_backup, restore_backup
+            result = (create_backup(home, Path(args.destination), timeout=args.timeout) if args.command == "backup"
+                      else restore_backup(home, Path(args.backup), timeout=args.timeout))
+        elif args.command == "status":
             result = status(home)
         elif args.command == "logs":
             for component in components:
