@@ -153,6 +153,29 @@ def test_gateway_env_has_separate_host_identities_and_never_root_key(tmp_path, m
     assert deploy.ROOT_KEY_ENV not in env
 
 
+def test_gateway_env_uses_narrow_or_denied_persisted_host_scope_rules(tmp_path, monkeypatch):
+    deploy._write_json(tmp_path / "access.json", {"schema": 1, "profiles": {
+        "codex": {"read_scopes": ["projects/kb/docs"], "write_scopes": []},
+        "reader": {"read_scopes": []}, "agent-bubble": {"write_scopes": ["captures/2026-10-11"]}}})
+    monkeypatch.setattr(deploy, "get_secret", lambda *_: "upstream-key")
+    monkeypatch.setattr(deploy, "_ensure_secret", lambda name, _: name)
+    env = deploy.gateway_env(tmp_path, {"ports": {"upstream": 17886, "gateway": 17888}})
+    identities = json.loads(env["MEMORY_BASE_TOKENS"])
+    assert identities["host-codex"]["read_scopes"] == ["projects/kb/docs"]
+    assert identities["host-codex"]["write_scopes"] == []
+    assert identities["host-reader"]["read_scopes"] == []
+    assert identities["host-agent-bubble"]["write_scopes"] == ["captures/2026-10-11"]
+    assert "read_scopes" not in identities["host-dsh"]
+
+
+def test_gateway_env_rejects_bad_scope_policy_before_reading_any_secret(tmp_path, monkeypatch):
+    deploy._write_json(tmp_path / "access.json", {"schema": True, "profiles": {}})
+    monkeypatch.setattr(deploy, "get_secret", lambda *_: pytest.fail("must validate before credentials"))
+    monkeypatch.setattr(deploy, "_ensure_secret", lambda *_: pytest.fail("must validate before credentials"))
+    with pytest.raises(ValueError):
+        deploy.gateway_env(tmp_path, {"ports": {"upstream": 17886, "gateway": 17888}})
+
+
 def test_log_output_redacts_every_registered_credential(tmp_path, monkeypatch):
     monkeypatch.setattr(deploy, "get_secret", lambda name, _: "secret-" + name)
     assert deploy.redact("root=secret-root-key host=secret-host-dsh", tmp_path) == "root=[REDACTED] host=[REDACTED]"
@@ -277,6 +300,36 @@ def test_source_registry_invalid_does_not_get_overwritten(tmp_path):
     with pytest.raises(ValueError):
         deploy.source_add(home, "kb", str(source))
     assert (home / "sources.json").read_bytes() == previous
+
+
+def test_access_set_preserves_other_side_and_profile_and_normalizes_scopes(tmp_path):
+    home = _installed_home(tmp_path)
+    deploy.access_set(home, "codex", read_scopes=["root", "projects/kb", "root"], write_scopes=[])
+    deploy.access_set(home, "reader", read_scopes=["projects/kb/docs"])
+    result = deploy.access_set(home, "codex", read_scopes=[])
+    assert result["gateway_restart_required"] is True
+    access = json.loads((home / "access.json").read_text())
+    assert access["profiles"]["codex"] == {"read_scopes": [], "write_scopes": []}
+    assert access["profiles"]["reader"] == {"read_scopes": ["projects/kb/docs"]}
+    assert deploy.access_set(home, "codex", read_scopes=[])["status"] == "unchanged"
+    assert not (home / "access.json.tmp").exists()
+
+
+def test_access_set_rejects_unknown_profile_or_ambiguous_scope_without_mutation(tmp_path):
+    home = _installed_home(tmp_path)
+    for profile, scopes in (("unknown", ["root"]), ("codex", ["projects/../escape"]), ("codex", None)):
+        with pytest.raises(ValueError):
+            deploy.access_set(home, profile, read_scopes=scopes)
+    assert not (home / "access.json").exists()
+
+
+def test_access_cli_requires_profile_and_rejects_conflicting_grant_deny(tmp_path):
+    for argv in (["access-set", "--deny-read"],
+                 ["access-set", "--profile", "codex"],
+                 ["access-set", "--profile", "codex", "--read-scope", "root", "--deny-read"]):
+        with pytest.raises(SystemExit) as error:
+            deploy.main(argv)
+        assert error.value.code == 2
 
 
 def test_llama_context_is_serialized_across_parallel_requests():

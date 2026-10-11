@@ -57,6 +57,16 @@ def _registry(home: Path) -> tuple[bytes | None, list[Path]]:
     return raw, [Path(project["root"]).expanduser().resolve() for project in registry["projects"]]
 
 
+def _access(home: Path) -> bytes | None:
+    path = _path(home / "access.json")
+    if not path.exists():
+        return None
+    raw = path.read_bytes()
+    from memory_base.paths import validate_access
+    validate_access(json.loads(raw))
+    return raw
+
+
 def _safe_name(value: str) -> str:
     if not isinstance(value, str) or not value or "\\" in value:
         raise ValueError("Unsafe backup entry name")
@@ -148,6 +158,7 @@ def create_backup(home: Path, destination: Path, *, timeout: float = 180) -> dic
         if not data.is_dir():
             raise ValueError("OpenViking data does not exist; nothing has been backed up")
         registry_raw, roots = _registry(home)
+        access_raw = _access(home)
         if any(_overlaps(destination, root) for root in (home, *roots)):
             raise ValueError("Backup destination must be outside the deployment and registered source roots")
         if destination.exists() or not destination.parent.is_dir():
@@ -164,6 +175,8 @@ def create_backup(home: Path, destination: Path, *, timeout: float = 180) -> dic
                     raise RuntimeError("Workspace changed or copy verification failed")
                 if registry_raw is not None:
                     (staged / "sources.json").write_bytes(registry_raw)
+                if access_raw is not None:
+                    (staged / "access.json").write_bytes(access_raw)
                 payload_files, payload_directories = _inventory(staged)
                 manifest = {"schema": 1, "format": FORMAT,
                             "created_at": datetime.now(timezone.utc).isoformat(),
@@ -176,7 +189,7 @@ def create_backup(home: Path, destination: Path, *, timeout: float = 180) -> dic
                 # as a complete backup. All payload renames stay on one volume.
                 destination.mkdir()
                 try:
-                    for name in ("data", "sources.json", "manifest.json"):
+                    for name in ("data", "sources.json", "access.json", "manifest.json"):
                         if (staged / name).exists():
                             (staged / name).rename(destination / name)
                 except BaseException:
@@ -209,9 +222,9 @@ def _validate_backup(backup: Path, config: dict) -> tuple[str, list[dict], list[
         if name.casefold() in names:
             raise ValueError("Duplicate backup entry")
         names.add(name.casefold())
-        if not (name == "data" or name.startswith("data/") or name == "sources.json"):
+        if not (name == "data" or name.startswith("data/") or name in {"sources.json", "access.json"}):
             raise ValueError("Unexpected backup payload")
-    if "data" not in directories or "sources.json" in directories:
+    if "data" not in directories or any(name in directories for name in ("sources.json", "access.json")):
         raise ValueError("Backup data directory is missing or invalid")
     for item in files:
         if (set(item) != {"path", "size", "sha256"} or type(item["size"]) is not int or item["size"] < 0 or
@@ -222,6 +235,7 @@ def _validate_backup(backup: Path, config: dict) -> tuple[str, list[dict], list[
     if actual_files != sorted(files, key=lambda item: item["path"]) or actual_dirs != sorted(directories):
         raise ValueError("Backup inventory or checksum verification failed")
     _registry(backup)
+    _access(backup)
     return hashlib.sha256(manifest_raw).hexdigest(), files, directories
 
 
@@ -234,8 +248,8 @@ def restore_backup(home: Path, backup: Path, *, timeout: float = 180) -> dict:
         data = _path(home / "data")
         if data.exists() and (not data.is_dir() or any(data.iterdir())):
             raise ValueError("Restore requires an empty target data directory")
-        if (home / "sources.json").exists() or (home / "restore-state.json").exists():
-            raise ValueError("Restore requires a target without existing source or restore state")
+        if any((home / name).exists() for name in ("sources.json", "access.json", "restore-state.json")):
+            raise ValueError("Restore requires a target without existing source, access or restore state")
         manifest_hash, files, directories = _validate_backup(backup, config)
         _, roots = _registry(backup)
         if any(_overlaps(home, root) for root in roots):
@@ -263,7 +277,7 @@ def restore_backup(home: Path, backup: Path, *, timeout: float = 180) -> dict:
                         data.rmdir()
                     (staged / "data").rename(data)
                     published.append(data)
-                    for name in ("sources.json", "restore-state.json"):
+                    for name in ("sources.json", "access.json", "restore-state.json"):
                         if (staged / name).exists():
                             # Hard-link publication is atomic and exclusive:
                             # a file appearing since preflight is never replaced.

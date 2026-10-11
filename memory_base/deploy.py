@@ -361,10 +361,12 @@ def _spawn(component: str, home: Path, config: dict, records: dict, timeout: flo
 
 
 def gateway_env(home: Path, config: dict) -> dict[str, str]:
+    access = _access_document(home)
     key = get_secret("upstream-key", home)
     if not key:
         raise RuntimeError("Upstream gateway identity has not been provisioned")
-    tokens = {_ensure_secret("host-" + profile, home): {"principal": profile, "role": role}
+    tokens = {_ensure_secret("host-" + profile, home): {"principal": profile, "role": role,
+                                                     **access["profiles"].get(profile, {})}
               for profile, role in PROFILES.items()}
     return {"MEMORY_BASE_OV_URL": f"http://127.0.0.1:{config['ports']['upstream']}", "MEMORY_BASE_OV_KEY": key,
             "MEMORY_BASE_OV_ACCOUNT": "personal", "MEMORY_BASE_OV_USER": "gateway",
@@ -498,15 +500,42 @@ def source_remove(home: Path, name: str) -> dict:
         return {"status": "unregistered", "name": name}
 
 
+def _access_document(home: Path) -> dict:
+    from memory_base.backup import _path
+    from memory_base.paths import validate_access
+    path = _path(home / "access.json")
+    return validate_access(json.loads(path.read_text(encoding="utf-8"))) if path.exists() else {"schema": 1, "profiles": {}}
+
+
+def access_set(home: Path, profile: str, *, read_scopes=None, write_scopes=None) -> dict:
+    from memory_base.paths import validate_access
+    if profile not in PROFILES or (read_scopes is None and write_scopes is None):
+        raise ValueError("Select a known profile and explicitly set at least one scope rule")
+    with lifecycle_lock(home):
+        load_config(home)
+        access = _access_document(home)
+        rules = dict(access["profiles"].get(profile, {}))
+        if read_scopes is not None:
+            rules["read_scopes"] = read_scopes
+        if write_scopes is not None:
+            rules["write_scopes"] = write_scopes
+        candidate = validate_access({"schema": 1, "profiles": {**access["profiles"], profile: rules}})
+        if candidate == access:
+            return {"status": "unchanged", "profile": profile, "rules": rules, "gateway_restart_required": True}
+        _write_json(home / "access.json", candidate)
+        return {"status": "configured", "profile": profile, "rules": candidate["profiles"][profile],
+                "gateway_restart_required": True}
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(prog="memory-base")
     parser.add_argument("command", choices=("install", "start", "stop", "restart", "status", "logs", "host-token",
-                                             "backup", "restore", "source-add", "source-list", "source-remove"))
+                                             "backup", "restore", "source-add", "source-list", "source-remove", "access-set"))
     parser.add_argument("--home")
     parser.add_argument("--runtime-python", help="Explicit existing runtime; versions are checked against pins")
     parser.add_argument("--fresh-runtime", action="store_true", help="Select the dedicated <home>/runtime venv instead of an adopted runtime")
     parser.add_argument("--model")
-    parser.add_argument("--profile", choices=list(PROFILES), default="agent-bubble")
+    parser.add_argument("--profile", choices=list(PROFILES), help="Host-token defaults to agent-bubble; access-set requires a profile")
     parser.add_argument("--components", default=",".join(COMPONENTS))
     parser.add_argument("--lines", type=int, default=80)
     parser.add_argument("--timeout", type=float, default=180)
@@ -517,6 +546,10 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--include", action="append", help="Relative Markdown glob; repeat to add patterns")
     parser.add_argument("--exclude", action="append", help="Relative exclusion glob; repeat to add patterns")
     parser.add_argument("--replace", action="store_true", help="Explicitly replace an existing source registration")
+    parser.add_argument("--read-scope", action="append", help="Replace profile read scopes; repeat; root grants all")
+    parser.add_argument("--write-scope", action="append", help="Replace profile write scopes; repeat")
+    parser.add_argument("--deny-read", action="store_true", help="Explicitly deny every read scope for this profile")
+    parser.add_argument("--deny-write", action="store_true", help="Explicitly deny every write scope for this profile")
     args = parser.parse_args(argv)
     home = state_home(args.home)
     components = tuple(args.components.split(","))
@@ -530,9 +563,16 @@ def main(argv: list[str] | None = None) -> int:
         parser.error("source-add requires --name and --root")
     if args.command == "source-remove" and not args.name:
         parser.error("source-remove requires --name")
+    if args.command == "access-set":
+        if args.profile is None:
+            parser.error("access-set requires --profile")
+        if (args.deny_read and args.read_scope is not None) or (args.deny_write and args.write_scope is not None):
+            parser.error("A deny flag cannot be combined with scope grants on the same side")
+        if args.read_scope is None and args.write_scope is None and not args.deny_read and not args.deny_write:
+            parser.error("access-set requires explicit read/write scopes or a deny flag")
     try:
         if args.command == "host-token":
-            token = get_secret("host-" + args.profile, home)
+            token = get_secret("host-" + (args.profile or "agent-bubble"), home)
             if not token:
                 raise RuntimeError("Host credential is not provisioned; run install first")
             # This is the only CLI command whose stdout intentionally contains a
@@ -545,6 +585,9 @@ def main(argv: list[str] | None = None) -> int:
             result = source_list(home)
         elif args.command == "source-remove":
             result = source_remove(home, args.name)
+        elif args.command == "access-set":
+            result = access_set(home, args.profile, read_scopes=[] if args.deny_read else args.read_scope,
+                                write_scopes=[] if args.deny_write else args.write_scope)
         elif args.command in ("backup", "restore"):
             from memory_base.backup import create_backup, restore_backup
             result = (create_backup(home, Path(args.destination), timeout=args.timeout) if args.command == "backup"

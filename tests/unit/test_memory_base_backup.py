@@ -59,10 +59,13 @@ def test_full_tree_round_trip_preserves_acl_context_identity_and_empty_directori
     source.mkdir()
     registry = {"schema": 1, "projects": [{"name": "kb", "root": str(source)}]}
     deploy._write_json(home / "sources.json", registry)
+    access = {"schema": 1, "profiles": {"reader": {"read_scopes": ["projects/kb/docs"], "write_scopes": []},
+                                        "codex": {"read_scopes": [], "write_scopes": []}}}
+    deploy._write_json(home / "access.json", access)
     destination = tmp_path / "snapshot"
     result = backup.create_backup(home, destination)
     assert result["status"] == "backed_up"
-    assert {p.name for p in destination.iterdir()} == {"data", "sources.json", "manifest.json"}
+    assert {p.name for p in destination.iterdir()} == {"data", "sources.json", "access.json", "manifest.json"}
     assert "must-not-travel-secret" not in (destination / "manifest.json").read_text()
     manifest = json.loads((destination / "manifest.json").read_text())
     assert manifest["versions"] == deploy.PINS
@@ -76,6 +79,7 @@ def test_full_tree_round_trip_preserves_acl_context_identity_and_empty_directori
     for relative, content in entries.items():
         assert (restored / "data" / relative).read_bytes() == content
     assert (restored / "sources.json").read_bytes() == (home / "sources.json").read_bytes()
+    assert (restored / "access.json").read_bytes() == (home / "access.json").read_bytes()
     assert (restored / "deployment.json").read_bytes() == independent_config
     assert (restored / "openviking.conf").read_bytes() == independent_upstream_config
     assert not (restored / "processes.json").exists()
@@ -233,6 +237,32 @@ def test_restore_refuses_existing_data(deployment, tmp_path):
     with pytest.raises(ValueError, match="empty target"):
         backup.restore_backup(restored, destination)
     assert existing.read_text() == "owner data"
+
+
+@pytest.mark.parametrize("name", ["sources.json", "access.json", "restore-state.json"])
+def test_restore_never_replaces_existing_target_control_state(deployment, tmp_path, name):
+    home, config, events = deployment
+    fill(home)
+    destination = tmp_path / "snapshot"
+    backup.create_backup(home, destination)
+    restored = target(tmp_path, config)
+    existing = restored / name
+    existing.write_bytes(b"owner state")
+    events.clear()
+    with pytest.raises(ValueError, match="existing source, access or restore state"):
+        backup.restore_backup(restored, destination)
+    assert existing.read_bytes() == b"owner state"
+    assert not (restored / "data").exists()
+    assert events == []
+
+
+def test_backup_rejects_invalid_access_before_stopping(deployment, tmp_path):
+    home, _, events = deployment
+    fill(home)
+    deploy._write_json(home / "access.json", {"schema": 1, "profiles": {"codex": {"read_scopes": ["../escape"]}}})
+    with pytest.raises(ValueError):
+        backup.create_backup(home, tmp_path / "snapshot")
+    assert events == []
 
 
 def test_restore_publication_failure_rolls_back_empty_target(deployment, tmp_path, monkeypatch):
