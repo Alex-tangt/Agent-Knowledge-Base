@@ -1,0 +1,50 @@
+{
+  "schema": 1,
+  "post_hoc": true,
+  "at": "2026-10-11T17:35:37.512804+00:00",
+  "verifier_sha256": "81f4b009e99477d538d1dca3f867796f921d68e93f49301c81d8af3cc3bfb639",
+  "limitations": [
+    "immutable PRAGMA in preregistered run covered base DB only",
+    "WAL-aware integrity is checked on a new independent copy",
+    "no pending-task execution or exactly-once claim"
+  ],
+  "native_report_sha256": "ee74cbf4dd03d8d9366f4f9f80ede87fd7cf8379cc2f74bd158c08a8d193e2c7",
+  "frozen_code": "d8a670905f93c86b36c6957b601fd8c2f02d0f45",
+  "script_commit": "7768344504c32967ef504fc6bf07af2692f205f4",
+  "manifest_sha256": "11bab9545ff8c245d9b7c4c8ac0ad5e898b4dbcf1c0fa11ef93eda98cff4864d",
+  "file_count": 85,
+  "directory_count": 50,
+  "probe": "D:\\python_work\\work2026-4\\memory-base-recovery-assets\\20261011T172652Z-330308\\wal-probe-b8a7f416",
+  "queues": [
+    {
+      "path": "data/_system/queue/queue.db",
+      "copied_files": [
+        {
+          "suffix": "db",
+          "size": 4096,
+          "sha256": "42f6846a1f2028a457d6b98aba191c71f826da80b60783bad4556568392b263a"
+        },
+        {
+          "suffix": "-wal",
+          "size": 3361952,
+          "sha256": "6b962285a53bc294a691336661cbb2eeee8208fc31eb677c3d35d40664b7e233"
+        },
+        {
+          "suffix": "-shm",
+          "size": 32768,
+          "sha256": "ac27fe5965876e069c5581afaf3eef2f11ed961062a3d0ab3ad3db29f70b315b"
+        }
+      ],
+      "integrity": "ok",
+      "table_count": 3,
+      "journal_mode": "wal",
+      "wal_present": true
+    }
+  ],
+  "snapshot_unchanged": true,
+  "manifest_fully_recomputed": true,
+  "both_owned_process_records_empty": true,
+  "registry_baseline_sha256": "e0ba0f494d5158d4fca5b163533399887158f996df0e5848ad118ce87b6b1cb5",
+  "registry_baseline_restored": true,
+  "passed": true
+}
