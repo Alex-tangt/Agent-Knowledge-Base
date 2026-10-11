@@ -63,6 +63,12 @@ Bubble 的 `scripts/smoke-memory-live.ts` 会创建新总结任务并实际调�
 | Bubble 旧文章/视频 | HTTP 原样读回、逐字节核验、搜索、同请求重试通过；原 URI/hash 均未改变 | [upgrade-2026-10-12.json](upgrade-2026-10-12.json) |
 | Lead 实际 SDK 1.30 stdio | 四工具、annotations、expected_revision、limit=1 全库分页、reader 写拒绝通过；文章另做一次现有本地查询嵌入 | [文章](mcp-upgrade-article-2026-10-12.json)、[视频](mcp-upgrade-video-2026-10-12.json) |
 | 当前 Codex 桌面 MCP 读项目 | 正式登记 `agent-kb`，仅 README/docs；两个当前文件的原字节 revision 等于本机 SHA256，65 个 Markdown 完整列举；一条实际项目词法查询首位命中部署说明 | [project-2026-10-12.json](project-2026-10-12.json) |
+| 正式项目即时变更 | 实际文档更新后，旧 expected_revision 返回冲突，新正文含更新且等于本机原字节哈希 | [source-change-2026-10-12.json](source-change-2026-10-12.json) |
+| Lead 独立恢复复核 | 重算 #85 的 85 文件/50 目录清单；实际启动恢复目标，原文哈希、reader 列举范围与 native user 拒绝通过；目标已停下 | [lead-recovery-2026-10-12.json](lead-recovery-2026-10-12.json) |
+| 正式当前用户登录启动 | 登记命令归属准确，其它 HKCU Run 项不变；手动执行该 pythonw 命令退出 0，三个受管理服务就绪；实际登录触发未测 | [autostart-2026-10-12.json](autostart-2026-10-12.json) |
+| 正式冷备份 | 67 文件与完整目录清单独立核验；sources.json 原样保留；7 个已知凭据的 UTF-8/UTF-16 检查无明文命中；服务重启后原总结和教训读回一致 | [backup-2026-10-12.json](backup-2026-10-12.json) |
 | 宿主规约同步 | Codex、DSH、opencode 的 personal-memory SKILL 均与仓库规约一致，SHA256 `72527b6cc7e74c5c8266f01f85d3dcbe398415ed24404facfe722d1468c5d964`；旧副本保留本机备份 | 只证明规约落位，DSH/opencode 实际会话仍未验 |
 
-这条项目词法查询验证实际接缝，不是检索质量 benchmark。项目原文没有复制进 native capture，源文件当前状态仍为权威。#85 的完整原生隔离恢复与 #86 的独立包结论分别记录在独立实验中；目前 wheel 默认新 runtime 安装缺陷正在 #89 修复，不能据本节宣布产品全部完成。AOCI 按 owner 决定完全停用。
+这条项目词法查询验证实际接缝，不是检索质量 benchmark。项目原文没有复制进 native capture，源文件当前状态仍为权威。正式备份位于 `D:\python_work\work2026-4\memory-base-backups\formal-20261012T014904`，manifest SHA256 为 `27dc14f772e61a351be62bf3c5dfb24397c27cec8894612065139a8677541c65`；它尚未自行恢复，空目标恢复行为另由 #85 验证。
+
+#85 的完整原生隔离恢复与 #86 的独立包结论分别记录在独立实验中。wheel 默认新 runtime 安装缺陷的 #89 修复已合入 `9252d52`，新版全量闸门与 #86 独立完整安装复验进行中，不能据本节宣布产品全部完成。AOCI 按 owner 决定完全停用。

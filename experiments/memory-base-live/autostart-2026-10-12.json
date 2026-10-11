@@ -1,0 +1,12 @@
+{
+  "date": "2026-10-12",
+  "home": "C:\\Users\\Tan\\.agent-memory-base",
+  "name": "AgentMemoryBase-11ab1c4c77ca00f9",
+  "registered": true,
+  "owned_command_exact": true,
+  "other_registry_values_unchanged": true,
+  "command_exit_code": 0,
+  "managed_services_ready": true,
+  "actual_logon_trigger_tested": false,
+  "command_carries_credentials": false
+}

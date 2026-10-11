@@ -1,0 +1,34 @@
+{
+  "date": "2026-10-12",
+  "created_at": "2026-10-11T17:50:32.748467+00:00",
+  "home": "C:\\Users\\Tan\\.agent-memory-base",
+  "destination": "D:\\python_work\\work2026-4\\memory-base-backups\\formal-20261012T014904",
+  "status": "backed_up",
+  "manifest_sha256": "27dc14f772e61a351be62bf3c5dfb24397c27cec8894612065139a8677541c65",
+  "file_count": 67,
+  "directory_count": 39,
+  "independent_manifest_verified": true,
+  "source_registry_exact": true,
+  "managed_services_ready_after_backup": true,
+  "credential_scan": {
+    "named_credentials": 7,
+    "utf8_and_utf16_checked": true,
+    "files_checked": 68,
+    "raw_credential_hits": 0
+  },
+  "runtime_config_logs_pid_records_excluded": true,
+  "captures": [
+    {
+      "uri": "viking://resources/captures/4b24c835877cfaa5666c2ba322431a663aab3fdd17c3196ac99274e94fcf591d/content.md",
+      "revision": "a773d1d44eb19f2b3e061417b37aabfc728a1878bf50f0918eb994e1746b8095",
+      "exact_readback": true
+    },
+    {
+      "uri": "viking://resources/captures/0ada0a7776fcf4e646f0b3b54d69972334f01b04a7da6488c4044fa6f46dbd7b/content.md",
+      "revision": "5f6ba7e2e05b205484c0034111404a363151d35d95516871c61fd6d727eeadc7",
+      "exact_readback": true
+    }
+  ],
+  "lesson_exact_readback": true,
+  "boundary": "Formal cold backup and post-restart readback. Empty-target restore is verified separately in #85; this backup has not itself been restored."
+}

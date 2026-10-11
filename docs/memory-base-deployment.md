@@ -79,4 +79,8 @@ memory-base restore --home <已安装且数据为空的目标部署> --backup <�
 
 Codex CLI 验证使用已登记入口及临时 CLI 默认设置，因桌面模型别名在独立 CLI 不可用；全局模型配置保留。DSH/opencode 已完成配置登记，需要新会话加载，其实际对话调用未纳入本轮成功声明。AOCI 于 2026-10-12 按 owner 决定停用，不参与安装、开发或接入。
 
-**2026-10-12 补充**：上述来源、范围、冷恢复与登录启动实现已合入。冻结版本 `d8a6709` 全量单测为 802 passed、5 skipped；harness 的 10 条确定性场景预期全部匹配，opencode server 缺席时接入冒烟 SKIP。正式 gateway 使用修复后的标准生命周期入口重启，MCP 读回新增教训逐字一致。独立 wheel 和真实隔离恢复验收仍在执行；正式项目来源及登录启动尚未登记，不以单测替代这些交付证据。
+**2026-10-12 补充**：正式实例已登记 `agent-kb` 的 README/docs，当前 Codex 桌面 MCP 可读到实时文件；文档变更后旧 revision 被拒，新原文立即可读。当前用户登录启动已登记，核验命令并手动执行后服务就绪；实际注销/重新登录触发未测试。
+
+正式冷备份保存在 `D:\python_work\work2026-4\memory-base-backups\formal-20261012T014904`，67 个文件的 size/SHA256 与目录清单独立核验通过，7 个已知凭据的 UTF-8/UTF-16 明文检查无命中；服务恢复后两份旧总结和教训原样读回。该正式快照尚未自行恢复；独立原生验收 #85 已在空数据根验证完整冷恢复、权限拒绝与原文，11 项通过，Lead 另行启动恢复目标复核后停下。复跑与限界见[真实接入记录](../experiments/memory-base-live/README.md)及[原生验收](../experiments/memory-base-recovery/README.md)。
+
+冻结版本 `d8a6709` 的既有全量闸门为 802 passed、5 skipped，harness 10/10 预期匹配；opencode server 缺席，冒烟 SKIP。#86 曾发现 wheel 默认新 runtime 安装失败，原 FAIL 保留；#89 修复已合入 `9252d52`，新增全量闸门与独立完整安装复验进行中。不能用旧版本测试或 CLI help 成功代替新版安装通过。
