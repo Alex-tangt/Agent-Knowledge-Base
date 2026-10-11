@@ -2,6 +2,7 @@
 
 import json
 import os
+from contextlib import contextmanager
 import subprocess
 import sys
 from concurrent.futures import ThreadPoolExecutor
@@ -330,6 +331,35 @@ def test_access_cli_requires_profile_and_rejects_conflicting_grant_deny(tmp_path
         with pytest.raises(SystemExit) as error:
             deploy.main(argv)
         assert error.value.code == 2
+
+
+def test_autostart_cli_status_is_read_only_and_enable_disable_use_lifecycle_lock(tmp_path, monkeypatch, capsys):
+    from memory_base import autostart
+    home = _installed_home(tmp_path)
+    events = []
+
+    @contextmanager
+    def lock(path):
+        events.append(("lock", path))
+        yield
+        events.append(("unlock", path))
+
+    monkeypatch.setattr(deploy, "lifecycle_lock", lock)
+    monkeypatch.setattr(autostart, "status", lambda path: events.append(("status", path)) or {"enabled": False})
+    monkeypatch.setattr(autostart, "enable", lambda path, python: events.append(("enable", path, python)) or {"enabled": True})
+    monkeypatch.setattr(autostart, "disable", lambda path: events.append(("disable", path)) or {"enabled": False})
+    monkeypatch.setattr(deploy, "load_config", lambda _: {"python": "installed-python"})
+    assert deploy.main(["autostart", "--home", str(home)]) == 0
+    assert events == [("status", home)]
+    assert json.loads(capsys.readouterr().out) == {"enabled": False}
+    events.clear()
+    assert deploy.main(["autostart", "--home", str(home), "--mode", "enable"]) == 0
+    assert events == [("lock", home), ("enable", home, "installed-python"), ("unlock", home)]
+    assert json.loads(capsys.readouterr().out) == {"enabled": True}
+    events.clear()
+    monkeypatch.setattr(deploy, "load_config", lambda _: pytest.fail("disable must allow removed runtime"))
+    assert deploy.main(["autostart", "--home", str(home), "--mode", "disable"]) == 0
+    assert events == [("lock", home), ("disable", home), ("unlock", home)]
 
 
 def test_llama_context_is_serialized_across_parallel_requests():

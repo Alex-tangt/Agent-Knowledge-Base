@@ -530,7 +530,8 @@ def access_set(home: Path, profile: str, *, read_scopes=None, write_scopes=None)
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(prog="memory-base")
     parser.add_argument("command", choices=("install", "start", "stop", "restart", "status", "logs", "host-token",
-                                             "backup", "restore", "source-add", "source-list", "source-remove", "access-set"))
+                                             "backup", "restore", "source-add", "source-list", "source-remove", "access-set",
+                                             "autostart"))
     parser.add_argument("--home")
     parser.add_argument("--runtime-python", help="Explicit existing runtime; versions are checked against pins")
     parser.add_argument("--fresh-runtime", action="store_true", help="Select the dedicated <home>/runtime venv instead of an adopted runtime")
@@ -550,6 +551,8 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--write-scope", action="append", help="Replace profile write scopes; repeat")
     parser.add_argument("--deny-read", action="store_true", help="Explicitly deny every read scope for this profile")
     parser.add_argument("--deny-write", action="store_true", help="Explicitly deny every write scope for this profile")
+    parser.add_argument("--mode", choices=("enable", "disable", "status"), default="status",
+                        help="Automatic logon startup registration; status is read-only")
     args = parser.parse_args(argv)
     home = state_home(args.home)
     components = tuple(args.components.split(","))
@@ -579,7 +582,15 @@ def main(argv: list[str] | None = None) -> int:
             # secret. Hosts capture it directly into their process environment.
             print(token)
             return 0
-        if args.command == "source-add":
+        if args.command == "autostart":
+            from memory_base import autostart
+            if args.mode == "status":
+                result = autostart.status(home)
+            else:
+                with lifecycle_lock(home):
+                    result = (autostart.enable(home, load_config(home)["python"]) if args.mode == "enable"
+                              else autostart.disable(home))
+        elif args.command == "source-add":
             result = source_add(home, args.name, args.root, include=args.include, exclude=args.exclude, replace=args.replace)
         elif args.command == "source-list":
             result = source_list(home)
