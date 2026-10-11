@@ -473,3 +473,9 @@ Five canonical roles, default strings. See `docs/agents/triage-labels.md`.
 ### Domain docs
 
 Single-context: `CONTEXT.md` + `docs/adr/`. See `docs/agents/domain.md`.
+
+## 外部组件引入与 AOCI 停用（owner 决定，2026-10-12）
+
+**AOCI 已完全停用。** 开发直接读取实际源码、必要测试、ADR 与项目说明；不调用 AOCI 工具，不运行扫描、全量读取、治理或提交后同步。索引、日志和旧接入记录仅为存档，不是当前开发流程；恢复接入需 owner 明确重新批准。
+
+**引入新的 MVP、开源项目或 skill 前必须评估。** 先明确本项目的实际需求，再调查社区使用反馈、已知缺陷、维护状况及接入成本；在隔离的小范围试用中核验收益、失败行为和退出方式，通过后才正式采用。不能因 README 宣传或一时兴奋直接下载并接入。没有明确收益或副作用过大时及时停用，避免维护工具挤占产品开发。
