@@ -221,9 +221,8 @@ class SourceRegistry:
                 "content_hash": revision, "source": {"project": project["name"], "relative_path": rel},
                 "freshness": "live", "bytes": len(body)}
 
-    def scan(self, scopes: list[str]) -> list[dict]:
+    def iter_entries(self, scopes: list[str]):
         """Read only authorized subtrees; fail visibly on a selected scan failure."""
-        entries = []
         for project in self.load()["projects"]:
             prefix = "projects/" + project["name"]
             grants = [scope for scope in scopes if overlaps(prefix, scope)]
@@ -257,12 +256,13 @@ class SourceRegistry:
                         if stat.S_ISDIR(info.st_mode):
                             pending.append(_safe_path(root, rel))
                         elif selected(project, rel) and any(contains(scope, path) for scope in grants):
-                            entries.append(self.read(path))
+                            yield self.read(path)
                 except SourceError:
                     raise
                 except (OSError, ValueError):
                     raise SourceError(503, "SOURCE_SCAN_INCOMPLETE") from None
-        return sorted(entries, key=lambda entry: entry["path"])
+    def scan(self, scopes: list[str]) -> list[dict]:
+        return sorted(self.iter_entries(scopes), key=lambda entry: entry["path"])
 
 
 def lexical_score(query: str, text: str) -> float:

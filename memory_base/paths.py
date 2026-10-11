@@ -12,19 +12,33 @@ KINDS = {"note", "article_summary", "video_summary"}
 
 def logical_path(value: str, *, root: bool = False) -> str:
     """Reject ambiguous paths rather than decoding or repairing caller input."""
-    if root and value in {"", "root"}:
-        return ""
     if not isinstance(value, str) or not value or len(value) > 4096:
+        if root and value == "":
+            return ""
         raise ValueError("invalid logical path")
-    if any(c in value for c in "\\:%?#\x00") or any(ord(c) < 32 for c in value):
+    if root and value == "root":
+        return ""
+    if any(c in value for c in '\\:%?#\x00"<>|*') or any(ord(c) < 32 for c in value):
         raise ValueError("invalid logical path")
     parts = value.split("/")
     if any(not p or p in {".", ".."} or p != p.strip() or p.endswith(".") for p in parts):
+        raise ValueError("invalid logical path")
+    devices = {"con", "prn", "aux", "nul", *(f"com{i}" for i in range(1, 10)), *(f"lpt{i}" for i in range(1, 10))}
+    if any(part.split(".", 1)[0].lower() in devices for part in parts):
         raise ValueError("invalid logical path")
     if parts[0] not in {"captures", "projects"}:
         raise ValueError("path must start with captures or projects")
     if parts[0] == "projects" and len(parts) > 1 and not PROJECT_NAME.fullmatch(parts[1]):
         raise ValueError("invalid project name")
+    if parts[0] == "captures":
+        if len(parts) > 1 and parts[1] != "unknown":
+            observed_date(parts[1])
+        if len(parts) > 2 and parts[2] not in KINDS:
+            raise ValueError("invalid capture kind")
+        if len(parts) > 3 and not re.fullmatch(r"[0-9a-f]{64}", parts[3]):
+            raise ValueError("invalid capture id")
+        if len(parts) > 5 or (len(parts) == 5 and parts[4] != "content.md"):
+            raise ValueError("invalid capture content path")
     return value
 
 

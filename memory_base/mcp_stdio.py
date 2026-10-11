@@ -1,4 +1,4 @@
-"""Three MCP tools forwarding to the running, authenticated capture gateway."""
+"""MCP tools forwarding to the running, authenticated memory gateway."""
 
 from __future__ import annotations
 
@@ -20,6 +20,32 @@ try:
 except ImportError:  # The pinned OpenViking environment uses the MCP 1.x SDK.
     from mcp.server.fastmcp import FastMCP as MCPServer
     from mcp.server.fastmcp.exceptions import ToolError
+
+
+_TOOL_ARGUMENTS = {
+    "memory_add": {"request_id", "content", "title", "kind", "source_url", "source_id",
+                   "conversation_id", "observed_on", "scope"},
+    "memory_search": {"query", "limit", "scope"},
+    "memory_get": {"uri", "expected_revision", "scope"},
+    "memory_list": {"scope", "limit", "cursor"},
+}
+
+
+class MemoryMCPServer(MCPServer):
+    async def list_tools(self):
+        tools = await super().list_tools()
+        for tool in tools:
+            schema = tool.input_schema if hasattr(tool, "input_schema") else tool.inputSchema
+            schema["additionalProperties"] = False
+        return tools
+
+    async def call_tool(self, name, arguments, *args, **kwargs):
+        # Both supported SDK generations otherwise discard unknown keys before
+        # invoking functions. Reject the original argument map at the boundary.
+        fields = _TOOL_ARGUMENTS.get(name)
+        if fields is not None and (not isinstance(arguments, dict) or set(arguments) - fields):
+            raise ToolError("UNKNOWN_MEMORY_TOOL_ARGUMENT")
+        return await super().call_tool(name, arguments, *args, **kwargs)
 
 
 class GatewayClient:
@@ -53,10 +79,13 @@ class GatewayClient:
 
 
 def create_mcp(client: GatewayClient) -> MCPServer:
-    server = MCPServer("personal-memory-base", instructions=(
+    server = MemoryMCPServer("personal-memory-base", instructions=(
         "Store original user-approved notes or article/video summaries with memory_add. "
         "Reuse the same request_id when retrying; altered content requires a new request_id. "
         "Search memory_search, then read the returned URI with memory_get. "
+        "Use memory_list for complete original-file enumeration and path scopes. "
+        "The default search scope is captures; projects/<name> queries live read-only Markdown. "
+        "observed_on is the person's encounter date; leave it unset when unknown. "
         "Unavailable is an error, never evidence that no memory exists. "
         "This interface does not promote personal preferences to global preferences."
     ))
@@ -67,26 +96,37 @@ def create_mcp(client: GatewayClient) -> MCPServer:
     def memory_add(request_id: str, content: str, title: str,
                    kind: Literal["note", "article_summary", "video_summary"] = "note",
                    source_url: str | None = None, source_id: str | None = None,
-                   conversation_id: str | None = None) -> dict[str, Any]:
+                   conversation_id: str | None = None, observed_on: str | None = None,
+                   scope: str | None = None) -> dict[str, Any]:
         """Persist exact content, source trace and writer identity without rewriting it."""
         return client.call("add", {
             "request_id": request_id, "content": content, "title": title, "kind": kind,
             "source_url": source_url, "source_id": source_id, "conversation_id": conversation_id,
+            "observed_on": observed_on, "scope": scope,
         })
 
     @server.tool(annotations=ToolAnnotations(
         readOnlyHint=True, destructiveHint=False, idempotentHint=True, openWorldHint=False,
     ))
-    def memory_search(query: str, limit: int = 5) -> dict[str, Any]:
-        """Search shared capture vectors and return URIs suitable for memory_get."""
-        return client.call("search", {"query": query, "limit": limit})
+    def memory_search(query: str, limit: int = 5, scope: str | None = None) -> dict[str, Any]:
+        """Search captures or a live project path; methods and coverage are explicit."""
+        return client.call("search", {"query": query, "limit": limit, "scope": scope})
 
     @server.tool(annotations=ToolAnnotations(
         readOnlyHint=True, destructiveHint=False, idempotentHint=True, openWorldHint=False,
     ))
-    def memory_get(uri: str) -> dict[str, Any]:
-        """Read the exact stored content of a returned capture URI."""
-        return client.call("get", {"uri": uri})
+    def memory_get(uri: str, expected_revision: str | None = None,
+                   scope: str | None = None) -> dict[str, Any]:
+        """Read an original capture/project; expected_revision rejects changed bytes."""
+        return client.call("get", {"uri": uri, "expected_revision": expected_revision, "scope": scope})
+
+    @server.tool(annotations=ToolAnnotations(
+        readOnlyHint=True, destructiveHint=False, idempotentHint=True, openWorldHint=False,
+    ))
+    def memory_list(scope: str | None = None, limit: int = 100,
+                    cursor: str | None = None) -> dict[str, Any]:
+        """List authorized originals without vectors; follow next_cursor until null."""
+        return client.call("list", {"scope": scope, "limit": limit, "cursor": cursor})
 
     return server
 

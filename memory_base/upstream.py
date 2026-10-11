@@ -50,7 +50,7 @@ class OpenVikingClient:
         )
 
     def call(self, method: str, path: str, *, body: dict | None = None,
-             params: dict | None = None) -> Any:
+             params: dict | None = None, envelope: bool = False) -> Any:
         url = self.url.rstrip("/") + path
         if params:
             url += "?" + urllib.parse.urlencode(params)
@@ -79,7 +79,7 @@ class OpenVikingClient:
             raise UpstreamError(503, "UPSTREAM_INVALID_RESPONSE")
         if "result" not in payload:
             raise UpstreamError(503, "UPSTREAM_INVALID_RESPONSE")
-        return payload["result"]
+        return payload if envelope else payload["result"]
 
     def read(self, uri: str) -> str:
         result = self.call("GET", "/api/v1/content/read",
@@ -107,11 +107,29 @@ class OpenVikingClient:
             raise UpstreamError(503, "UPSTREAM_INVALID_RESPONSE")
         return result
 
-    def find(self, query: str, limit: int, scope: str) -> list[dict]:
-        result = self.call("POST", "/api/v1/search/find", body={
+    def ls(self, uri: str, offset: int = 0, limit: int = 1000) -> dict:
+        payload = self.call("GET", "/api/v1/fs/ls", params={
+            "uri": uri, "recursive": "true",
+            "output": "original", "include_abstract": "false", "include_overview": "false",
+            "node_limit": limit, "offset": offset, "sort_by": "name", "sort_order": "asc",
+        }, envelope=True)
+        if (not isinstance(payload["result"], list)
+                or not isinstance(payload.get("has_more"), bool)):
+            raise UpstreamError(503, "UPSTREAM_INVALID_RESPONSE")
+        return {"entries": payload["result"], "has_more": payload["has_more"]}
+
+    def find(self, query: str, limit: int, scope: str,
+             allowed_uris: list[str] | None = None) -> list[dict]:
+        body = {
             "query": query, "target_uri": scope, "limit": limit,
             "level": 2, "tags": ["memory_base=capture"],
-        })
+        }
+        if allowed_uris is not None:
+            if not allowed_uris:
+                return []  # An empty allowlist must never become an unfiltered query.
+            # Native path matching needs depth zero to mean exact URI equality.
+            body["filter"] = {"op": "must", "field": "uri", "conds": allowed_uris, "para": "-d=0"}
+        result = self.call("POST", "/api/v1/search/find", body=body)
         if not isinstance(result, dict) or not isinstance(result.get("resources"), list):
             raise UpstreamError(503, "UPSTREAM_INVALID_RESPONSE")
         return result["resources"]

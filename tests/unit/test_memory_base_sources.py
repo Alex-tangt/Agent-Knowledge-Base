@@ -130,6 +130,8 @@ def test_source_directory_link_cannot_escape(source, tmp_path):
     "projects/demo/../secret.md", "projects/demo/%2e%2e/secret.md",
     "projects/demo/docs\\secret.md", "projects/demo/docs//a.md", "/projects/demo/docs/a.md",
     "projects/demo/docs/a.md?secret", "projects/demo/docs/a.md:stream", "projects/demo/docs/a.md/",
+    "projects/demo/docs/CON.md", "projects/demo/docs/COM1.md", "projects/demo/docs/*.md",
+    "captures/2026-02-30", "captures/unknown/unknown_kind", "captures/unknown/note/not-an-id",
 ])
 def test_ambiguous_paths_are_rejected(path):
     with pytest.raises(ValueError):
