@@ -4,11 +4,13 @@ FastAPI + vanilla-JS RAG 应用，已重构为三模块单仓：`ragcore/`（可
 
 ## 目录布局
 
-**正式个人记忆基座**：`memory_base/`（固定 OpenViking 部署、外部串行嵌入、HTTP/MCP 三工具）与 `install-memory-base.ps1/.sh`；部署和真实宿主验收见 `docs/memory-base-deployment.md`。旧 `memory_agent` 引擎冻结，以下旧入口只用于保留资产。当前优先级为可部署、可接入与 Bubble 实际 pi 总结写入/读取（ADR-0032 D9–D12；#79–#81）。
+**正式个人记忆基座**：`memory_base/`（固定 OpenViking 部署、外部串行嵌入、HTTP/MCP 四工具）与 `install-memory-base.ps1/.sh`；部署和真实宿主验收见 `docs/memory-base-deployment.md`。旧 `memory_agent` 引擎冻结，以下旧入口只用于保留资产。Bubble 实际 pi 总结读写已验收；当前扩充为项目只读映射、路径权限、完整恢复与登录启动（ADR-0032 D13–D16；任务状态见 `docs/memory-base-delivery-plan-2026-10-11.md`）。
 
 ```
 memory_base/        # 正式个人记忆基座（OpenViking 薄运行包）；独立安装
   deploy.py  credentials.py  embed.py  gateway.py  upstream.py  mcp_stdio.py
+  paths.py  sources.py    # 规范路径/范围规则、登记项目的实时只读 Markdown
+  backup.py  autostart.py # 完整冷备份/空数据根恢复、Windows 当前用户登录启动
   pyproject.toml  requirements.txt  constraints.txt  skill/SKILL.md
 install-memory-base.ps1  install-memory-base.sh  # 当前部署薄壳；Windows 已实测
 ragcore/            # 可复用核心（零 FastAPI 依赖）；真包

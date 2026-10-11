@@ -5,8 +5,8 @@
 ## 产品形状（Project Shape）
 
 **Agent 知识库（Agent Knowledge Base）**：
-项目定位。把 Markdown 知识库变成 agent 可安全读写、可检索的长期知识底座；当前聚焦"记忆能力包"这一个能力；北向是企业级 agent 知识库管理（多租户访问权限、缓存、降级、内容生命周期）。
-_Avoid_: 通用 RAG 框架、个人 RAG 工具（起点形态，已被本定位取代）
+项目定位。把个人内容与项目 Markdown 变成多个 agent 共享、可追溯、可恢复的长期知识底座。当前正式形状是家用 PC 上的个人记忆基座；企业多租户属于先前探索，不是当前交付范围。
+_Avoid_: 通用 RAG 框架、以企业多租户扩充首期个人产品
 
 **记忆能力包（Memory Capability Package）**：
 本阶段交付物。以工具协议（MCP）+ 技能（skill）对外暴露，让 coding agent 读写长期记忆。
@@ -46,7 +46,7 @@ _Avoid_: 把搜索片段、LLM 推断或另一份项目摘要当作原文权威
 _Avoid_: 把持久数据库中的全部状态都当作缓存
 
 **个人记忆基座（Personal Memory Base）**：
-一个人的多 agent 共同使用的内容持久层：应用提交原文、项目文件的只读地址，以及另存且引用输入的派生记忆。当前正式接入采用固定 OpenViking 保存 capture；旧候选导入项目快照会陈旧，真实文件读取与路径范围扩充按 ADR-0032 D13–D15 推进。
+一个人的多 agent 共同使用的内容持久层：应用提交原文、项目文件的只读地址，以及另存且引用输入的派生记忆。正式接入采用固定 OpenViking 保存 capture，登记项目 Markdown 每次从源文件读取；旧候选导入快照的陈旧问题由实时读取接缝处理。路径范围、备份恢复与实际验收按 ADR-0032 D13–D16 推进。
 _See_: `docs/adr/0032-personal-memory-base-adopt-then-productize.md`、`docs/memory-base-delivery-plan-2026-10-11.md`
 _Avoid_: 记忆能力包（`memory_agent` = 已冻结的旧自研实现）
 
@@ -59,8 +59,8 @@ _Avoid_: 用接收日推断接触日
 _Avoid_: 仅用项目 Git commit 表示实际读取的内容
 
 **正式接入层（`memory_base`）**：
-固定 OpenViking 的部署与宿主接缝。HTTP 与 MCP 共用追加、搜索、读取语义；凭据绑定调用身份，虚拟条目正文与追溯元数据分开保存，同一次请求重试不生成第二条。Agent-bubble 的 pi 首次总结由程序原样提交，知识库保存失败不丢弃本机总结。
-_See_: `docs/memory-base-deployment.md`、ADR-0032 D9–D12
+固定 OpenViking 的部署与宿主接缝。HTTP 与 MCP 共用追加、搜索、读取、列举语义；凭据绑定调用身份，范围只可收窄，虚拟条目正文与追溯元数据分开保存，同一次请求重试不生成第二条。Agent-bubble 的 pi 首次总结由程序原样提交，知识库保存失败不丢弃本机总结。`sources.json` 登记真实项目，`access.json` 保存非秘密范围规则；两者和全部原生 data 一起备份。
+_See_: `docs/memory-base-deployment.md`、ADR-0032 D9–D16
 
 **视图（View）**：
 一份**具名谓词**，规定哪些**域**的哪些**条目**可见——"看什么"的范围定义；**只读**

@@ -4,7 +4,9 @@
 
 **让多个 agent 共享个人知识和文章、视频总结。**
 
-当前开发入口是 `memory_base/`：固定 OpenViking 0.4.23，统一安装、启动、停止与状态检查；HTTP / MCP 提供相同的追加、搜索与读取接口。Agent-bubble 的 pi 接入使用这一服务。部署方式与验收记录见 [正式部署说明](docs/memory-base-deployment.md) 和 [真实接入验收](experiments/memory-base-live/README.md)。
+当前开发入口是 `memory_base/`：固定 OpenViking 0.4.23，统一安装、启动、停止与状态检查；HTTP / MCP 共用追加、搜索、读取与列举接口。Agent-bubble 的 pi 接入使用这一服务。项目 Markdown 经登记实时只读，结果带字节版本；路径权限、完整冷备份/恢复和 Windows 登录启动经本机 CLI 管理。部署方式与已完成宿主验收见 [正式部署说明](docs/memory-base-deployment.md) 和 [真实接入验收](experiments/memory-base-live/README.md)，本轮恢复和产品包验收进度见 [交付任务板](docs/memory-base-delivery-plan-2026-10-11.md)。
+
+OpenViking / MemOS 的固定源码比较、模块取舍和基本架构建议已保存为 [源码研究报告](docs/architecture-memory-base-source-study-2026-10-11.md)。独立产品的保留、剥离、升级及数据出口计划见 [产品计划](docs/memory-base-product-plan.md)。
 
 Windows 新部署入口为 `install-memory-base.ps1`；POSIX 薄壳 `install-memory-base.sh` 的凭据持久化仍待补齐。原 `install.ps1` / `install.sh` 与下面的 `memory_agent` 内容保留旧自研实现的用法；旧引擎按 [ADR-0032](docs/adr/0032-personal-memory-base-adopt-then-productize.md) 冻结。`legal_web` 为已排除的历史产品。
 
