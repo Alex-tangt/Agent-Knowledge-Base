@@ -1,5 +1,9 @@
 """Deployment boundaries: protected secrets, owned processes and serialized model."""
 
+import base64
+import csv
+import hashlib
+import io
 import json
 import os
 from contextlib import contextmanager
@@ -10,11 +14,73 @@ from pathlib import Path
 import threading
 import time
 import textwrap
+import zipfile
 
 import pytest
 
 from memory_base import credentials, deploy
 from memory_base.embed import EmbeddingState
+
+PACKAGE_SOURCE = Path(deploy.__file__).resolve().parent
+
+
+def _wheel_fixture(tmp_path, *, product="agent-memory-base", version="0.1.0", missing=None, corrupt=False):
+    """A real ZIP/RECORD fixture built from the product's own package files."""
+    path = tmp_path / ("agent_memory_base-" + version + "-py3-none-any.whl")
+    dist = "agent_memory_base-" + version + ".dist-info/"
+    files = {"memory_base/" + item.name: item.read_bytes() for item in PACKAGE_SOURCE.glob("*.py")}
+    for name in ("requirements.txt", "constraints.txt", "skill/SKILL.md"):
+        files["memory_base/" + name] = (PACKAGE_SOURCE / name).read_bytes()
+    files.update({dist + "METADATA": f"Metadata-Version: 2.1\nName: {product}\nVersion: {version}\n".encode(),
+                  dist + "WHEEL": b"Wheel-Version: 1.0\nRoot-Is-Purelib: true\nTag: py3-none-any\n",
+                  dist + "entry_points.txt": b"[console_scripts]\nmemory-base = memory_base.deploy:main\n"})
+    if missing:
+        files.pop(missing)
+    record = io.StringIO()
+    writer = csv.writer(record, lineterminator="\n")
+    for name, content in files.items():
+        digest = base64.urlsafe_b64encode(hashlib.sha256(content).digest()).rstrip(b"=").decode()
+        writer.writerow([name, "sha256=" + digest, len(content)])
+    writer.writerow([dist + "RECORD", "", ""])
+    files[dist + "RECORD"] = record.getvalue().encode()
+    if corrupt:
+        files["memory_base/__init__.py"] += b"# changed after RECORD\n"
+    with zipfile.ZipFile(path, "w", compression=zipfile.ZIP_DEFLATED) as archive:
+        for name, content in files.items():
+            archive.writestr(name, content)
+    return path
+
+
+def _wheel_launcher(tmp_path, monkeypatch, origin=None, version="0.1.0"):
+    installed = tmp_path / "launcher" / "site-packages" / "memory_base" / "deploy.py"
+    installed.parent.mkdir(parents=True)
+    installed.write_text("installed wheel fixture")
+    monkeypatch.setattr(deploy, "__file__", str(installed))
+
+    class Distribution:
+        def read_text(self, name):
+            assert name == "direct_url.json"
+            return json.dumps(origin) if origin is not None else None
+
+    distribution = Distribution()
+    distribution.version = version
+    monkeypatch.setattr(deploy.metadata, "distribution", lambda _: distribution)
+    return installed
+
+
+def _stub_install_runtime(tmp_path, monkeypatch):
+    target = tmp_path / "target" / ("Scripts/python.exe" if os.name == "nt" else "bin/python")
+    target.parent.mkdir(parents=True)
+    target.write_text("target runtime fixture")
+    site = tmp_path / "target" / "site-packages"
+    model = tmp_path / "embedding.gguf"
+    model.write_bytes(b"GGUFmodel")
+    calls = []
+    monkeypatch.setattr(deploy.subprocess, "run", lambda command, **kwargs: calls.append(command))
+    monkeypatch.setattr(deploy, "_versions", lambda _: deploy.PINS)
+    monkeypatch.setattr(deploy, "_installed_source", lambda python, source: site)
+    monkeypatch.setattr(deploy, "_ensure_secret", lambda *_: "synthetic")
+    return target, site, model, calls
 
 
 def test_upstream_config_uses_external_embedder_and_no_secret(tmp_path):
@@ -41,10 +107,133 @@ def test_fresh_runtime_switch_preserves_deployment_home_and_existing_model(tmp_p
     monkeypatch.setattr(deploy, "_versions", lambda _: deploy.PINS)
     monkeypatch.setattr(deploy.subprocess, "run", lambda *_a, **_k: None)
     monkeypatch.setattr(deploy, "_ensure_secret", lambda *_: "existing")
+    monkeypatch.setattr(deploy, "_installed_source", lambda python, source: source.parent)
     config = deploy.install(tmp_path, fresh_runtime=True)
     assert config["python"] == str(runtime.resolve())
     assert config["model"] == str(model.resolve())
     assert json.loads((tmp_path / "openviking.conf").read_text())["storage"]["workspace"] == str(tmp_path / "data")
+
+
+@pytest.mark.parametrize("fresh", [False, True], ids=["default", "fresh-runtime"])
+def test_wheel_without_artifact_rejects_before_install_side_effects(tmp_path, monkeypatch, fresh):
+    _wheel_launcher(tmp_path, monkeypatch)
+    monkeypatch.setattr(deploy, "_versions", lambda _: deploy.PINS)
+    calls = []
+    monkeypatch.setattr(deploy.subprocess, "run", lambda *args, **kwargs: calls.append(args))
+    monkeypatch.setattr(deploy, "_ensure_secret", lambda *_: pytest.fail("must reject before credentials"))
+    home = tmp_path / "new-home"
+    with pytest.raises(RuntimeError, match="--wheel"):
+        deploy.install(home, fresh_runtime=fresh)
+    assert calls == []
+    assert not home.exists()
+
+
+def test_explicit_wheel_installs_package_into_target_and_records_target_source(tmp_path, monkeypatch):
+    wheel = _wheel_fixture(tmp_path)
+    target, site, model, calls = _stub_install_runtime(tmp_path, monkeypatch)
+    config = deploy.install(tmp_path / "home", str(target), str(model), wheel=str(wheel))
+    assert calls[-1] == [str(target.resolve()), "-m", "pip", "install", "--no-deps", "--ignore-installed", str(wheel.resolve())]
+    assert all("-e" not in command for command in calls)
+    assert config["source"] == str(site)
+    assert config["python"] == str(target.resolve())
+
+
+@pytest.mark.parametrize("hash_field", ["hashes", "hash"], ids=["current-pep610", "legacy-pep610"])
+def test_default_wheel_reuses_verified_local_origin(tmp_path, monkeypatch, hash_field):
+    wheel = _wheel_fixture(tmp_path)
+    digest = hashlib.sha256(wheel.read_bytes()).hexdigest()
+    archive = {"hashes": {"sha256": digest}} if hash_field == "hashes" else {"hash": "sha256=" + digest}
+    _wheel_launcher(tmp_path, monkeypatch, {"url": wheel.as_uri(), "archive_info": archive})
+    target, site, model, calls = _stub_install_runtime(tmp_path, monkeypatch)
+    config = deploy.install(tmp_path / "home", str(target), str(model))
+    assert calls[-1][-1] == str(wheel.resolve())
+    assert config["source"] == str(site)
+
+
+@pytest.mark.parametrize("problem", ["missing", "wrong-product", "wrong-version", "bad-zip", "bad-record", "incomplete"])
+def test_invalid_explicit_wheel_is_rejected_before_subprocesses(tmp_path, monkeypatch, problem):
+    wheel = _wheel_fixture(tmp_path, product="other-product" if problem == "wrong-product" else "agent-memory-base",
+                           version="0.2.0" if problem == "wrong-version" else "0.1.0",
+                           corrupt=problem == "bad-record", missing="memory_base/mcp_stdio.py" if problem == "incomplete" else None)
+    if problem == "missing":
+        wheel = tmp_path / "missing.whl"
+    elif problem == "bad-zip":
+        wheel.write_bytes(b"not a zip")
+    monkeypatch.setattr(deploy.subprocess, "run", lambda *_a, **_k: pytest.fail("must reject before subprocesses"))
+    home = tmp_path / "home"
+    with pytest.raises(RuntimeError, match="--wheel"):
+        deploy.install(home, wheel=str(wheel))
+    assert not home.exists()
+
+
+@pytest.mark.parametrize("problem", ["missing-file", "hash-mismatch", "remote", "no-hash", "credential-url"])
+def test_invalid_pep610_origin_fails_before_install_side_effects(tmp_path, monkeypatch, problem):
+    wheel = _wheel_fixture(tmp_path)
+    digest = hashlib.sha256(wheel.read_bytes()).hexdigest()
+    url = (tmp_path / "missing.whl").as_uri() if problem == "missing-file" else wheel.as_uri()
+    if problem == "remote":
+        url = "https://example.invalid/product.whl"
+    elif problem == "credential-url":
+        url = "file://user:do-not-display@localhost/product.whl"
+    archive = {"hashes": {"sha256": "0" * 64 if problem == "hash-mismatch" else digest}}
+    if problem == "no-hash":
+        archive = {}
+    _wheel_launcher(tmp_path, monkeypatch, {"url": url, "archive_info": archive})
+    monkeypatch.setattr(deploy.subprocess, "run", lambda *_a, **_k: pytest.fail("must reject before subprocesses"))
+    home = tmp_path / "home"
+    with pytest.raises(RuntimeError, match="--wheel") as error:
+        deploy.install(home)
+    assert "do-not-display" not in str(error.value)
+    assert not home.exists()
+
+
+def test_same_installed_runtime_does_not_need_original_wheel(tmp_path, monkeypatch):
+    _wheel_launcher(tmp_path, monkeypatch)
+    _, _, model, calls = _stub_install_runtime(tmp_path, monkeypatch)
+    monkeypatch.setattr(deploy, "_local_wheel_origin", lambda: pytest.fail("current runtime already has package"))
+    config = deploy.install(tmp_path / "home", sys.executable, str(model))
+    assert len(calls) == 1 and calls[0][1:5] == ["-m", "pip", "install", "--no-compile"]
+    assert config["python"] == str(Path(sys.executable).resolve())
+
+
+def test_target_import_verification_rejects_launchers_package_and_clears_pythonpath(tmp_path, monkeypatch):
+    python = Path(sys.executable).resolve()
+    site = tmp_path / "target-site"
+    payload = {"python": str(python), "file": str(tmp_path / "launcher" / "memory_base" / "__init__.py"),
+               "site": str(site), "version": "0.1.0", "distribution_version": "0.1.0", "distribution_root": str(site)}
+    monkeypatch.setenv("PYTHONPATH", "untrusted-caller-source")
+
+    def query(command, **kwargs):
+        assert "PYTHONPATH" not in kwargs["env"]
+        assert kwargs["cwd"] == str(python.parent)
+        return subprocess.CompletedProcess(command, 0, json.dumps(payload), "")
+
+    monkeypatch.setattr(deploy.subprocess, "run", query)
+    with pytest.raises(RuntimeError, match="Target runtime"):
+        deploy._installed_source(python, None)
+    payload["file"] = str(site / "memory_base" / "__init__.py")
+    assert deploy._installed_source(python, None) == site.resolve()
+
+
+def test_cli_wheel_preflight_precedes_lock_and_requires_install_command(tmp_path, monkeypatch, capsys):
+    _wheel_launcher(tmp_path, monkeypatch)
+    monkeypatch.setattr(deploy, "lifecycle_lock", lambda _: pytest.fail("must reject before lock/home creation"))
+    assert deploy.main(["install", "--home", str(tmp_path / "home")]) == 1
+    assert "--wheel" in capsys.readouterr().err
+    assert not (tmp_path / "home").exists()
+    with pytest.raises(SystemExit) as error:
+        deploy.main(["status", "--wheel", "unused.whl"])
+    assert error.value.code == 2
+
+
+def test_cli_forwards_wheel_and_fresh_runtime(tmp_path, monkeypatch):
+    wheel = _wheel_fixture(tmp_path)
+    with pytest.raises(ValueError, match="either"):
+        deploy.install(tmp_path / "other", sys.executable, fresh_runtime=True, wheel=str(wheel))
+    captured = []
+    monkeypatch.setattr(deploy, "install", lambda *args, **kwargs: captured.append((args, kwargs)))
+    assert deploy.main(["install", "--home", str(tmp_path / "home"), "--fresh-runtime", "--wheel", str(wheel)]) == 0
+    assert captured == [((tmp_path / "home", None, None), {"fresh_runtime": True, "wheel": str(wheel)})]
 
 
 def test_secrets_are_env_override_and_home_scoped(tmp_path, monkeypatch):

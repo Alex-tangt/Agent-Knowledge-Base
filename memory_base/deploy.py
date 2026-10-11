@@ -7,8 +7,13 @@ injected into child environments and never placed in configuration or PID files.
 from __future__ import annotations
 
 import argparse
+import base64
 from contextlib import contextmanager
+import csv
+from email.parser import BytesParser
 import hashlib
+import importlib.metadata as metadata
+import io
 import json
 import os
 from pathlib import Path
@@ -20,7 +25,10 @@ import sys
 import time
 import urllib.error
 import urllib.request
+import urllib.parse
+import zipfile
 
+from memory_base import __version__
 from memory_base.credentials import env_name, get_secret, set_secret, state_home
 from memory_base.embed import DEFAULT_MODEL, MODEL_ID
 
@@ -30,6 +38,11 @@ PROFILES = {"agent-bubble": "writer", "codex": "writer", "dsh": "writer",
             "opencode": "writer", "reader": "reader"}
 COMPONENTS = ("embed", "upstream", "gateway")
 ROOT_KEY_ENV = "MEMORY_BASE_ROOT_KEY"
+PACKAGE_NAME = "agent-memory-base"
+_PACKAGE_FILES = {"memory_base/" + name for name in (
+    "__init__.py", "__main__.py", "deploy.py", "credentials.py", "embed.py", "gateway.py",
+    "upstream.py", "mcp_stdio.py", "paths.py", "sources.py", "backup.py", "autostart.py",
+    "requirements.txt", "constraints.txt", "skill/SKILL.md")}
 _RUN_COMPONENT = ("import os,runpy,sys;os.environ['MEMORY_BASE_HOME']=sys.argv[1];"
                   "module=sys.argv[2];sys.argv=[module,*sys.argv[3:]];"
                   "runpy.run_module(module,run_name='__main__',alter_sys=True)")
@@ -143,18 +156,128 @@ def _ensure_secret(name: str, home: Path) -> str:
     return value
 
 
-def install(home: Path, runtime_python: str | None = None, model: str | None = None,
-            ports: dict | None = None, fresh_runtime: bool = False) -> dict:
-    """Create a dedicated venv or adopt an explicitly selected pinned runtime."""
+def _verified_wheel(path: str | Path, expected_hash: str | None = None) -> Path:
+    """Validate a local product artifact before creating or changing a runtime."""
+    error = "A valid local memory-base wheel is required; pass --wheel <path>"
+    try:
+        artifact = Path(path).expanduser().resolve(strict=True)
+        parts = artifact.name.removesuffix(".whl").split("-")
+        if artifact.suffix != ".whl" or len(parts) not in (5, 6) or parts[:2] != ["agent_memory_base", __version__]:
+            raise ValueError("Wrong product wheel filename")
+        if expected_hash is not None and hashlib.sha256(artifact.read_bytes()).hexdigest() != expected_hash.lower():
+            raise ValueError("Wheel hash differs from the recorded local origin")
+        with zipfile.ZipFile(artifact) as archive:
+            names = archive.namelist()
+            dist = "agent_memory_base-" + __version__ + ".dist-info/"
+            required = _PACKAGE_FILES | {dist + name for name in ("METADATA", "WHEEL", "RECORD", "entry_points.txt")}
+            if len(names) != len(set(names)) or not required.issubset(names):
+                raise ValueError("Wheel is incomplete")
+            if any(not name.startswith(("memory_base/", dist)) or ".." in name.split("/") or "\\" in name for name in names):
+                raise ValueError("Wheel contains unrelated paths")
+            headers = BytesParser().parsebytes(archive.read(dist + "METADATA"))
+            wheel_headers = BytesParser().parsebytes(archive.read(dist + "WHEEL"))
+            if headers["Name"] != PACKAGE_NAME or headers["Version"] != __version__:
+                raise ValueError("Wheel product metadata differs")
+            if wheel_headers["Wheel-Version"] != "1.0" or wheel_headers["Root-Is-Purelib"] != "true":
+                raise ValueError("Unsupported product wheel layout")
+            if "memory-base = memory_base.deploy:main" not in archive.read(dist + "entry_points.txt").decode("utf-8"):
+                raise ValueError("Wheel is missing the install entrypoint")
+            records = list(csv.reader(io.StringIO(archive.read(dist + "RECORD").decode("utf-8"))))
+            if len(records) != len(names) or any(len(row) != 3 for row in records) or {row[0] for row in records} != set(names):
+                raise ValueError("Wheel RECORD is incomplete")
+            for name, digest, size in records:
+                if name == dist + "RECORD":
+                    if digest or size:
+                        raise ValueError("Invalid RECORD self entry")
+                    continue
+                payload = archive.read(name)
+                actual = base64.urlsafe_b64encode(hashlib.sha256(payload).digest()).rstrip(b"=").decode("ascii")
+                if digest != "sha256=" + actual or size != str(len(payload)):
+                    raise ValueError("Wheel RECORD differs from its content")
+        return artifact
+    except (OSError, ValueError, KeyError, UnicodeError, csv.Error, zipfile.BadZipFile):
+        # Never echo a PEP610 URL or archive content, which can contain secrets.
+        raise RuntimeError(error) from None
+
+
+def _local_wheel_origin() -> Path:
+    """Reuse only an existing local PEP610 archive with a recorded SHA-256."""
+    try:
+        distribution = metadata.distribution(PACKAGE_NAME)
+        origin = json.loads(distribution.read_text("direct_url.json") or "null")
+        url = urllib.parse.urlsplit(origin["url"])
+        archive = origin["archive_info"]
+        digest = archive.get("hashes", {}).get("sha256")
+        legacy = archive.get("hash", "")
+        if legacy.startswith("sha256="):
+            recorded = legacy.removeprefix("sha256=")
+            if digest is not None and recorded.lower() != digest.lower():
+                raise ValueError("Inconsistent archive hashes")
+            digest = recorded
+        if (distribution.version != __version__ or url.scheme != "file" or url.netloc not in ("", "localhost")
+                or url.query or url.fragment or not isinstance(digest, str) or len(digest) != 64
+                or any(char not in "0123456789abcdefABCDEF" for char in digest)):
+            raise ValueError("Origin is not a verified local archive")
+        return _verified_wheel(urllib.request.url2pathname(url.path), digest)
+    except (metadata.PackageNotFoundError, OSError, ValueError, TypeError, KeyError, AttributeError):
+        raise RuntimeError("No verified local wheel origin is available; pass --wheel <path>") from None
+
+
+def _install_state(home: Path, runtime_python: str | None, fresh_runtime: bool) -> tuple[dict, Path]:
     config_path = home / "deployment.json"
     previous = json.loads(config_path.read_text()) if config_path.exists() else {}
     if fresh_runtime and runtime_python:
         raise ValueError("Choose either --fresh-runtime or --runtime-python")
     python = Path(runtime_python or (None if fresh_runtime else previous.get("python")) or
                   home / "runtime" / ("Scripts/python.exe" if os.name == "nt" else "bin/python")).resolve()
+    if runtime_python and not python.exists():
+        raise FileNotFoundError("Selected runtime Python does not exist")
+    return previous, python
+
+
+def _package_input(python: Path, wheel: str | None) -> tuple[Path | None, Path | None]:
+    if wheel is not None:
+        return None, _verified_wheel(wheel)
+    source = Path(__file__).resolve().parent
+    if (source / "pyproject.toml").is_file():
+        return source, None
+    if python == Path(sys.executable).resolve():
+        return None, None  # The current wheel runtime already contains this package.
+    return None, _local_wheel_origin()
+
+
+def _installed_source(python: Path, source: Path | None) -> Path:
+    """Ask the target interpreter, without caller PYTHONPATH, what it imports."""
+    script = ("import json,sys,sysconfig,importlib.metadata as m;import memory_base;"
+              "d=m.distribution('agent-memory-base');print(json.dumps({'python':sys.executable,"
+              "'file':memory_base.__file__,'version':memory_base.__version__,'distribution_version':d.version,"
+              "'site':sysconfig.get_path('purelib'),'distribution_root':str(d.locate_file(''))}))")
+    env = clean_env()
+    env.pop("PYTHONPATH", None)
+    env.pop("PYTHONHOME", None)
+    result = subprocess.run([str(python), "-c", script], cwd=str(python.parent), env=env,
+                            capture_output=True, text=True, check=True)
+    try:
+        imported = json.loads(result.stdout)
+        actual = Path(imported["file"]).resolve()
+        site = Path(imported["site"]).resolve()
+        expected = (source if source is not None else site / "memory_base") / "__init__.py"
+        if (Path(imported["python"]).resolve() != python or imported["version"] != __version__
+                or imported["distribution_version"] != __version__ or actual != expected.resolve()
+                or (source is None and Path(imported["distribution_root"]).resolve() != site)):
+            raise ValueError("Wrong target installation")
+        return actual.parent.parent
+    except (ValueError, TypeError, KeyError):
+        raise RuntimeError("Target runtime did not import its installed memory-base package") from None
+
+
+def install(home: Path, runtime_python: str | None = None, model: str | None = None,
+            ports: dict | None = None, fresh_runtime: bool = False, wheel: str | None = None) -> dict:
+    """Create a dedicated venv or adopt an explicitly selected pinned runtime."""
+    config_path = home / "deployment.json"
+    previous, python = _install_state(home, runtime_python, fresh_runtime)
+    source_dir, artifact = _package_input(python, wheel)
     if not python.exists():
-        if runtime_python:
-            raise FileNotFoundError("Selected runtime Python does not exist")
         subprocess.run([sys.executable, "-m", "venv", str(home / "runtime")], check=True)
     # Always let pip apply the verified constraints: matching direct versions
     # alone cannot detect a changed transitive dependency. Already satisfied
@@ -166,11 +289,12 @@ def install(home: Path, runtime_python: str | None = None, model: str | None = N
     versions = _versions(python)
     if versions != PINS:
         raise RuntimeError("Runtime versions do not match the deployment pins")
-    source_dir = Path(__file__).parent
-    if (source_dir / "pyproject.toml").exists():
+    if source_dir is not None:
         subprocess.run([str(python), "-m", "pip", "install", "--no-deps", "-e", str(source_dir)], check=True)
-    elif Path(sys.executable).resolve() != python:
-        raise RuntimeError("Installing into a new runtime requires the source checkout; this package was installed as a wheel")
+    elif artifact is not None:
+        # Do not uninstall an inherited distribution from another environment.
+        subprocess.run([str(python), "-m", "pip", "install", "--no-deps", "--ignore-installed", str(artifact)], check=True)
+    target_source = _installed_source(python, source_dir)
     model_path = Path(model or previous.get("model") or DEFAULT_MODEL).expanduser().resolve()
     if not model_path.exists():
         # Upstream's pinned model specification supplies its public download URL.
@@ -187,7 +311,7 @@ def install(home: Path, runtime_python: str | None = None, model: str | None = N
     for secret in ("root-key", *["host-" + p for p in PROFILES]):
         _ensure_secret(secret, home)
     config = {"schema": 1, "python": str(python), "model": str(model_path), "ports": selected_ports,
-              "source": str(Path(__file__).parent.parent.resolve()), "account": "personal",
+              "source": str(target_source), "account": "personal",
               "user": "gateway", "versions": versions,
               "model_sha256": hashlib.sha256(model_path.read_bytes()).hexdigest()}
     _write_json(config_path, config)
@@ -542,6 +666,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--home")
     parser.add_argument("--runtime-python", help="Explicit existing runtime; versions are checked against pins")
     parser.add_argument("--fresh-runtime", action="store_true", help="Select the dedicated <home>/runtime venv instead of an adopted runtime")
+    parser.add_argument("--wheel", help="Local product wheel for installing memory-base into the target runtime")
     parser.add_argument("--model")
     parser.add_argument("--profile", choices=list(PROFILES), help="Host-token defaults to agent-bubble; access-set requires a profile")
     parser.add_argument("--components", default=",".join(COMPONENTS))
@@ -561,6 +686,8 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--mode", choices=("enable", "disable", "status"), default="status",
                         help="Automatic logon startup registration; status is read-only")
     args = parser.parse_args(argv)
+    if args.wheel is not None and args.command != "install":
+        parser.error("--wheel is only supported by install")
     home = state_home(args.home)
     components = tuple(args.components.split(","))
     if any(component not in COMPONENTS for component in components):
@@ -621,9 +748,14 @@ def main(argv: list[str] | None = None) -> int:
                         print(redact("\n".join(path.read_text(encoding="utf-8", errors="replace").splitlines()[-args.lines:]), home))
             return 0
         else:
+            if args.command == "install":
+                # Missing/invalid artifacts must fail before the lifecycle lock
+                # creates a home, or any venv/pip/credential side effects occur.
+                _, python = _install_state(home, args.runtime_python, args.fresh_runtime)
+                _package_input(python, args.wheel)
             with lifecycle_lock(home):
                 if args.command == "install":
-                    install(home, args.runtime_python, args.model, fresh_runtime=args.fresh_runtime)
+                    install(home, args.runtime_python, args.model, fresh_runtime=args.fresh_runtime, wheel=args.wheel)
                     result = {"status": "installed", "home": str(home), "versions": PINS}
                 elif args.command == "stop":
                     result = stop(home, components)
