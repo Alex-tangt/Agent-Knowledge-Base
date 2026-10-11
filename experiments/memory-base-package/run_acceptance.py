@@ -209,6 +209,8 @@ def main() -> None:
         result["formal_pip_check"] = {"exit_code": checked.returncode, "stdout": checked.stdout,
                                       "stderr": checked.stderr, "readonly": True}
         result["checks"]["formal_runtime_pip_check"] = "PASS" if checked.returncode == 0 else "FAIL"
+        result["package_protocol_overall"] = ("PASS" if all(value == "PASS" for name, value in result["checks"].items()
+            if name != "wheel_default_and_fresh_runtime_bootstrap") else "FAIL")
         result["overall"] = "PASS" if all(value == "PASS" for value in result["checks"].values()) else "FAIL"
     except Exception as error:
         result["overall"] = "FAIL"
