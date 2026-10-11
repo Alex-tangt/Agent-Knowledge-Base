@@ -69,3 +69,23 @@ def effective_scopes(requested: str, grants: tuple[str, ...] | None) -> list[str
         elif contains(requested, grant):
             result.append(grant)
     return sorted(set(result))
+
+
+def validate_access(data: object) -> dict:
+    """Validate durable, non-secret host scope rules used when issuing tokens."""
+    if (not isinstance(data, dict) or set(data) != {"schema", "profiles"}
+            or type(data["schema"]) is not int or data["schema"] != 1
+            or not isinstance(data["profiles"], dict)):
+        raise ValueError("access must contain schema=1 and profiles")
+    profiles = {}
+    for profile, rules in data["profiles"].items():
+        if (profile not in {"codex", "dsh", "opencode", "agent-bubble", "reader"}
+                or not isinstance(rules, dict) or set(rules) - {"read_scopes", "write_scopes"}):
+            raise ValueError("invalid access profile or fields")
+        normalized = {}
+        for key, value in rules.items():
+            if not isinstance(value, list) or len(value) > 128 or not all(isinstance(scope, str) for scope in value):
+                raise ValueError("access scopes must be path arrays")
+            normalized[key] = sorted(set(logical_path(scope, root=True) for scope in value))
+        profiles[profile] = normalized
+    return {"schema": 1, "profiles": profiles}

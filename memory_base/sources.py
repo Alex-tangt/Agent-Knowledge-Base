@@ -16,6 +16,7 @@ DEFAULT_EXCLUDE = ["**/.*/**", "**/node_modules/**", "**/venv/**", "**/.venv/**"
                    "**/outputs/**", "**/secrets/**", "**/credentials/**"]
 _BLOCKED_DIRS = {"node_modules", "venv", "__pycache__", "outputs", "secrets", "credentials"}
 _BLOCKED_NAMES = {"secrets.md", "credentials.md", "private-key.md"}
+DEFAULT_MAX_BYTES = 2 * 1024 * 1024
 
 
 class SourceError(Exception):
@@ -104,6 +105,22 @@ def selected(project: dict, rel: str) -> bool:
             and not any(_matches(rel, p) for p in project["exclude"]))
 
 
+def _reachable(project: dict, directory: str) -> bool:
+    for pattern in project["include"]:
+        wildcard = re.search(r"[*?[]", pattern)
+        prefix = pattern[:wildcard.start()] if wildcard else pattern
+        # The literal filename fragment before a wildcard is not a directory.
+        if wildcard:
+            prefix = prefix.rsplit("/", 1)[0] if "/" in prefix else ""
+        elif "/" in prefix:
+            prefix = prefix.rsplit("/", 1)[0]
+        else:
+            continue
+        if not prefix or overlaps(directory, prefix):
+            return True
+    return False
+
+
 def _link(info: os.stat_result) -> bool:
     return stat.S_ISLNK(info.st_mode) or bool(getattr(info, "st_file_attributes", 0) & 0x400)
 
@@ -129,8 +146,18 @@ def _safe_path(root: Path, rel: str = "") -> Path:
 
 
 class SourceRegistry:
-    def __init__(self, path: Path):
+    def __init__(self, path: Path, max_bytes: int | None = None):
         self.path = Path(path)
+        self.max_bytes = max_bytes
+
+    def _size_limit(self) -> int:
+        try:
+            limit = self.max_bytes if self.max_bytes is not None else int(os.environ.get("MEMORY_BASE_SOURCE_MAX_BYTES", str(DEFAULT_MAX_BYTES)))
+            if type(limit) is not int or limit < 1:
+                raise ValueError()
+            return limit
+        except ValueError:
+            raise SourceError(503, "SOURCE_SIZE_LIMIT_INVALID") from None
 
     def load(self) -> dict:
         try:
@@ -163,12 +190,17 @@ class SourceRegistry:
             before = target.lstat()
             if not stat.S_ISREG(before.st_mode):
                 raise SourceError(403, "SOURCE_FILE_FORBIDDEN")
+            limit = self._size_limit()
+            if before.st_size > limit:
+                raise SourceError(413, "SOURCE_TOO_LARGE")
             with os.fdopen(os.open(target, flags), "rb") as stream:
                 opened = os.fstat(stream.fileno())
                 if (opened.st_dev, opened.st_ino) != (before.st_dev, before.st_ino):
                     raise SourceError(409, "SOURCE_CHANGED_DURING_READ")
-                body = stream.read()
+                body = stream.read(limit + 1)
                 after = os.fstat(stream.fileno())
+            if len(body) > limit:
+                raise SourceError(413, "SOURCE_TOO_LARGE")
             current = _safe_path(root, rel).lstat()
             if ((opened.st_size, opened.st_mtime_ns) != (after.st_size, after.st_mtime_ns)
                     or len(body) != after.st_size
@@ -215,6 +247,11 @@ class SourceRegistry:
                             continue
                         logical_path(path)
                         info = child.stat(follow_symlinks=False)
+                        directory_candidate = stat.S_ISDIR(info.st_mode) or _link(info)
+                        if directory_candidate and not _reachable(project, rel) and not selected(project, rel):
+                            continue
+                        if not directory_candidate and not selected(project, rel):
+                            continue
                         if _link(info):
                             raise SourceError(403, "SOURCE_LINK_FORBIDDEN")
                         if stat.S_ISDIR(info.st_mode):
@@ -229,7 +266,13 @@ class SourceRegistry:
 
 
 def lexical_score(query: str, text: str) -> float:
-    terms = re.findall(r"[a-z0-9_]+|[\u3400-\u9fff]", query.casefold())
+    terms = []
+    for token in re.findall(r"[a-z0-9_]+|[\u3400-\u9fff]+", query.casefold()):
+        if re.fullmatch(r"[\u3400-\u9fff]+", token) and len(token) > 1:
+            terms.extend(token[i:i + 2] for i in range(len(token) - 1))
+            terms.append(token)  # Retain the complete phrase alongside bigrams.
+        else:
+            terms.append(token)
     terms = sorted(set(terms))
     lowered = text.casefold()
     return sum(term in lowered for term in terms) / len(terms) if terms else 0.0
