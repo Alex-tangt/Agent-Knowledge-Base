@@ -7,8 +7,10 @@ import io
 import json
 import os
 from contextlib import contextmanager
+import shutil
 import subprocess
 import sys
+import sysconfig
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 import threading
@@ -105,12 +107,15 @@ def test_fresh_runtime_switch_preserves_deployment_home_and_existing_model(tmp_p
     model.write_bytes(b"GGUFmodel")
     (tmp_path / "deployment.json").write_text(json.dumps({"python": "/old/experimental/python", "model": str(model)}))
     monkeypatch.setattr(deploy, "_versions", lambda _: deploy.PINS)
-    monkeypatch.setattr(deploy.subprocess, "run", lambda *_a, **_k: None)
+    calls = []
+    monkeypatch.setattr(deploy.subprocess, "run", lambda command, **kwargs: calls.append(command))
     monkeypatch.setattr(deploy, "_ensure_secret", lambda *_: "existing")
     monkeypatch.setattr(deploy, "_installed_source", lambda python, source: source.parent)
     config = deploy.install(tmp_path, fresh_runtime=True)
     assert config["python"] == str(runtime.resolve())
     assert config["model"] == str(model.resolve())
+    assert calls[-1] == [str(runtime.resolve()), "-m", "pip", "install", "--no-deps", "-e", str(PACKAGE_SOURCE)]
+    assert config["source"] == str(PACKAGE_SOURCE.parent)
     assert json.loads((tmp_path / "openviking.conf").read_text())["storage"]["workspace"] == str(tmp_path / "data")
 
 
@@ -234,6 +239,87 @@ def test_cli_forwards_wheel_and_fresh_runtime(tmp_path, monkeypatch):
     monkeypatch.setattr(deploy, "install", lambda *args, **kwargs: captured.append((args, kwargs)))
     assert deploy.main(["install", "--home", str(tmp_path / "home"), "--fresh-runtime", "--wheel", str(wheel)]) == 0
     assert captured == [((tmp_path / "home", None, None), {"fresh_runtime": True, "wheel": str(wheel)})]
+
+
+@pytest.mark.skipif(sys.version_info[:2] != (3, 12), reason="Product wheel requires Python 3.12")
+@pytest.mark.parametrize("mode", ["automatic-default", "explicit-fresh"])
+def test_real_wheel_bootstraps_independent_target_runtime(tmp_path, mode):
+    """Real build and package pip installs; dependency/credential stages are fixtures."""
+    source = tmp_path / "build-source"
+    shutil.copytree(PACKAGE_SOURCE, source, ignore=shutil.ignore_patterns("__pycache__", "build", "*.egg-info"))
+    env = {key: value for key, value in deploy.clean_env().items()
+           if key.upper() not in {"PYTHONPATH", "PYTHONHOME"} and not key.upper().startswith("MEMORY_")}
+    env.update({"PYTHONDONTWRITEBYTECODE": "1", "PIP_DISABLE_PIP_VERSION_CHECK": "1"})
+    commands = []
+
+    def run(command, cwd=tmp_path):
+        command = [str(item) for item in command]
+        commands.append(command)
+        result = subprocess.run(command, cwd=cwd, env=env, capture_output=True,
+                                text=True, encoding="utf-8", timeout=90)
+        assert result.returncode == 0, (command, result.stdout, result.stderr)
+        return result.stdout
+
+    wheels = tmp_path / "wheels"
+    run([sys.executable, "-m", "pip", "wheel", source, "--no-deps", "--no-build-isolation", "--no-index", "--wheel-dir", wheels])
+    wheel, = wheels.glob("*.whl")
+    dependency_site = sysconfig.get_path("purelib")
+
+    def venv(root):
+        # Reuse only installed build/pip dependencies. Do not process the caller's
+        # editable .pth files, and keep pip writes inside each new venv.
+        run([sys.executable, "-m", "venv", "--without-pip", "--system-site-packages", root])
+        python = root / ("Scripts/python.exe" if os.name == "nt" else "bin/python")
+        site = Path(run([python, "-c", "import sysconfig;print(sysconfig.get_path('purelib'))"]).strip())
+        (site / "test-dependency-provider.pth").write_text(dependency_site + "\n", encoding="utf-8")
+        return python, site
+
+    launcher, launcher_site = venv(tmp_path / "launcher")
+    home = tmp_path / "deployment"
+    target, target_site = venv(home / "runtime")
+    assert not (target_site / "memory_base").exists()
+    run([launcher, "-m", "pip", "install", "--no-deps", "--no-index", "--ignore-installed", wheel])
+    model = tmp_path / "model.gguf"
+    model.write_bytes(b"GGUFsynthetic-header-fixture")
+    controller = textwrap.dedent("""
+        import json, subprocess, sys
+        from pathlib import Path
+        from memory_base import deploy
+        original = subprocess.run
+        calls = []
+        def staged_run(command, **kwargs):
+            calls.append([str(item) for item in command])
+            if command[1:5] == ['-m', 'pip', 'install', '--no-compile']:
+                return subprocess.CompletedProcess(command, 0, '', '')
+            return original(command, **kwargs)
+        deploy.subprocess.run = staged_run
+        deploy._versions = lambda python: dict(deploy.PINS)
+        deploy._ensure_secret = lambda *args: 'synthetic-not-persisted'
+        home, model, mode, wheel = sys.argv[1:]
+        argv = ['install', '--home', home, '--model', model]
+        if mode == 'explicit-fresh':
+            argv += ['--fresh-runtime', '--wheel', wheel]
+        assert deploy.main(argv) == 0
+        config = json.loads((Path(home)/'deployment.json').read_text())
+        print('WHEEL_PROOF=' + json.dumps({'config':config,'calls':calls,'launcher_origin':deploy.__file__}))
+    """)
+    stdout = run([launcher, "-c", controller, home, model, mode, wheel])
+    proof = json.loads(next(line.removeprefix("WHEEL_PROOF=") for line in stdout.splitlines() if line.startswith("WHEEL_PROOF=")))
+    assert Path(proof["launcher_origin"]) == launcher_site / "memory_base" / "deploy.py"
+    assert proof["config"]["source"] == str(target_site)
+    assert proof["config"]["python"] == str(target.resolve())
+    assert [str(target.resolve()), "-m", "pip", "install", "--no-deps", "--ignore-installed", str(wheel.resolve())] in proof["calls"]
+    origin = run([target, "-c", "import memory_base;print(memory_base.__file__)"]).strip()
+    assert Path(origin) == target_site / "memory_base" / "__init__.py"
+    assert "usage:" in run([target, "-m", "memory_base", "--help"])
+    assert "usage:" in run([home / "runtime" / ("Scripts/memory-base.exe" if os.name == "nt" else "bin/memory-base"), "--help"])
+    proof.update({"mode": mode, "target_origin": origin, "wheel": str(wheel),
+                  "wheel_sha256": hashlib.sha256(wheel.read_bytes()).hexdigest(), "commands": commands,
+                  "dependency_provider": dependency_site,
+                  "boundary": "Real wheel build/package pip installs. Upstream dependency install/version checks and vault writes are stubbed; no clean dependency-stack installation is claimed."})
+    (tmp_path / "real-wheel-proof.json").write_text(json.dumps(proof, indent=2) + "\n", encoding="utf-8")
+    print(json.dumps({"mode": mode, "proof": str(tmp_path / "real-wheel-proof.json"), "target_origin": origin,
+                      "wheel_sha256": proof["wheel_sha256"]}))
 
 
 def test_secrets_are_env_override_and_home_scoped(tmp_path, monkeypatch):
