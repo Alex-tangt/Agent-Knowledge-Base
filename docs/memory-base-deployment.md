@@ -1,6 +1,6 @@
 # 正式个人记忆基座部署
 
-本阶段交付一个运行包 `memory_base/`，复用 OpenViking 0.4.23，不启动旧 `memory_agent` 引擎。当前支持总结与笔记的追加、搜索、读取；项目来源新鲜度和偏好升级仍按 ADR-0032 / #78 的后续边界处理。
+正式运行包为 `memory_base/`，复用 OpenViking 0.4.23。总结与笔记通过共同 HTTP/MCP 追加、搜索、读取和列举；登记的项目 Markdown 实时只读，支持路径范围和字节版本核验。本机 CLI 管理来源、宿主权限、完整冷备份恢复及可选 Windows 登录启动。旧 `memory_agent` 引擎保持冻结，偏好升级仍遵守 #78 的批准边界。实现状态与真实验收分别记录在[交付任务板](memory-base-delivery-plan-2026-10-11.md)。
 
 ## 安装和运行
 
@@ -23,7 +23,7 @@
 
 `restart` 重启所管理的服务；`install --fresh-runtime` 选择新的专用环境，保留同一状态目录里的数据与身份。`--home` 可指定另一个部署目录。生命周期命令校验 PID、创建时间和启动命令，不接管占用端口的其它服务。
 
-目前没有注册开机自动启动。电脑重启后先执行 `start`，再用 `status` 确认就绪。安装失败时保留数据与日志，可修复前置条件后重新执行安装。
+Windows 可显式登记当前用户登录后的自动启动：`memory-base autostart --mode enable`；`--mode status` 核验，`--mode disable` 移除本部署自己的启动项。使用专用解释器时可写成 `python -m memory_base autostart --mode enable`。命令只管理按 home 区分的 HKCU Run 值，不带凭据；登记成功与实际登录触发是两项证据。正式实例的登记状态见下方交付记录。未登记时，重启后执行 `start` 并确认 `status=ready`。安装失败保留数据与日志，可修复前置条件后重新执行安装。
 
 运行包含三个仅监听本机的进程：OpenViking 8786，进程外串行嵌入 8796，统一接入服务 8788。`status=ready` 要求三个受管理进程均健康。OpenViking 显式采用 key 模式、开启账户 ACL，注册密钥以哈希保存；宿主凭据从系统凭据管理器注入进程环境。手机只连接原有 Bubble 后端 8787。
 
@@ -35,9 +35,9 @@ MCP 统一入口为：
 <专用Python> -m memory_base.mcp_stdio --profile <宿主名> --home <部署目录>
 ```
 
-已登记身份名为 `codex`、`dsh`、`opencode`、`agent-bubble`（writer）及 `reader`（只读）。接口只暴露 `memory_add`、`memory_search`、`memory_get`；不向普通宿主暴露覆盖、删除或管理工具。HTTP 对应 `/api/memory/add`、`/search`、`/get`，与 MCP 共用实现。
+已登记身份名为 `codex`、`dsh`、`opencode`、`agent-bubble`（writer）及 `reader`（只读）。接口暴露 `memory_add`、`memory_search`、`memory_get`、`memory_list`；普通宿主仅能追加 capture，不提供覆盖、删除或管理工具。HTTP 对应 `/api/memory/add`、`/search`、`/get`、`/list`，与 MCP 共用实现。
 
-MCP 声明搜索和读取为只读，追加为非只读；三个工具均声明幂等、非破坏性且仅在受控范围工作。这些提示供客户端展示和审批使用，权限仍由服务端凭据校验。
+MCP 声明搜索、读取和列举为只读，追加为非只读；四个工具均声明幂等、非破坏性且仅在受控范围工作。这些提示供客户端展示和审批使用，权限仍由服务端凭据校验。
 
 Codex 可通过其本机 `codex mcp add personal-memory -- <专用Python> -m memory_base.mcp_stdio --profile codex --home <部署目录>` 登记。DSH 的实际入口为 `~/.dsh/profiles/desktop/cordis.patch.yml` 中的 `@deepseek-ai/dsh-mcp-client` 插件，以 `insert` 插入一条 stdio 配置；opencode 在其 `mcp` 配置登记同一入口。配置里只有路径与身份名。宿主规约源文件为 `memory_base/skill/SKILL.md`。
 
@@ -49,7 +49,27 @@ Bubble `.env` 只增加 `MEMORY_BASE_URL`、`MEMORY_BASE_PYTHON`、`MEMORY_BASE_
 
 正文保存在 `viking://resources/captures/<请求地址哈希>/content.md`，同目录 `capture.json` 保存身份、时间、来源、请求及正文哈希。地址由身份和 request_id 派生；同一请求内容变更返回冲突，不能覆盖原文。并发保障以正式部署的单 gateway 进程为边界。
 
-成功响应的 `index.status=pending` 表示正文已保存但派生索引尚未就绪；重试同一请求会再次尝试索引。不可用为明确错误，不能解释为没有记忆。此增量不实现项目文件就地映射、自动来源更新、偏好全局升级或完整产品化裁剪。
+成功响应的 `index.status=pending` 表示正文已保存但派生索引尚未就绪；重试同一请求会再次尝试索引。不可用为明确错误，不能解释为没有记忆。`observed_on` 是人明确提供的接触日，缺失保留 `unknown`；新增日期和逻辑路径不搬移旧 URI。`memory_get(expected_revision=...)` 核验原始 UTF-8 字节 SHA256，版本变化返回冲突。
+
+## 来源、范围与恢复
+
+以下命令均使用安装后的 `memory-base`，或专用解释器的 `-m memory_base`。其它 home 增加 `--home <部署目录>`。
+
+```powershell
+memory-base source-add --name agent-kb --root <项目绝对路径>
+memory-base source-list
+memory-base source-remove --name agent-kb
+memory-base access-set --profile reader --read-scope captures --read-scope projects/agent-kb/docs
+memory-base restart --components gateway
+memory-base backup --destination <新的完整备份目录>
+memory-base restore --home <已安装且数据为空的目标部署> --backup <完整备份目录>
+```
+
+来源默认仅包含 `README.md` 与 `docs/**/*.md`，显式登记后按当前文件读回，不复制正文作第二主库。登记规则运行时重读，源失联明确报错，不能回退旧快照。查询项目时指定 `scope="projects/agent-kb"`；默认搜索仍为 captures。项目首期为标明方法的词法扫描，返回版本和扫描范围；`memory_list` 无需向量，按 `next_cursor` 翻页直至空。
+
+`access-set` 持久化 `access.json`，权限在 gateway 启动时装载，改后需重启 gateway。省略规则沿用共享默认；`--deny-read`、`--deny-write` 明确拒绝；scope 只收窄，writer 无权写入项目文件。capture 的逻辑路径为 `captures/<接触日或unknown>/<kind>/<id>/content.md`，旧 URI 与新地址遵守同一授权。
+
+完整备份受生命周期锁保护，停服复制整个 native data、`sources.json`、`access.json` 和哈希清单，结束恢复原先运行的组件。备份目录不得与部署或来源根重叠，不覆盖已有备份。目标必须已安装、data 为空且没有既有来源/范围/恢复状态；恢复先核验全部清单与哈希，保留目标运行路径、模型与端口，重新签发目标凭据。完整冷备份是恢复介质；项目正文仍由源项目保管，迁移后必须核验来源路径可达。该流程提供明确恢复点，不承诺任意时刻回滚。
 
 最终运行证据与复跑方法见 [真实接入验收](../experiments/memory-base-live/README.md)。安装和接口测试通过不替代真实宿主验收。
 
@@ -57,4 +77,6 @@ Bubble `.env` 只增加 `MEMORY_BASE_URL`、`MEMORY_BASE_PYTHON`、`MEMORY_BASE_
 
 正式状态目录为 `C:\Users\Tan\.agent-memory-base`，运行使用其中的 `runtime\Scripts\python.exe`，源码指向本仓主目录。三个基座服务与 Bubble 后端均在运行。真实 pi 的文章、视频总结已原样保存，跨会话读取成功；真实 Codex CLI 搜索、读回通过。完整停止和启动后，两份内容的 URI、哈希及搜索结果保持一致；上游不可用时返回明确故障。
 
-Codex CLI 验证使用已登记入口及临时 CLI 默认设置，因桌面模型别名在独立 CLI 不可用；全局模型配置保留。DSH/opencode 已完成配置登记，需要新会话加载，其实际对话调用未纳入本轮成功声明。AOCI 仍未建索引，不是这条接入链路的前置条件。
+Codex CLI 验证使用已登记入口及临时 CLI 默认设置，因桌面模型别名在独立 CLI 不可用；全局模型配置保留。DSH/opencode 已完成配置登记，需要新会话加载，其实际对话调用未纳入本轮成功声明。AOCI 于 2026-10-12 按 owner 决定停用，不参与安装、开发或接入。
+
+**2026-10-12 补充**：上述来源、范围、冷恢复与登录启动实现已合入。冻结版本 `d8a6709` 全量单测为 802 passed、5 skipped；harness 的 10 条确定性场景预期全部匹配，opencode server 缺席时接入冒烟 SKIP。正式 gateway 使用修复后的标准生命周期入口重启，MCP 读回新增教训逐字一致。独立 wheel 和真实隔离恢复验收仍在执行；正式项目来源及登录启动尚未登记，不以单测替代这些交付证据。
