@@ -33,11 +33,11 @@
 
 ## 复跑
 
-先使用根 `venv`，且正式服务与 Bubble 后端正在运行。以下读取验收包含幂等保存重试，不重新生成总结：
+先激活根 `venv`，正式服务与 Bubble 后端需要正在运行。当前 `memory_base` 安装在专用 runtime，下面直接使用其 Python，避免从脚本目录运行时误以为根 venv 已安装新包。以下读取验收包含幂等保存重试，不重新生成总结：
 
 ```powershell
 . .\venv\Scripts\Activate.ps1
-python experiments/memory-base-live/verify.py --bubble-dir D:\python_work\work2026-10\Agent-bubble --task-id 371a0f8f-dd90-4fe5-856c-34b9b7302f1a --task-id 38985cdf-9228-442d-b387-a398abc35ece --out experiments/memory-base-live/after-restart.json
+& "$env:USERPROFILE\.agent-memory-base\runtime\Scripts\python.exe" experiments/memory-base-live/verify.py --bubble-dir D:\python_work\work2026-10\Agent-bubble --task-id 371a0f8f-dd90-4fe5-856c-34b9b7302f1a --task-id 38985cdf-9228-442d-b387-a398abc35ece --out experiments/memory-base-live/upgrade-2026-10-12.json
 python experiments/memory-base-live/refresh_navigation.py
 ```
 
@@ -53,3 +53,16 @@ Bubble 的 `scripts/smoke-memory-live.ts` 会创建新总结任务并实际调�
 - **Codex、DSH、opencode 均已登记**，规约已落位；DSH/opencode 的新会话加载及实际对话调用尚未验证。旧 opencode `memory-agent` 入口已禁用，其余配置保留。
 - **Bubble 后端已完成受管理重启并正在运行**，手机继续连接原后端 8787。总结自动保存；普通追问不自动新增；失败保留本地结果，可幂等重试。
 - 此增量不等于 ADR-0032 四阶段全部完成。项目来源新鲜度在 ADR-0032 实测补充登记，后续由 #82 处理；#78 专门处理偏好护栏。就地映射、偏好升级、完整产品化裁剪和 Windows 开机自动启动未纳入此次验收。此次验收未使用 AOCI；这不代表后来仍未建立索引。
+
+## 扩充后的正式回归（2026-10-12）
+
+本节是后续证据，保留上方 2026-10-11 的原始口径与报告。基座实现冻结于 `d8a6709`；四工具回归脚本修订于 `1e78f0d`。默认 capture 接入仍兼容 Bubble，无新 LLM 或总结生成。
+
+| 检查 | 结果与范围 | 新记录 |
+|---|---|---|
+| Bubble 旧文章/视频 | HTTP 原样读回、逐字节核验、搜索、同请求重试通过；原 URI/hash 均未改变 | [upgrade-2026-10-12.json](upgrade-2026-10-12.json) |
+| Lead 实际 SDK 1.30 stdio | 四工具、annotations、expected_revision、limit=1 全库分页、reader 写拒绝通过；文章另做一次现有本地查询嵌入 | [文章](mcp-upgrade-article-2026-10-12.json)、[视频](mcp-upgrade-video-2026-10-12.json) |
+| 当前 Codex 桌面 MCP 读项目 | 正式登记 `agent-kb`，仅 README/docs；两个当前文件的原字节 revision 等于本机 SHA256，65 个 Markdown 完整列举；一条实际项目词法查询首位命中部署说明 | [project-2026-10-12.json](project-2026-10-12.json) |
+| 宿主规约同步 | Codex、DSH、opencode 的 personal-memory SKILL 均与仓库规约一致，SHA256 `72527b6cc7e74c5c8266f01f85d3dcbe398415ed24404facfe722d1468c5d964`；旧副本保留本机备份 | 只证明规约落位，DSH/opencode 实际会话仍未验 |
+
+这条项目词法查询验证实际接缝，不是检索质量 benchmark。项目原文没有复制进 native capture，源文件当前状态仍为权威。#85 的完整原生隔离恢复与 #86 的独立包结论分别记录在独立实验中；目前 wheel 默认新 runtime 安装缺陷正在 #89 修复，不能据本节宣布产品全部完成。AOCI 按 owner 决定完全停用。

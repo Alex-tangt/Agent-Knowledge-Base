@@ -1,0 +1,88 @@
+{
+  "date": "2026-10-12",
+  "transport": "Codex desktop personal-memory MCP",
+  "source": {
+    "name": "agent-kb",
+    "root": "D:\\python_work\\work2026-4\\Agent-Knowledge-Base",
+    "include": [
+      "README.md",
+      "docs/**/*.md"
+    ],
+    "readonly": true
+  },
+  "checks": [
+    {
+      "i": 0,
+      "uri": "projects/agent-kb/README.md",
+      "path": "projects/agent-kb/README.md",
+      "revision": "f1da1afeacfc7edd359307ccbcd9c146caf6811fbdbc6cc57b344a6103c9660c",
+      "characters": 5369,
+      "effective_scope": [
+        "projects/agent-kb/README.md"
+      ]
+    },
+    {
+      "i": 1,
+      "uri": "projects/agent-kb/docs/memory-base-deployment.md",
+      "path": "projects/agent-kb/docs/memory-base-deployment.md",
+      "revision": "0c49c60c368f38df1c4119f4f5de4b321c81241f29afa1ca4bacf0aba65e1acb",
+      "characters": 5056,
+      "effective_scope": [
+        "projects/agent-kb/docs/memory-base-deployment.md"
+      ]
+    },
+    {
+      "i": 2,
+      "method": "project_lexical",
+      "completeness": {
+        "source_scan": "complete",
+        "capture_enumeration": "not_requested",
+        "capture_index": "not_requested",
+        "results_limited": true
+      },
+      "effective_scope": [
+        "projects/agent-kb"
+      ],
+      "items": [
+        {
+          "path": "projects/agent-kb/docs/memory-base-deployment.md",
+          "revision": "0c49c60c368f38df1c4119f4f5de4b321c81241f29afa1ca4bacf0aba65e1acb",
+          "method": "project_lexical"
+        },
+        {
+          "path": "projects/agent-kb/docs/memory-base-product-plan.md",
+          "revision": "410f5afa703e30c79830d46308a13455351a4ceb2aa4f4ebb843d9001cb8d8ac",
+          "method": "project_lexical"
+        },
+        {
+          "path": "projects/agent-kb/README.md",
+          "revision": "f1da1afeacfc7edd359307ccbcd9c146caf6811fbdbc6cc57b344a6103c9660c",
+          "method": "project_lexical"
+        },
+        {
+          "path": "projects/agent-kb/docs/memory-base-delivery-plan-2026-10-11.md",
+          "revision": "b6d39c3549d386c16ae5010d2649545ec5aa35df63bf614676569ff64dae465b",
+          "method": "project_lexical"
+        },
+        {
+          "path": "projects/agent-kb/docs/adr/0032-personal-memory-base-adopt-then-productize.md",
+          "revision": "df0f741b43e696dd766ad7de7a902c868e0f154d150e8760b0f38cc9ec702d20",
+          "method": "project_lexical"
+        }
+      ]
+    },
+    {
+      "i": 3,
+      "items": 65,
+      "next_cursor": null,
+      "completeness": {
+        "enumeration": "complete",
+        "snapshot": "per_request",
+        "total": 65,
+        "has_more": false
+      }
+    }
+  ],
+  "originals_and_credentials_in_report": false,
+  "scope": "live original files; one lexical query is not a retrieval benchmark"
+}

@@ -38,9 +38,10 @@ Lead 负责本文件、ADR、地图同步和集成验收；执行者各自工作
 | [#83 完整备份恢复与运维登记](https://github.com/Alex-tangt/Agent-Knowledge-Base/issues/83) | 实现已合入并关闭，最终单元 `474af7b`；原生证据由 #85 补齐 | `memory_base/backup.py`, `deploy.py`, 对应新增/原 deploy 单测 | 无；集成验收依赖映射格式稳定 | 冷备份哈希；空数据根恢复；ACL/登记/凭据边界；只管理自有进程 |
 | [#84 Windows 登录自动启动](https://github.com/Alex-tangt/Agent-Knowledge-Base/issues/84) | API 与 CLI 已合入并关闭，最终单元 `55be228`；真实登记由 #85 验证 | `memory_base/autostart.py`, 对应单测；CLI 由 #83 单写者接入 | 无 | 命令路径解析、归属冲突、幂等登记；真实登录另列限制 |
 | [#85 原生隔离验收](https://github.com/Alex-tangt/Agent-Knowledge-Base/issues/85) | 接续预注册，冻结实现 `d8a6709` | `experiments/memory-base-recovery/` | #82、#83、#84 | 冻结 SHA；真实路径过滤、变更、离线、完整备份、空根恢复、native ACL、SDK1.30 MCP |
-| [#86 独立包验收](https://github.com/Alex-tangt/Agent-Knowledge-Base/issues/86) | 执行中，冻结实现 `d8a6709` | `experiments/memory-base-package/` | 无 | 独立 wheel、任意 cwd 导入、正式 Python 3.12、MCP 四工具；依赖复用边界明确 |
+| [#86 独立包验收](https://github.com/Alex-tangt/Agent-Knowledge-Base/issues/86) | 包/协议 7/7 通过；产品安装入口 FAIL，等待 #89 后复验 | `experiments/memory-base-package/` | 无 | 独立 wheel、任意 cwd 导入、正式 Python 3.12、MCP 四工具；依赖复用边界明确 |
 | [#87 标准启动请求解析修复](https://github.com/Alex-tangt/Agent-Knowledge-Base/issues/87) | 已合入 `d8a6709` 并关闭 | `memory_base/deploy.py`, 对应单测 | 无 | 正式 runtime 请求 200/422；gateway 重启后 MCP 原文及 revision 一致 |
-| [#88 正式 MCP 四工具回归](https://github.com/Alex-tangt/Agent-Knowledge-Base/issues/88) | 执行中 | `experiments/memory-base-live/mcp_probe.py` | 无 | 旧 Bubble URI/hash，实际 stdio 四工具、列举、版本读回、只读写拒绝；无新模型调用 |
+| [#88 正式 MCP 四工具回归](https://github.com/Alex-tangt/Agent-Knowledge-Base/issues/88) | 已合入 `1e78f0d`，Lead 正式文章/视频复跑通过 | `experiments/memory-base-live/mcp_probe.py` | 无 | 旧 Bubble URI/hash，实际 stdio 四工具、列举、版本读回、只读写拒绝；无新 LLM/总结生成 |
+| [#89 wheel 专用 runtime 安装修复](https://github.com/Alex-tangt/Agent-Knowledge-Base/issues/89) | 执行中 | `memory_base/deploy.py`, 对应单测 | 无 | 明确本地 artifact、拒绝发生在副作用前、目标实际包来源、源码入口兼容；#86 重验 |
 | 产品化计划、实际项目接入与复跑 | 执行中 | Lead 文档、地图与正式接入记录 | 上述实现和验收单元 | 冻结版本全量单测、已有 harness/冒烟、正式实例与旧消费者兼容 |
 
 ## 完成审计

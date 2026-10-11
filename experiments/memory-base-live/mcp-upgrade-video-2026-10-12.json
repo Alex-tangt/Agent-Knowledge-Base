@@ -1,0 +1,44 @@
+{
+  "profile": "reader",
+  "tools": [
+    "memory_add",
+    "memory_get",
+    "memory_list",
+    "memory_search"
+  ],
+  "uri": "viking://resources/captures/0ada0a7776fcf4e646f0b3b54d69972334f01b04a7da6488c4044fa6f46dbd7b/content.md",
+  "content_hash": "5f6ba7e2e05b205484c0034111404a363151d35d95516871c61fd6d727eeadc7",
+  "annotations": {
+    "memory_add": {
+      "readOnlyHint": false,
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": false
+    },
+    "memory_search": {
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": false
+    },
+    "memory_get": {
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": false
+    },
+    "memory_list": {
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": false
+    }
+  },
+  "mcp_initialize": true,
+  "mcp_read": true,
+  "mcp_expected_revision": true,
+  "mcp_list": true,
+  "mcp_list_paginated": true,
+  "mcp_list_contains_original": true,
+  "mcp_reader_write_refused": true
+}
