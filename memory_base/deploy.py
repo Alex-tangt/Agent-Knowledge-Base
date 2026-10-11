@@ -32,7 +32,11 @@ COMPONENTS = ("embed", "upstream", "gateway")
 ROOT_KEY_ENV = "MEMORY_BASE_ROOT_KEY"
 _RUN_COMPONENT = ("import os,runpy,sys;os.environ['MEMORY_BASE_HOME']=sys.argv[1];"
                   "module=sys.argv[2];sys.argv=[module,*sys.argv[3:]];"
-                  "runpy.run_module(module,run_name='__main__')")
+                  "runpy.run_module(module,run_name='__main__',alter_sys=True)")
+# Existing home-bound processes retain their original command until restarted.
+_RUN_COMPONENT_V1 = ("import os,runpy,sys;os.environ['MEMORY_BASE_HOME']=sys.argv[1];"
+                     "module=sys.argv[2];sys.argv=[module,*sys.argv[3:]];"
+                     "runpy.run_module(module,run_name='__main__')")
 
 
 def _write_json(path: Path, value: dict) -> None:
@@ -269,6 +273,9 @@ def owned_component(component: str, home: Path, config: dict, record: dict | Non
         return False
     actual = record.get("command", "").strip()
     commands = [_component_command(component, home, config)]
+    previous_wrapper = commands[0].copy()
+    previous_wrapper[2] = _RUN_COMPONENT_V1
+    commands.append(previous_wrapper)
     if Path(config["python"]).resolve().is_relative_to(home.resolve()):
         commands.append(_component_command(component, home, config, legacy=True))
     return any(actual == (subprocess.list2cmdline(command) if os.name == "nt" else " ".join(command))

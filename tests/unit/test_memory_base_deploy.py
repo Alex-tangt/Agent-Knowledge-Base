@@ -9,6 +9,7 @@ from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 import threading
 import time
+import textwrap
 
 import pytest
 
@@ -104,6 +105,24 @@ def test_component_ownership_binds_real_command_to_home_with_shared_runtime(tmp_
     assert not deploy.owned_component("gateway", left, config, record)
 
 
+@pytest.mark.parametrize("component", deploy.COMPONENTS)
+def test_previous_home_wrapper_remains_owned_only_by_exact_deployment(tmp_path, monkeypatch, component):
+    previous_wrapper = ("import os,runpy,sys;os.environ['MEMORY_BASE_HOME']=sys.argv[1];"
+                        "module=sys.argv[2];sys.argv=[module,*sys.argv[3:]];"
+                        "runpy.run_module(module,run_name='__main__')")
+    config = {"python": sys.executable, "ports": {"embed": 17996, "upstream": 17886, "gateway": 17888},
+              "model": "/test/model.gguf"}
+    arguments = deploy._component_command(component, tmp_path, config)
+    arguments[2] = previous_wrapper
+    command = _command_text(arguments)
+    record = {"pid": 42, "created": "now", "command": command, "port": config["ports"][component]}
+    monkeypatch.setattr(deploy, "_process_info", lambda _: {"created": "now", "command": record["command"]})
+    assert deploy.owned_component(component, tmp_path, config, record)
+    assert not deploy.owned_component(component, tmp_path / "other", config, record)
+    record["command"] += " --other"
+    assert not deploy.owned_component(component, tmp_path, config, record)
+
+
 def test_legacy_component_ownership_requires_home_local_runtime(tmp_path, monkeypatch):
     config = {"python": str(tmp_path / "runtime" / "python"), "ports": {"gateway": 17888}}
     command = _command_text(deploy._component_command("gateway", tmp_path, config, legacy=True))
@@ -127,6 +146,55 @@ def test_component_wrapper_sets_home_and_preserves_module_arguments(tmp_path):
     home, arguments = json.loads(result.stdout)
     assert home == str(tmp_path)
     assert arguments[1:] == ["--port", "17996", "--model", "/test/model.gguf"]
+
+
+def _gateway_body_probe(tmp_path, python, *, legacy=False):
+    # Replace only the server loop: execute the real gateway module and routes.
+    # No port is opened and the parsed request is handled without an upstream.
+    (tmp_path / "uvicorn.py").write_text(textwrap.dedent("""
+        import json, os
+        from fastapi.testclient import TestClient
+
+        def run(app, **kwargs):
+            app.state.capture_service.add = lambda request, identity: {
+                "request": request.model_dump(), "identity": identity.public()}
+            body = {"request_id": "bootstrap-test", "title": "Original title",
+                    "content": "  Original content\\r\\n"}
+            headers = {"Authorization": "Bearer test-token"}
+            with TestClient(app, raise_server_exceptions=False) as client:
+                valid = client.post("/api/memory/add", json=body, headers=headers)
+                invalid = client.post("/api/memory/add", json={**body, "content": []}, headers=headers)
+            result = {"status": valid.status_code,
+                      "body": valid.json() if valid.status_code == 200 else valid.text,
+                      "invalid_status": invalid.status_code,
+                      "home": os.environ["MEMORY_BASE_HOME"]}
+            if valid.status_code == 500:
+                try:
+                    with TestClient(app) as client:
+                        client.post("/api/memory/add", json=body, headers=headers)
+                except Exception as error:
+                    result["error"] = str(error)
+            print(json.dumps(result))
+    """), encoding="utf-8")
+    env = deploy.clean_env({
+        "PYTHONPATH": os.pathsep.join([str(tmp_path), str(Path(deploy.__file__).resolve().parents[1])]),
+        "MEMORY_BASE_HOME": str(tmp_path), "MEMORY_BASE_OV_KEY": "unused-test-key",
+        "MEMORY_BASE_TOKENS": json.dumps({"test-token": {"principal": "test", "role": "writer"}}),
+    })
+    config = {"python": str(python), "ports": {"gateway": 17888}}
+    result = subprocess.run(deploy._component_command("gateway", tmp_path, config, legacy=legacy),
+                            cwd=tmp_path, env=env, capture_output=True, text=True, check=True, timeout=30)
+    return json.loads(result.stdout)
+
+
+@pytest.mark.parametrize("legacy", [False, True], ids=["home-wrapper", "legacy-module"])
+def test_gateway_component_subprocess_validates_request_body(tmp_path, legacy):
+    result = _gateway_body_probe(tmp_path, sys.executable, legacy=legacy)
+    assert result["status"] == 200, result
+    assert result["body"]["request"]["content"] == "  Original content\r\n"
+    assert result["body"]["identity"] == {"principal": "test", "role": "writer"}
+    assert result["invalid_status"] == 422
+    assert result["home"] == str(tmp_path)
 
 
 def test_upstream_health_rejects_dev_mode_and_wrong_version(monkeypatch):
