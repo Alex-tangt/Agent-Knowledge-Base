@@ -206,6 +206,79 @@ def test_restored_identity_failure_keeps_reissue_marker(tmp_path, monkeypatch):
     assert json.loads((tmp_path / "restore-state.json").read_text())["identity_reissue_pending"] is True
 
 
+def _installed_home(tmp_path):
+    home = tmp_path / "home"
+    deploy._write_json(home / "deployment.json", {"schema": 1})
+    return home
+
+
+def test_source_cli_registration_is_atomic_idempotent_and_never_writes_project(tmp_path):
+    home = _installed_home(tmp_path)
+    source = tmp_path / "source"
+    source.mkdir()
+    original = source / "README.md"
+    original.write_bytes("权威原文\n".encode("utf-8"))
+    before = original.stat()
+    result = deploy.source_add(home, "kb", str(source))
+    assert result["status"] == "registered"
+    assert result["project"]["include"] == ["README.md", "docs/**/*.md"]
+    registered = (home / "sources.json").read_bytes()
+    assert deploy.source_add(home, "kb", str(source))["status"] == "unchanged"
+    assert (home / "sources.json").read_bytes() == registered
+    assert deploy.source_list(home)["projects"][0]["availability"] == "reachable"
+    assert original.read_bytes() == "权威原文\n".encode("utf-8")
+    assert original.stat().st_mtime_ns == before.st_mtime_ns
+    assert [p.name for p in source.iterdir()] == ["README.md"]
+    assert not (home / "sources.json.tmp").exists()
+
+
+def test_source_replace_requires_explicit_switch_and_preserves_custom_patterns(tmp_path):
+    home = _installed_home(tmp_path)
+    source, second = tmp_path / "source", tmp_path / "second"
+    source.mkdir()
+    second.mkdir()
+    deploy.source_add(home, "kb", str(source), include=["notes/**/*.md"], exclude=[])
+    previous = (home / "sources.json").read_bytes()
+    with pytest.raises(ValueError, match="--replace"):
+        deploy.source_add(home, "kb", str(second))
+    assert (home / "sources.json").read_bytes() == previous
+    assert deploy.source_add(home, "kb", str(second), replace=True)["status"] == "replaced"
+    project = deploy.source_list(home)["projects"][0]
+    assert project["include"] == ["notes/**/*.md"] and project["exclude"] == []
+
+
+def test_source_remove_changes_only_registry_and_missing_root_is_visible(tmp_path):
+    home = _installed_home(tmp_path)
+    source = tmp_path / "source"
+    source.mkdir()
+    deploy.source_add(home, "kb", str(source))
+    source.rmdir()
+    assert deploy.source_list(home)["projects"][0]["availability"] == "unavailable"
+    assert deploy.source_remove(home, "kb")["status"] == "unregistered"
+    assert deploy.source_remove(home, "kb")["status"] == "unchanged"
+    assert deploy.source_list(home)["projects"] == []
+
+
+def test_source_add_refuses_unavailable_or_home_overlapping_root(tmp_path):
+    home = _installed_home(tmp_path)
+    with pytest.raises(ValueError, match="existing readable"):
+        deploy.source_add(home, "kb", str(tmp_path / "missing"))
+    with pytest.raises(ValueError, match="independent"):
+        deploy.source_add(home, "kb", str(home))
+    assert not (home / "sources.json").exists()
+
+
+def test_source_registry_invalid_does_not_get_overwritten(tmp_path):
+    home = _installed_home(tmp_path)
+    source = tmp_path / "source"
+    source.mkdir()
+    (home / "sources.json").write_text('{"schema":1,"projects":[],"unknown":"do not erase"}')
+    previous = (home / "sources.json").read_bytes()
+    with pytest.raises(ValueError):
+        deploy.source_add(home, "kb", str(source))
+    assert (home / "sources.json").read_bytes() == previous
+
+
 def test_llama_context_is_serialized_across_parallel_requests():
     class UnsafeModel:
         active = 0

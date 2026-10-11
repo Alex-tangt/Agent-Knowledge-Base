@@ -433,10 +433,75 @@ def redact(text: str, home: Path) -> str:
     return text
 
 
+def _source_document(home: Path) -> dict:
+    from memory_base.backup import _path
+    from memory_base.sources import validate_registry
+    path = _path(home / "sources.json")
+    return validate_registry(json.loads(path.read_text(encoding="utf-8"))) if path.exists() else {"schema": 1, "projects": []}
+
+
+def source_add(home: Path, name: str, root: str, *, include=None, exclude=None, replace=False) -> dict:
+    """Register a local read-only root without creating or modifying its files."""
+    from memory_base.backup import _overlaps, _path
+    from memory_base.sources import DEFAULT_EXCLUDE, DEFAULT_INCLUDE, validate_registry
+    home, selected_root = _path(home), _path(root)
+    if _overlaps(home, selected_root):
+        raise ValueError("Source root must be independent of the deployment home")
+    if not selected_root.is_dir():
+        raise ValueError("Source root must be an existing readable directory")
+    with os.scandir(selected_root):
+        pass  # A root-only readability check; no source content is copied.
+    with lifecycle_lock(home):
+        load_config(home)
+        registry = _source_document(home)
+        existing = next((p for p in registry["projects"] if p["name"] == name), None)
+        project = {"name": name, "root": str(selected_root),
+                   "include": include if include is not None else (existing or {}).get("include", DEFAULT_INCLUDE),
+                   "exclude": exclude if exclude is not None else (existing or {}).get("exclude", DEFAULT_EXCLUDE)}
+        if existing == project:
+            return {"status": "unchanged", "project": project}
+        if existing and not replace:
+            raise ValueError("Source registration differs; use --replace to change it explicitly")
+        candidate = validate_registry({"schema": 1, "projects": [
+            p for p in registry["projects"] if p["name"] != name] + [project]})
+        _write_json(home / "sources.json", candidate)
+        return {"status": "replaced" if existing else "registered", "project": project}
+
+
+def source_list(home: Path) -> dict:
+    from memory_base.backup import _path
+    load_config(home)
+    registry = _source_document(home)
+    projects = []
+    for project in registry["projects"]:
+        try:
+            root = _path(project["root"])
+            if not root.is_dir():
+                raise OSError("unavailable")
+            with os.scandir(root):
+                pass
+            availability = "reachable"
+        except (OSError, ValueError):
+            availability = "unavailable"
+        projects.append({**project, "availability": availability})
+    return {"status": "ok", "projects": projects}
+
+
+def source_remove(home: Path, name: str) -> dict:
+    with lifecycle_lock(home):
+        load_config(home)
+        registry = _source_document(home)
+        projects = [project for project in registry["projects"] if project["name"] != name]
+        if len(projects) == len(registry["projects"]):
+            return {"status": "unchanged", "name": name}
+        _write_json(home / "sources.json", {"schema": 1, "projects": projects})
+        return {"status": "unregistered", "name": name}
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(prog="memory-base")
     parser.add_argument("command", choices=("install", "start", "stop", "restart", "status", "logs", "host-token",
-                                             "backup", "restore"))
+                                             "backup", "restore", "source-add", "source-list", "source-remove"))
     parser.add_argument("--home")
     parser.add_argument("--runtime-python", help="Explicit existing runtime; versions are checked against pins")
     parser.add_argument("--fresh-runtime", action="store_true", help="Select the dedicated <home>/runtime venv instead of an adopted runtime")
@@ -447,6 +512,11 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--timeout", type=float, default=180)
     parser.add_argument("--destination", help="New backup directory outside deployment and source roots")
     parser.add_argument("--backup", help="Verified cold backup to restore into this installed empty deployment")
+    parser.add_argument("--name", help="Registered project name")
+    parser.add_argument("--root", help="Local read-only project root")
+    parser.add_argument("--include", action="append", help="Relative Markdown glob; repeat to add patterns")
+    parser.add_argument("--exclude", action="append", help="Relative exclusion glob; repeat to add patterns")
+    parser.add_argument("--replace", action="store_true", help="Explicitly replace an existing source registration")
     args = parser.parse_args(argv)
     home = state_home(args.home)
     components = tuple(args.components.split(","))
@@ -456,6 +526,10 @@ def main(argv: list[str] | None = None) -> int:
         parser.error("backup requires --destination")
     if args.command == "restore" and not args.backup:
         parser.error("restore requires --backup")
+    if args.command == "source-add" and (not args.name or not args.root):
+        parser.error("source-add requires --name and --root")
+    if args.command == "source-remove" and not args.name:
+        parser.error("source-remove requires --name")
     try:
         if args.command == "host-token":
             token = get_secret("host-" + args.profile, home)
@@ -465,7 +539,13 @@ def main(argv: list[str] | None = None) -> int:
             # secret. Hosts capture it directly into their process environment.
             print(token)
             return 0
-        if args.command in ("backup", "restore"):
+        if args.command == "source-add":
+            result = source_add(home, args.name, args.root, include=args.include, exclude=args.exclude, replace=args.replace)
+        elif args.command == "source-list":
+            result = source_list(home)
+        elif args.command == "source-remove":
+            result = source_remove(home, args.name)
+        elif args.command in ("backup", "restore"):
             from memory_base.backup import create_backup, restore_backup
             result = (create_backup(home, Path(args.destination), timeout=args.timeout) if args.command == "backup"
                       else restore_backup(home, Path(args.backup), timeout=args.timeout))
