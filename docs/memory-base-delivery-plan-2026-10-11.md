@@ -32,9 +32,9 @@ Lead 负责本文件、ADR、地图同步和集成验收；执行者各自工作
 
 | 单元 | 状态 | write scope | blocked_by | 验收锚点 |
 |---|---|---|---|---|
-| 两仓源码研究 | 已保存，待提交 | `experiments/memory-source-study/`, 综合报告 | 无 | 固定 SHA；链接与有限探针；不将静态阅读称完整运行 |
-| 只读映射与路径查询 | 待派遣 | `memory_base/sources.py`, `paths.py`, `gateway.py`, `upstream.py`, `mcp_stdio.py`, 对应新增/原 gateway 单测 | 无 | 上表映射与范围判据；保留原接入回归 |
-| 完整备份恢复与运维登记 | 待派遣 | `memory_base/backup.py`, `deploy.py`, 对应新增/原 deploy 单测 | 无；集成验收依赖映射格式稳定 | 冷备份哈希；空数据根恢复；ACL/登记/凭据边界；只管理自有进程 |
+| 两仓源码研究 | 已提交 `747d150` | `experiments/memory-source-study/`, 综合报告 | 无 | 固定 SHA；226 个固定源链接、41 个本地链接通过；有限探针不等于完整运行 |
+| [#82 只读映射与路径查询](https://github.com/Alex-tangt/Agent-Knowledge-Base/issues/82) | 执行中 | `memory_base/sources.py`, `paths.py`, `gateway.py`, `upstream.py`, `mcp_stdio.py`, 对应新增/原 gateway 单测 | 无 | 上表映射与范围判据；保留原接入回归 |
+| [#83 完整备份恢复与运维登记](https://github.com/Alex-tangt/Agent-Knowledge-Base/issues/83) | 执行中 | `memory_base/backup.py`, `deploy.py`, 对应新增/原 deploy 单测 | 无；集成验收依赖映射格式稳定 | 冷备份哈希；空数据根恢复；ACL/登记/凭据边界；只管理自有进程 |
 | 产品化计划、实际项目接入与复跑 | 待执行 | Lead 文档与隔离验收记录 | 上述两个单元 | 冻结版本全量单测、已有 harness/冒烟、真实服务隔离恢复与来源查询 |
 
 ## 完成审计
