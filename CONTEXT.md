@@ -38,17 +38,25 @@ _Avoid_: 会话上下文、短期上下文
 _Avoid_: 长期记忆、知识库
 
 **真相源（Source of Truth）**：
-记忆真正落盘之处——Markdown 条目及其 frontmatter 元数据；可版本化、可回退。
-_Avoid_: 索引、数据库
+某类内容或规则的权威记录。旧自研实现为 Markdown 条目及其 frontmatter；正式个人基座保存应用提交原文与回执，项目原文则属于各自项目。权限、来源登记与人的确认也是必须保留的权威状态。
+_Avoid_: 把搜索片段、LLM 推断或另一份项目摘要当作原文权威
 
 **派生索引（Derived Index）**：
-从真相源重建、可随时丢弃的检索加速结构，不承载记忆本体。
-_Avoid_: 真相源、存储
+从指定原文版本生成的检索加速结构，不承载原文权威。向量可重建；包含权限或确认状态的持久数据库不能整体视为可丢弃索引。
+_Avoid_: 把持久数据库中的全部状态都当作缓存
 
 **个人记忆基座（Personal Memory Base）**：
-记忆能力的下一阶段形态——**服务端权威的内容仓库 + 只读来源导入 + 派生检索**，由选定开源实现承接存储 / 权限 / 版本 / 恢复，本仓保留接入面与评测。本轮候选 = OpenViking 0.4.23（**导入快照**而非就地挂载；与"映射类"的原始设想有偏差，见 ADR-0032 实测补充）。
-_See_: `docs/adr/0032-personal-memory-base-adopt-then-productize.md`、`experiments/memory-framework-spike/mvp-protocol.md`
+一个人的多 agent 共同使用的内容持久层：应用提交原文、项目文件的只读地址，以及另存且引用输入的派生记忆。当前正式接入采用固定 OpenViking 保存 capture；旧候选导入项目快照会陈旧，真实文件读取与路径范围扩充按 ADR-0032 D13–D15 推进。
+_See_: `docs/adr/0032-personal-memory-base-adopt-then-productize.md`、`docs/memory-base-delivery-plan-2026-10-11.md`
 _Avoid_: 记忆能力包（`memory_agent` = 已冻结的旧自研实现）
+
+**接触日（Observed Day）**：
+本人接触文章、视频或笔记内容的日历日，以 Asia/Shanghai 解释；未知时保留未知。它不同于服务接收请求的时刻。
+_Avoid_: 用接收日推断接触日
+
+**内容版本（Content Revision）**：
+一次具体原文字节的身份。读取结果带内容版本，后续读取可以要求仍是同一版本；项目未提交的变化也属于变化。
+_Avoid_: 仅用项目 Git commit 表示实际读取的内容
 
 **正式接入层（`memory_base`）**：
 固定 OpenViking 的部署与宿主接缝。HTTP 与 MCP 共用追加、搜索、读取语义；凭据绑定调用身份，虚拟条目正文与追溯元数据分开保存，同一次请求重试不生成第二条。Agent-bubble 的 pi 首次总结由程序原样提交，知识库保存失败不丢弃本机总结。
