@@ -1,0 +1,214 @@
+{
+  "audited_at": "2026-10-12T13:09:13.849174+00:00",
+  "frozen_sha": "45296a58fe2559e0b92f4af851c018b56148865a",
+  "wheel_sha256": "baa5877bc55a834f7abf16c833d9e869c0768624efdd63de9ad1ef8b2768bfde",
+  "record_rows_verified": 20,
+  "completed_commands": 38,
+  "installed": {
+    "d": {
+      "wheel_product_bytes_match": true,
+      "entries": [
+        {
+          "path": "memory_base/__init__.py",
+          "sha256": "de4f114fc3136f47fe31db2f94787039d6ef67e66da8c8e3b9a168558a088f0a"
+        },
+        {
+          "path": "memory_base/__main__.py",
+          "sha256": "a12437bac114788f3a6077f4e34d080460618640f8a632f52fe80c7dab2db729"
+        },
+        {
+          "path": "memory_base/autostart.py",
+          "sha256": "b82a59900f9f5c50d1e39d08ca9278a5d0b42efe1dfe89b3e7a5ad85b4693565"
+        },
+        {
+          "path": "memory_base/backup.py",
+          "sha256": "481cc29e47f9c732be14bde141dcaaf7ab9f72432ad9e18118ca7de77a699106"
+        },
+        {
+          "path": "memory_base/constraints.txt",
+          "sha256": "eb43f8369e316bfe040e457a6f0a815ab1b1b1c11e3dfcf7043a2a60e7ec32ca"
+        },
+        {
+          "path": "memory_base/credentials.py",
+          "sha256": "b8ca897ac3fc2310133219ddc1537ff437de8a369cb67626faab98ca7bf4607d"
+        },
+        {
+          "path": "memory_base/deploy.py",
+          "sha256": "f7948a4d4dc50e5f4545de996e874ede7f133471c10915146ca6f88157dcf619"
+        },
+        {
+          "path": "memory_base/embed.py",
+          "sha256": "d481c7f11bf28697aac82c93c429ca9accf082153a7c3a19f5a0c50d7005405a"
+        },
+        {
+          "path": "memory_base/gateway.py",
+          "sha256": "3dd26546bafa6a8db67f5065e5ecd7edc3ae25353330f0a40a9f00d86714a9fb"
+        },
+        {
+          "path": "memory_base/mcp_stdio.py",
+          "sha256": "d31c183a896f226ba45e7849c4c6572e1350b125751e6caa18e3b6237f57f1e8"
+        },
+        {
+          "path": "memory_base/paths.py",
+          "sha256": "9fa05d72f153b7c44af922a2b6424c4c58d8a66340333b3e7b9a1ad01d11c446"
+        },
+        {
+          "path": "memory_base/requirements.txt",
+          "sha256": "d4f68d45c950dbd63082adbef1ddcbad71cf517ce8aeb63e5ddff393f5d5c38c"
+        },
+        {
+          "path": "memory_base/sources.py",
+          "sha256": "923338fe4f093e09c2f836420d357aaf4fbe9a13a6ac416534bf6e8973a1a3c0"
+        },
+        {
+          "path": "memory_base/upstream.py",
+          "sha256": "0b35b1626d1123bbf6c4eb78d16fad81ffa686145da666dc3c679fd7b55df426"
+        },
+        {
+          "path": "memory_base/skill/SKILL.md",
+          "sha256": "6d7e62498229280faf84dbd8033ec698f201a98da9417bec97a91665eb7aa049"
+        }
+      ],
+      "own_distributions": 175,
+      "active_constraints": 173,
+      "direct_url": {
+        "archive_info": {
+          "hash": "sha256=baa5877bc55a834f7abf16c833d9e869c0768624efdd63de9ad1ef8b2768bfde",
+          "hashes": {
+            "sha256": "baa5877bc55a834f7abf16c833d9e869c0768624efdd63de9ad1ef8b2768bfde"
+          }
+        },
+        "url": "file:///C:/Users/Tan/.mb86/r5/wheels/agent_memory_base-0.1.0-py3-none-any.whl"
+      },
+      "lark_python_files": 10727,
+      "lark_pyc_files": 10727,
+      "current_volc_sdk_roots": 138,
+      "current_volc_sdk_py_files": 26461,
+      "current_volc_sdk_pyc_files": 472
+    },
+    "f": {
+      "wheel_product_bytes_match": true,
+      "entries": [
+        {
+          "path": "memory_base/__init__.py",
+          "sha256": "de4f114fc3136f47fe31db2f94787039d6ef67e66da8c8e3b9a168558a088f0a"
+        },
+        {
+          "path": "memory_base/__main__.py",
+          "sha256": "a12437bac114788f3a6077f4e34d080460618640f8a632f52fe80c7dab2db729"
+        },
+        {
+          "path": "memory_base/autostart.py",
+          "sha256": "b82a59900f9f5c50d1e39d08ca9278a5d0b42efe1dfe89b3e7a5ad85b4693565"
+        },
+        {
+          "path": "memory_base/backup.py",
+          "sha256": "481cc29e47f9c732be14bde141dcaaf7ab9f72432ad9e18118ca7de77a699106"
+        },
+        {
+          "path": "memory_base/constraints.txt",
+          "sha256": "eb43f8369e316bfe040e457a6f0a815ab1b1b1c11e3dfcf7043a2a60e7ec32ca"
+        },
+        {
+          "path": "memory_base/credentials.py",
+          "sha256": "b8ca897ac3fc2310133219ddc1537ff437de8a369cb67626faab98ca7bf4607d"
+        },
+        {
+          "path": "memory_base/deploy.py",
+          "sha256": "f7948a4d4dc50e5f4545de996e874ede7f133471c10915146ca6f88157dcf619"
+        },
+        {
+          "path": "memory_base/embed.py",
+          "sha256": "d481c7f11bf28697aac82c93c429ca9accf082153a7c3a19f5a0c50d7005405a"
+        },
+        {
+          "path": "memory_base/gateway.py",
+          "sha256": "3dd26546bafa6a8db67f5065e5ecd7edc3ae25353330f0a40a9f00d86714a9fb"
+        },
+        {
+          "path": "memory_base/mcp_stdio.py",
+          "sha256": "d31c183a896f226ba45e7849c4c6572e1350b125751e6caa18e3b6237f57f1e8"
+        },
+        {
+          "path": "memory_base/paths.py",
+          "sha256": "9fa05d72f153b7c44af922a2b6424c4c58d8a66340333b3e7b9a1ad01d11c446"
+        },
+        {
+          "path": "memory_base/requirements.txt",
+          "sha256": "d4f68d45c950dbd63082adbef1ddcbad71cf517ce8aeb63e5ddff393f5d5c38c"
+        },
+        {
+          "path": "memory_base/sources.py",
+          "sha256": "923338fe4f093e09c2f836420d357aaf4fbe9a13a6ac416534bf6e8973a1a3c0"
+        },
+        {
+          "path": "memory_base/upstream.py",
+          "sha256": "0b35b1626d1123bbf6c4eb78d16fad81ffa686145da666dc3c679fd7b55df426"
+        },
+        {
+          "path": "memory_base/skill/SKILL.md",
+          "sha256": "6d7e62498229280faf84dbd8033ec698f201a98da9417bec97a91665eb7aa049"
+        }
+      ],
+      "own_distributions": 175,
+      "active_constraints": 173,
+      "direct_url": {
+        "archive_info": {
+          "hash": "sha256=baa5877bc55a834f7abf16c833d9e869c0768624efdd63de9ad1ef8b2768bfde",
+          "hashes": {
+            "sha256": "baa5877bc55a834f7abf16c833d9e869c0768624efdd63de9ad1ef8b2768bfde"
+          }
+        },
+        "url": "file:///C:/Users/Tan/.mb86/r5/wheels/agent_memory_base-0.1.0-py3-none-any.whl"
+      },
+      "lark_python_files": 10727,
+      "lark_pyc_files": 10727,
+      "current_volc_sdk_roots": 138,
+      "current_volc_sdk_py_files": 26461,
+      "current_volc_sdk_pyc_files": 0
+    }
+  },
+  "default_start_timeout": 180,
+  "actual_start_command": [
+    "C:\\Users\\Tan\\.mb86\\r5\\d\\runtime\\Scripts\\memory-base.exe",
+    "start",
+    "--home",
+    "C:\\Users\\Tan\\.mb86\\r5\\d"
+  ],
+  "start_seconds": 168.13062770000397,
+  "native_checks": {
+    "three_owned_native_services_ready": true,
+    "same_request_retry_idempotent": true,
+    "stale_revision_409": true,
+    "mismatched_scope_403": true,
+    "anonymous_401": true,
+    "reader_403": true,
+    "synthetic_unicode_crlf_append": true,
+    "reader_exact_hash_revision": true,
+    "native_list": true,
+    "native_search": true,
+    "native_stdio_four_tools_get_list": true,
+    "owned_process_cleanup_no_residual": true
+  },
+  "current_owned_process_survivors": {
+    "embed": false,
+    "upstream": false,
+    "gateway": false
+  },
+  "current_ports_busy": {
+    "upstream": false,
+    "gateway": false,
+    "embed": false
+  },
+  "current_process_records": {},
+  "offline_capture_file": "C:\\Users\\Tan\\.mb86\\r5\\d\\data\\viking\\personal\\resources\\captures\\b689ca3d68176b13a21d9bd17e44bf1bac3a6b345b2a1ab6ab6456b6f102bba6\\content.md",
+  "offline_capture_bytes": 81,
+  "offline_capture_sha256": "0c5aae91f3e9e347c564fac699d63e93e8cd3bf4332bde8edcf8b96cfaa17b50",
+  "scanned_secret_count": 13,
+  "scanned_evidence_files": 53,
+  "plaintext_credential_matches": 0,
+  "windows_LongPathsEnabled_readonly": 0,
+  "measurement_correction": "Original pre-native volcenginesdk count used a nonexistent single root. It does not prove no other SDK caches. Current actual distributed volcenginesdk* roots are enumerated here; this is post-run evidence.",
+  "no_jobs_rerun": true,
+  "overall": "PASS"
+}

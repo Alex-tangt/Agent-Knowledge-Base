@@ -1,0 +1,394 @@
+{
+  "frozen_sha": "45296a58fe2559e0b92f4af851c018b56148865a",
+  "preregistration_sha": "096a051103efed7b85092445988ed8c0af163456",
+  "asset_root": "C:\\Users\\Tan\\.mb86\\r5",
+  "generated_at": "2026-10-12T13:10:56.115450+00:00",
+  "files": [
+    {
+      "path": "command-000-preregistration.log",
+      "asset_original": "C:\\Users\\Tan\\.mb86\\r5\\command-000-preregistration.log",
+      "bytes": 41,
+      "sha256": "41f474427c875eeb0f0be3676124fb7d31cd575e97fcbcbe6f562599d42aee6e",
+      "raw_bytes_equal": true
+    },
+    {
+      "path": "command-001-preregistration-ancestor.log",
+      "asset_original": "C:\\Users\\Tan\\.mb86\\r5\\command-001-preregistration-ancestor.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_bytes_equal": true
+    },
+    {
+      "path": "command-002-script-commit.log",
+      "asset_original": "C:\\Users\\Tan\\.mb86\\r5\\command-002-script-commit.log",
+      "bytes": 41,
+      "sha256": "41f474427c875eeb0f0be3676124fb7d31cd575e97fcbcbe6f562599d42aee6e",
+      "raw_bytes_equal": true
+    },
+    {
+      "path": "command-003-build-identity.log",
+      "asset_original": "C:\\Users\\Tan\\.mb86\\r5\\command-003-build-identity.log",
+      "bytes": 186,
+      "sha256": "fb95f6182dd3785c67b013a4ec3089c12c005df7204c39a1a0591ec446a91eec",
+      "raw_bytes_equal": true
+    },
+    {
+      "path": "command-004-formal-identity.log",
+      "asset_original": "C:\\Users\\Tan\\.mb86\\r5\\command-004-formal-identity.log",
+      "bytes": 176,
+      "sha256": "1d6aebae7ceaa476c6e840e384f3bf4edf082589c926e299e02e2657f6286779",
+      "raw_bytes_equal": true
+    },
+    {
+      "path": "command-005-export.log",
+      "asset_original": "C:\\Users\\Tan\\.mb86\\r5\\command-005-export.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_bytes_equal": true
+    },
+    {
+      "path": "command-006-tracked.log",
+      "asset_original": "C:\\Users\\Tan\\.mb86\\r5\\command-006-tracked.log",
+      "bytes": 392,
+      "sha256": "c3a18ada3dee5fff8adac57958db4cdff7bc98e986d7933691270240223d0165",
+      "raw_bytes_equal": true
+    },
+    {
+      "path": "command-007-build-wheel.log",
+      "asset_original": "C:\\Users\\Tan\\.mb86\\r5\\command-007-build-wheel.log",
+      "bytes": 745,
+      "sha256": "8525879eb4d861c8c7988f5a19b0476a0c268159b6e2532e41444e2932100cd8",
+      "raw_bytes_equal": true
+    },
+    {
+      "path": "command-008-create-launcher.log",
+      "asset_original": "C:\\Users\\Tan\\.mb86\\r5\\command-008-create-launcher.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_bytes_equal": true
+    },
+    {
+      "path": "command-009-launcher-identity.log",
+      "asset_original": "C:\\Users\\Tan\\.mb86\\r5\\command-009-launcher-identity.log",
+      "bytes": 161,
+      "sha256": "0d6fe41e49f3f57a72503b34f6c3e16886fb1662376480b5790cc60e97e58458",
+      "raw_bytes_equal": true
+    },
+    {
+      "path": "command-010-install-launcher-wheel.log",
+      "asset_original": "C:\\Users\\Tan\\.mb86\\r5\\command-010-install-launcher-wheel.log",
+      "bytes": 180,
+      "sha256": "0a0d51a245a1003242dcd70cfa390eb5cf103167182a0dcbea46b7d905a7559e",
+      "raw_bytes_equal": true
+    },
+    {
+      "path": "command-011-launcher-origins.log",
+      "asset_original": "C:\\Users\\Tan\\.mb86\\r5\\command-011-launcher-origins.log",
+      "bytes": 39522,
+      "sha256": "f0dc363326393b99b884c94a2fa0c8fd94f88a2cfd46303e16d38a29fc7a97c3",
+      "raw_bytes_equal": true
+    },
+    {
+      "path": "command-012-launcher-imports.log",
+      "asset_original": "C:\\Users\\Tan\\.mb86\\r5\\command-012-launcher-imports.log",
+      "bytes": 4384,
+      "sha256": "c7832ab73d2ec0b1526a7259331d998e769d696e32ab654635bb3e0e8c9a5089",
+      "raw_bytes_equal": true
+    },
+    {
+      "path": "command-013-launcher-help.log",
+      "asset_original": "C:\\Users\\Tan\\.mb86\\r5\\command-013-launcher-help.log",
+      "bytes": 2752,
+      "sha256": "7a2de5603ba28196bbbbd6d50b085b3eb33df68bab2594dd30aabaa9aa9e942a",
+      "raw_bytes_equal": true
+    },
+    {
+      "path": "command-014-launcher-help.log",
+      "asset_original": "C:\\Users\\Tan\\.mb86\\r5\\command-014-launcher-help.log",
+      "bytes": 2752,
+      "sha256": "7a2de5603ba28196bbbbd6d50b085b3eb33df68bab2594dd30aabaa9aa9e942a",
+      "raw_bytes_equal": true
+    },
+    {
+      "path": "command-015-launcher-help.log",
+      "asset_original": "C:\\Users\\Tan\\.mb86\\r5\\command-015-launcher-help.log",
+      "bytes": 246,
+      "sha256": "059691bd27755991d63652c10c006142d6fc5c911322b6470fd926ee4d285d09",
+      "raw_bytes_equal": true
+    },
+    {
+      "path": "command-016-launcher-imports.log",
+      "asset_original": "C:\\Users\\Tan\\.mb86\\r5\\command-016-launcher-imports.log",
+      "bytes": 4369,
+      "sha256": "f879fca4335027a63b4651877be767a995236eeb8248b81edfd79429aa6f5d80",
+      "raw_bytes_equal": true
+    },
+    {
+      "path": "command-017-launcher-help.log",
+      "asset_original": "C:\\Users\\Tan\\.mb86\\r5\\command-017-launcher-help.log",
+      "bytes": 2752,
+      "sha256": "7a2de5603ba28196bbbbd6d50b085b3eb33df68bab2594dd30aabaa9aa9e942a",
+      "raw_bytes_equal": true
+    },
+    {
+      "path": "command-018-launcher-help.log",
+      "asset_original": "C:\\Users\\Tan\\.mb86\\r5\\command-018-launcher-help.log",
+      "bytes": 2752,
+      "sha256": "7a2de5603ba28196bbbbd6d50b085b3eb33df68bab2594dd30aabaa9aa9e942a",
+      "raw_bytes_equal": true
+    },
+    {
+      "path": "command-019-launcher-help.log",
+      "asset_original": "C:\\Users\\Tan\\.mb86\\r5\\command-019-launcher-help.log",
+      "bytes": 246,
+      "sha256": "059691bd27755991d63652c10c006142d6fc5c911322b6470fd926ee4d285d09",
+      "raw_bytes_equal": true
+    },
+    {
+      "path": "command-020-synthetic-mcp.log",
+      "asset_original": "C:\\Users\\Tan\\.mb86\\r5\\command-020-synthetic-mcp.log",
+      "bytes": 8924,
+      "sha256": "aa92abc985fc17e6fbe96f24d0836e0521db24bcf9a01d8fb877bef4573e5f51",
+      "raw_bytes_equal": true
+    },
+    {
+      "path": "command-021-default-real-install.log",
+      "asset_original": "C:\\Users\\Tan\\.mb86\\r5\\command-021-default-real-install.log",
+      "bytes": 57104,
+      "sha256": "8fca1bdae9988d84f1e464841f79a5012c47fbcb0ed38ec02090f57655821dd5",
+      "raw_bytes_equal": true
+    },
+    {
+      "path": "command-022-target-origins.log",
+      "asset_original": "C:\\Users\\Tan\\.mb86\\r5\\command-022-target-origins.log",
+      "bytes": 37914,
+      "sha256": "f32526dad91668ce4e163091d206616c770ea2fdc9319129ce90a69f2e1ad446",
+      "raw_bytes_equal": true
+    },
+    {
+      "path": "command-023-default-pip-check.log",
+      "asset_original": "C:\\Users\\Tan\\.mb86\\r5\\command-023-default-pip-check.log",
+      "bytes": 31,
+      "sha256": "672aec65a45bed50e70229c70934a7eebf0462595c459b83023027645d57cccf",
+      "raw_bytes_equal": true
+    },
+    {
+      "path": "command-024-default-target-imports.log",
+      "asset_original": "C:\\Users\\Tan\\.mb86\\r5\\command-024-default-target-imports.log",
+      "bytes": 4110,
+      "sha256": "a56be23658e8b0b88b68bc8b7a7a87e885e0331c90a5d7e50c2b541a86035af9",
+      "raw_bytes_equal": true
+    },
+    {
+      "path": "command-025-default-target-help.log",
+      "asset_original": "C:\\Users\\Tan\\.mb86\\r5\\command-025-default-target-help.log",
+      "bytes": 2752,
+      "sha256": "7a2de5603ba28196bbbbd6d50b085b3eb33df68bab2594dd30aabaa9aa9e942a",
+      "raw_bytes_equal": true
+    },
+    {
+      "path": "command-026-default-target-help.log",
+      "asset_original": "C:\\Users\\Tan\\.mb86\\r5\\command-026-default-target-help.log",
+      "bytes": 2752,
+      "sha256": "7a2de5603ba28196bbbbd6d50b085b3eb33df68bab2594dd30aabaa9aa9e942a",
+      "raw_bytes_equal": true
+    },
+    {
+      "path": "command-027-default-target-help.log",
+      "asset_original": "C:\\Users\\Tan\\.mb86\\r5\\command-027-default-target-help.log",
+      "bytes": 246,
+      "sha256": "059691bd27755991d63652c10c006142d6fc5c911322b6470fd926ee4d285d09",
+      "raw_bytes_equal": true
+    },
+    {
+      "path": "command-028-default-target-imports.log",
+      "asset_original": "C:\\Users\\Tan\\.mb86\\r5\\command-028-default-target-imports.log",
+      "bytes": 4095,
+      "sha256": "9eb4275fb2f3a3b05270aeb126d519afede935eafe6331a2bcc20b935e845cc1",
+      "raw_bytes_equal": true
+    },
+    {
+      "path": "command-029-default-target-help.log",
+      "asset_original": "C:\\Users\\Tan\\.mb86\\r5\\command-029-default-target-help.log",
+      "bytes": 2752,
+      "sha256": "7a2de5603ba28196bbbbd6d50b085b3eb33df68bab2594dd30aabaa9aa9e942a",
+      "raw_bytes_equal": true
+    },
+    {
+      "path": "command-030-default-target-help.log",
+      "asset_original": "C:\\Users\\Tan\\.mb86\\r5\\command-030-default-target-help.log",
+      "bytes": 2752,
+      "sha256": "7a2de5603ba28196bbbbd6d50b085b3eb33df68bab2594dd30aabaa9aa9e942a",
+      "raw_bytes_equal": true
+    },
+    {
+      "path": "command-031-default-target-help.log",
+      "asset_original": "C:\\Users\\Tan\\.mb86\\r5\\command-031-default-target-help.log",
+      "bytes": 246,
+      "sha256": "059691bd27755991d63652c10c006142d6fc5c911322b6470fd926ee4d285d09",
+      "raw_bytes_equal": true
+    },
+    {
+      "path": "command-032-default-native.log",
+      "asset_original": "C:\\Users\\Tan\\.mb86\\r5\\command-032-default-native.log",
+      "bytes": 1972,
+      "sha256": "4a1b3adb5243fde20192d47e8b474d715b4d8a5f010baa732798339f09d44753",
+      "raw_bytes_equal": true
+    },
+    {
+      "path": "command-033-adopt-real-install.log",
+      "asset_original": "C:\\Users\\Tan\\.mb86\\r5\\command-033-adopt-real-install.log",
+      "bytes": 42416,
+      "sha256": "06e83a79bc4b6a83fc411e9d8464a30b59da1f978c7c390aad9128e9b2a9245f",
+      "raw_bytes_equal": true
+    },
+    {
+      "path": "command-034-fresh-real-install.log",
+      "asset_original": "C:\\Users\\Tan\\.mb86\\r5\\command-034-fresh-real-install.log",
+      "bytes": 57104,
+      "sha256": "990c603ba092946f2b79738ee261f020ef7265a7db0ed7753ad61797c7941117",
+      "raw_bytes_equal": true
+    },
+    {
+      "path": "command-035-target-origins.log",
+      "asset_original": "C:\\Users\\Tan\\.mb86\\r5\\command-035-target-origins.log",
+      "bytes": 37914,
+      "sha256": "ec5157ef0f5b606247e72783df9c79e336f204c91974ad4692ceb64c0fe56526",
+      "raw_bytes_equal": true
+    },
+    {
+      "path": "command-036-fresh-pip-check.log",
+      "asset_original": "C:\\Users\\Tan\\.mb86\\r5\\command-036-fresh-pip-check.log",
+      "bytes": 31,
+      "sha256": "672aec65a45bed50e70229c70934a7eebf0462595c459b83023027645d57cccf",
+      "raw_bytes_equal": true
+    },
+    {
+      "path": "command-037-formal-readonly-pip-check.log",
+      "asset_original": "C:\\Users\\Tan\\.mb86\\r5\\command-037-formal-readonly-pip-check.log",
+      "bytes": 31,
+      "sha256": "672aec65a45bed50e70229c70934a7eebf0462595c459b83023027645d57cccf",
+      "raw_bytes_equal": true
+    },
+    {
+      "path": "service-logs/embed.err.log",
+      "asset_original": "C:\\Users\\Tan\\.mb86\\r5\\d\\logs\\embed.err.log",
+      "bytes": 5094,
+      "sha256": "d7fd9c40017c6262f68d63636b3a95f1a8b835853476afdf0013e6f85a2fa1fc",
+      "raw_bytes_equal": true
+    },
+    {
+      "path": "service-logs/embed.out.log",
+      "asset_original": "C:\\Users\\Tan\\.mb86\\r5\\d\\logs\\embed.out.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_bytes_equal": true
+    },
+    {
+      "path": "service-logs/gateway.err.log",
+      "asset_original": "C:\\Users\\Tan\\.mb86\\r5\\d\\logs\\gateway.err.log",
+      "bytes": 203,
+      "sha256": "c5d281cee5b58244424ca56e877565aa73da00fbd5d74d2c826ff65a2118817a",
+      "raw_bytes_equal": true
+    },
+    {
+      "path": "service-logs/gateway.out.log",
+      "asset_original": "C:\\Users\\Tan\\.mb86\\r5\\d\\logs\\gateway.out.log",
+      "bytes": 901,
+      "sha256": "4c421f0f9fc483259fa7865eab477b619d748e2f88b4fa730d605b8d35a9308e",
+      "raw_bytes_equal": true
+    },
+    {
+      "path": "service-logs/upstream.err.log",
+      "asset_original": "C:\\Users\\Tan\\.mb86\\r5\\d\\logs\\upstream.err.log",
+      "bytes": 447,
+      "sha256": "a574837af568601bcdaa449bd64cd7a6161b2dda6d3527938408961ad4773e91",
+      "raw_bytes_equal": true
+    },
+    {
+      "path": "service-logs/upstream.out.log",
+      "asset_original": "C:\\Users\\Tan\\.mb86\\r5\\d\\logs\\upstream.out.log",
+      "bytes": 427,
+      "sha256": "f00ed908d2a672fb625d21760f9aa22cd3d88d6c00717bfb959df24486bd0b3e",
+      "raw_bytes_equal": true
+    },
+    {
+      "path": "final-audit.json",
+      "asset_original": "C:\\Users\\Tan\\.mb86\\r5\\final-audit.json",
+      "bytes": 8186,
+      "sha256": "535db20270773cba0ca18ceb31c18c5ed516a70982537bc02c94736a86d30b67",
+      "raw_bytes_equal": true
+    },
+    {
+      "path": "fresh-external-final.json",
+      "asset_original": "C:\\Users\\Tan\\.mb86\\r5\\fresh-external-final.json",
+      "bytes": 25090,
+      "sha256": "7f601bcd2a79d75b13110ee4b2634c82788051c53f6a3470e9eaf467f86709ed",
+      "raw_bytes_equal": true
+    },
+    {
+      "path": "native-mcp.stderr.log",
+      "asset_original": "C:\\Users\\Tan\\.mb86\\r5\\native-mcp.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_bytes_equal": true
+    },
+    {
+      "path": "native-start.log",
+      "asset_original": "C:\\Users\\Tan\\.mb86\\r5\\native-start.log",
+      "bytes": 1150,
+      "sha256": "f706930aeaa2e87cfda2d1fcf6876f079aa2c183859e7a3a0df87b6acb28c62d",
+      "raw_bytes_equal": true
+    },
+    {
+      "path": "native-stop.log",
+      "asset_original": "C:\\Users\\Tan\\.mb86\\r5\\native-stop.log",
+      "bytes": 49,
+      "sha256": "cf54dfbf516fd0609b696eb6ddd8353f22f6a76f7bdf3c296037de5f6408d18e",
+      "raw_bytes_equal": true
+    },
+    {
+      "path": "native.json",
+      "asset_original": "C:\\Users\\Tan\\.mb86\\r5\\native.json",
+      "bytes": 1972,
+      "sha256": "4a1b3adb5243fde20192d47e8b474d715b4d8a5f010baa732798339f09d44753",
+      "raw_bytes_equal": true
+    },
+    {
+      "path": "processes-before-stop.json",
+      "asset_original": "C:\\Users\\Tan\\.mb86\\r5\\processes-before-stop.json",
+      "bytes": 1438,
+      "sha256": "eb4980aaf57009a08d425ac61a0f364ee2f4947392c3a0b7f6134b83863cc02c",
+      "raw_bytes_equal": true
+    },
+    {
+      "path": "processes-started.json",
+      "asset_original": "C:\\Users\\Tan\\.mb86\\r5\\processes-started.json",
+      "bytes": 1438,
+      "sha256": "eb4980aaf57009a08d425ac61a0f364ee2f4947392c3a0b7f6134b83863cc02c",
+      "raw_bytes_equal": true
+    },
+    {
+      "path": "results.json",
+      "asset_original": "C:\\Users\\Tan\\.mb86\\r5\\results.json",
+      "bytes": 193726,
+      "sha256": "557c607188e2baac0722893cebac4a5d4e682b67fb9f206b6da450872491c2dd",
+      "raw_bytes_equal": true
+    }
+  ],
+  "external_artifacts": [
+    {
+      "path": "C:\\Users\\Tan\\.mb86\\r5\\source.zip",
+      "bytes": 44899,
+      "sha256": "2e750cd42f75eb255dc79dc791f323db2dba289396c1daf4307bb50d7d225457",
+      "preserved_external": true
+    },
+    {
+      "path": "C:\\Users\\Tan\\.mb86\\r5\\wheels\\agent_memory_base-0.1.0-py3-none-any.whl",
+      "bytes": 45982,
+      "sha256": "baa5877bc55a834f7abf16c833d9e869c0768624efdd63de9ad1ef8b2768bfde",
+      "preserved_external": true
+    }
+  ],
+  "boundary": "Only report/log copies archived. Full source, wheels, runtimes, synthetic data and home-specific vault credentials preserved in r5. No installation/native repetition."
+}

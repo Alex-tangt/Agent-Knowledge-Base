@@ -1,0 +1,72 @@
+{
+  "home": "C:\\Users\\Tan\\.mb86\\r5\\d",
+  "ports": {
+    "upstream": 62925,
+    "gateway": 62926,
+    "embed": 62927
+  },
+  "checks": {
+    "three_owned_native_services_ready": true,
+    "same_request_retry_idempotent": true,
+    "stale_revision_409": true,
+    "mismatched_scope_403": true,
+    "anonymous_401": true,
+    "reader_403": true,
+    "synthetic_unicode_crlf_append": true,
+    "reader_exact_hash_revision": true,
+    "native_list": true,
+    "native_search": true,
+    "native_stdio_four_tools_get_list": true,
+    "owned_process_cleanup_no_residual": true
+  },
+  "boundary": "New isolated native OpenViking; only synthetic fixture and local GGUF embedding. No LLM generation.",
+  "manager_commands": [
+    [
+      "C:\\Users\\Tan\\.mb86\\r5\\d\\runtime\\Scripts\\memory-base.exe",
+      "start",
+      "--home",
+      "C:\\Users\\Tan\\.mb86\\r5\\d"
+    ],
+    [
+      "C:\\Users\\Tan\\.mb86\\r5\\d\\runtime\\Scripts\\memory-base.exe",
+      "stop",
+      "--home",
+      "C:\\Users\\Tan\\.mb86\\r5\\d"
+    ]
+  ],
+  "start_exit_code": 0,
+  "start_seconds": 168.13062770000397,
+  "uri": "viking://resources/captures/b689ca3d68176b13a21d9bd17e44bf1bac3a6b345b2a1ab6ab6456b6f102bba6/content.md",
+  "content_hash": "0c5aae91f3e9e347c564fac699d63e93e8cd3bf4332bde8edcf8b96cfaa17b50",
+  "index": {
+    "status": "ready"
+  },
+  "mcp": {
+    "tools": [
+      "memory_add",
+      "memory_get",
+      "memory_list",
+      "memory_search"
+    ],
+    "initialized": true,
+    "schema_closed": true,
+    "get_hash_matches": true,
+    "list_contains_original": true
+  },
+  "overall": "PASS",
+  "stop_exit_code": 0,
+  "stop_seconds": 18.472391099996457,
+  "cleanup": {
+    "records_after": {},
+    "owned_survivors": {
+      "embed": false,
+      "upstream": false,
+      "gateway": false
+    },
+    "ports_busy": {
+      "upstream": false,
+      "gateway": false,
+      "embed": false
+    }
+  }
+}
