@@ -30,4 +30,14 @@ Lark-only 非 force 编译触及本票自行选择的 **300 秒编译测量上�
 
 本目录封存 `probe.json`、`identity-before.log`、`lark-only-compile.log`、`post-compile-state.json`。相同原始字节资产仍留在 `C:\Users\Tan\.mb86\r4\cold-start-91`；d 的部分 Lark bytecode 保留，不删除，不虚称全新无缓存 runtime。不得用下一轮续编耗时替代本轮 300 秒成本。
 
-只有预编译后标准 native 实际通过才修改 install；否则报告 Lead，不扩大编译范围、不 fork 上游。正式 runtime、formal 缓存、f home、原 R4 报告与既有 store 未写入，服务未启动，AOCI 未调用。
+R1 没有启动服务。正式 runtime、formal 缓存、f home、原 R4 报告与既有 store 未写入，AOCI 未调用。
+
+## R2 绿色信号
+
+Lead 明确批准后，独立预登记 `7b8cef4`，限定同一 Lark 非 force 续编 60 秒，不覆盖 R1。handle `41959` 正常结束，退出 0。续编内部成本 41.311 秒、wall 41.694 秒，**累计准备成本 341.750 秒**；10727 py/10727 pyc，SDK RECORD 摘要未变。不是 fresh 全量准备仅需 41 秒。
+
+在仍空的 d workspace 上运行原 300 秒标准 native：start 191.073 秒成功（包含 embed/身份步骤），三服务 ready、合成 Unicode/CRLF 原文、hash/revision、匿名 401、reader 403、search/list、真实 stdio MCP 四工具/get/list 全通过。stop 18.523 秒，owned 进程和端口完整清理。R1 与原 R4 报告 raw SHA 在前后不变。
+
+该结果是有限准备后首次成功初始化工作区的正向信号；d 之前失败启动产生过部分 SDK 缓存，不能替代完全全新 runtime 的独立复验。**产品当前默认 start 每组件 180 秒，实验 300 秒不等于默认通过**；不修改默认服务 timeout。Lead 批准安装时 Lark-only 准备阶段单独 600 秒预算（基于实测累计341.750秒），准备失败先于部署配置/凭据写入，使用所选 target 的实际 own-site，拒绝写继承 provider cache。
+
+R2 原始报告/命令/manager 日志与归属记录封存在本目录 `r2/`，`evidence-manifest.json` 记录各资产 raw SHA256；原件仍在 `C:\Users\Tan\.mb86\r4\cold-start-91\r2`。d workspace 此后已含本票合成测量基座，保留，不能再称空 workspace 或用于新的 fresh 首次启动。

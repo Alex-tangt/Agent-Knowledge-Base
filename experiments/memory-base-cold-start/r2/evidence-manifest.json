@@ -1,0 +1,57 @@
+{
+  "identity-after.log": {
+    "asset_path": "C:\\Users\\Tan\\.mb86\\r4\\cold-start-91\\r2\\identity-after.log",
+    "bytes": 656,
+    "sha256": "d8df878ae5f7b975e36e0e6783e603e23a3a8e0a3050f4fa40b2b4b5acd4eaf8"
+  },
+  "identity-before.log": {
+    "asset_path": "C:\\Users\\Tan\\.mb86\\r4\\cold-start-91\\r2\\identity-before.log",
+    "bytes": 656,
+    "sha256": "f231473f678cab5282662bb15ff5bf5495450628a9615d914fda4f1fc11ed015"
+  },
+  "lark-only-compile.log": {
+    "asset_path": "C:\\Users\\Tan\\.mb86\\r4\\cold-start-91\\r2\\lark-only-compile.log",
+    "bytes": 184,
+    "sha256": "8ff53310e0fe2d4b7c63c703b4d6abcaa659fd8bc1dad3ed40e40aff80d8f15b"
+  },
+  "native-mcp.stderr.log": {
+    "asset_path": "C:\\Users\\Tan\\.mb86\\r4\\cold-start-91\\r2\\native-mcp.stderr.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "native-start.log": {
+    "asset_path": "C:\\Users\\Tan\\.mb86\\r4\\cold-start-91\\r2\\native-start.log",
+    "bytes": 1150,
+    "sha256": "ef9e5d60ea5bce74076a84bcbc81a798b848e55a0b1a643dab0c56dc2dbdcc3a"
+  },
+  "native-stop.log": {
+    "asset_path": "C:\\Users\\Tan\\.mb86\\r4\\cold-start-91\\r2\\native-stop.log",
+    "bytes": 49,
+    "sha256": "cf54dfbf516fd0609b696eb6ddd8353f22f6a76f7bdf3c296037de5f6408d18e"
+  },
+  "native.json": {
+    "asset_path": "C:\\Users\\Tan\\.mb86\\r4\\cold-start-91\\r2\\native.json",
+    "bytes": 1255,
+    "sha256": "3c15d89f89ac93d8e9b8c3177ba791df20a2db4e3c8f2b5cc43657ee1ab8608a"
+  },
+  "probe.json": {
+    "asset_path": "C:\\Users\\Tan\\.mb86\\r4\\cold-start-91\\r2\\probe.json",
+    "bytes": 9809,
+    "sha256": "e318fa8ca1b6a1f3882a1364660bca2322e73c0b14d068cb208a4d56f1a3a1f7"
+  },
+  "processes-before-stop.json": {
+    "asset_path": "C:\\Users\\Tan\\.mb86\\r4\\cold-start-91\\r2\\processes-before-stop.json",
+    "bytes": 1439,
+    "sha256": "c5068e221a81cb77b7a62ba663d2ec7fb1a422ebb346dd343f779dd31cd749b0"
+  },
+  "processes-started.json": {
+    "asset_path": "C:\\Users\\Tan\\.mb86\\r4\\cold-start-91\\r2\\processes-started.json",
+    "bytes": 1439,
+    "sha256": "c5068e221a81cb77b7a62ba663d2ec7fb1a422ebb346dd343f779dd31cd749b0"
+  },
+  "standard-native.log": {
+    "asset_path": "C:\\Users\\Tan\\.mb86\\r4\\cold-start-91\\r2\\standard-native.log",
+    "bytes": 1255,
+    "sha256": "3c15d89f89ac93d8e9b8c3177ba791df20a2db4e3c8f2b5cc43657ee1ab8608a"
+  }
+}
