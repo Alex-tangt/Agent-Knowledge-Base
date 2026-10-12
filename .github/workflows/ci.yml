@@ -24,9 +24,10 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # 两条腿都是真实目标：开发机 = Windows，部署与验收 = WSL/Linux（ADR-0028）。
+        # 正式 memory_base 要求 Python 3.12；Windows 为当前产品平台，Ubuntu 保留源码回归。
+        # Ubuntu 单测不代表 POSIX 独立部署已验收（ADR-0032）。
         os: [ubuntu-latest, windows-latest]
-        python-version: ["3.11"]
+        python-version: ["3.12"]
     steps:
       - name: 取源码
         # v5 / v6 = Node 24 运行时（v4 / v5 会被 runner 强制升到 Node 24 并打 deprecation 警告）
@@ -58,7 +59,7 @@ jobs:
       - name: 预热 BM25 词法编码器
         run: python -c "from memory_agent.settings import SPARSE_BM25_CACHE_DIR; from fastembed.sparse import SparseTextEmbedding; SparseTextEmbedding('Qdrant/bm25', cache_dir=SPARSE_BM25_CACHE_DIR); print('bm25 model ready')"
 
-      # 本地基线：579 passed / 3 skipped / 3 xfailed（AGENTS.md「Tests」节）。
+      # 最近 Windows/Python 3.12 本地闸门：833 passed / 5 skipped（45296a5）。
       - name: 单元测试（回归闸门）
         run: python -m pytest tests/unit -q
 
