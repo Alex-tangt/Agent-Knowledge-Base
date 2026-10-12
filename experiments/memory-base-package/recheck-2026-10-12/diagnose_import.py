@@ -54,6 +54,7 @@ def identity():
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--identity", action="store_true")
+    parser.add_argument("--census-only", action="store_true")
     args = parser.parse_args()
     if args.identity:
         identity()
@@ -63,10 +64,12 @@ def main():
     acceptance = json.loads((store / "results.json").read_text(encoding="utf-8"))
     assert acceptance["overall"] == "FAIL" and acceptance["native"]["overall"] == "FAIL"
     assert acceptance["continuation"]["fresh_install_gate"] == "PASS"
-    asset = store / ("diag-" + time.strftime("%Y%m%dT%H%M%SZ", time.gmtime()))
+    asset = store / (("diag-census-" if args.census_only else "diag-") + time.strftime("%Y%m%dT%H%M%SZ", time.gmtime()))
     asset.mkdir()  # New diagnostics; never overwrite original acceptance evidence.
     report = {"asset": str(asset), "purpose": "Import-only diagnosis after sealed fresh installation; original native FAIL unchanged",
               "probe_limit_seconds": 25, "all_children_dont_write_bytecode": True,
+              "script_sha256": hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
+              "census_only": args.census_only,
               "commands": [], "identities": {}, "imports": []}
     interpreters = {"formal": FORMAL, "default_after_failed_start": store / "d/runtime/Scripts/python.exe",
                     "fresh_never_started": store / "f/runtime/Scripts/python.exe"}
@@ -74,7 +77,7 @@ def main():
     def save():
         text = json.dumps(report, indent=2) + "\n"
         (asset / "report.json").write_text(text, encoding="utf-8")
-        (HERE / "import_diagnosis.json").write_text(text, encoding="utf-8")
+        (HERE / ("complete_import_census.json" if args.census_only else "import_diagnosis.json")).write_text(text, encoding="utf-8")
 
     def run(command, stage):
         command = list(map(str, command))
@@ -110,6 +113,8 @@ def main():
     cases += [("formal_force_source", FORMAL, "lark_oapi", True),
               ("default_feishu_pure_import", interpreters["default_after_failed_start"],
                "openviking.parse.accessors.feishu_accessor", False)]
+    if args.census_only:
+        cases = []
     for label, python, module, force_source in cases:
         command = [python, "-B", "-u", "-X", "importtime"]
         if force_source:
