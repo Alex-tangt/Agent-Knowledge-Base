@@ -13,6 +13,7 @@ import socket
 import subprocess
 import sys
 import tomllib
+from urllib.parse import urlsplit
 import zipfile
 
 FROZEN = "9252d5281ab69ad418c76e1672af4dc6fbdff9e5"
@@ -30,7 +31,7 @@ def sha(content):
 
 def clean_env():
     env = {key: value for key, value in os.environ.items() if not key.upper().startswith(("MEMORY_", "PIP_"))
-           and key.upper() not in {"PYTHONPATH", "PYTHONHOME", "VIRTUAL_ENV", "HTTP_PROXY", "HTTPS_PROXY", "ALL_PROXY"}}
+           and key.upper() not in {"PYTHONPATH", "PYTHONHOME", "VIRTUAL_ENV"}}
     env.update({"PYTHONUTF8": "1", "PYTHONDONTWRITEBYTECODE": "1", "PIP_DISABLE_PIP_VERSION_CHECK": "1",
                 "PIP_CONFIG_FILE": os.devnull, "PIP_INDEX_URL": "https://pypi.org/simple",
                 "NO_PROXY": "localhost,127.0.0.1,::1"})
@@ -68,6 +69,15 @@ def main():
               "limitations": ["Windows/Python 3.12 only; POSIX first credential persistence is not verified.",
                               "Launcher explicitly reuses formal dependencies; the two target runtimes do not.",
                               "No LLM/summary generation; native search uses the existing local GGUF model."]}
+    # R2 method correction: preserve this machine's existing credential-free
+    # loopback network proxy; private pip configuration remains excluded.
+    proxy_policy = {}
+    for name, value in clean_env().items():
+        if name.upper() in {"HTTP_PROXY", "HTTPS_PROXY", "ALL_PROXY"}:
+            parsed = urlsplit(value)
+            assert parsed.hostname in {"localhost", "127.0.0.1", "::1"} and not parsed.username
+            proxy_policy[name.upper()] = {"loopback": True, "userinfo": False, "value_logged": False}
+    report["network_proxy_policy"] = proxy_policy
 
     def save():
         (store / "results.json").write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
