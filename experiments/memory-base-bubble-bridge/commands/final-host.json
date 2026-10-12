@@ -1,0 +1,12 @@
+{
+  "command": [
+    "npm",
+    "run",
+    "test:host"
+  ],
+  "cwd": "D:\\python_work\\work2026-4\\memory-base-bubble-bridge-assets\\20261012\\candidate",
+  "started_at_utc": "2026-10-12T01:10:12.102192+00:00",
+  "seconds": 2.547,
+  "exit_code": 1,
+  "output": "final-host.txt"
+}

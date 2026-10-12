@@ -1,0 +1,16 @@
+{
+  "command": [
+    "node",
+    "--import",
+    "tsx",
+    "--test",
+    "--test-name-pattern",
+    "scoped client|client rejects|known gateway",
+    "server/tests/memory-base.test.ts"
+  ],
+  "cwd": "D:\\python_work\\work2026-4\\memory-base-bubble-bridge-assets\\20261012\\candidate",
+  "started_at_utc": "2026-10-12T01:04:45.636481+00:00",
+  "seconds": 18.656,
+  "exit_code": 0,
+  "output": "client-contract.txt"
+}

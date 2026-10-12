@@ -1,0 +1,32 @@
+
+> agent-bubble@0.1.0 test:host
+> node --test scripts/tests/backend-readiness.test.mjs scripts/tests/local-backend.test.mjs
+
+✔ a 61 second Windows cold start must not be reported as a failed startup (7.7297ms)
+✔ an existing launcher in starting phase is not a successful backend until HTTP is healthy (0.7259ms)
+✔ a failed launcher stops waiting immediately (0.4514ms)
+✔ an alive launcher with a permanently unreachable HTTP backend cannot report ready (0.638ms)
+✖ local launcher: start, duplicate start, crash recovery, graceful stop, unmanaged process (9.8847ms)
+ℹ tests 5
+ℹ suites 0
+ℹ pass 4
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 293.1895
+
+✖ failing tests:
+
+test at scripts\tests\local-backend.test.mjs:11:1
+✖ local launcher: start, duplicate start, crash recovery, graceful stop, unmanaged process (9.8847ms)
+  Error: ENOENT: no such file or directory, mkdtemp 'D:\python_work\work2026-4\memory-base-bubble-bridge-assets\20261012\candidate\.tools\host-test-XXXXXX'
+      at async mkdtemp (node:internal/fs/promises:1190:10)
+      at async TestContext.<anonymous> (file:///D:/python_work/work2026-4/memory-base-bubble-bridge-assets/20261012/candidate/scripts/tests/local-backend.test.mjs:12:16)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:358:3) {
+    errno: -4058,
+    code: 'ENOENT',
+    syscall: 'mkdtemp',
+    path: 'D:\\python_work\\work2026-4\\memory-base-bubble-bridge-assets\\20261012\\candidate\\.tools\\host-test-XXXXXX'
+  }
