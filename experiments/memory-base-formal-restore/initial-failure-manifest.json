@@ -1,0 +1,37 @@
+{
+  "files": [
+    {
+      "path": "initial-result.json",
+      "asset_original": "C:\\Users\\Tan\\.mb94\\result.json",
+      "bytes": 1816,
+      "sha256": "a9cd178e680c98f0d638f0f10775bccc2b446d598ec51cb81b9a14759ae32f2e"
+    },
+    {
+      "path": "initial-install.log",
+      "asset_original": "C:\\Users\\Tan\\.mb94\\install.log",
+      "bytes": 43796,
+      "sha256": "cba586e9a32b2c3df68384a593e8cb2819924c2754213b18e8b00c8510db418a"
+    },
+    {
+      "path": "initial-install-guard-diagnosis.json",
+      "asset_original": "C:\\Users\\Tan\\.mb94\\install-guard-diagnosis.json",
+      "bytes": 3281,
+      "sha256": "8a18875f107b0ae5010e697ee1fc5361574dd8b1539950aafd919271d608d17e"
+    },
+    {
+      "path": "initial-record-semantics-diagnosis.json",
+      "asset_original": "C:\\Users\\Tan\\.mb94\\record-semantics-diagnosis.json",
+      "bytes": 2063,
+      "sha256": "5d977fc675c7860fe555bc8a99915b7834998379984b5ff49ec649c3e3ed36a3"
+    },
+    {
+      "path": "initial-r5-immutable-after-install.json",
+      "asset_original": "C:\\Users\\Tan\\.mb94\\r5-immutable-after-install.json",
+      "bytes": 19867,
+      "sha256": "6b7b05e17bff1c227fc1ea3bdf96bd25347117030b2a9da0da6f638321272559"
+    }
+  ],
+  "restored": false,
+  "native_started": false,
+  "original_failed_target_preserved": "C:\\Users\\Tan\\.mb94\\a"
+}
