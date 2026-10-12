@@ -39,3 +39,13 @@ finally 已通过本 home manager `stop`，退出 0、remaining=[]、processes.j
 Lead 已确认可继续独立的 adopt→fresh 安装判据，不重启任何服务、不扩范围。`continue_fresh.py` 先封存外部 results-before-fresh.json，再在已有授权 r4 的不存在 f home 真实 adopt/explicit wheel fresh、保留 marker/ports/model、核全新目标 origins/active pins/pip check；formal pip check 只读。脚本先提交再执行；最终 overall 始终保留 native FAIL，installer 独立结果另列，剩余 native 未验证项显式列出。
 
 独立 continuation 已自然结束退出 0，adopt→fresh gate PASS。第二目标 f/runtime 从不存在创建，真实完整依赖/产品 pip 成功，全部 active constraints/origins/PEP610 SHA/source 校验成功，home/model/ports/合成 marker 保留，fresh 和 formal pip check 均为 `No broken requirements found.`。结果封存在 [results.json](results.json)，原 R4 副本与 results-before-fresh.json 不改；native 仍 FAIL。后续只读诊断另存报告。
+
+## 有限对照后：独立标准条件 native（先提交，后执行）
+
+已发现额外 `PYTHONDONTWRITEBYTECODE=1` 会改变普通首次启动条件；R4 原 FAIL 只证明该试验环境未就绪。Lead 已批准标准条件独立复验，同冻结 `9252d52` 的已安装 wheel，使用本票 r4/f 这个**从未启动的 fresh home**，原 manager `--timeout 300`，去掉该额外变量，仍清空 MEMORY_* / PYTHONPATH / PYTHONHOME。不预编译、不改变产品 `--no-compile`、不安装新依赖/引入 fork/调用外部 LLM。
+
+此前只读有限 import 不写缓存；完整 census 已确认 f 的 lark/volcengine/OpenViking/FastAPI/Pydantic pyc 均为 0。f 已有 fresh 案的保留 marker，OpenViking data 顶层仅该 marker，没有初始化上游工作区或 process records。正式服务和三个旧 store 保持原样。
+
+`normal_native.py` 先核 frozen/fresh gate/config/model/source/marker 与不存在的报告根，实际调用 f/runtime 的 `native_probe.py`，分别传 `--asset-root r4` 和 `--store r4/normal-native`。脚本分开 home 资产根和报告根；新子目录报告、process records 快照与日志不覆盖原 r4/native.json、results.json、results-before-fresh.json，并在完成后核验它们的字节哈希。
+
+标准条件实际运行三服务 readiness、native Unicode/CRLF 合成 append、reader get/hash/list/search、anonymous 401/reader 403、SDK1.30 stdio 四工具/get/list；只允许本地 GGUF embedding，不生成总结。finally 由本 f home manager 精确归属清理，保存 stop 前 records、核端口无残留。PASS/FAIL 均另存 [normal_native_result.json](normal_native_result.json)；不改原 FAIL，不因观察等待超时重启或增加服务 timeout。结束后再追加实际结果。

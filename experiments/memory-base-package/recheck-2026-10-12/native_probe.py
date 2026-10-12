@@ -9,6 +9,7 @@ import os
 from pathlib import Path
 import subprocess
 import sys
+import time
 import urllib.error
 import urllib.request
 
@@ -53,9 +54,12 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--home", type=Path, required=True)
     parser.add_argument("--store", type=Path, required=True)
+    parser.add_argument("--asset-root", type=Path)
     args = parser.parse_args()
     home, store = args.home.resolve(), args.store.resolve()
-    assert home.is_relative_to(store), "Native probe home escaped this run's store"
+    asset_root = args.asset_root.resolve() if args.asset_root else store
+    assert home.is_relative_to(asset_root), "Native probe home escaped this run's asset root"
+    assert store.is_relative_to(asset_root), "Native probe report directory escaped asset root"
     config = deploy.load_config(home)
     assert Path(config["python"]).resolve() == Path(sys.executable).resolve()
     cli = Path(sys.executable).parent / "memory-base.exe"
@@ -67,11 +71,13 @@ def main():
         (store / "native.json").write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 
     def manager(command):
+        started = time.perf_counter()
         output = subprocess.run([str(cli), command, "--home", str(home), "--timeout", "300"],
                                 cwd=os.environ["TEMP"], env=clean_env(), capture_output=True, text=True,
                                 encoding="utf-8", errors="replace")
         (store / ("native-" + command + ".log")).write_text(output.stdout + output.stderr, encoding="utf-8")
         report[command + "_exit_code"] = output.returncode
+        report[command + "_seconds"] = time.perf_counter() - started
         save()
         assert output.returncode == 0, "Native manager " + command + " failed; see preserved log"
         return json.loads(output.stdout)

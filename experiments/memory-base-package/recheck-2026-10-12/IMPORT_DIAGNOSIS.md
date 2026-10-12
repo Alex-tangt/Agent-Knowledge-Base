@@ -20,3 +20,13 @@ Lead 已只读核验 formal/target 的 lark-oapi 1.7.3、volcengine-python-sdk 5
 ## Census 补充方法
 
 首版 actual census 对 volcengine-python-sdk 只扫描了不存在的单根 `volcenginesdk/`，其 0 计数不用于判断；lark 等单目录包的 actual census 有效。首版报告及 import 原始日志全部保留。补充 worker 从 distribution RECORD 中找所有 `volcenginesdk*` 的 source 顶层目录，逐目录 os.walk 统计实际 py/pyc，避免逐文件 resolve/stat，另存完整 census；不重复原 import 测量、不改变任何 bytecode。
+
+## 实际结果与边界
+
+有限纯 import 实际报告为 [import_diagnosis.json](import_diagnosis.json)，完整多根 census 为 [complete_import_census.json](complete_import_census.json)。两个 target 与 formal 的**全部已安装 distribution versions 差异均为空**；五个关键包全部 Python source RECORD digest 相同，故已排除这次安装的版本/源 artifact 差异假设。
+
+actual pyc：lark formal 10727、default 463、从未启动的 fresh 0；volcengine SDK formal 26458、default/fresh 0。default 的部分缓存来自后续 Lead 诊断，不能倒推原 startup 的缓存状态。fresh 的 OpenViking/FastAPI/Pydantic 也均无 pyc。
+
+全部五个 import 探针均触发 25s faulthandler，没有完成导入。缓存 formal/default 探针分别完成 3379/3217 条 importtime 行；cold fresh/formal force-source 为 1160/1332；Feishu accessor 为 2072。缓存 formal/default 的诊断 child 在 dump 后实际退出 3221225477、wall 41.22/38.00s，其它 child 退出 1、wall 25.37/26.26/25.42s。这些是**带 importtime/faulthandler 的有限诊断子进程状态**，不是普通产品 crash、不是完整导入时间，也不能据行数推断精确加速比。
+
+证据支持缓存影响/SDK eager-import 规模是需要真实普通启动检验的方向；纯 lark/Feishu import 的慢阶段无需服务配置、模型、外部数据或 LLM，因此这些不是该阶段的必要触发。缓存因素的完整影响、是否仍有后续服务问题尚未证明。原 acceptance report 内容核验未变，无 bytecode 写入，不再重复 metadata/census。
