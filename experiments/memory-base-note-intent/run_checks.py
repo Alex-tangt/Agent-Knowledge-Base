@@ -10,7 +10,7 @@ import time
 
 HERE = Path(__file__).resolve().parent
 CANDIDATE = Path(r"D:\python_work\work2026-4\memory-base-bubble-bridge-assets\20261012\candidate92")
-FROZEN = "8b7327f86ad632bf4fd1b367af969a94bf78db84"
+FROZEN = "36f9bf294e4117bf36a4228d63b3a3c7ad715af1"
 
 
 def git(*args):
@@ -20,7 +20,7 @@ def git(*args):
 def main():
     assert git("rev-parse", "HEAD") == FROZEN and not git("status", "--porcelain")
     assert not (CANDIDATE / ".env").exists()
-    store = HERE / "store/frozen-8b7327f"
+    store = HERE / ("store/frozen-" + FROZEN[:7])
     store.mkdir()
     report = {"candidate": str(CANDIDATE), "frozen_commit": FROZEN, "commands": [],
         "environment": "Inherited model/Bubble/Memory/ASR/browser settings removed; synthetic local tests only.",

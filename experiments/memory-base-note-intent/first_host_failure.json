@@ -1,0 +1,34 @@
+{
+  "fixture_root": "D:\\python_work\\work2026-4\\memory-base-bubble-bridge-assets\\20261012\\candidate92\\.tools\\host-test-w6CFiU",
+  "state": {
+    "pid": 25096,
+    "instance": "78ed2b48-6493-45fd-86ce-90a261cf501f",
+    "phase": "starting",
+    "childPid": 33324,
+    "port": 55704,
+    "startedAt": "2026-10-12T08:52:58.566Z"
+  },
+  "process_observations": [
+    {
+      "pid": 25096,
+      "observed_process": null
+    },
+    {
+      "pid": 33324,
+      "observed_process": null
+    }
+  ],
+  "fixture_port_has_listener": false,
+  "no_kill_or_stop_executed": true,
+  "error": "EPERM (-4048) rename state.json.tmp to state.json after backend reported ready; lifecycle test cancelled at original120s.",
+  "logs": [
+    {
+      "path": "D:\\python_work\\work2026-4\\memory-base-bubble-bridge-assets\\20261012\\candidate92\\.tools\\host-test-w6CFiU\\host\\logs\\2026-10-12.log",
+      "sha256": "6a6860f6e28ac5535ace3840d1ee83094dbb401462fdb289a993c0469b883e8d"
+    },
+    {
+      "path": "D:\\python_work\\work2026-4\\memory-base-bubble-bridge-assets\\20261012\\candidate92\\.tools\\host-test-w6CFiU\\host\\logs\\launcher.log",
+      "sha256": "3d413d5c17ec887716cd2cdcf32b7704b1a6238be85042b270c590adbcd2f819"
+    }
+  ]
+}
