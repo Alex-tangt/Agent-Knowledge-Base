@@ -1,0 +1,2133 @@
+{
+  "frozen_sha": "9252d5281ab69ad418c76e1672af4dc6fbdff9e5",
+  "store": "C:\\Users\\Tan\\.codex\\worktrees\\memory-bootstrap-fix\\Agent-Knowledge-Base\\experiments\\memory-base-package\\recheck-2026-10-12\\store\\3",
+  "started_utc": "20261012T001747Z",
+  "commands": [
+    {
+      "command": [
+        "git",
+        "log",
+        "-1",
+        "--format=%H",
+        "--",
+        "C:\\Users\\Tan\\.codex\\worktrees\\memory-bootstrap-fix\\Agent-Knowledge-Base\\experiments\\memory-base-package\\recheck-2026-10-12\\PREREGISTRATION.md"
+      ],
+      "cwd": "C:\\Users\\Tan\\.codex\\worktrees\\memory-bootstrap-fix\\Agent-Knowledge-Base",
+      "stage": "preregistration",
+      "log": "C:\\Users\\Tan\\.codex\\worktrees\\memory-bootstrap-fix\\Agent-Knowledge-Base\\experiments\\memory-base-package\\recheck-2026-10-12\\store\\3\\command-000-preregistration.log",
+      "status": "completed",
+      "pid": 2472,
+      "exit_code": 0
+    },
+    {
+      "command": [
+        "git",
+        "merge-base",
+        "--is-ancestor",
+        "5fbeea837b504c8802ddb739e17ec47092da1fea",
+        "HEAD"
+      ],
+      "cwd": "C:\\Users\\Tan\\.codex\\worktrees\\memory-bootstrap-fix\\Agent-Knowledge-Base",
+      "stage": "preregistration-ancestor",
+      "log": "C:\\Users\\Tan\\.codex\\worktrees\\memory-bootstrap-fix\\Agent-Knowledge-Base\\experiments\\memory-base-package\\recheck-2026-10-12\\store\\3\\command-001-preregistration-ancestor.log",
+      "status": "completed",
+      "pid": 11676,
+      "exit_code": 0
+    },
+    {
+      "command": [
+        "git",
+        "rev-parse",
+        "HEAD"
+      ],
+      "cwd": "C:\\Users\\Tan\\.codex\\worktrees\\memory-bootstrap-fix\\Agent-Knowledge-Base",
+      "stage": "script-commit",
+      "log": "C:\\Users\\Tan\\.codex\\worktrees\\memory-bootstrap-fix\\Agent-Knowledge-Base\\experiments\\memory-base-package\\recheck-2026-10-12\\store\\3\\command-002-script-commit.log",
+      "status": "completed",
+      "pid": 13736,
+      "exit_code": 0
+    },
+    {
+      "command": [
+        "D:\\python_work\\work2026-4\\Agent-Knowledge-Base\\venv\\Scripts\\python.exe",
+        "-c",
+        "import json,sys,sysconfig,importlib.metadata as m;print(json.dumps({'python':sys.version,'purelib':sysconfig.get_path('purelib'),'pip':m.version('pip')}))"
+      ],
+      "cwd": "C:\\Users\\Tan\\AppData\\Local\\Temp",
+      "stage": "build-identity",
+      "log": "C:\\Users\\Tan\\.codex\\worktrees\\memory-bootstrap-fix\\Agent-Knowledge-Base\\experiments\\memory-base-package\\recheck-2026-10-12\\store\\3\\command-003-build-identity.log",
+      "status": "completed",
+      "pid": 9780,
+      "exit_code": 0
+    },
+    {
+      "command": [
+        "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Scripts\\python.exe",
+        "-c",
+        "import json,sys,sysconfig,importlib.metadata as m;print(json.dumps({'python':sys.version,'purelib':sysconfig.get_path('purelib'),'pip':m.version('pip')}))"
+      ],
+      "cwd": "C:\\Users\\Tan\\AppData\\Local\\Temp",
+      "stage": "formal-identity",
+      "log": "C:\\Users\\Tan\\.codex\\worktrees\\memory-bootstrap-fix\\Agent-Knowledge-Base\\experiments\\memory-base-package\\recheck-2026-10-12\\store\\3\\command-004-formal-identity.log",
+      "status": "completed",
+      "pid": 33096,
+      "exit_code": 0
+    },
+    {
+      "command": [
+        "git",
+        "archive",
+        "--format=zip",
+        "--output",
+        "C:\\Users\\Tan\\.codex\\worktrees\\memory-bootstrap-fix\\Agent-Knowledge-Base\\experiments\\memory-base-package\\recheck-2026-10-12\\store\\3\\source.zip",
+        "9252d5281ab69ad418c76e1672af4dc6fbdff9e5",
+        "memory_base"
+      ],
+      "cwd": "C:\\Users\\Tan\\.codex\\worktrees\\memory-bootstrap-fix\\Agent-Knowledge-Base",
+      "stage": "export",
+      "log": "C:\\Users\\Tan\\.codex\\worktrees\\memory-bootstrap-fix\\Agent-Knowledge-Base\\experiments\\memory-base-package\\recheck-2026-10-12\\store\\3\\command-005-export.log",
+      "status": "completed",
+      "pid": 21956,
+      "exit_code": 0
+    },
+    {
+      "command": [
+        "git",
+        "ls-tree",
+        "-r",
+        "--name-only",
+        "9252d5281ab69ad418c76e1672af4dc6fbdff9e5",
+        "memory_base"
+      ],
+      "cwd": "C:\\Users\\Tan\\.codex\\worktrees\\memory-bootstrap-fix\\Agent-Knowledge-Base",
+      "stage": "tracked",
+      "log": "C:\\Users\\Tan\\.codex\\worktrees\\memory-bootstrap-fix\\Agent-Knowledge-Base\\experiments\\memory-base-package\\recheck-2026-10-12\\store\\3\\command-006-tracked.log",
+      "status": "completed",
+      "pid": 31240,
+      "exit_code": 0
+    },
+    {
+      "command": [
+        "D:\\python_work\\work2026-4\\Agent-Knowledge-Base\\venv\\Scripts\\python.exe",
+        "-m",
+        "pip",
+        "wheel",
+        "C:\\Users\\Tan\\.codex\\worktrees\\memory-bootstrap-fix\\Agent-Knowledge-Base\\experiments\\memory-base-package\\recheck-2026-10-12\\store\\3\\source\\memory_base",
+        "--no-deps",
+        "--no-build-isolation",
+        "--no-index",
+        "--wheel-dir",
+        "C:\\Users\\Tan\\.codex\\worktrees\\memory-bootstrap-fix\\Agent-Knowledge-Base\\experiments\\memory-base-package\\recheck-2026-10-12\\store\\3\\wheels"
+      ],
+      "cwd": "C:\\Users\\Tan\\.codex\\worktrees\\memory-bootstrap-fix\\Agent-Knowledge-Base",
+      "stage": "build-wheel",
+      "log": "C:\\Users\\Tan\\.codex\\worktrees\\memory-bootstrap-fix\\Agent-Knowledge-Base\\experiments\\memory-base-package\\recheck-2026-10-12\\store\\3\\command-007-build-wheel.log",
+      "status": "completed",
+      "pid": 33648,
+      "exit_code": 0
+    },
+    {
+      "command": [
+        "D:\\python_work\\work2026-4\\Agent-Knowledge-Base\\venv\\Scripts\\python.exe",
+        "-m",
+        "venv",
+        "C:\\Users\\Tan\\.codex\\worktrees\\memory-bootstrap-fix\\Agent-Knowledge-Base\\experiments\\memory-base-package\\recheck-2026-10-12\\store\\3\\l"
+      ],
+      "cwd": "C:\\Users\\Tan\\AppData\\Local\\Temp",
+      "stage": "create-launcher",
+      "log": "C:\\Users\\Tan\\.codex\\worktrees\\memory-bootstrap-fix\\Agent-Knowledge-Base\\experiments\\memory-base-package\\recheck-2026-10-12\\store\\3\\command-008-create-launcher.log",
+      "status": "completed",
+      "pid": 17544,
+      "exit_code": 0
+    },
+    {
+      "command": [
+        "C:\\Users\\Tan\\.codex\\worktrees\\memory-bootstrap-fix\\Agent-Knowledge-Base\\experiments\\memory-base-package\\recheck-2026-10-12\\store\\3\\l\\Scripts\\python.exe",
+        "-c",
+        "import json,sys,sysconfig,importlib.metadata as m;print(json.dumps({'python':sys.version,'purelib':sysconfig.get_path('purelib'),'pip':m.version('pip')}))"
+      ],
+      "cwd": "C:\\Users\\Tan\\AppData\\Local\\Temp",
+      "stage": "launcher-identity",
+      "log": "C:\\Users\\Tan\\.codex\\worktrees\\memory-bootstrap-fix\\Agent-Knowledge-Base\\experiments\\memory-base-package\\recheck-2026-10-12\\store\\3\\command-009-launcher-identity.log",
+      "status": "completed",
+      "pid": 29452,
+      "exit_code": 0
+    },
+    {
+      "command": [
+        "C:\\Users\\Tan\\.codex\\worktrees\\memory-bootstrap-fix\\Agent-Knowledge-Base\\experiments\\memory-base-package\\recheck-2026-10-12\\store\\3\\l\\Scripts\\python.exe",
+        "-m",
+        "pip",
+        "install",
+        "--no-deps",
+        "--no-index",
+        "--ignore-installed",
+        "C:\\Users\\Tan\\.codex\\worktrees\\memory-bootstrap-fix\\Agent-Knowledge-Base\\experiments\\memory-base-package\\recheck-2026-10-12\\store\\3\\wheels\\agent_memory_base-0.1.0-py3-none-any.whl"
+      ],
+      "cwd": "C:\\Users\\Tan\\AppData\\Local\\Temp",
+      "stage": "install-launcher-wheel",
+      "log": "C:\\Users\\Tan\\.codex\\worktrees\\memory-bootstrap-fix\\Agent-Knowledge-Base\\experiments\\memory-base-package\\recheck-2026-10-12\\store\\3\\command-010-install-launcher-wheel.log",
+      "status": "completed",
+      "pid": 468,
+      "exit_code": 0
+    },
+    {
+      "command": [
+        "C:\\Users\\Tan\\.codex\\worktrees\\memory-bootstrap-fix\\Agent-Knowledge-Base\\experiments\\memory-base-package\\recheck-2026-10-12\\store\\3\\l\\Scripts\\python.exe",
+        "C:\\Users\\Tan\\.codex\\worktrees\\memory-bootstrap-fix\\Agent-Knowledge-Base\\experiments\\memory-base-package\\recheck-2026-10-12\\inspect_environment.py"
+      ],
+      "cwd": "C:\\Users\\Tan\\AppData\\Local\\Temp",
+      "stage": "launcher-origins",
+      "log": "C:\\Users\\Tan\\.codex\\worktrees\\memory-bootstrap-fix\\Agent-Knowledge-Base\\experiments\\memory-base-package\\recheck-2026-10-12\\store\\3\\command-011-launcher-origins.log",
+      "status": "completed",
+      "pid": 31400,
+      "exit_code": 0
+    },
+    {
+      "command": [
+        "C:\\Users\\Tan\\.codex\\worktrees\\memory-bootstrap-fix\\Agent-Knowledge-Base\\experiments\\memory-base-package\\recheck-2026-10-12\\store\\3\\l\\Scripts\\python.exe",
+        "C:\\Users\\Tan\\.codex\\worktrees\\memory-bootstrap-fix\\Agent-Knowledge-Base\\experiments\\memory-base-package\\probe_installed.py",
+        "imports",
+        "--site",
+        "C:\\Users\\Tan\\.codex\\worktrees\\memory-bootstrap-fix\\Agent-Knowledge-Base\\experiments\\memory-base-package\\recheck-2026-10-12\\store\\3\\l\\Lib\\site-packages",
+        "--modules",
+        "memory_base",
+        "memory_base.__main__",
+        "memory_base.autostart",
+        "memory_base.backup",
+        "memory_base.credentials",
+        "memory_base.deploy",
+        "memory_base.embed",
+        "memory_base.gateway",
+        "memory_base.mcp_stdio",
+        "memory_base.paths",
+        "memory_base.sources",
+        "memory_base.upstream"
+      ],
+      "cwd": "C:\\Users\\Tan\\AppData\\Local\\Temp",
+      "stage": "launcher-imports",
+      "log": "C:\\Users\\Tan\\.codex\\worktrees\\memory-bootstrap-fix\\Agent-Knowledge-Base\\experiments\\memory-base-package\\recheck-2026-10-12\\store\\3\\command-012-launcher-imports.log",
+      "status": "completed",
+      "pid": 8664,
+      "exit_code": 0
+    },
+    {
+      "command": [
+        "C:\\Users\\Tan\\.codex\\worktrees\\memory-bootstrap-fix\\Agent-Knowledge-Base\\experiments\\memory-base-package\\recheck-2026-10-12\\store\\3\\l\\Scripts\\python.exe",
+        "-m",
+        "memory_base",
+        "--help"
+      ],
+      "cwd": "C:\\Users\\Tan\\AppData\\Local\\Temp",
+      "stage": "launcher-help",
+      "log": "C:\\Users\\Tan\\.codex\\worktrees\\memory-bootstrap-fix\\Agent-Knowledge-Base\\experiments\\memory-base-package\\recheck-2026-10-12\\store\\3\\command-013-launcher-help.log",
+      "status": "completed",
+      "pid": 31820,
+      "exit_code": 0
+    },
+    {
+      "command": [
+        "C:\\Users\\Tan\\.codex\\worktrees\\memory-bootstrap-fix\\Agent-Knowledge-Base\\experiments\\memory-base-package\\recheck-2026-10-12\\store\\3\\l\\Scripts\\memory-base.exe",
+        "--help"
+      ],
+      "cwd": "C:\\Users\\Tan\\AppData\\Local\\Temp",
+      "stage": "launcher-help",
+      "log": "C:\\Users\\Tan\\.codex\\worktrees\\memory-bootstrap-fix\\Agent-Knowledge-Base\\experiments\\memory-base-package\\recheck-2026-10-12\\store\\3\\command-014-launcher-help.log",
+      "status": "completed",
+      "pid": 33672,
+      "exit_code": 0
+    },
+    {
+      "command": [
+        "C:\\Users\\Tan\\.codex\\worktrees\\memory-bootstrap-fix\\Agent-Knowledge-Base\\experiments\\memory-base-package\\recheck-2026-10-12\\store\\3\\l\\Scripts\\python.exe",
+        "-m",
+        "memory_base.mcp_stdio",
+        "--help"
+      ],
+      "cwd": "C:\\Users\\Tan\\AppData\\Local\\Temp",
+      "stage": "launcher-help",
+      "log": "C:\\Users\\Tan\\.codex\\worktrees\\memory-bootstrap-fix\\Agent-Knowledge-Base\\experiments\\memory-base-package\\recheck-2026-10-12\\store\\3\\command-015-launcher-help.log",
+      "status": "completed",
+      "pid": 31000,
+      "exit_code": 0
+    },
+    {
+      "command": [
+        "C:\\Users\\Tan\\.codex\\worktrees\\memory-bootstrap-fix\\Agent-Knowledge-Base\\experiments\\memory-base-package\\recheck-2026-10-12\\store\\3\\l\\Scripts\\python.exe",
+        "C:\\Users\\Tan\\.codex\\worktrees\\memory-bootstrap-fix\\Agent-Knowledge-Base\\experiments\\memory-base-package\\probe_installed.py",
+        "imports",
+        "--site",
+        "C:\\Users\\Tan\\.codex\\worktrees\\memory-bootstrap-fix\\Agent-Knowledge-Base\\experiments\\memory-base-package\\recheck-2026-10-12\\store\\3\\l\\Lib\\site-packages",
+        "--modules",
+        "memory_base",
+        "memory_base.__main__",
+        "memory_base.autostart",
+        "memory_base.backup",
+        "memory_base.credentials",
+        "memory_base.deploy",
+        "memory_base.embed",
+        "memory_base.gateway",
+        "memory_base.mcp_stdio",
+        "memory_base.paths",
+        "memory_base.sources",
+        "memory_base.upstream"
+      ],
+      "cwd": "C:\\WINDOWS\\System32",
+      "stage": "launcher-imports",
+      "log": "C:\\Users\\Tan\\.codex\\worktrees\\memory-bootstrap-fix\\Agent-Knowledge-Base\\experiments\\memory-base-package\\recheck-2026-10-12\\store\\3\\command-016-launcher-imports.log",
+      "status": "completed",
+      "pid": 6472,
+      "exit_code": 0
+    },
+    {
+      "command": [
+        "C:\\Users\\Tan\\.codex\\worktrees\\memory-bootstrap-fix\\Agent-Knowledge-Base\\experiments\\memory-base-package\\recheck-2026-10-12\\store\\3\\l\\Scripts\\python.exe",
+        "-m",
+        "memory_base",
+        "--help"
+      ],
+      "cwd": "C:\\WINDOWS\\System32",
+      "stage": "launcher-help",
+      "log": "C:\\Users\\Tan\\.codex\\worktrees\\memory-bootstrap-fix\\Agent-Knowledge-Base\\experiments\\memory-base-package\\recheck-2026-10-12\\store\\3\\command-017-launcher-help.log",
+      "status": "completed",
+      "pid": 3140,
+      "exit_code": 0
+    },
+    {
+      "command": [
+        "C:\\Users\\Tan\\.codex\\worktrees\\memory-bootstrap-fix\\Agent-Knowledge-Base\\experiments\\memory-base-package\\recheck-2026-10-12\\store\\3\\l\\Scripts\\memory-base.exe",
+        "--help"
+      ],
+      "cwd": "C:\\WINDOWS\\System32",
+      "stage": "launcher-help",
+      "log": "C:\\Users\\Tan\\.codex\\worktrees\\memory-bootstrap-fix\\Agent-Knowledge-Base\\experiments\\memory-base-package\\recheck-2026-10-12\\store\\3\\command-018-launcher-help.log",
+      "status": "completed",
+      "pid": 30608,
+      "exit_code": 0
+    },
+    {
+      "command": [
+        "C:\\Users\\Tan\\.codex\\worktrees\\memory-bootstrap-fix\\Agent-Knowledge-Base\\experiments\\memory-base-package\\recheck-2026-10-12\\store\\3\\l\\Scripts\\python.exe",
+        "-m",
+        "memory_base.mcp_stdio",
+        "--help"
+      ],
+      "cwd": "C:\\WINDOWS\\System32",
+      "stage": "launcher-help",
+      "log": "C:\\Users\\Tan\\.codex\\worktrees\\memory-bootstrap-fix\\Agent-Knowledge-Base\\experiments\\memory-base-package\\recheck-2026-10-12\\store\\3\\command-019-launcher-help.log",
+      "status": "completed",
+      "pid": 20572,
+      "exit_code": 0
+    },
+    {
+      "command": [
+        "C:\\Users\\Tan\\.codex\\worktrees\\memory-bootstrap-fix\\Agent-Knowledge-Base\\experiments\\memory-base-package\\recheck-2026-10-12\\store\\3\\l\\Scripts\\python.exe",
+        "C:\\Users\\Tan\\.codex\\worktrees\\memory-bootstrap-fix\\Agent-Knowledge-Base\\experiments\\memory-base-package\\probe_installed.py",
+        "mcp",
+        "--store",
+        "C:\\Users\\Tan\\.codex\\worktrees\\memory-bootstrap-fix\\Agent-Knowledge-Base\\experiments\\memory-base-package\\recheck-2026-10-12\\store\\3\\synthetic-protocol"
+      ],
+      "cwd": "C:\\Users\\Tan\\AppData\\Local\\Temp",
+      "stage": "synthetic-mcp",
+      "log": "C:\\Users\\Tan\\.codex\\worktrees\\memory-bootstrap-fix\\Agent-Knowledge-Base\\experiments\\memory-base-package\\recheck-2026-10-12\\store\\3\\command-020-synthetic-mcp.log",
+      "status": "completed",
+      "pid": 25904,
+      "exit_code": 0
+    },
+    {
+      "command": [
+        "C:\\Users\\Tan\\.codex\\worktrees\\memory-bootstrap-fix\\Agent-Knowledge-Base\\experiments\\memory-base-package\\recheck-2026-10-12\\store\\3\\l\\Scripts\\memory-base.exe",
+        "install",
+        "--home",
+        "C:\\Users\\Tan\\.codex\\worktrees\\memory-bootstrap-fix\\Agent-Knowledge-Base\\experiments\\memory-base-package\\recheck-2026-10-12\\store\\3\\d",
+        "--model",
+        "C:\\Users\\Tan\\.cache\\openviking\\models\\bge-small-zh-v1.5-f16.gguf"
+      ],
+      "cwd": "C:\\Users\\Tan\\AppData\\Local\\Temp",
+      "stage": "default-real-install",
+      "log": "C:\\Users\\Tan\\.codex\\worktrees\\memory-bootstrap-fix\\Agent-Knowledge-Base\\experiments\\memory-base-package\\recheck-2026-10-12\\store\\3\\command-021-default-real-install.log",
+      "status": "completed",
+      "pid": 23548,
+      "exit_code": 1
+    }
+  ],
+  "checks": {
+    "wheel_inventory_source_metadata_record": "PASS",
+    "launcher_real_no_deps_wheel_install": "PASS",
+    "external_cwd_all_modules_console_module_mcp_help": "PASS",
+    "real_mcp_four_tools_synthetic_protocol_only": "PASS"
+  },
+  "script_hashes": {
+    "inspect_environment.py": "7d51112ee7288f9ec2fc3a661be1fe2aeeb5ea3936cf34b3c334799527ca0737",
+    "native_probe.py": "7b25c465978a4f5bdaa3b6809175adc88f25cd965675970f01a4d7f6f306f5cc",
+    "run_recheck.py": "98470014755afc14cd876d944a8aed2dc83d76676790fd8ed94f62152dbde1a1"
+  },
+  "limitations": [
+    "Windows/Python 3.12 only; POSIX first credential persistence is not verified.",
+    "Launcher explicitly reuses formal dependencies; the two target runtimes do not.",
+    "No LLM/summary generation; native search uses the existing local GGUF model."
+  ],
+  "fixture_path_layout": {
+    "launcher": "l",
+    "default_home": "d",
+    "fresh_home": "f",
+    "short_home_evidence_only": true,
+    "windows_long_paths_not_enabled_by_test": true
+  },
+  "network_proxy_policy": {
+    "HTTPS_PROXY": {
+      "loopback": true,
+      "userinfo": false,
+      "value_logged": false
+    },
+    "HTTP_PROXY": {
+      "loopback": true,
+      "userinfo": false,
+      "value_logged": false
+    }
+  },
+  "preregistration_commit": "5fbeea837b504c8802ddb739e17ec47092da1fea",
+  "script_commit": "5f47738681e6782f6471eb649278119ec72af2dc",
+  "build_identity": {
+    "python": "3.12.14 (main, Aug 25 2026, 14:01:42) [MSC v.1944 64 bit (AMD64)]",
+    "purelib": "D:\\python_work\\work2026-4\\Agent-Knowledge-Base\\venv\\Lib\\site-packages",
+    "pip": "24.0"
+  },
+  "formal_readonly_identity": {
+    "python": "3.12.14 (main, Aug 25 2026, 14:01:42) [MSC v.1944 64 bit (AMD64)]",
+    "purelib": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages",
+    "pip": "25.0.1"
+  },
+  "wheel": {
+    "path": "C:\\Users\\Tan\\.codex\\worktrees\\memory-bootstrap-fix\\Agent-Knowledge-Base\\experiments\\memory-base-package\\recheck-2026-10-12\\store\\3\\wheels\\agent_memory_base-0.1.0-py3-none-any.whl",
+    "sha256": "2a3dee013da0437484f146e4f873d808c4784ae7567cdbc97d658b2517eb0d60",
+    "archive_sha256": "9cc879c8a40ebcc6b12aef83cac59d7eb36a7966891ed40f319c77f9d21f0708",
+    "inventory": [
+      {
+        "path": "agent_memory_base-0.1.0.dist-info/METADATA",
+        "sha256": "6875b78a50c795b07eac9968bf40c1e3ac27042c3cf9b6cecb055fba6620f1fd",
+        "bytes": 392
+      },
+      {
+        "path": "agent_memory_base-0.1.0.dist-info/RECORD",
+        "sha256": "32a3402e05e377cd98d2ce3f54197943f2edcace7dfe3616fc2d606046a003bb",
+        "bytes": 1647
+      },
+      {
+        "path": "agent_memory_base-0.1.0.dist-info/WHEEL",
+        "sha256": "60b2577585d0d8543452a9f627eea21080bede239ecbc947df10adbc52e477c4",
+        "bytes": 91
+      },
+      {
+        "path": "agent_memory_base-0.1.0.dist-info/entry_points.txt",
+        "sha256": "f773c9cadbc2c22f1071f0c951db4ac7b291ab478622cce95a3f9879684f2086",
+        "bytes": 56
+      },
+      {
+        "path": "agent_memory_base-0.1.0.dist-info/top_level.txt",
+        "sha256": "db1d6a2ce3d8efbdfbc0dd69a66763d2fa1d301bcad774223ee5f3b47843437b",
+        "bytes": 12
+      },
+      {
+        "path": "memory_base/__init__.py",
+        "sha256": "de4f114fc3136f47fe31db2f94787039d6ef67e66da8c8e3b9a168558a088f0a",
+        "bytes": 105
+      },
+      {
+        "path": "memory_base/__main__.py",
+        "sha256": "a12437bac114788f3a6077f4e34d080460618640f8a632f52fe80c7dab2db729",
+        "bytes": 65
+      },
+      {
+        "path": "memory_base/autostart.py",
+        "sha256": "b82a59900f9f5c50d1e39d08ca9278a5d0b42efe1dfe89b3e7a5ad85b4693565",
+        "bytes": 5860
+      },
+      {
+        "path": "memory_base/backup.py",
+        "sha256": "481cc29e47f9c732be14bde141dcaaf7ab9f72432ad9e18118ca7de77a699106",
+        "bytes": 15087
+      },
+      {
+        "path": "memory_base/constraints.txt",
+        "sha256": "eb43f8369e316bfe040e457a6f0a815ab1b1b1c11e3dfcf7043a2a60e7ec32ca",
+        "bytes": 3708
+      },
+      {
+        "path": "memory_base/credentials.py",
+        "sha256": "b8ca897ac3fc2310133219ddc1537ff437de8a369cb67626faab98ca7bf4607d",
+        "bytes": 3697
+      },
+      {
+        "path": "memory_base/deploy.py",
+        "sha256": "ead61c8fd5842c3144c59b33b510ad71554333214957d6afcd90f1b240b1893b",
+        "bytes": 41948
+      },
+      {
+        "path": "memory_base/embed.py",
+        "sha256": "d481c7f11bf28697aac82c93c429ca9accf082153a7c3a19f5a0c50d7005405a",
+        "bytes": 4010
+      },
+      {
+        "path": "memory_base/gateway.py",
+        "sha256": "3dd26546bafa6a8db67f5065e5ecd7edc3ae25353330f0a40a9f00d86714a9fb",
+        "bytes": 24975
+      },
+      {
+        "path": "memory_base/mcp_stdio.py",
+        "sha256": "d31c183a896f226ba45e7849c4c6572e1350b125751e6caa18e3b6237f57f1e8",
+        "bytes": 7197
+      },
+      {
+        "path": "memory_base/paths.py",
+        "sha256": "9fa05d72f153b7c44af922a2b6424c4c58d8a66340333b3e7b9a1ad01d11c446",
+        "bytes": 4724
+      },
+      {
+        "path": "memory_base/requirements.txt",
+        "sha256": "d4f68d45c950dbd63082adbef1ddcbad71cf517ce8aeb63e5ddff393f5d5c38c",
+        "bytes": 421
+      },
+      {
+        "path": "memory_base/skill/SKILL.md",
+        "sha256": "6d7e62498229280faf84dbd8033ec698f201a98da9417bec97a91665eb7aa049",
+        "bytes": 2105
+      },
+      {
+        "path": "memory_base/sources.py",
+        "sha256": "923338fe4f093e09c2f836420d357aaf4fbe9a13a6ac416534bf6e8973a1a3c0",
+        "bytes": 13087
+      },
+      {
+        "path": "memory_base/upstream.py",
+        "sha256": "0b35b1626d1123bbf6c4eb78d16fad81ffa686145da666dc3c679fd7b55df426",
+        "bytes": 6618
+      }
+    ],
+    "exported_source": [
+      {
+        "path": "memory_base/__init__.py",
+        "git_blob_sha256": "b295fb1e4a56fa053363de5ffec7c885855873c5c757eeb1a0b2f28e7cd3d80d",
+        "export_sha256": "de4f114fc3136f47fe31db2f94787039d6ef67e66da8c8e3b9a168558a088f0a",
+        "raw_bytes_equal": false,
+        "crlf_normalized_equal": true
+      },
+      {
+        "path": "memory_base/__main__.py",
+        "git_blob_sha256": "178cb0b8f33df8b2e80b5c1b8d4d248609cfff12d9269d77f4e2dcac88f55880",
+        "export_sha256": "a12437bac114788f3a6077f4e34d080460618640f8a632f52fe80c7dab2db729",
+        "raw_bytes_equal": false,
+        "crlf_normalized_equal": true
+      },
+      {
+        "path": "memory_base/autostart.py",
+        "git_blob_sha256": "fcfd8afecb5d64b67d7be3bd462db6d90281610436f8a45e0a338a55f4f1730e",
+        "export_sha256": "b82a59900f9f5c50d1e39d08ca9278a5d0b42efe1dfe89b3e7a5ad85b4693565",
+        "raw_bytes_equal": false,
+        "crlf_normalized_equal": true
+      },
+      {
+        "path": "memory_base/backup.py",
+        "git_blob_sha256": "8ed876c34ea495a4e4efebe657e80d4b9f194b30352cf4d58accef41a96c546d",
+        "export_sha256": "481cc29e47f9c732be14bde141dcaaf7ab9f72432ad9e18118ca7de77a699106",
+        "raw_bytes_equal": false,
+        "crlf_normalized_equal": true
+      },
+      {
+        "path": "memory_base/constraints.txt",
+        "git_blob_sha256": "f5500024bb4950a64092aad91161c3f97591acc698f3ac4ba3258996e63a8500",
+        "export_sha256": "eb43f8369e316bfe040e457a6f0a815ab1b1b1c11e3dfcf7043a2a60e7ec32ca",
+        "raw_bytes_equal": false,
+        "crlf_normalized_equal": true
+      },
+      {
+        "path": "memory_base/credentials.py",
+        "git_blob_sha256": "445f2378eb4192c5ee80e03eaf1f7952f8caf8c3ac256ce16d3f07f1012863c7",
+        "export_sha256": "b8ca897ac3fc2310133219ddc1537ff437de8a369cb67626faab98ca7bf4607d",
+        "raw_bytes_equal": false,
+        "crlf_normalized_equal": true
+      },
+      {
+        "path": "memory_base/deploy.py",
+        "git_blob_sha256": "680a31096d8aa98fc2aa47df6540bd706705954bc8e05c814398354096b99e28",
+        "export_sha256": "ead61c8fd5842c3144c59b33b510ad71554333214957d6afcd90f1b240b1893b",
+        "raw_bytes_equal": false,
+        "crlf_normalized_equal": true
+      },
+      {
+        "path": "memory_base/embed.py",
+        "git_blob_sha256": "1ff4eb9264ff100de672f212f276c85fe7bdfe577e86fad92cd729905a0781ba",
+        "export_sha256": "d481c7f11bf28697aac82c93c429ca9accf082153a7c3a19f5a0c50d7005405a",
+        "raw_bytes_equal": false,
+        "crlf_normalized_equal": true
+      },
+      {
+        "path": "memory_base/gateway.py",
+        "git_blob_sha256": "aeaeb47d6e4edd438e54e464de08d012d250b2094817bc3308b87c17a1b79fe6",
+        "export_sha256": "3dd26546bafa6a8db67f5065e5ecd7edc3ae25353330f0a40a9f00d86714a9fb",
+        "raw_bytes_equal": false,
+        "crlf_normalized_equal": true
+      },
+      {
+        "path": "memory_base/mcp_stdio.py",
+        "git_blob_sha256": "9356ba6782f3dbf0c8808ef6aa7799790f787ee8e6264e94e7a1a53ec56a9df3",
+        "export_sha256": "d31c183a896f226ba45e7849c4c6572e1350b125751e6caa18e3b6237f57f1e8",
+        "raw_bytes_equal": false,
+        "crlf_normalized_equal": true
+      },
+      {
+        "path": "memory_base/paths.py",
+        "git_blob_sha256": "c15f1f90b931d848a5a280752f956174729a836b267f5739f415459c9f3ef1a0",
+        "export_sha256": "9fa05d72f153b7c44af922a2b6424c4c58d8a66340333b3e7b9a1ad01d11c446",
+        "raw_bytes_equal": false,
+        "crlf_normalized_equal": true
+      },
+      {
+        "path": "memory_base/pyproject.toml",
+        "git_blob_sha256": "e9099c627e2de02dc8231ac69d6bc5d7485b89cce92053d71b6749d3193f5826",
+        "export_sha256": "c0866118721b05cebf797327c225f7577fb25e40128a1fd70ffabd0b31d53501",
+        "raw_bytes_equal": false,
+        "crlf_normalized_equal": true
+      },
+      {
+        "path": "memory_base/requirements.txt",
+        "git_blob_sha256": "19e369d6281ca2584b20baa30926b82489bcd01c731e4eeb37797e14611257e9",
+        "export_sha256": "d4f68d45c950dbd63082adbef1ddcbad71cf517ce8aeb63e5ddff393f5d5c38c",
+        "raw_bytes_equal": false,
+        "crlf_normalized_equal": true
+      },
+      {
+        "path": "memory_base/skill/SKILL.md",
+        "git_blob_sha256": "72527b6cc7e74c5c8266f01f85d3dcbe398415ed24404facfe722d1468c5d964",
+        "export_sha256": "6d7e62498229280faf84dbd8033ec698f201a98da9417bec97a91665eb7aa049",
+        "raw_bytes_equal": false,
+        "crlf_normalized_equal": true
+      },
+      {
+        "path": "memory_base/sources.py",
+        "git_blob_sha256": "76f5614d798d2ef65b62664a0df7d1658d35e49e3928f9c397408b0c750f8312",
+        "export_sha256": "923338fe4f093e09c2f836420d357aaf4fbe9a13a6ac416534bf6e8973a1a3c0",
+        "raw_bytes_equal": false,
+        "crlf_normalized_equal": true
+      },
+      {
+        "path": "memory_base/upstream.py",
+        "git_blob_sha256": "b0c6f83243e957d849b49a4424f8e205315bbdfafb354a8aa1402f93228b1ed0",
+        "export_sha256": "0b35b1626d1123bbf6c4eb78d16fad81ffa686145da666dc3c679fd7b55df426",
+        "raw_bytes_equal": false,
+        "crlf_normalized_equal": true
+      }
+    ],
+    "wheel_export_bytes_match": true,
+    "record_verified": true,
+    "entry_points": "[console_scripts]\nmemory-base = memory_base.deploy:main\n",
+    "requires_python": "<3.13,>=3.12",
+    "requires_dist": [
+      "openviking==0.4.23",
+      "openviking-sdk==0.1.13",
+      "mcp==1.30.0",
+      "llama-cpp-python==0.3.36",
+      "volcengine-python-sdk[ark]==5.0.51",
+      "openai==2.54.0"
+    ]
+  },
+  "launcher_dependency_reuse": {
+    "provider_site": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages",
+    "pth": "C:\\Users\\Tan\\.codex\\worktrees\\memory-bootstrap-fix\\Agent-Knowledge-Base\\experiments\\memory-base-package\\recheck-2026-10-12\\store\\3\\l\\Lib\\site-packages\\formal-dependencies-readonly.pth",
+    "pth_sha256": "1510a7bdb3308788d90a624bb3c10aa2bd128e6c72e6bfb18daddf7fb087fe41",
+    "system_site_packages": false,
+    "new_dependency_stack": false
+  },
+  "launcher_origins": {
+    "python": "3.12.14 (main, Aug 25 2026, 14:01:42) [MSC v.1944 64 bit (AMD64)]",
+    "executable": "C:\\Users\\Tan\\.codex\\worktrees\\memory-bootstrap-fix\\Agent-Knowledge-Base\\experiments\\memory-base-package\\recheck-2026-10-12\\store\\3\\l\\Scripts\\python.exe",
+    "prefix": "C:\\Users\\Tan\\.codex\\worktrees\\memory-bootstrap-fix\\Agent-Knowledge-Base\\experiments\\memory-base-package\\recheck-2026-10-12\\store\\3\\l",
+    "base_prefix": "C:\\Users\\Tan\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python",
+    "site": "C:\\Users\\Tan\\.codex\\worktrees\\memory-bootstrap-fix\\Agent-Knowledge-Base\\experiments\\memory-base-package\\recheck-2026-10-12\\store\\3\\l\\Lib\\site-packages",
+    "sys_path": [
+      "C:\\Users\\Tan\\.codex\\worktrees\\memory-bootstrap-fix\\Agent-Knowledge-Base\\experiments\\memory-base-package\\recheck-2026-10-12",
+      "C:\\Users\\Tan\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python312.zip",
+      "C:\\Users\\Tan\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\DLLs",
+      "C:\\Users\\Tan\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\Lib",
+      "C:\\Users\\Tan\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python",
+      "C:\\Users\\Tan\\.codex\\worktrees\\memory-bootstrap-fix\\Agent-Knowledge-Base\\experiments\\memory-base-package\\recheck-2026-10-12\\store\\3\\l",
+      "C:\\Users\\Tan\\.codex\\worktrees\\memory-bootstrap-fix\\Agent-Knowledge-Base\\experiments\\memory-base-package\\recheck-2026-10-12\\store\\3\\l\\Lib\\site-packages",
+      "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages",
+      "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages",
+      "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\win32",
+      "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\win32\\lib",
+      "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\pythonwin",
+      "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\win32",
+      "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\win32\\lib",
+      "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\pythonwin"
+    ],
+    "product_file": "C:\\Users\\Tan\\.codex\\worktrees\\memory-bootstrap-fix\\Agent-Knowledge-Base\\experiments\\memory-base-package\\recheck-2026-10-12\\store\\3\\l\\Lib\\site-packages\\memory_base\\__init__.py",
+    "product_distribution": "C:\\Users\\Tan\\.codex\\worktrees\\memory-bootstrap-fix\\Agent-Knowledge-Base\\experiments\\memory-base-package\\recheck-2026-10-12\\store\\3\\l\\Lib\\site-packages\\agent_memory_base-0.1.0.dist-info",
+    "direct_url": {
+      "archive_info": {
+        "hash": "sha256=2a3dee013da0437484f146e4f873d808c4784ae7567cdbc97d658b2517eb0d60",
+        "hashes": {
+          "sha256": "2a3dee013da0437484f146e4f873d808c4784ae7567cdbc97d658b2517eb0d60"
+        }
+      },
+      "url": "file:///C:/Users/Tan/.codex/worktrees/memory-bootstrap-fix/Agent-Knowledge-Base/experiments/memory-base-package/recheck-2026-10-12/store/3/wheels/agent_memory_base-0.1.0-py3-none-any.whl"
+    },
+    "pins": {
+      "openviking": "0.4.23",
+      "openviking-sdk": "0.1.13",
+      "mcp": "1.30.0",
+      "llama-cpp-python": "0.3.36",
+      "volcengine-python-sdk": "5.0.51",
+      "openai": "2.54.0"
+    },
+    "distributions": {
+      "openviking": {
+        "version": "0.4.23",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\openviking-0.4.23.dist-info"
+      },
+      "openviking-sdk": {
+        "version": "0.1.13",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\openviking_sdk-0.1.13.dist-info"
+      },
+      "mcp": {
+        "version": "1.30.0",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\mcp-1.30.0.dist-info"
+      },
+      "llama-cpp-python": {
+        "version": "0.3.36",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\llama_cpp_python-0.3.36.dist-info"
+      },
+      "volcengine-python-sdk": {
+        "version": "5.0.51",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\volcengine_python_sdk-5.0.51.dist-info"
+      },
+      "openai": {
+        "version": "2.54.0",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\openai-2.54.0.dist-info"
+      }
+    },
+    "modules": {
+      "memory_base": "C:\\Users\\Tan\\.codex\\worktrees\\memory-bootstrap-fix\\Agent-Knowledge-Base\\experiments\\memory-base-package\\recheck-2026-10-12\\store\\3\\l\\Lib\\site-packages\\memory_base\\__init__.py",
+      "fastapi": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\fastapi\\__init__.py",
+      "pydantic": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\pydantic\\__init__.py",
+      "mcp": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\mcp\\__init__.py",
+      "openviking": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\openviking\\__init__.py",
+      "llama_cpp": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\llama_cpp\\__init__.py",
+      "openai": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\openai\\__init__.py"
+    },
+    "pths": [
+      {
+        "path": "C:\\Users\\Tan\\.codex\\worktrees\\memory-bootstrap-fix\\Agent-Knowledge-Base\\experiments\\memory-base-package\\recheck-2026-10-12\\store\\3\\l\\Lib\\site-packages\\formal-dependencies-readonly.pth",
+        "content": "import sys,site; sys.path.insert(sys.path.index('C:\\\\Users\\\\Tan\\\\.codex\\\\worktrees\\\\memory-bootstrap-fix\\\\Agent-Knowledge-Base\\\\experiments\\\\memory-base-package\\\\recheck-2026-10-12\\\\store\\\\3\\\\l\\\\Lib\\\\site-packages')+1, 'C:\\\\Users\\\\Tan\\\\.agent-memory-base\\\\runtime\\\\Lib\\\\site-packages'); site.addpackage('C:\\\\Users\\\\Tan\\\\.agent-memory-base\\\\runtime\\\\Lib\\\\site-packages', 'pywin32.pth', set(sys.path))\n"
+      }
+    ],
+    "all_distributions": {
+      "agent-memory-base": {
+        "version": "0.1.0",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\agent_memory_base-0.1.0.dist-info"
+      },
+      "pip": {
+        "version": "25.0.1",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\pip-25.0.1.dist-info"
+      },
+      "aiohappyeyeballs": {
+        "version": "2.7.1",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\aiohappyeyeballs-2.7.1.dist-info"
+      },
+      "aiohttp": {
+        "version": "3.14.4",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\aiohttp-3.14.4.dist-info"
+      },
+      "aiosignal": {
+        "version": "1.4.0",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\aiosignal-1.4.0.dist-info"
+      },
+      "annotated-doc": {
+        "version": "0.0.5",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\annotated_doc-0.0.5.dist-info"
+      },
+      "annotated-types": {
+        "version": "0.8.0",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\annotated_types-0.8.0.dist-info"
+      },
+      "anyio": {
+        "version": "4.15.1",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\anyio-4.15.1.dist-info"
+      },
+      "apscheduler": {
+        "version": "3.11.3",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\apscheduler-3.11.3.dist-info"
+      },
+      "argon2-cffi": {
+        "version": "25.1.0",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\argon2_cffi-25.1.0.dist-info"
+      },
+      "argon2-cffi-bindings": {
+        "version": "26.1.0",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\argon2_cffi_bindings-26.1.0.dist-info"
+      },
+      "attrs": {
+        "version": "26.1.0",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\attrs-26.1.0.dist-info"
+      },
+      "automat": {
+        "version": "25.4.16",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\automat-25.4.16.dist-info"
+      },
+      "babel": {
+        "version": "2.18.0",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\babel-2.18.0.dist-info"
+      },
+      "backports-zstd": {
+        "version": "1.7.0",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\backports_zstd-1.7.0.dist-info"
+      },
+      "beautifulsoup4": {
+        "version": "4.15.0",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\beautifulsoup4-4.15.0.dist-info"
+      },
+      "brotli": {
+        "version": "1.2.0",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\brotli-1.2.0.dist-info"
+      },
+      "certifi": {
+        "version": "2026.7.22",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\certifi-2026.7.22.dist-info"
+      },
+      "cffi": {
+        "version": "2.1.1",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\cffi-2.1.1.dist-info"
+      },
+      "charset-normalizer": {
+        "version": "3.5.2",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\charset_normalizer-3.5.2.dist-info"
+      },
+      "click": {
+        "version": "8.5.0",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\click-8.5.0.dist-info"
+      },
+      "colorama": {
+        "version": "0.4.6",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\colorama-0.4.6.dist-info"
+      },
+      "constantly": {
+        "version": "23.10.4",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\constantly-23.10.4.dist-info"
+      },
+      "courlan": {
+        "version": "1.4.0",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\courlan-1.4.0.dist-info"
+      },
+      "cryptography": {
+        "version": "50.0.2",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\cryptography-50.0.2.dist-info"
+      },
+      "cssselect": {
+        "version": "1.5.0",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\cssselect-1.5.0.dist-info"
+      },
+      "dateparser": {
+        "version": "1.4.3",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\dateparser-1.4.3.dist-info"
+      },
+      "decorator": {
+        "version": "5.3.1",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\decorator-5.3.1.dist-info"
+      },
+      "defusedxml": {
+        "version": "0.7.1",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\defusedxml-0.7.1.dist-info"
+      },
+      "diskcache": {
+        "version": "5.6.3",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\diskcache-5.6.3.dist-info"
+      },
+      "distro": {
+        "version": "1.9.0",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\distro-1.9.0.dist-info"
+      },
+      "fastapi": {
+        "version": "0.143.0",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\fastapi-0.143.0.dist-info"
+      },
+      "fastuuid": {
+        "version": "0.14.0",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\fastuuid-0.14.0.dist-info"
+      },
+      "feedparser": {
+        "version": "6.0.14",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\feedparser-6.0.14.dist-info"
+      },
+      "feedparser-sgmllib": {
+        "version": "2.1.0",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\feedparser_sgmllib-2.1.0.dist-info"
+      },
+      "filelock": {
+        "version": "4.0.12",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\filelock-4.0.12.dist-info"
+      },
+      "firecrawl-anydoc": {
+        "version": "0.2.4",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\firecrawl_anydoc-0.2.4.dist-info"
+      },
+      "frozenlist": {
+        "version": "1.8.0",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\frozenlist-1.8.0.dist-info"
+      },
+      "fsspec": {
+        "version": "2026.9.0",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\fsspec-2026.9.0.dist-info"
+      },
+      "google": {
+        "version": "3.0.0",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\google-3.0.0.dist-info"
+      },
+      "googleapis-common-protos": {
+        "version": "1.75.5",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\googleapis_common_protos-1.75.5.dist-info"
+      },
+      "grep-ast": {
+        "version": "0.9.0",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\grep_ast-0.9.0.dist-info"
+      },
+      "grpcio": {
+        "version": "1.84.0",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\grpcio-1.84.0.dist-info"
+      },
+      "h11": {
+        "version": "0.16.0",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\h11-0.16.0.dist-info"
+      },
+      "hf-xet": {
+        "version": "1.7.0",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\hf_xet-1.7.0.dist-info"
+      },
+      "htmldate": {
+        "version": "1.11.0",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\htmldate-1.11.0.dist-info"
+      },
+      "httpcore": {
+        "version": "1.0.9",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\httpcore-1.0.9.dist-info"
+      },
+      "httpcore2": {
+        "version": "2.13.1",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\httpcore2-2.13.1.dist-info"
+      },
+      "httpx": {
+        "version": "0.28.1",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\httpx-0.28.1.dist-info"
+      },
+      "httpx2": {
+        "version": "2.13.1",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\httpx2-2.13.1.dist-info"
+      },
+      "httpx-sse": {
+        "version": "0.4.3",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\httpx_sse-0.4.3.dist-info"
+      },
+      "huggingface-hub": {
+        "version": "2.2.0",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\huggingface_hub-2.2.0.dist-info"
+      },
+      "hyperlink": {
+        "version": "21.0.0",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\hyperlink-21.0.0.dist-info"
+      },
+      "idna": {
+        "version": "3.20",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\idna-3.20.dist-info"
+      },
+      "importlib-metadata": {
+        "version": "8.9.0",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\importlib_metadata-8.9.0.dist-info"
+      },
+      "incremental": {
+        "version": "24.11.0",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\incremental-24.11.0.dist-info"
+      },
+      "itemadapter": {
+        "version": "0.13.1",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\itemadapter-0.13.1.dist-info"
+      },
+      "itemloaders": {
+        "version": "1.5.0",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\itemloaders-1.5.0.dist-info"
+      },
+      "jinja2": {
+        "version": "3.1.6",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\jinja2-3.1.6.dist-info"
+      },
+      "jiter": {
+        "version": "0.17.0",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\jiter-0.17.0.dist-info"
+      },
+      "jmespath": {
+        "version": "1.1.0",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\jmespath-1.1.0.dist-info"
+      },
+      "jsonschema": {
+        "version": "4.26.0",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\jsonschema-4.26.0.dist-info"
+      },
+      "jsonschema-specifications": {
+        "version": "2025.9.1",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\jsonschema_specifications-2025.9.1.dist-info"
+      },
+      "json-repair": {
+        "version": "0.64.0",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\json_repair-0.64.0.dist-info"
+      },
+      "justext": {
+        "version": "3.0.2",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\justext-3.0.2.dist-info"
+      },
+      "lark-oapi": {
+        "version": "1.7.3",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\lark_oapi-1.7.3.dist-info"
+      },
+      "litellm": {
+        "version": "1.91.1",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\litellm-1.91.1.dist-info"
+      },
+      "llama-cpp-python": {
+        "version": "0.3.36",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\llama_cpp_python-0.3.36.dist-info"
+      },
+      "loguru": {
+        "version": "0.7.3",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\loguru-0.7.3.dist-info"
+      },
+      "lxml": {
+        "version": "6.1.3",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\lxml-6.1.3.dist-info"
+      },
+      "lxml-html-clean": {
+        "version": "0.4.5",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\lxml_html_clean-0.4.5.dist-info"
+      },
+      "markdown-it-py": {
+        "version": "4.2.0",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\markdown_it_py-4.2.0.dist-info"
+      },
+      "markupsafe": {
+        "version": "3.0.4",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\markupsafe-3.0.4.dist-info"
+      },
+      "mcp": {
+        "version": "1.30.0",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\mcp-1.30.0.dist-info"
+      },
+      "mdurl": {
+        "version": "0.1.2",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\mdurl-0.1.2.dist-info"
+      },
+      "multidict": {
+        "version": "6.9.1",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\multidict-6.9.1.dist-info"
+      },
+      "numpy": {
+        "version": "2.5.3",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\numpy-2.5.3.dist-info"
+      },
+      "openai": {
+        "version": "2.54.0",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\openai-2.54.0.dist-info"
+      },
+      "opentelemetry-api": {
+        "version": "1.45.1",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\opentelemetry_api-1.45.1.dist-info"
+      },
+      "opentelemetry-exporter-http-transport": {
+        "version": "0.66b1",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\opentelemetry_exporter_http_transport-0.66b1.dist-info"
+      },
+      "opentelemetry-exporter-otlp-common": {
+        "version": "0.66b1",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\opentelemetry_exporter_otlp_common-0.66b1.dist-info"
+      },
+      "opentelemetry-exporter-otlp-proto-common": {
+        "version": "1.45.1",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\opentelemetry_exporter_otlp_proto_common-1.45.1.dist-info"
+      },
+      "opentelemetry-exporter-otlp-proto-grpc": {
+        "version": "1.45.1",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\opentelemetry_exporter_otlp_proto_grpc-1.45.1.dist-info"
+      },
+      "opentelemetry-exporter-otlp-proto-http": {
+        "version": "1.45.1",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\opentelemetry_exporter_otlp_proto_http-1.45.1.dist-info"
+      },
+      "opentelemetry-instrumentation": {
+        "version": "0.66b1",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\opentelemetry_instrumentation-0.66b1.dist-info"
+      },
+      "opentelemetry-instrumentation-asyncio": {
+        "version": "0.66b1",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\opentelemetry_instrumentation_asyncio-0.66b1.dist-info"
+      },
+      "opentelemetry-proto": {
+        "version": "1.45.1",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\opentelemetry_proto-1.45.1.dist-info"
+      },
+      "opentelemetry-sdk": {
+        "version": "1.45.1",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\opentelemetry_sdk-1.45.1.dist-info"
+      },
+      "opentelemetry-semantic-conventions": {
+        "version": "0.66b1",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\opentelemetry_semantic_conventions-0.66b1.dist-info"
+      },
+      "openviking": {
+        "version": "0.4.23",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\openviking-0.4.23.dist-info"
+      },
+      "openviking-sdk": {
+        "version": "0.1.13",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\openviking_sdk-0.1.13.dist-info"
+      },
+      "packaging": {
+        "version": "26.3",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\packaging-26.3.dist-info"
+      },
+      "parsel": {
+        "version": "1.12.1",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\parsel-1.12.1.dist-info"
+      },
+      "pathspec": {
+        "version": "1.1.1",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\pathspec-1.1.1.dist-info"
+      },
+      "pdfminer-six": {
+        "version": "20260107",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\pdfminer_six-20260107.dist-info"
+      },
+      "pdfplumber": {
+        "version": "0.11.10",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\pdfplumber-0.11.10.dist-info"
+      },
+      "pillow": {
+        "version": "12.3.0",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\pillow-12.3.0.dist-info"
+      },
+      "platformdirs": {
+        "version": "4.12.4",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\platformdirs-4.12.4.dist-info"
+      },
+      "propcache": {
+        "version": "0.5.4",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\propcache-0.5.4.dist-info"
+      },
+      "protego": {
+        "version": "0.7.0",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\protego-0.7.0.dist-info"
+      },
+      "protobuf": {
+        "version": "7.36.2",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\protobuf-7.36.2.dist-info"
+      },
+      "py": {
+        "version": "1.11.0",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\py-1.11.0.dist-info"
+      },
+      "pycparser": {
+        "version": "3.11",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\pycparser-3.11.dist-info"
+      },
+      "pycryptodome": {
+        "version": "3.24.0",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\pycryptodome-3.24.0.dist-info"
+      },
+      "pydantic": {
+        "version": "2.14.0",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\pydantic-2.14.0.dist-info"
+      },
+      "pydantic-core": {
+        "version": "2.50.0",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\pydantic_core-2.50.0.dist-info"
+      },
+      "pydantic-settings": {
+        "version": "2.15.0",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\pydantic_settings-2.15.0.dist-info"
+      },
+      "pydispatcher": {
+        "version": "2.0.7",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\PyDispatcher-2.0.7.dist-info"
+      },
+      "pygments": {
+        "version": "2.21.0",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\pygments-2.21.0.dist-info"
+      },
+      "pyjwt": {
+        "version": "2.15.1",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\pyjwt-2.15.1.dist-info"
+      },
+      "pyopenssl": {
+        "version": "26.4.0",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\pyopenssl-26.4.0.dist-info"
+      },
+      "pypdfium2": {
+        "version": "5.14.0",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\pypdfium2-5.14.0.dist-info"
+      },
+      "python-dateutil": {
+        "version": "2.9.0.post0",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\python_dateutil-2.9.0.post0.dist-info"
+      },
+      "python-dotenv": {
+        "version": "1.2.4",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\python_dotenv-1.2.4.dist-info"
+      },
+      "python-multipart": {
+        "version": "0.0.32",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\python_multipart-0.0.32.dist-info"
+      },
+      "pytz": {
+        "version": "2026.5",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\pytz-2026.5.dist-info"
+      },
+      "pywin32": {
+        "version": "312",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\pywin32-312.dist-info"
+      },
+      "pyyaml": {
+        "version": "6.0.3",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\pyyaml-6.0.3.dist-info"
+      },
+      "queuelib": {
+        "version": "1.10.0",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\queuelib-1.10.0.dist-info"
+      },
+      "rapidfuzz": {
+        "version": "3.14.6",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\rapidfuzz-3.14.6.dist-info"
+      },
+      "referencing": {
+        "version": "0.37.0",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\referencing-0.37.0.dist-info"
+      },
+      "regex": {
+        "version": "2026.9.29",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\regex-2026.9.29.dist-info"
+      },
+      "requests": {
+        "version": "2.34.2",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\requests-2.34.2.dist-info"
+      },
+      "requests-file": {
+        "version": "3.0.1",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\requests_file-3.0.1.dist-info"
+      },
+      "requests-toolbelt": {
+        "version": "1.0.0",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\requests_toolbelt-1.0.0.dist-info"
+      },
+      "retry": {
+        "version": "0.9.2",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\retry-0.9.2.dist-info"
+      },
+      "rich": {
+        "version": "15.0.0",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\rich-15.0.0.dist-info"
+      },
+      "rpds-py": {
+        "version": "2026.9.1",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\rpds_py-2026.9.1.dist-info"
+      },
+      "scrapy": {
+        "version": "2.19.0",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\scrapy-2.19.0.dist-info"
+      },
+      "service-identity": {
+        "version": "26.1.0",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\service_identity-26.1.0.dist-info"
+      },
+      "shellingham": {
+        "version": "1.5.4",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\shellingham-1.5.4.dist-info"
+      },
+      "six": {
+        "version": "1.17.0",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\six-1.17.0.dist-info"
+      },
+      "sniffio": {
+        "version": "1.3.1",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\sniffio-1.3.1.dist-info"
+      },
+      "soupsieve": {
+        "version": "2.10",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\soupsieve-2.10.dist-info"
+      },
+      "sse-starlette": {
+        "version": "3.5.0",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\sse_starlette-3.5.0.dist-info"
+      },
+      "starlette": {
+        "version": "1.7.0",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\starlette-1.7.0.dist-info"
+      },
+      "tabulate": {
+        "version": "0.10.0",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\tabulate-0.10.0.dist-info"
+      },
+      "tenacity": {
+        "version": "9.2.1",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\tenacity-9.2.1.dist-info"
+      },
+      "tiktoken": {
+        "version": "0.14.0",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\tiktoken-0.14.0.dist-info"
+      },
+      "tld": {
+        "version": "0.13.2",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\tld-0.13.2.dist-info"
+      },
+      "tldextract": {
+        "version": "5.4.0",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\tldextract-5.4.0.dist-info"
+      },
+      "tokenizers": {
+        "version": "0.23.3",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\tokenizers-0.23.3.dist-info"
+      },
+      "tqdm": {
+        "version": "4.70.1",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\tqdm-4.70.1.dist-info"
+      },
+      "trafilatura": {
+        "version": "2.3.1",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\trafilatura-2.3.1.dist-info"
+      },
+      "tree-sitter": {
+        "version": "0.25.2",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\tree_sitter-0.25.2.dist-info"
+      },
+      "tree-sitter-cpp": {
+        "version": "0.23.4",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\tree_sitter_cpp-0.23.4.dist-info"
+      },
+      "tree-sitter-c-sharp": {
+        "version": "0.23.1",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\tree_sitter_c_sharp-0.23.1.dist-info"
+      },
+      "tree-sitter-go": {
+        "version": "0.25.0",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\tree_sitter_go-0.25.0.dist-info"
+      },
+      "tree-sitter-java": {
+        "version": "0.23.5",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\tree_sitter_java-0.23.5.dist-info"
+      },
+      "tree-sitter-javascript": {
+        "version": "0.25.0",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\tree_sitter_javascript-0.25.0.dist-info"
+      },
+      "tree-sitter-language-pack": {
+        "version": "1.13.3",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\tree_sitter_language_pack-1.13.3.dist-info"
+      },
+      "tree-sitter-lua": {
+        "version": "0.5.0",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\tree_sitter_lua-0.5.0.dist-info"
+      },
+      "tree-sitter-php": {
+        "version": "0.24.1",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\tree_sitter_php-0.24.1.dist-info"
+      },
+      "tree-sitter-python": {
+        "version": "0.25.0",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\tree_sitter_python-0.25.0.dist-info"
+      },
+      "tree-sitter-rust": {
+        "version": "0.24.0",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\tree_sitter_rust-0.24.0.dist-info"
+      },
+      "tree-sitter-typescript": {
+        "version": "0.23.2",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\tree_sitter_typescript-0.23.2.dist-info"
+      },
+      "truststore": {
+        "version": "0.10.4",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\truststore-0.10.4.dist-info"
+      },
+      "twisted": {
+        "version": "26.4.0",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\twisted-26.4.0.dist-info"
+      },
+      "typer": {
+        "version": "0.27.3",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\typer-0.27.3.dist-info"
+      },
+      "typing-extensions": {
+        "version": "4.16.0",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\typing_extensions-4.16.0.dist-info"
+      },
+      "typing-inspection": {
+        "version": "0.4.4",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\typing_inspection-0.4.4.dist-info"
+      },
+      "tzdata": {
+        "version": "2026.5",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\tzdata-2026.5.dist-info"
+      },
+      "tzlocal": {
+        "version": "5.4.4",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\tzlocal-5.4.4.dist-info"
+      },
+      "urllib3": {
+        "version": "2.8.0",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\urllib3-2.8.0.dist-info"
+      },
+      "uvicorn": {
+        "version": "0.54.0",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\uvicorn-0.54.0.dist-info"
+      },
+      "volcengine": {
+        "version": "1.0.228",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\volcengine-1.0.228.dist-info"
+      },
+      "volcengine-python-sdk": {
+        "version": "5.0.51",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\volcengine_python_sdk-5.0.51.dist-info"
+      },
+      "w3lib": {
+        "version": "2.5.0",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\w3lib-2.5.0.dist-info"
+      },
+      "websockets": {
+        "version": "15.0.1",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\websockets-15.0.1.dist-info"
+      },
+      "win32-setctime": {
+        "version": "1.2.0",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\win32_setctime-1.2.0.dist-info"
+      },
+      "wrapt": {
+        "version": "2.5.0",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\wrapt-2.5.0.dist-info"
+      },
+      "xxhash": {
+        "version": "4.0.1",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\xxhash-4.0.1.dist-info"
+      },
+      "yarl": {
+        "version": "1.25.1",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\yarl-1.25.1.dist-info"
+      },
+      "zipp": {
+        "version": "4.1.1",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\zipp-4.1.1.dist-info"
+      },
+      "zope-interface": {
+        "version": "8.6",
+        "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\zope_interface-8.6.dist-info"
+      }
+    },
+    "active_constraints": {
+      "apscheduler": "3.11.3",
+      "automat": "25.4.16",
+      "incremental": "24.11.0",
+      "jinja2": "3.1.6",
+      "markupsafe": "3.0.4",
+      "protego": "0.7.0",
+      "pydispatcher": "2.0.7",
+      "pyjwt": "2.15.1",
+      "pyyaml": "6.0.3",
+      "pygments": "2.21.0",
+      "rapidfuzz": "3.14.6",
+      "scrapy": "2.19.0",
+      "twisted": "26.4.0",
+      "aiohappyeyeballs": "2.7.1",
+      "aiohttp": "3.14.4",
+      "aiosignal": "1.4.0",
+      "annotated-doc": "0.0.5",
+      "annotated-types": "0.8.0",
+      "anyio": "4.15.1",
+      "argon2-cffi": "25.1.0",
+      "argon2-cffi-bindings": "26.1.0",
+      "attrs": "26.1.0",
+      "babel": "2.18.0",
+      "backports-zstd": "1.7.0",
+      "beautifulsoup4": "4.15.0",
+      "brotli": "1.2.0",
+      "certifi": "2026.7.22",
+      "cffi": "2.1.1",
+      "charset-normalizer": "3.5.2",
+      "click": "8.5.0",
+      "colorama": "0.4.6",
+      "constantly": "23.10.4",
+      "courlan": "1.4.0",
+      "cryptography": "50.0.2",
+      "cssselect": "1.5.0",
+      "dateparser": "1.4.3",
+      "decorator": "5.3.1",
+      "defusedxml": "0.7.1",
+      "diskcache": "5.6.3",
+      "distro": "1.9.0",
+      "fastapi": "0.143.0",
+      "fastuuid": "0.14.0",
+      "feedparser": "6.0.14",
+      "feedparser-sgmllib": "2.1.0",
+      "filelock": "4.0.12",
+      "firecrawl-anydoc": "0.2.4",
+      "frozenlist": "1.8.0",
+      "fsspec": "2026.9.0",
+      "google": "3.0.0",
+      "googleapis-common-protos": "1.75.5",
+      "grep-ast": "0.9.0",
+      "grpcio": "1.84.0",
+      "h11": "0.16.0",
+      "hf-xet": "1.7.0",
+      "htmldate": "1.11.0",
+      "httpcore": "1.0.9",
+      "httpcore2": "2.13.1",
+      "httpx": "0.28.1",
+      "httpx-sse": "0.4.3",
+      "httpx2": "2.13.1",
+      "huggingface-hub": "2.2.0",
+      "hyperlink": "21.0.0",
+      "idna": "3.20",
+      "importlib-metadata": "8.9.0",
+      "itemadapter": "0.13.1",
+      "itemloaders": "1.5.0",
+      "jiter": "0.17.0",
+      "jmespath": "1.1.0",
+      "json-repair": "0.64.0",
+      "jsonschema": "4.26.0",
+      "jsonschema-specifications": "2025.9.1",
+      "justext": "3.0.2",
+      "lark-oapi": "1.7.3",
+      "litellm": "1.91.1",
+      "llama-cpp-python": "0.3.36",
+      "loguru": "0.7.3",
+      "lxml": "6.1.3",
+      "lxml-html-clean": "0.4.5",
+      "markdown-it-py": "4.2.0",
+      "mcp": "1.30.0",
+      "mdurl": "0.1.2",
+      "multidict": "6.9.1",
+      "numpy": "2.5.3",
+      "openai": "2.54.0",
+      "opentelemetry-api": "1.45.1",
+      "opentelemetry-exporter-http-transport": "0.66b1",
+      "opentelemetry-exporter-otlp-common": "0.66b1",
+      "opentelemetry-exporter-otlp-proto-common": "1.45.1",
+      "opentelemetry-exporter-otlp-proto-grpc": "1.45.1",
+      "opentelemetry-exporter-otlp-proto-http": "1.45.1",
+      "opentelemetry-instrumentation": "0.66b1",
+      "opentelemetry-instrumentation-asyncio": "0.66b1",
+      "opentelemetry-proto": "1.45.1",
+      "opentelemetry-sdk": "1.45.1",
+      "opentelemetry-semantic-conventions": "0.66b1",
+      "openviking": "0.4.23",
+      "openviking-sdk": "0.1.13",
+      "packaging": "26.3",
+      "parsel": "1.12.1",
+      "pathspec": "1.1.1",
+      "pdfminer-six": "20260107",
+      "pdfplumber": "0.11.10",
+      "pillow": "12.3.0",
+      "platformdirs": "4.12.4",
+      "propcache": "0.5.4",
+      "protobuf": "7.36.2",
+      "py": "1.11.0",
+      "pyopenssl": "26.4.0",
+      "pycparser": "3.11",
+      "pycryptodome": "3.24.0",
+      "pydantic": "2.14.0",
+      "pydantic-settings": "2.15.0",
+      "pydantic-core": "2.50.0",
+      "pypdfium2": "5.14.0",
+      "python-dateutil": "2.9.0.post0",
+      "python-dotenv": "1.2.4",
+      "python-multipart": "0.0.32",
+      "pytz": "2026.5",
+      "pywin32": "312",
+      "queuelib": "1.10.0",
+      "referencing": "0.37.0",
+      "regex": "2026.9.29",
+      "requests": "2.34.2",
+      "requests-file": "3.0.1",
+      "requests-toolbelt": "1.0.0",
+      "retry": "0.9.2",
+      "rich": "15.0.0",
+      "rpds-py": "2026.9.1",
+      "service-identity": "26.1.0",
+      "shellingham": "1.5.4",
+      "six": "1.17.0",
+      "sniffio": "1.3.1",
+      "soupsieve": "2.10",
+      "sse-starlette": "3.5.0",
+      "starlette": "1.7.0",
+      "tabulate": "0.10.0",
+      "tenacity": "9.2.1",
+      "tiktoken": "0.14.0",
+      "tld": "0.13.2",
+      "tldextract": "5.4.0",
+      "tokenizers": "0.23.3",
+      "tqdm": "4.70.1",
+      "trafilatura": "2.3.1",
+      "tree-sitter": "0.25.2",
+      "tree-sitter-c-sharp": "0.23.1",
+      "tree-sitter-cpp": "0.23.4",
+      "tree-sitter-go": "0.25.0",
+      "tree-sitter-java": "0.23.5",
+      "tree-sitter-javascript": "0.25.0",
+      "tree-sitter-language-pack": "1.13.3",
+      "tree-sitter-lua": "0.5.0",
+      "tree-sitter-php": "0.24.1",
+      "tree-sitter-python": "0.25.0",
+      "tree-sitter-rust": "0.24.0",
+      "tree-sitter-typescript": "0.23.2",
+      "truststore": "0.10.4",
+      "typer": "0.27.3",
+      "typing-inspection": "0.4.4",
+      "typing-extensions": "4.16.0",
+      "tzdata": "2026.5",
+      "tzlocal": "5.4.4",
+      "urllib3": "2.8.0",
+      "uvicorn": "0.54.0",
+      "volcengine": "1.0.228",
+      "volcengine-python-sdk": "5.0.51",
+      "w3lib": "2.5.0",
+      "websockets": "15.0.1",
+      "win32-setctime": "1.2.0",
+      "wrapt": "2.5.0",
+      "xxhash": "4.0.1",
+      "yarl": "1.25.1",
+      "zipp": "4.1.1",
+      "zope-interface": "8.6"
+    },
+    "clean_target": false
+  },
+  "reused_probe_sha256": "ede033807e9b8b676a5b4d410b8bc38d64cf74bcf8f2aea6ab36793df7f1a6fa",
+  "launcher_external_cwds": [
+    {
+      "identity": {
+        "python": "3.12.14 (main, Aug 25 2026, 14:01:42) [MSC v.1944 64 bit (AMD64)]",
+        "executable": "C:\\Users\\Tan\\.codex\\worktrees\\memory-bootstrap-fix\\Agent-Knowledge-Base\\experiments\\memory-base-package\\recheck-2026-10-12\\store\\3\\l\\Scripts\\python.exe",
+        "prefix": "C:\\Users\\Tan\\.codex\\worktrees\\memory-bootstrap-fix\\Agent-Knowledge-Base\\experiments\\memory-base-package\\recheck-2026-10-12\\store\\3\\l",
+        "base_prefix": "C:\\Users\\Tan\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python",
+        "sitepackages": "C:\\Users\\Tan\\.codex\\worktrees\\memory-bootstrap-fix\\Agent-Knowledge-Base\\experiments\\memory-base-package\\recheck-2026-10-12\\store\\3\\l\\Lib\\site-packages",
+        "sys_path": [
+          "C:\\Users\\Tan\\.codex\\worktrees\\memory-bootstrap-fix\\Agent-Knowledge-Base\\experiments\\memory-base-package",
+          "C:\\Users\\Tan\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python312.zip",
+          "C:\\Users\\Tan\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\DLLs",
+          "C:\\Users\\Tan\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\Lib",
+          "C:\\Users\\Tan\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python",
+          "C:\\Users\\Tan\\.codex\\worktrees\\memory-bootstrap-fix\\Agent-Knowledge-Base\\experiments\\memory-base-package\\recheck-2026-10-12\\store\\3\\l",
+          "C:\\Users\\Tan\\.codex\\worktrees\\memory-bootstrap-fix\\Agent-Knowledge-Base\\experiments\\memory-base-package\\recheck-2026-10-12\\store\\3\\l\\Lib\\site-packages",
+          "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages",
+          "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages",
+          "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\win32",
+          "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\win32\\lib",
+          "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\pythonwin",
+          "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\win32",
+          "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\win32\\lib",
+          "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\pythonwin"
+        ],
+        "cwd": "C:\\Users\\Tan\\AppData\\Local\\Temp",
+        "pythonpath": null,
+        "distribution": "C:\\Users\\Tan\\.codex\\worktrees\\memory-bootstrap-fix\\Agent-Knowledge-Base\\experiments\\memory-base-package\\recheck-2026-10-12\\store\\3\\l\\Lib\\site-packages\\agent_memory_base-0.1.0.dist-info"
+      },
+      "modules": {
+        "memory_base": {
+          "file": "C:\\Users\\Tan\\.codex\\worktrees\\memory-bootstrap-fix\\Agent-Knowledge-Base\\experiments\\memory-base-package\\recheck-2026-10-12\\store\\3\\l\\Lib\\site-packages\\memory_base\\__init__.py",
+          "mode": "imported"
+        },
+        "memory_base.__main__": {
+          "file": "C:\\Users\\Tan\\.codex\\worktrees\\memory-bootstrap-fix\\Agent-Knowledge-Base\\experiments\\memory-base-package\\recheck-2026-10-12\\store\\3\\l\\Lib\\site-packages\\memory_base\\__main__.py",
+          "mode": "imported_with_help_and_expected_exit_0"
+        },
+        "memory_base.autostart": {
+          "file": "C:\\Users\\Tan\\.codex\\worktrees\\memory-bootstrap-fix\\Agent-Knowledge-Base\\experiments\\memory-base-package\\recheck-2026-10-12\\store\\3\\l\\Lib\\site-packages\\memory_base\\autostart.py",
+          "mode": "imported"
+        },
+        "memory_base.backup": {
+          "file": "C:\\Users\\Tan\\.codex\\worktrees\\memory-bootstrap-fix\\Agent-Knowledge-Base\\experiments\\memory-base-package\\recheck-2026-10-12\\store\\3\\l\\Lib\\site-packages\\memory_base\\backup.py",
+          "mode": "imported"
+        },
+        "memory_base.credentials": {
+          "file": "C:\\Users\\Tan\\.codex\\worktrees\\memory-bootstrap-fix\\Agent-Knowledge-Base\\experiments\\memory-base-package\\recheck-2026-10-12\\store\\3\\l\\Lib\\site-packages\\memory_base\\credentials.py",
+          "mode": "imported"
+        },
+        "memory_base.deploy": {
+          "file": "C:\\Users\\Tan\\.codex\\worktrees\\memory-bootstrap-fix\\Agent-Knowledge-Base\\experiments\\memory-base-package\\recheck-2026-10-12\\store\\3\\l\\Lib\\site-packages\\memory_base\\deploy.py",
+          "mode": "imported"
+        },
+        "memory_base.embed": {
+          "file": "C:\\Users\\Tan\\.codex\\worktrees\\memory-bootstrap-fix\\Agent-Knowledge-Base\\experiments\\memory-base-package\\recheck-2026-10-12\\store\\3\\l\\Lib\\site-packages\\memory_base\\embed.py",
+          "mode": "imported"
+        },
+        "memory_base.gateway": {
+          "file": "C:\\Users\\Tan\\.codex\\worktrees\\memory-bootstrap-fix\\Agent-Knowledge-Base\\experiments\\memory-base-package\\recheck-2026-10-12\\store\\3\\l\\Lib\\site-packages\\memory_base\\gateway.py",
+          "mode": "imported"
+        },
+        "memory_base.mcp_stdio": {
+          "file": "C:\\Users\\Tan\\.codex\\worktrees\\memory-bootstrap-fix\\Agent-Knowledge-Base\\experiments\\memory-base-package\\recheck-2026-10-12\\store\\3\\l\\Lib\\site-packages\\memory_base\\mcp_stdio.py",
+          "mode": "imported"
+        },
+        "memory_base.paths": {
+          "file": "C:\\Users\\Tan\\.codex\\worktrees\\memory-bootstrap-fix\\Agent-Knowledge-Base\\experiments\\memory-base-package\\recheck-2026-10-12\\store\\3\\l\\Lib\\site-packages\\memory_base\\paths.py",
+          "mode": "imported"
+        },
+        "memory_base.sources": {
+          "file": "C:\\Users\\Tan\\.codex\\worktrees\\memory-bootstrap-fix\\Agent-Knowledge-Base\\experiments\\memory-base-package\\recheck-2026-10-12\\store\\3\\l\\Lib\\site-packages\\memory_base\\sources.py",
+          "mode": "imported"
+        },
+        "memory_base.upstream": {
+          "file": "C:\\Users\\Tan\\.codex\\worktrees\\memory-bootstrap-fix\\Agent-Knowledge-Base\\experiments\\memory-base-package\\recheck-2026-10-12\\store\\3\\l\\Lib\\site-packages\\memory_base\\upstream.py",
+          "mode": "imported"
+        }
+      },
+      "loaded_excluded_namespaces": [],
+      "dependency_providers": {
+        "fastapi": {
+          "version": "0.143.0",
+          "file": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\fastapi\\__init__.py"
+        },
+        "pydantic": {
+          "version": "2.14.0",
+          "file": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\pydantic\\__init__.py"
+        },
+        "mcp": {
+          "version": "1.30.0",
+          "file": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\mcp\\__init__.py"
+        }
+      }
+    },
+    {
+      "identity": {
+        "python": "3.12.14 (main, Aug 25 2026, 14:01:42) [MSC v.1944 64 bit (AMD64)]",
+        "executable": "C:\\Users\\Tan\\.codex\\worktrees\\memory-bootstrap-fix\\Agent-Knowledge-Base\\experiments\\memory-base-package\\recheck-2026-10-12\\store\\3\\l\\Scripts\\python.exe",
+        "prefix": "C:\\Users\\Tan\\.codex\\worktrees\\memory-bootstrap-fix\\Agent-Knowledge-Base\\experiments\\memory-base-package\\recheck-2026-10-12\\store\\3\\l",
+        "base_prefix": "C:\\Users\\Tan\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python",
+        "sitepackages": "C:\\Users\\Tan\\.codex\\worktrees\\memory-bootstrap-fix\\Agent-Knowledge-Base\\experiments\\memory-base-package\\recheck-2026-10-12\\store\\3\\l\\Lib\\site-packages",
+        "sys_path": [
+          "C:\\Users\\Tan\\.codex\\worktrees\\memory-bootstrap-fix\\Agent-Knowledge-Base\\experiments\\memory-base-package",
+          "C:\\Users\\Tan\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python312.zip",
+          "C:\\Users\\Tan\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\DLLs",
+          "C:\\Users\\Tan\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\Lib",
+          "C:\\Users\\Tan\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python",
+          "C:\\Users\\Tan\\.codex\\worktrees\\memory-bootstrap-fix\\Agent-Knowledge-Base\\experiments\\memory-base-package\\recheck-2026-10-12\\store\\3\\l",
+          "C:\\Users\\Tan\\.codex\\worktrees\\memory-bootstrap-fix\\Agent-Knowledge-Base\\experiments\\memory-base-package\\recheck-2026-10-12\\store\\3\\l\\Lib\\site-packages",
+          "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages",
+          "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages",
+          "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\win32",
+          "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\win32\\lib",
+          "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\pythonwin",
+          "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\win32",
+          "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\win32\\lib",
+          "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\pythonwin"
+        ],
+        "cwd": "C:\\WINDOWS\\System32",
+        "pythonpath": null,
+        "distribution": "C:\\Users\\Tan\\.codex\\worktrees\\memory-bootstrap-fix\\Agent-Knowledge-Base\\experiments\\memory-base-package\\recheck-2026-10-12\\store\\3\\l\\Lib\\site-packages\\agent_memory_base-0.1.0.dist-info"
+      },
+      "modules": {
+        "memory_base": {
+          "file": "C:\\Users\\Tan\\.codex\\worktrees\\memory-bootstrap-fix\\Agent-Knowledge-Base\\experiments\\memory-base-package\\recheck-2026-10-12\\store\\3\\l\\Lib\\site-packages\\memory_base\\__init__.py",
+          "mode": "imported"
+        },
+        "memory_base.__main__": {
+          "file": "C:\\Users\\Tan\\.codex\\worktrees\\memory-bootstrap-fix\\Agent-Knowledge-Base\\experiments\\memory-base-package\\recheck-2026-10-12\\store\\3\\l\\Lib\\site-packages\\memory_base\\__main__.py",
+          "mode": "imported_with_help_and_expected_exit_0"
+        },
+        "memory_base.autostart": {
+          "file": "C:\\Users\\Tan\\.codex\\worktrees\\memory-bootstrap-fix\\Agent-Knowledge-Base\\experiments\\memory-base-package\\recheck-2026-10-12\\store\\3\\l\\Lib\\site-packages\\memory_base\\autostart.py",
+          "mode": "imported"
+        },
+        "memory_base.backup": {
+          "file": "C:\\Users\\Tan\\.codex\\worktrees\\memory-bootstrap-fix\\Agent-Knowledge-Base\\experiments\\memory-base-package\\recheck-2026-10-12\\store\\3\\l\\Lib\\site-packages\\memory_base\\backup.py",
+          "mode": "imported"
+        },
+        "memory_base.credentials": {
+          "file": "C:\\Users\\Tan\\.codex\\worktrees\\memory-bootstrap-fix\\Agent-Knowledge-Base\\experiments\\memory-base-package\\recheck-2026-10-12\\store\\3\\l\\Lib\\site-packages\\memory_base\\credentials.py",
+          "mode": "imported"
+        },
+        "memory_base.deploy": {
+          "file": "C:\\Users\\Tan\\.codex\\worktrees\\memory-bootstrap-fix\\Agent-Knowledge-Base\\experiments\\memory-base-package\\recheck-2026-10-12\\store\\3\\l\\Lib\\site-packages\\memory_base\\deploy.py",
+          "mode": "imported"
+        },
+        "memory_base.embed": {
+          "file": "C:\\Users\\Tan\\.codex\\worktrees\\memory-bootstrap-fix\\Agent-Knowledge-Base\\experiments\\memory-base-package\\recheck-2026-10-12\\store\\3\\l\\Lib\\site-packages\\memory_base\\embed.py",
+          "mode": "imported"
+        },
+        "memory_base.gateway": {
+          "file": "C:\\Users\\Tan\\.codex\\worktrees\\memory-bootstrap-fix\\Agent-Knowledge-Base\\experiments\\memory-base-package\\recheck-2026-10-12\\store\\3\\l\\Lib\\site-packages\\memory_base\\gateway.py",
+          "mode": "imported"
+        },
+        "memory_base.mcp_stdio": {
+          "file": "C:\\Users\\Tan\\.codex\\worktrees\\memory-bootstrap-fix\\Agent-Knowledge-Base\\experiments\\memory-base-package\\recheck-2026-10-12\\store\\3\\l\\Lib\\site-packages\\memory_base\\mcp_stdio.py",
+          "mode": "imported"
+        },
+        "memory_base.paths": {
+          "file": "C:\\Users\\Tan\\.codex\\worktrees\\memory-bootstrap-fix\\Agent-Knowledge-Base\\experiments\\memory-base-package\\recheck-2026-10-12\\store\\3\\l\\Lib\\site-packages\\memory_base\\paths.py",
+          "mode": "imported"
+        },
+        "memory_base.sources": {
+          "file": "C:\\Users\\Tan\\.codex\\worktrees\\memory-bootstrap-fix\\Agent-Knowledge-Base\\experiments\\memory-base-package\\recheck-2026-10-12\\store\\3\\l\\Lib\\site-packages\\memory_base\\sources.py",
+          "mode": "imported"
+        },
+        "memory_base.upstream": {
+          "file": "C:\\Users\\Tan\\.codex\\worktrees\\memory-bootstrap-fix\\Agent-Knowledge-Base\\experiments\\memory-base-package\\recheck-2026-10-12\\store\\3\\l\\Lib\\site-packages\\memory_base\\upstream.py",
+          "mode": "imported"
+        }
+      },
+      "loaded_excluded_namespaces": [],
+      "dependency_providers": {
+        "fastapi": {
+          "version": "0.143.0",
+          "file": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\fastapi\\__init__.py"
+        },
+        "pydantic": {
+          "version": "2.14.0",
+          "file": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\pydantic\\__init__.py"
+        },
+        "mcp": {
+          "version": "1.30.0",
+          "file": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\mcp\\__init__.py"
+        }
+      }
+    }
+  ],
+  "synthetic_protocol": {
+    "identity": {
+      "python": "3.12.14 (main, Aug 25 2026, 14:01:42) [MSC v.1944 64 bit (AMD64)]",
+      "executable": "C:\\Users\\Tan\\.codex\\worktrees\\memory-bootstrap-fix\\Agent-Knowledge-Base\\experiments\\memory-base-package\\recheck-2026-10-12\\store\\3\\l\\Scripts\\python.exe",
+      "prefix": "C:\\Users\\Tan\\.codex\\worktrees\\memory-bootstrap-fix\\Agent-Knowledge-Base\\experiments\\memory-base-package\\recheck-2026-10-12\\store\\3\\l",
+      "base_prefix": "C:\\Users\\Tan\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python",
+      "sitepackages": "C:\\Users\\Tan\\.codex\\worktrees\\memory-bootstrap-fix\\Agent-Knowledge-Base\\experiments\\memory-base-package\\recheck-2026-10-12\\store\\3\\l\\Lib\\site-packages",
+      "sys_path": [
+        "C:\\Users\\Tan\\.codex\\worktrees\\memory-bootstrap-fix\\Agent-Knowledge-Base\\experiments\\memory-base-package",
+        "C:\\Users\\Tan\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python312.zip",
+        "C:\\Users\\Tan\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\DLLs",
+        "C:\\Users\\Tan\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\Lib",
+        "C:\\Users\\Tan\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python",
+        "C:\\Users\\Tan\\.codex\\worktrees\\memory-bootstrap-fix\\Agent-Knowledge-Base\\experiments\\memory-base-package\\recheck-2026-10-12\\store\\3\\l",
+        "C:\\Users\\Tan\\.codex\\worktrees\\memory-bootstrap-fix\\Agent-Knowledge-Base\\experiments\\memory-base-package\\recheck-2026-10-12\\store\\3\\l\\Lib\\site-packages",
+        "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages",
+        "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages",
+        "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\win32",
+        "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\win32\\lib",
+        "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\pythonwin",
+        "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\win32",
+        "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\win32\\lib",
+        "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\pythonwin"
+      ],
+      "cwd": "C:\\Users\\Tan\\AppData\\Local\\Temp",
+      "pythonpath": null,
+      "distribution": "C:\\Users\\Tan\\.codex\\worktrees\\memory-bootstrap-fix\\Agent-Knowledge-Base\\experiments\\memory-base-package\\recheck-2026-10-12\\store\\3\\l\\Lib\\site-packages\\agent_memory_base-0.1.0.dist-info"
+    },
+    "server_info": {
+      "name": "personal-memory-base",
+      "title": null,
+      "version": "1.30.0",
+      "websiteUrl": null,
+      "icons": null
+    },
+    "protocol_version": "2025-11-25",
+    "tool_names": [
+      "memory_add",
+      "memory_get",
+      "memory_list",
+      "memory_search"
+    ],
+    "tool_schemas": {
+      "memory_add": {
+        "properties": {
+          "request_id": {
+            "title": "Request Id",
+            "type": "string"
+          },
+          "content": {
+            "title": "Content",
+            "type": "string"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "kind": {
+            "default": "note",
+            "enum": [
+              "note",
+              "article_summary",
+              "video_summary"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "source_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Source Url"
+          },
+          "source_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Source Id"
+          },
+          "conversation_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Conversation Id"
+          },
+          "observed_on": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Observed On"
+          },
+          "scope": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Scope"
+          }
+        },
+        "required": [
+          "request_id",
+          "content",
+          "title"
+        ],
+        "title": "memory_addArguments",
+        "type": "object",
+        "additionalProperties": false
+      },
+      "memory_search": {
+        "properties": {
+          "query": {
+            "title": "Query",
+            "type": "string"
+          },
+          "limit": {
+            "default": 5,
+            "title": "Limit",
+            "type": "integer"
+          },
+          "scope": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Scope"
+          }
+        },
+        "required": [
+          "query"
+        ],
+        "title": "memory_searchArguments",
+        "type": "object",
+        "additionalProperties": false
+      },
+      "memory_get": {
+        "properties": {
+          "uri": {
+            "title": "Uri",
+            "type": "string"
+          },
+          "expected_revision": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Expected Revision"
+          },
+          "scope": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Scope"
+          }
+        },
+        "required": [
+          "uri"
+        ],
+        "title": "memory_getArguments",
+        "type": "object",
+        "additionalProperties": false
+      },
+      "memory_list": {
+        "properties": {
+          "scope": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Scope"
+          },
+          "limit": {
+            "default": 100,
+            "title": "Limit",
+            "type": "integer"
+          },
+          "cursor": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Cursor"
+          }
+        },
+        "title": "memory_listArguments",
+        "type": "object",
+        "additionalProperties": false
+      }
+    },
+    "calls": {
+      "memory_add": {
+        "status": "fixture",
+        "route": "/api/memory/add",
+        "arguments": {
+          "request_id": "package-86-fixture",
+          "content": "Synthetic wheel acceptance note.",
+          "title": "Package fixture",
+          "kind": "note",
+          "source_url": null,
+          "source_id": null,
+          "conversation_id": null,
+          "observed_on": null,
+          "scope": "captures"
+        }
+      },
+      "memory_search": {
+        "status": "fixture",
+        "route": "/api/memory/search",
+        "arguments": {
+          "query": "Synthetic wheel acceptance",
+          "limit": 3,
+          "scope": "captures"
+        }
+      },
+      "memory_get": {
+        "status": "fixture",
+        "route": "/api/memory/get",
+        "arguments": {
+          "uri": "viking://resources/captures/fixture.md",
+          "expected_revision": null,
+          "scope": "captures"
+        }
+      },
+      "memory_list": {
+        "status": "fixture",
+        "route": "/api/memory/list",
+        "arguments": {
+          "scope": "captures",
+          "limit": 10,
+          "cursor": null
+        }
+      }
+    },
+    "http_received": [
+      {
+        "path": "/api/memory/add",
+        "arguments": {
+          "request_id": "package-86-fixture",
+          "content": "Synthetic wheel acceptance note.",
+          "title": "Package fixture",
+          "kind": "note",
+          "source_url": null,
+          "source_id": null,
+          "conversation_id": null,
+          "observed_on": null,
+          "scope": "captures"
+        },
+        "synthetic_auth_matched": true
+      },
+      {
+        "path": "/api/memory/search",
+        "arguments": {
+          "query": "Synthetic wheel acceptance",
+          "limit": 3,
+          "scope": "captures"
+        },
+        "synthetic_auth_matched": true
+      },
+      {
+        "path": "/api/memory/get",
+        "arguments": {
+          "uri": "viking://resources/captures/fixture.md",
+          "expected_revision": null,
+          "scope": "captures"
+        },
+        "synthetic_auth_matched": true
+      },
+      {
+        "path": "/api/memory/list",
+        "arguments": {
+          "scope": "captures",
+          "limit": 10,
+          "cursor": null
+        },
+        "synthetic_auth_matched": true
+      }
+    ],
+    "boundary": "Real MCP stdio server and HTTP forwarding; synthetic HTTP responses, no OpenViking data or real credentials."
+  },
+  "failure_stage": "default-real-install",
+  "overall": "FAIL",
+  "failure": {
+    "type": "RuntimeError",
+    "message": "default-real-install exited 1; see C:\\Users\\Tan\\.codex\\worktrees\\memory-bootstrap-fix\\Agent-Knowledge-Base\\experiments\\memory-base-package\\recheck-2026-10-12\\store\\3\\command-021-default-real-install.log"
+  }
+}

@@ -65,17 +65,39 @@ def main():
     stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
     parser = argparse.ArgumentParser()
     parser.add_argument("--run-name", default="run-" + stamp, help="New unique store directory name; use a short name on Windows")
+    parser.add_argument("--asset-root", type=Path, help="Owner-authorized external R4 fixture root only")
     args = parser.parse_args()
     assert args.run_name not in {".", ".."} and Path(args.run_name).name == args.run_name
-    store = HERE / "store" / args.run_name
+    if args.asset_root is not None:
+        parent = Path(r"C:\Users\Tan\.mb86")
+        authorized = parent / "r4"
+        assert parent.resolve() == parent.absolute(), "Asset parent may not redirect through an alias"
+        assert args.asset_root.resolve() == authorized.resolve(), "External asset scope is limited to .mb86/r4"
+        assert authorized.resolve().parent == parent.resolve()
+        assert not authorized.exists(), "Preserve all existing assets; choose a newly authorized root"
+        census = json.loads((HERE / "external_asset_path_census.json").read_text(encoding="utf-8"))
+        assert census["all_proposed_paths_lt250"] and census["target_paths_ge_250"] == 0
+        assert Path(census["target_site"]).resolve() == (authorized / "d/runtime/Lib/site-packages").resolve()
+        store = authorized.resolve()
+    else:
+        store = HERE / "store" / args.run_name
     store.mkdir(parents=True, exist_ok=False)
+    if args.asset_root is not None:
+        note = store.parent / "README-kb86-r4.txt"
+        with note.open("x", encoding="utf-8") as handle:
+            handle.write("Owner-authorized #86 R4 fixture assets only. Preserve r4, its runtimes, data, wheels and logs.\n"
+                         "Repository evidence: experiments/memory-base-package/recheck-2026-10-12/.\n"
+                         "Frozen product: " + FROZEN + ". No formal service/config/runtime ownership.\n")
     report = {"frozen_sha": FROZEN, "store": str(store), "started_utc": stamp, "commands": [], "checks": {},
               "script_hashes": {path.name: sha(path.read_bytes()) for path in HERE.glob("*.py")},
               "limitations": ["Windows/Python 3.12 only; POSIX first credential persistence is not verified.",
                               "Launcher explicitly reuses formal dependencies; the two target runtimes do not.",
                               "No LLM/summary generation; native search uses the existing local GGUF model."]}
     report["fixture_path_layout"] = {"launcher": "l", "default_home": "d", "fresh_home": "f",
-                                    "short_home_evidence_only": True, "windows_long_paths_not_enabled_by_test": True}
+                                    "short_home_evidence_only": True, "windows_long_paths_not_enabled_by_test": True,
+                                    "authorized_external_asset_root": args.asset_root is not None}
+    if args.asset_root is not None:
+        report["external_asset_path_census_sha256"] = sha((HERE / "external_asset_path_census.json").read_bytes())
     # R2 method correction: preserve this machine's existing credential-free
     # loopback network proxy; private pip configuration remains excluded.
     proxy_policy = {}

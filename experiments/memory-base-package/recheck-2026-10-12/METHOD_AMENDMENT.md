@@ -17,3 +17,15 @@
 该 fixture 变化限定了最终成功结论的适用范围：短 home 的 Windows/Python3.12 安装；不能据它宣称任意深 home 在关闭 Windows 长路径支持时可用。补充环境探针同时记录全部实际 distribution origin/version，并核对已安装的所有 constraints pin；constraints 中未参与安装的包不强行安装。
 
 Lead 在开跑前另以 formal 的 pywin32 RECORD 做只读独立核对：短 default 布局最长完整文件路径为 238（`MAPIStubLibrary/LICENSE`），`>=260` 的条目为 0。该核对提供短 fixture 的依据，不代替实际 pip/native 验收。
+
+## R4 前：保留短 repo 路径失败，扩充专属外部 fixture 资产域
+
+第三轮 `store/3` 越过 pywin32，但完整依赖 pip 在 `volcenginesdkadvdefence20230308/models/biz_in_kbps_flow_for_describe_biz_flow_and_conn_count_output.py` 报 Errno 2，并明确提示 Windows 长路径支持未启用；CLI/pip/编排自然结束、退出 1。真实失败副本为 [short_path_platform_failure.json](short_path_platform_failure.json)。未到自身包安装、native 或 fresh；旧资产、原始日志全部保留，无重启或清理。
+
+仅 pywin32 的事前 census 不覆盖云 SDK 的更长文件名。只读 SDK RECORD census 为 [short_path_census.json](short_path_census.json)，包含已生成 pyc 的保守上限：53k 左右条目、8713 个预测路径 >=260。它解释为何同 repo 写域仍不足，不代替新目标 pip 结果。
+
+Lead 已明确扩充**fixture 资产**授权，仅 `C:\Users\Tan\.mb86\r4` 及父 `.mb86` 的本票说明；repo 写域仍仅本 R2 目录。不改正式实例、产品、HKLM，也不加 junction。开跑前只读全部 formal distribution RECORD，核拟目标全部路径 <250，完整数据见 [external_asset_path_census.json](external_asset_path_census.json)；其中 compiled 项也计入保守上限。方法及前三次失败记录先提交，再执行 `run_recheck.py --asset-root C:\Users\Tan\.mb86\r4`。
+
+脚本只接受这个专属外部根，检查解析后的父归属和 census，要求根不存在，禁止覆盖/删除旧目录。wheel、export、launcher、两全新目标 runtime、原始日志/报告、数据和 process records 都在 r4 保留；安全 JSON/脚本/结论仍在 repo 白名单。native home 继续必须在本 store 下，保持真实全新依赖 pip 和全部原判据。若短 home 成功，也不推翻前三次失败，不宣称关闭 Windows 长路径支持时任意深 home 可安装。
+
+开跑前完成全部 **175 份 RECORD / 101336 条目** 核验，拟 target site 前缀长 49，最长预测文件路径 **197**，`>=250` 的条目为 **0**。逐文件 physical-resolve 和另一个等价 lexical normpath 上界均给出相同完整结果；父根另做实际 resolve 并禁止 alias/junction。后者避免了对十万不存在文件开 handle 的重复 IO，数据为 [external_asset_path_census_lexical.json](external_asset_path_census_lexical.json)。原慢测量在身份前置保护后已自然结束、退出 0，没有执行 Stop-Process，也没有中断 pip 或重启任何测量；两个 census 均保留。

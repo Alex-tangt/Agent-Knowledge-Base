@@ -1,0 +1,24 @@
+{
+  "distribution": "volcengine-python-sdk",
+  "version": "5.0.51",
+  "record_file_count": 52927,
+  "target_site_characters": 158,
+  "longest_three": [
+    [
+      306,
+      "volcenginesdkmlplatform20240701/models/__pycache__/matching_reservation_plan_time_config_for_update_resource_reservation_plan_input.cpython-312.pyc"
+    ],
+    [
+      306,
+      "volcenginesdkmlplatform20240701/models/__pycache__/available_resource_for_list_resource_reservation_plan_available_resources_output.cpython-312.pyc"
+    ],
+    [
+      306,
+      "volcenginesdkarkclaw/models/__pycache__/external_identity_provider_configuration_for_update_identity_provider_token_exchange_output.cpython-312.pyc"
+    ]
+  ],
+  "target_paths_ge_260": 8713,
+  "longest_relative_characters": 147,
+  "maximum_site_prefix_characters_for_lt260": 111,
+  "boundary": "Read-only distribution RECORD path census, not an install result."
+}
