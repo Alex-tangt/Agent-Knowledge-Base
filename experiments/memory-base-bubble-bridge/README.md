@@ -46,7 +46,7 @@
 ## 交付文件
 
 - `baseline-hashes.json` / `final-hashes.json`：实际原始、公共快照、候选工作文件的 raw SHA256 与仅 CRLF→LF SHA256；两处 Git blob SHA256 单独列出。`actual_raw_unchanged=true`，实际四文件在收尾仍与初始 raw SHA 相同。不能把 Git LF blob 或候选 raw 字节虚称为实际文件的逐字节相同版本。
-- `bubble-four-tools.patch`：基线到冻结候选的仅四文件 Git 补丁（LF 规范化 blob）；40,184 字节，raw SHA256 `f65c17ddd0ef1211aae374a533c0aa9decc62b626c5196dd7c321152139aedf8`。
+- `bubble-four-tools.patch`：基线到冻结候选的仅四文件 Git 补丁（LF 规范化 blob）；40,184 字节，raw SHA256 `f65c17ddd0ef1211aae374a533c0aa9decc62b626c5196dd7c321152139aedf8`。本目录 `.gitattributes` 对该 artifact 设置 `-text`，防止后续 Windows checkout 改写补丁字节；对原始公共快照执行 `git apply --check` 已通过，未实际应用。
 - `delivery.json`：冻结 commit、patch 哈希、实际依赖版本、命令结果和环境边界。Node 24.14.1；实际复用 pi-ai/pi-coding-agent 1.1.0、typebox 1.3.27、zod 4.6.5、typescript 5.9.3、tsx 4.23.15。
 - `capture_hashes.py`、`export_delivery.py`、`run_check.py`：只读采集四文件、导出冻结补丁与捕获现有命令，不读取实际 `.env`。已有封存结果拒绝覆盖。
 
