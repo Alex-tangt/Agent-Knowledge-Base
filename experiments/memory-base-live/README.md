@@ -84,3 +84,9 @@ Bubble 的 `scripts/smoke-memory-live.ts` 会创建新总结任务并实际调�
 这条项目词法查询验证实际接缝，不是检索质量benchmark。项目原文没有复制进native capture，源文件当前状态仍为权威。正式备份位于 `D:\python_work\work2026-4\memory-base-backups\formal-20261012T014904`，manifest SHA256 为 `27dc14f772e61a351be62bf3c5dfb24397c27cec8894612065139a8677541c65`；创建时尚未做自身恢复，后续#94实际恢复与Lead复核已通过，见上表。此前#85证明的是独立合成实例的空目标恢复。
 
 #85完整原生隔离恢复、#86独立包及#94实际正式快照恢复分别记录。#89/#91后的#86 R5已取得真实新栈/默认首次运行证据；保留此前FAIL及环境边界。Bubble#90/#92/#93代码已实际应用，组合Lead闸门73应用/13host通过。跨设备、真实登录及DSH/opencode实际对话仍未验证，不能宣布整个产品目标完成。AOCI按owner决定移除。
+
+## 2026-10-13 OpenCode 实际本地模型读取
+
+[#98 有限实验](../memory-base-opencode-dialogue/README.md)冻结`c73ba717`。0.6B 仅 list，未 get，按原判据 FAIL；既有3B实际完成list/get，返回正文 UTF-8 的10053字节、revision/content_hash与当前README完全一致。[Lead独立复核](lead-opencode-dialogue-2026-10-13.json)核对两份原trace、13资产的原件/Git哈希、六个当前配置/auth哈希及全部记录PID缺席，正式三health200。
+
+3B 的 expected_revision=null，且最终答复漏报path/hash；未验证默认商业模型、capture模型对话或完整提示规约。两次会话自然退出，无第三轮/付费调用/新增模型，全局配置不改。DSH、第二设备及正常登录仍缺真实证据。

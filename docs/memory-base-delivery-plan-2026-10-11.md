@@ -48,8 +48,8 @@ Lead 负责本文件、ADR、地图同步和集成验收；执行者各自工作
 | [#93 Bubble Windows 状态发布](https://github.com/Alex-tangt/Agent-Knowledge-Base/issues/93) | 冻结`ba8b5b5`；Lead组合#92为`8e13fae`，build/73应用/13host全通过；实际三scripts已备份应用，自有manager重启健康 | Bubble `scripts/local-backend.mjs`, `host-state.mjs`, 对应scripts测试；本仓`experiments/memory-base-host-state/` | 无 | rename短错误至多暂停200ms，保持原子JSON/同步顺序；持续失败关闭自有child并清理本instance；原120s就绪上限不变，原FAIL保留 |
 | [#94 正式快照隔离恢复](https://github.com/Alex-tangt/Agent-Knowledge-Base/issues/94) | 固定67文件/39目录实际快照→空data恢复、三原文/来源/权限/凭据重发/MCP通过；Lead独立31原件/清单及实际读回/权限/清理通过 | `experiments/memory-base-formal-restore/`，隔离`.mb94/a`；借R5 f runtime，重装launcher/RECORD及缓存副作用声明 | #86（原生边，已通过） | 原快照不变，target已停；所有方法FAIL保留；不冒称第三新栈、任意ACL对象或真实登录/设备验证 |
 | [#95 交付分支复核](https://github.com/Alex-tangt/Agent-Knowledge-Base/issues/95) | 已合入`0113d3c`：1131 blobs/47当前凭据/3原文/1私有URL无实际匹配；131候选411位置保留分类、6项Lead复核通过；后续25新blob单独核对；草稿PR #96已建立 | `experiments/memory-base-publication/`，Lead负责PR与地图 | 无 | 不输出秘密、不改历史/用户文件/正式实例；当前树与历史分开、判据/漏项明确；发布前复核根venv闸门/产品freeze/实际证据链接 |
-| [#97 虚拟环境入口识别](https://github.com/Alex-tangt/Agent-Knowledge-Base/issues/97) | 已合入`4498aea`，WSL真实符号链接RED→GREEN；冻结`4fc5aa9` Lead837单测/5skip、harness10/10、opencode脚本SKIP；最终 `a852fab` 远端 Ubuntu838/4skip、Windows839/3skip及两腿harness10/10通过；脚本均SKIP | `memory_base/deploy.py`、对应单测、`experiments/memory-base-runtime-path/` | 无 | 实际venv符号链接红/绿；不同环境共享基础exe不能视作同一runtime；own-site与缓存/身份安全边界保持；真实wheel自动/fresh与冻结全量复验 |
-| [#98 本地模型实际 opencode 对话](https://github.com/Alex-tangt/Agent-Knowledge-Base/issues/98) | 已登记，有限只读验收待执行 | `experiments/memory-base-opencode-dialogue/**`；隔离临时 cwd、仅子进程配置 | 无 | 既有本地模型实际完成 MCP 读取、源 revision 独立校核；禁止远端回落/新增模型/写记忆/改日常配置；真实对话与 SDK 冒烟分别判断 |
+| [#97 虚拟环境入口识别](https://github.com/Alex-tangt/Agent-Knowledge-Base/issues/97) | 已合入`4498aea`并关闭，WSL真实符号链接RED→GREEN；冻结`4fc5aa9` Lead837单测/5skip、harness10/10、opencode脚本SKIP；最终 `a852fab` 远端 Ubuntu838/4skip、Windows839/3skip及两腿harness10/10通过；脚本均SKIP | `memory_base/deploy.py`、对应单测、`experiments/memory-base-runtime-path/` | 无 | 实际venv符号链接红/绿；不同环境共享基础exe不能视作同一runtime；own-site与缓存/身份安全边界保持；真实wheel自动/fresh与冻结全量复验 |
+| [#98 本地模型实际 opencode 对话](https://github.com/Alex-tangt/Agent-Knowledge-Base/issues/98) | 冻结`c73ba717`：0.6B未get而FAIL；3B实际list/get/正文hash通过，版本前置与最终答复未遵从；Lead原trace/13资产独立核验通过 | `experiments/memory-base-opencode-dialogue/**`；隔离临时 cwd、仅子进程配置 | 无 | 既有本地模型实际完成 MCP 读取、源 revision 独立校核；禁止远端回落/新增模型/写记忆/改日常配置；真实对话与 SDK 冒烟分别判断 |
 | 产品化计划、实际项目接入与复跑 | 执行中 | Lead 文档、地图与正式接入记录 | 上述实现和验收单元 | 冻结版本全量单测、已有 harness/冒烟、正式实例与旧消费者兼容 |
 
 ## 完成审计
@@ -70,7 +70,7 @@ Lead 负责本文件、ADR、地图同步和集成验收；执行者各自工作
 
 | 要求 | 当前判断与证据 | 仍须取得的证据 |
 |---|---|---|
-| S1 / I2 / A：人的共同记忆、新 agent 无迁移读取 | 正式 Bubble 与 Codex 读取同 URI，另 reader 身份原生 stdio 读回；真实宿主轨迹及哈希已保存 | DSH/opencode 登记与规约存在，其实际对话未验证 |
+| S1 / I2 / A：人的共同记忆、新 agent 无迁移读取 | 正式 Bubble 与 Codex 读取同 URI，另 reader 身份原生 stdio 读回；真实宿主轨迹及哈希已保存 | #98 既有本地3B实际OpenCode list/get及正文hash通过；默认模型完整规约、capture对话和DSH实际会话仍未验证 |
 | S2 / E：capture 与实时只读项目共同寻址 | #85增改删/失联恢复/越界、#90/#92实际scope/分页/版本、R5新包capture通过；#94真实快照来源原字节恢复，实际读取当前项目hash，Lead再读当前README | 首期项目词法查询不冒称语义检索；项目正文仍归真实repo |
 | S3 / I1：原样保存及回执追溯 | 正式文章/视频一致、重复exists/变更拒覆盖；R5新包Unicode/CRLF/hash/幂等；#94实际快照三原文及来源metadata读回，Lead再读三receipt一致 | 首次安装guard/不合法fixture/Lead错误API路径的FAIL均保留，不能把404/422当权限成功 |
 | I3 / F：共同写入合同、只读源权限 | HTTP/MCP共用gateway，writer仅追加capture；#85/R5拒写和范围、#92笔记意图保护通过；#94实际合法reader403无新增、native账户域403，目标7凭据重发不同 | 有限命令规则不覆盖任意自然语言；正式快照未含自定义access/受限文件ACL，不能假称恢复该不存在对象 |
@@ -78,12 +78,12 @@ Lead 负责本文件、ADR、地图同步和集成验收；执行者各自工作
 | B / C：第二台设备与可见延迟 | 同机两个真实宿主共享已验；2026-10-12 ADB 枚举无连接设备，不能据同机结果宣称两台设备通过 | 实际手机/第二设备读写互查、可见延迟；只使用既有私有网络 |
 | G / D15：完整备份、空根恢复 | #85坏清单/空根/权限/重发通过；#94实际67文件/39目录快照空data恢复、真实原文/来源/权限/MCP通过；Lead独立重算及启动目标复核 | 这是该固定快照恢复点；不承诺任意时刻恢复；共享f launcher/RECORD重装副作用及旧before取证缺口明确披露 |
 | D9 / D16：安装、运行与无人值守启动 | 正式三服务ready，Run归属/同命令手动执行通过；R5新wheel默认/fresh安装、默认首次native168.13秒通过；清理无残留 | 真实注销/登录未测；POSIX非已交付平台；初次SDK准备仍有数分钟成本 |
-| D4：独立产物、退出与维护 | wheel排除旧三包；固定依赖/来源/迁移/出口见计划；833单测及R5独立native、#94实际快照恢复通过；Bubble#90/#92/#93已实际部署 | 跨设备/真实登录和DSH/opencode实际对话未验，不能宣称整个目标完成 |
+| D4：独立产物、退出与维护 | wheel排除旧三包；固定依赖/来源/迁移/出口见计划；833单测及R5独立native、#94实际快照恢复通过；Bubble#90/#92/#93已实际部署 | 跨设备/真实登录与DSH实际对话未验；OpenCode本地读通不等于默认模型/capture/完整规约验收，不能宣称整个目标完成 |
 
 本表用于决定下一步，不替代原始证据。数据出口可以通过四工具 list/get 读取原文与引用；native 冷备份是恢复介质，不能称通用跨引擎格式。当前工作集测点为三服务树 273.97 MiB，仅是闲置 Windows 工作集相加，非峰值或私有内存，详见真实接入记录。
 
 尚缺的第二设备、真实登录和 DSH/opencode 对话按[剩余真实验收步骤](memory-base-remaining-acceptance.md)取得证据。步骤本身不计为通过，不强制注销用户，不用同机模拟或配置登记替代真实行为。
 
-草稿交付已建立[PR #96](https://github.com/Alex-tangt/Agent-Knowledge-Base/pull/96)。首远端两腿缺 FastAPI 收集失败，第二轮 Ubuntu 的 3 failed 定位为虚拟环境入口解析，#97 已修复；旧失败在[干净CI记录](../experiments/memory-base-ci/README.md)保留。最终 `a852fab` 的[run 38271905054](https://github.com/Alex-tangt/Agent-Knowledge-Base/actions/runs/38271905054) 两平台 Python3.12 均通过：Ubuntu838 passed/4 skipped，Windows839 passed/3 skipped，两腿 harness10/10。opencode 脚本都实际执行但无4096服务而 SKIP，不计为真实对话或原生POSIX部署。#98 已登记，仅使用既有本地模型、子进程配置及项目只读工具验证实际会话；结果尚未取得。
+草稿交付已建立[PR #96](https://github.com/Alex-tangt/Agent-Knowledge-Base/pull/96)。首远端两腿缺 FastAPI 收集失败，第二轮 Ubuntu 的 3 failed 定位为虚拟环境入口解析，#97 已修复；旧失败在[干净CI记录](../experiments/memory-base-ci/README.md)保留。最终 `a852fab` 的[run 38271905054](https://github.com/Alex-tangt/Agent-Knowledge-Base/actions/runs/38271905054) 两平台 Python3.12 均通过：Ubuntu838 passed/4 skipped，Windows839 passed/3 skipped，两腿 harness10/10。opencode 脚本都实际执行但无4096服务而 SKIP，不计为真实对话或原生POSIX部署。#98 已完成两次有限实际会话：0.6B仅list而FAIL；既有3B实际list/get返回正文与README原始10053字节/hash完全一致，Lead独立原trace复核通过。3B调用`expected_revision=null`、最终文字漏报path/hash，完整提示规约未通过；默认商业模型、capture对话、DSH、第二设备和真实登录仍缺证。六个配置/auth SHA未变、自有进程自然退出，未新增模型或付费调用。详见[实际OpenCode记录](../experiments/memory-base-opencode-dialogue/README.md)。
 
 **早期标准环境启动失败（2026-10-12，修复前）**：#86 对从未启动的 fresh home 去掉额外 bytecode 禁止后，仍在原 300 秒上限未等到 upstream 健康；start 总耗时 314.52 秒包含 embedding 启动，整个验收 331.88 秒。gateway 与后续读写/MCP 没有运行，owned stop 退出 0，端口与进程无残留，旧 FAIL 原字节未变。该结果当时证明普通冷启动仍阻塞部署，不能据安装成功关闭 #86。随后 #91 修复与 #86 R5 默认首次运行通过，当前状态以上方逐项核验和 R5 原始记录为准；此段保留失败历史，不表示当前仍阻塞。

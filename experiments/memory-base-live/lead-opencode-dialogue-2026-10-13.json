@@ -1,0 +1,81 @@
+{
+  "date": "2026-10-13",
+  "experiment_freeze": "c73ba717dd71ebde51710b19e2fe4dec28db9ff4",
+  "product_source_baseline": "a852fab33db109e72a19665877f573e7bd6c2d15",
+  "manifest_files_verified_against_worker_and_git": 13,
+  "manifest_sha256": "9800e4babecf3ab29410ee66afc46866ed5a93c5055fe1f4eace45e900f7212e",
+  "changed_files": 14,
+  "write_scope_matches": true,
+  "source_path": "projects/agent-kb/README.md",
+  "source_bytes": 10053,
+  "source_sha256": "3612771cabaf820bd4d09aeb72459d2184ee1755848620525094e5fab48148fb",
+  "sessions": [
+    {
+      "model": "qwen3:0.6B",
+      "trace_sha256": "74b5118df8ecb96b9ef9e4b7abdc2ee85a2c3e7444292df4ec5dc4f43bd66279",
+      "exit_code": 0,
+      "wall_seconds": 72.53099999998813,
+      "tools": [
+        "personal-memory_memory_list"
+      ],
+      "get_body_matches_current_source": false,
+      "expected_revision_guard_covered": false
+    },
+    {
+      "model": "qwen2.5:3b-instruct-q4_k_m",
+      "trace_sha256": "b64c6dd8aeadfed5ffd78abb28744e095f927b61cd23a0186320664b34bb7ec5",
+      "exit_code": 0,
+      "wall_seconds": 131.35899999999674,
+      "tools": [
+        "personal-memory_memory_list",
+        "personal-memory_memory_get"
+      ],
+      "get_body_matches_current_source": true,
+      "expected_revision_guard_covered": false
+    }
+  ],
+  "current_config_auth_hashes_match": true,
+  "checked_config_auth_files": 6,
+  "recorded_owned_processes_now_absent": [
+    29100,
+    29392,
+    30344,
+    31388,
+    38904,
+    41908,
+    42556,
+    44000
+  ],
+  "formal_health": {
+    "8796": 200,
+    "8786": 200,
+    "8788": 200
+  },
+  "verdict": "PASS for existing-local-model actual OpenCode list/get/body/revision path; 0.6B failed get; full prompt compliance not passed",
+  "limits": [
+    "3B expected_revision=null; no conditional guard in model call",
+    "3B final response omitted requested path/revision",
+    "no default commercial model or capture dialogue acceptance",
+    "DSH, second device and actual login remain unverified",
+    "no additional model call during Lead verification"
+  ],
+  "integration_checkout_note": {
+    "first_main_manifest_checks": [
+      "FAIL on .gitattributes local text newline conversion",
+      "FAIL on probe.py after exact metadata rewrite"
+    ],
+    "resolution": "Restored normal Git checkout for metadata; all 13 committed blobs match original manifest. Main JSON archive bytes match exactly; text files match after newline normalization. No source semantics or worker/Git original changed.",
+    "main_text_files_with_checkout_newline_conversion": [
+      ".gitattributes",
+      "probe.py",
+      "README.md",
+      "seal.py"
+    ]
+  },
+  "integration_targeted_check": {
+    "checked_changed_files": 22,
+    "configured_credential_literals_checked": 2,
+    "credential_or_full_source_matches": 0,
+    "limits": "Current opencode JSON/auth literals only; not full-history or unknown-secret audit."
+  }
+}

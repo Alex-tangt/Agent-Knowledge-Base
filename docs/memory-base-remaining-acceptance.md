@@ -26,6 +26,8 @@
 
 ## DSH 与 opencode 实际会话
 
+2026-10-13 补验：[有限 OpenCode 本地模型实验](../experiments/memory-base-opencode-dialogue/README.md)已取得 3B 实际 list/get 与当前 README 正文/hash 一致的证据，0.6B 未 get 的失败保留。该会话未传 expected_revision、最终文字漏报 path/hash；未读取 capture，也未使用日常默认商业模型。以下完整两宿主及共同 capture 判据继续待验，不把有限通路证明扩大为完整规约通过。
+
 分别打开实际使用的 DSH/opencode 新会话，让其加载已经登记的 personal-memory MCP 与规约。使用该宿主实际配置的模型和工具通路；合成 SSE/直接 SDK 探针、配置存在和 CLI help 均不能代替本项。
 
 向两个宿主分别提出：“请通过 personal-memory 在 `projects/agent-kb` 范围找到当前 README，读取原文并报告逻辑路径与 revision。”检查会话内实际工具调用，核对返回的字节 SHA256 与本机当前 README；不得只依据模型口述“已读过”。再从 `captures` 列举并读取一份已有回执，确认同一 URI/revision；不生成新文章或视频总结。
