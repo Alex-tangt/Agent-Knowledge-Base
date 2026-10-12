@@ -1,0 +1,95 @@
+{
+  "observed_at": "2026-10-12T22:50:28.816489+08:00",
+  "reviewed_main_head": "d40e4aaf61ba9e12a4691834b7159ac41f5c5462",
+  "fixed_base": "4dadc407d39b26855a96079ce8561e8983dc4401",
+  "upstream": "4270f13f418c5069316ba819cec11bb5910dcefc",
+  "coverage": {
+    "tree_files": 989,
+    "tree_unique_blobs": 927,
+    "history_unique_blobs": 630,
+    "union_unique_blobs": 1131,
+    "history_bytes": 6490039,
+    "tree_bytes": 20181200
+  },
+  "known_source_report": "../memory-base-publication/scan-4dadc40.json",
+  "generic_report": "../memory-base-publication/generic-4dadc40.json",
+  "generic_review_blobs": 131,
+  "lead_owner_review_resolutions": [
+    {
+      "blob": "1b730e704eee95aaefd7a3396efe746bb98dcdd8",
+      "line": 407,
+      "criterion": "nested_node_program_not_credential_literal",
+      "checks": {
+        "node_inline_script": true,
+        "process_environment_reference": true,
+        "stdout_expression": true,
+        "inner_literal_count": 0,
+        "long_inner_literal_count": 0
+      },
+      "resolution": "NO_SECRET_LITERAL"
+    },
+    {
+      "blob": "53b4ce8091286a1714f747f9a4159a58788f1076",
+      "line": 437,
+      "criterion": "nested_node_program_not_credential_literal",
+      "checks": {
+        "node_inline_script": true,
+        "process_environment_reference": true,
+        "stdout_expression": true,
+        "inner_literal_count": 0,
+        "long_inner_literal_count": 0
+      },
+      "resolution": "NO_SECRET_LITERAL"
+    },
+    {
+      "blob": "758f808c4087e89705ca59933ad4d107a78cb0de",
+      "line": 53,
+      "criterion": "regex_for_environment_assignment",
+      "checks": {
+        "same_match_and_replace_regex": true,
+        "anchored": true,
+        "api_key_field_reference": true,
+        "empty_replacement": true
+      },
+      "resolution": "NO_SECRET_LITERAL"
+    },
+    {
+      "blob": "758f808c4087e89705ca59933ad4d107a78cb0de",
+      "line": 241,
+      "criterion": "regex_for_environment_assignment",
+      "checks": {
+        "same_match_and_replace_regex": true,
+        "anchored": true,
+        "api_key_field_reference": true,
+        "empty_replacement": true
+      },
+      "resolution": "NO_SECRET_LITERAL"
+    },
+    {
+      "blob": "8d1118a09336642dd371cc1ac095239bfcc39095",
+      "line": 133,
+      "criterion": "explicit_local_probe_fixture",
+      "checks": {
+        "credential_environment_name": true,
+        "explicit_fixture_marker": true,
+        "second_value_store_expression": true
+      },
+      "resolution": "SYNTHETIC_FIXTURE"
+    },
+    {
+      "blob": "d26cad43a4f64f0034b9b23e3b49f1b3c9dd71f9",
+      "line": 31,
+      "criterion": "environment_interpolation_reference",
+      "checks": {
+        "strict_environment_placeholder": true
+      },
+      "resolution": "PLACEHOLDER"
+    }
+  ],
+  "actual_sensitive_matches": 0,
+  "known_source_gaps": [
+    "r4-fresh:missing-vault-entries",
+    "r5-fresh:missing-vault-entries"
+  ],
+  "boundary": "Lead independently inspected six retained reviewer items through syntax/literal checks without printing source values. This resolves those six; agent whole generic classification report is still required. Known-source exact comparison covers currently available credentials and three approved receipts, not all possible historical secrets or encodings. No model calls, service changes, install, or raw Git blob reproduction."
+}
