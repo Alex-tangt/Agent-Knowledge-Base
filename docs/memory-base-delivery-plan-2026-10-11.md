@@ -49,6 +49,7 @@ Lead 负责本文件、ADR、地图同步和集成验收；执行者各自工作
 | [#94 正式快照隔离恢复](https://github.com/Alex-tangt/Agent-Knowledge-Base/issues/94) | 固定67文件/39目录实际快照→空data恢复、三原文/来源/权限/凭据重发/MCP通过；Lead独立31原件/清单及实际读回/权限/清理通过 | `experiments/memory-base-formal-restore/`，隔离`.mb94/a`；借R5 f runtime，重装launcher/RECORD及缓存副作用声明 | #86（原生边，已通过） | 原快照不变，target已停；所有方法FAIL保留；不冒称第三新栈、任意ACL对象或真实登录/设备验证 |
 | [#95 交付分支复核](https://github.com/Alex-tangt/Agent-Knowledge-Base/issues/95) | 已合入`0113d3c`：1131 blobs/47当前凭据/3原文/1私有URL无实际匹配；131候选411位置保留分类、6项Lead复核通过；后续25新blob单独核对，准备草稿交付 | `experiments/memory-base-publication/`，Lead负责PR与地图 | 无 | 不输出秘密、不改历史/用户文件/正式实例；当前树与历史分开、判据/漏项明确；发布前复核根venv闸门/产品freeze/实际证据链接 |
 | [#97 虚拟环境入口识别](https://github.com/Alex-tangt/Agent-Knowledge-Base/issues/97) | 已合入`4498aea`，WSL真实符号链接RED→GREEN；冻结`4fc5aa9` Lead837单测/5skip、harness10/10、opencode脚本SKIP；最终Ubuntu3.12 CI待复验 | `memory_base/deploy.py`、对应单测、`experiments/memory-base-runtime-path/` | 无 | 实际venv符号链接红/绿；不同环境共享基础exe不能视作同一runtime；own-site与缓存/身份安全边界保持；真实wheel自动/fresh与冻结全量复验 |
+| [#98 本地模型实际 opencode 对话](https://github.com/Alex-tangt/Agent-Knowledge-Base/issues/98) | 已登记，有限只读验收待执行 | `experiments/memory-base-opencode-dialogue/**`；隔离临时 cwd、仅子进程配置 | 无 | 既有本地模型实际完成 MCP 读取、源 revision 独立校核；禁止远端回落/新增模型/写记忆/改日常配置；真实对话与 SDK 冒烟分别判断 |
 | 产品化计划、实际项目接入与复跑 | 执行中 | Lead 文档、地图与正式接入记录 | 上述实现和验收单元 | 冻结版本全量单测、已有 harness/冒烟、正式实例与旧消费者兼容 |
 
 ## 完成审计
