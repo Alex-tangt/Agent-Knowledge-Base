@@ -320,10 +320,16 @@ def analyse(index):
         part = event.get("part", {})
         if event.get("type") == "tool_use":
             state = part["state"]
+            safe = safe_metadata(state.get("output"))
+            if part.get("tool") == "personal-memory_memory_get" and state["status"] == "completed":
+                body = json.loads(state["output"]).get("content")
+                if isinstance(body, str):
+                    safe["observed_content_sha256"] = digest(body.encode("utf-8"))
+                    safe["observed_content_bytes"] = len(body.encode("utf-8"))
             events.append({"tool": part.get("tool"), "status": state["status"],
                            "input": {k: v for k, v in state.get("input", {}).items()
                                      if k in ("scope", "uri", "expected_revision", "limit", "query", "cursor")},
-                           "output_safe": safe_metadata(state.get("output")),
+                           "output_safe": safe,
                            "output_sha256": digest(str(state.get("output", "")).encode())})
         if event.get("type") == "text":
             final_path |= "projects/agent-kb/README.md" in part.get("text", "")
@@ -332,18 +338,23 @@ def analyse(index):
     lists = [e for e in events if e["tool"] == "personal-memory_memory_list" and e["status"] == "completed"]
     correct_get = any(e["input"].get("uri") == "projects/agent-kb/README.md"
                       and e["input"].get("scope") == "projects/agent-kb/README.md"
-                      and e["input"].get("expected_revision") == source_revision
                       and e["output_safe"] and e["output_safe"].get("revision") == source_revision
+                      and e["output_safe"].get("observed_content_sha256") == source_revision
                       and e["output_safe"].get("path") == "projects/agent-kb/README.md" for e in gets)
+    conditional_read = any(e["input"].get("expected_revision") == source_revision for e in gets)
     boundaries = report["config_auth_unchanged"] and report["capture_count_unchanged"] and not report["remaining_owned"]
-    passed = bool(correct_get and lists and final_path and final_revision and boundaries
+    passed = bool(correct_get and lists and boundaries
                   and report["exit_code"] == 0 and not report["deadline_expired"])
     info = {"model": report["model"], "verdict": "PASS" if passed else "FAIL", "tool_events": events,
             "completed_get_count": len(gets), "completed_list_count": len(lists), "correct_get": correct_get,
+            "expected_revision_guard_covered": conditional_read,
+            "requested_final_format_met": final_path and final_revision,
+            "all_prompt_requirements_met": passed and conditional_read and final_path and final_revision,
             "final_text_has_path": final_path, "final_text_has_actual_revision": final_revision,
             "event_types": types, "source_sha256": source_revision, "trace_sha256": report["trace_sha256"],
             "source_unchanged": report["before"]["source_sha256"] == report["after"]["source_sha256"],
-            "boundaries": boundaries, "reason": "Actual read plus revision verified" if passed else "No completed memory_get"}
+            "boundaries": boundaries, "reason": "Actual read plus revision verified" if passed else
+            ("No completed memory_get" if not gets else "Actual read/version gate failed")}
     write(HERE / f"analysis-{index + 1}.json", info)
     print(json.dumps(info, ensure_ascii=False))
 

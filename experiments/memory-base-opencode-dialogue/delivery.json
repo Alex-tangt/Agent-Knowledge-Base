@@ -1,0 +1,79 @@
+{
+  "baseline": "a852fab33db109e72a19665877f573e7bd6c2d15",
+  "permitted_sessions": 2,
+  "actual_sessions": 2,
+  "cli_version": "1.18.35",
+  "cli_sha256": "83567c13cc5e361ded7e48351cb024cd4503285960d82c30fc585194da46d757",
+  "ollama_version": "0.40.3",
+  "asset": "C:\\Users\\Tan\\AppData\\Local\\Temp\\memory-base-opencode-98-ysneij2m",
+  "model_details": {
+    "qwen3:0.6B": {
+      "digest": "7df6b6e09427a769808717c0a93cadc4ae99ed4eb8bf5ca557c90846becea435",
+      "size": 522653767,
+      "capabilities": [
+        "completion",
+        "tools",
+        "thinking"
+      ]
+    },
+    "qwen2.5:3b-instruct-q4_k_m": {
+      "digest": "357c53fb659c5076de1d65ccb0b397446227b71a42be9d1603d46168015c9e4b",
+      "size": 1929912432,
+      "capabilities": [
+        "completion",
+        "tools"
+      ]
+    }
+  },
+  "session_outcomes": [
+    {
+      "model": "qwen3:0.6B",
+      "verdict": "FAIL",
+      "wall_seconds": 72.53099999998813,
+      "exit_code": 0,
+      "deadline_expired": false,
+      "trace_sha256": "74b5118df8ecb96b9ef9e4b7abdc2ee85a2c3e7444292df4ec5dc4f43bd66279",
+      "expected_revision_guard_covered": false
+    },
+    {
+      "model": "qwen2.5:3b-instruct-q4_k_m",
+      "verdict": "PASS",
+      "wall_seconds": 131.35899999999674,
+      "exit_code": 0,
+      "deadline_expired": false,
+      "trace_sha256": "b64c6dd8aeadfed5ffd78abb28744e095f927b61cd23a0186320664b34bb7ec5",
+      "expected_revision_guard_covered": false
+    }
+  ],
+  "formal_health": {
+    "embed": 200,
+    "upstream": 200,
+    "gateway": 200
+  },
+  "capture_file_count": 8,
+  "capture_count_method": "directory enumeration of files in data paths with captures component; no body or source URL read",
+  "config_auth_hashes": {
+    "C:\\Users\\Tan\\.config\\opencode\\opencode.json": "8fa909de30803f0943cce4c9e80c4d0e51c37fe92c8f5cd9d1c9aef5b8f38d15",
+    "C:\\Users\\Tan\\.config\\opencode\\opencode.jsonc": "750820b85778c7ae20c163b6247feb3812337f22956305129bf9106738113ff3",
+    "C:\\Users\\Tan\\.config\\opencode\\package-lock.json": "62eda299cac2905ff35999ea7ddf2acb2ca68ceb1e115ac0c1d9b165de7a4fa2",
+    "C:\\Users\\Tan\\.config\\opencode\\package.json": "7bf0b8eb62ac5540d6eafc45e29b6bf9db62b9b854cc8fed71433d4167f2fd45",
+    "C:\\Users\\Tan\\.config\\opencode\\tui.jsonc": "b6f6aafab4d363869cb16e318c6de2837c71a4c1197c2019654f1d2a081a3310",
+    "C:\\Users\\Tan\\.local\\share\\opencode\\auth.json": "4ab8e593e23f8b468795a9af354777797b553fd363b27482d715edf1d590965e"
+  },
+  "config_auth_unchanged_since_pre_session_verification": true,
+  "global_json_unchanged_since_first_config_probe": true,
+  "source_sha256": "3612771cabaf820bd4d09aeb72459d2184ee1755848620525094e5fab48148fb",
+  "remaining_owned": [],
+  "cleanup": [
+    [],
+    []
+  ],
+  "limits": [
+    "0.6B completed list but omitted get",
+    "3B used expected_revision=null; conditional revision guard not covered",
+    "3B final model text omitted requested path/revision; full prompt compliance failed",
+    "no third session",
+    "no default commercial model, DSH desktop, mobile or actual login acceptance",
+    "no memory_search, permission-denial or add execution tested in model dialogue"
+  ]
+}

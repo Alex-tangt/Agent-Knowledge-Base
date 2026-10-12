@@ -1,0 +1,15 @@
+{
+  ".gitattributes": "9e8f041ed812cb5288282cc6b187de804e96b688d56647fdae181c49fec71863",
+  "analysis-1.json": "ac30001ffe9acdce05fca70ce8e9054d169cb115444ad176425090e2e61d933f",
+  "analysis-2.json": "6934094cb48f4776f36fb75b0f5548590feabb7b47ffd9ba7e100fdf42cabad5",
+  "binary-adapter-evidence.json": "c373de08be4b63e63f4c647bb7d5ea1a4b0b0d5e0dadbd76c8e93a6eefd7d2a7",
+  "delivery.json": "854a8b202fa8f74b293cc6690d8ab7314a6646a4fadce40ff501cf1851120106",
+  "preflight-harness-failure.json": "01923faf1d549c076b4068335acc1ea8d634bfc3822082397cfa20e9b73a8c14",
+  "preflight.json": "15eefea6560237a38c9cb27da3e4eabdbd8c4ca92aaacb02c254b92e6217a185",
+  "probe.py": "54079ec7ebad2dce11debcef8aa34c34a511d014b0d4ac723a44d3348f22ee13",
+  "README.md": "259ce0b72cfb1bcf522ffd478c37ccf2d401e08a11f878f5c059ac680a34c7a6",
+  "seal.py": "9dc7b03f73bb258e6c1d1044c27f44a77b242f895214d3415ac25f82ee73aba5",
+  "session-1.json": "8e7cbc8199227fe4fea7a320de0a4eba53e7865dd36a108c31a379ee05f21911",
+  "session-2.json": "227788e135b92c5b5c6c65213019cae1155907f3681a77530ec5fbbea5a73bbd",
+  "verified.json": "7a1c71460dd7b8a255f08dba2e1bf10e7ef9b2ab0ef35b063752f48ee2af86da"
+}

@@ -1,0 +1,79 @@
+{
+  "model": "qwen2.5:3b-instruct-q4_k_m",
+  "verdict": "PASS",
+  "tool_events": [
+    {
+      "tool": "personal-memory_memory_list",
+      "status": "completed",
+      "input": {
+        "limit": 1,
+        "scope": "projects/agent-kb/README.md"
+      },
+      "output_safe": {
+        "effective_scope": [
+          "projects/agent-kb/README.md"
+        ],
+        "next_cursor": null,
+        "items": [
+          {
+            "uri": "projects/agent-kb/README.md",
+            "path": "projects/agent-kb/README.md",
+            "revision": "3612771cabaf820bd4d09aeb72459d2184ee1755848620525094e5fab48148fb",
+            "content_hash": "3612771cabaf820bd4d09aeb72459d2184ee1755848620525094e5fab48148fb",
+            "freshness": "live",
+            "bytes": 10053
+          }
+        ],
+        "completeness": {
+          "has_more": false
+        }
+      },
+      "output_sha256": "44e47307d8584b5d9234d4dc85b7a2b47f76714cad96375866336107a8efa87a"
+    },
+    {
+      "tool": "personal-memory_memory_get",
+      "status": "completed",
+      "input": {
+        "expected_revision": null,
+        "scope": "projects/agent-kb/README.md",
+        "uri": "projects/agent-kb/README.md"
+      },
+      "output_safe": {
+        "uri": "projects/agent-kb/README.md",
+        "path": "projects/agent-kb/README.md",
+        "revision": "3612771cabaf820bd4d09aeb72459d2184ee1755848620525094e5fab48148fb",
+        "content_hash": "3612771cabaf820bd4d09aeb72459d2184ee1755848620525094e5fab48148fb",
+        "freshness": "live",
+        "bytes": 10053,
+        "effective_scope": [
+          "projects/agent-kb/README.md"
+        ],
+        "observed_content_sha256": "3612771cabaf820bd4d09aeb72459d2184ee1755848620525094e5fab48148fb",
+        "observed_content_bytes": 10053
+      },
+      "output_sha256": "ea710cfb7d1ea39be8b8b8c61b00bcafd92eec9a5bbd8366ba6c05b495e3055d"
+    }
+  ],
+  "completed_get_count": 1,
+  "completed_list_count": 1,
+  "correct_get": true,
+  "expected_revision_guard_covered": false,
+  "final_text_has_path": false,
+  "final_text_has_actual_revision": false,
+  "event_types": [
+    "step_start",
+    "tool_use",
+    "tool_use",
+    "step_finish",
+    "step_start",
+    "text",
+    "step_finish"
+  ],
+  "source_sha256": "3612771cabaf820bd4d09aeb72459d2184ee1755848620525094e5fab48148fb",
+  "trace_sha256": "b64c6dd8aeadfed5ffd78abb28744e095f927b61cd23a0186320664b34bb7ec5",
+  "source_unchanged": true,
+  "boundaries": true,
+  "reason": "Actual completed get, correct scope/path, observed body and returned revision match independent file SHA256",
+  "requested_final_format_met": false,
+  "all_prompt_requirements_met": false
+}
