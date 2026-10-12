@@ -46,6 +46,7 @@ Lead 负责本文件、ADR、地图同步和集成验收；执行者各自工作
 | [#91 首次冷启动](https://github.com/Alex-tangt/Agent-Knowledge-Base/issues/91) | 实现 `dc3168d`、记录 `45296a5` 已合入；Lead 全量闸门及 #86 新环境复验中 | `memory_base/deploy.py`, 对应单测；`experiments/memory-base-cold-start/`，d runtime 的 bytecode 实验资产 | 无；#86最终运行通过依赖本票 | 安装限目标 own-site Lark 准备（独立 600 秒预算，实测累计 341.750 秒）；不扩大服务默认 180 秒；不改上游/不借正式缓存；实际新环境默认首次就绪及完整读写/MCP |
 | [#92 Bubble 笔记写入意图](https://github.com/Alex-tangt/Agent-Knowledge-Base/issues/92) | 冻结 `36f9bf2` 两文件已备份应用；Lead build、73/73 应用及 5/5 host 闸门、正式工具入口与只读 pi/网关通过；正式 manager 重启健康 | Bubble 候选 `server/memory-tools.ts`, `server/tests/memory-base.test.ts`；本仓 `experiments/memory-base-note-intent/` 和 Lead live 记录 | 无 | 否定/询问/引用和撤回不调用add；明确中文/英文保存、原文和旧key兼容；有限规则拒绝未匹配表达并提供明确示例，不冒称通用语言理解 |
 | [#93 Bubble Windows 状态发布](https://github.com/Alex-tangt/Agent-Knowledge-Base/issues/93) | #92 既有生命周期测试实际 EPERM 导致 manager 退出；独立候选修复 | Bubble 独立候选 `scripts/local-backend.mjs`, 必要状态辅助模块和 scripts 测试；本仓 `experiments/memory-base-host-state/` | 无；不阻塞 #92 代码冻结，只独立核验 | 短暂 rename 失败有界处理、保持 JSON 原子发布/状态顺序；持续失败可见、仅清理自有 child；默认就绪 timeout 不变 |
+| [#94 正式快照隔离恢复](https://github.com/Alex-tangt/Agent-Knowledge-Base/issues/94) | 补齐实际 67 文件正式快照的恢复证明；独立空数据目标，正式实例不操作 | `experiments/memory-base-formal-restore/`，新隔离 home `.mb94/a`；已验 runtime 借用边界声明 | #86 通过是前置证据 | 独立清单/原件hash，真实恢复、三份原文/URI/hash、来源/权限与凭据重发、MCP/search、自有清理；原快照不变 |
 | 产品化计划、实际项目接入与复跑 | 执行中 | Lead 文档、地图与正式接入记录 | 上述实现和验收单元 | 冻结版本全量单测、已有 harness/冒烟、正式实例与旧消费者兼容 |
 
 ## 完成审计
