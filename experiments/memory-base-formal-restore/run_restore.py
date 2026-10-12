@@ -3,9 +3,13 @@ from __future__ import annotations
 
 import argparse
 import asyncio
+import base64
+import csv
 from datetime import datetime, timezone
 import hashlib
 import importlib.metadata as metadata
+import importlib.util
+import io
 import json
 import os
 from pathlib import Path
@@ -88,6 +92,7 @@ def r5_immutable():
             if p.is_file() and p.suffix != ".pyc":
                 items[str(p)]=sha(p.read_bytes())
     items[str(WHEEL)]=sha(WHEEL.read_bytes())
+    items[str(PYTHON.parent/"memory-base.exe")]=sha((PYTHON.parent/"memory-base.exe").read_bytes())
     return items
 
 
@@ -219,27 +224,79 @@ def live_probe():
                       "native_foreign_account_read_403":True},ensure_ascii=False))
 
 
+def runtime_audit():
+    from memory_base import deploy
+    assert Path(sys.executable).resolve()==PYTHON.resolve()
+    site=R5/"f/runtime/Lib/site-packages"
+    dist=metadata.distribution("agent-memory-base")
+    assert Path(dist._path).resolve().is_relative_to(site.resolve())
+    assert Path(deploy.__file__).resolve()==site/"memory_base/deploy.py"
+    for name,version in deploy.PINS.items():
+        installed=metadata.distribution(name)
+        assert installed.version==version and Path(installed._path).resolve().is_relative_to(site.resolve())
+    for name in ("memory_base","mcp","fastapi","openviking"):
+        assert Path(importlib.util.find_spec(name).origin).resolve().is_relative_to(site.resolve())
+    record_rows=0
+    for name,digest,size in csv.reader(io.StringIO(dist.read_text("RECORD"))):
+        record_rows+=1
+        path=(site/name).resolve()
+        assert path.is_relative_to((R5/"f/runtime").resolve()) and path.is_file()
+        if not digest:
+            assert not size and (name.endswith("/RECORD") or name.endswith(".pyc"))
+        else:
+            raw=path.read_bytes()
+            encoded=base64.urlsafe_b64encode(hashlib.sha256(raw).digest()).rstrip(b"=").decode()
+            assert digest=="sha256="+encoded and size==str(len(raw))
+    with zipfile.ZipFile(WHEEL) as z:
+        files=[n for n in z.namelist() if n.startswith("memory_base/")]
+        assert all((site/n).read_bytes()==z.read(n) for n in files)
+    origin=json.loads(dist.read_text("direct_url.json"))
+    assert origin["url"]==WHEEL.as_uri() and origin["archive_info"]["hashes"]["sha256"]==WHEEL_HASH
+    result={"overall":"PASS","own_site":True,"pins":deploy.PINS,"product_payload_files":len(files),
+        "product_payload_equals_frozen_wheel":True,"installed_record_rows_checked":record_rows,
+        "installed_record_sha256":sha((Path(dist._path)/"RECORD").read_bytes()),
+        "console_launcher_sha256":sha((PYTHON.parent/"memory-base.exe").read_bytes()),
+        "direct_url_sha256":sha((Path(dist._path)/"direct_url.json").read_bytes()),
+        "local_wheel_provenance":True,"wheel_sha256":WHEEL_HASH}
+    (ROOT/"continuation-runtime-audit.json").write_text(json.dumps(result,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
+    print(json.dumps(result,ensure_ascii=False))
+
+
 def main():
     parser=argparse.ArgumentParser()
     parser.add_argument("--live-probe",action="store_true")
+    parser.add_argument("--runtime-audit",action="store_true")
+    parser.add_argument("--continue-installed",action="store_true")
     args=parser.parse_args()
     if args.live_probe:
         live_probe()
         return
-    assert not ROOT.exists(),"Preserve all existing target assets; root must be new"
+    if args.runtime_audit:
+        runtime_audit()
+        return
+    if args.continue_installed:
+        assert ROOT.is_dir() and (HOME/"deployment.json").is_file()
+        assert not (ROOT/"result-continuation.json").exists(),"Never overwrite a continuation result"
+        assert not any((HOME/name).exists() for name in ("data","sources.json","access.json","restore-state.json"))
+    else:
+        assert not ROOT.exists(),"Preserve all existing target assets; root must be new"
     assert sha(WHEEL.read_bytes())==WHEEL_HASH
     immutable_before=r5_immutable()
     manifest,original=snapshot_inventory()
-    ROOT.mkdir()
+    if not args.continue_installed:ROOT.mkdir()
+    (ROOT/("r5-continuation-baseline.json" if args.continue_installed else "r5-initial-baseline.json")).write_text(
+        json.dumps(immutable_before,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
     report={"started_at":datetime.now(timezone.utc).isoformat(),"snapshot":original,"commands":[],"checks":{},
         "wheel_sha256":WHEEL_HASH,"product_frozen_sha":"45296a58fe2559e0b92f4af851c018b56148865a",
         "runtime_reuse":{"python":str(PYTHON),"new_dependency_stack":False,"own_site":True},
-        "cache_before":cache_counts(),"original_r5_immutable_file_count":len(immutable_before)}
+        "cache_before":cache_counts(),"original_r5_immutable_file_count":len(immutable_before),
+        "continued_successful_install":args.continue_installed,"no_install_rerun":args.continue_installed,
+        "boundary":"Actual 67-file formal snapshot recovery only. Shared R5 runtime; not a third new dependency stack or a new cold-install gate."}
     def save():
-        (ROOT/"result.json").write_text(json.dumps(report,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
+        (ROOT/("result-continuation.json" if args.continue_installed else "result.json")).write_text(json.dumps(report,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
     def run(command,stage):
         command=list(map(str,command))
-        log=ROOT/(stage+".log")
+        log=ROOT/(("continuation-" if args.continue_installed else "")+stage+".log")
         entry={"stage":stage,"command":command,"status":"running","log":str(log)}
         started=time.perf_counter()
         with log.open("wb") as out:
@@ -258,7 +315,11 @@ def main():
     config=None
     try:
         report["checks"]["independent_snapshot_67_inventory"]=True
-        run([*cli,"install","--home",HOME,"--runtime-python",PYTHON,"--wheel",WHEEL,"--model",MODEL],"install")
+        if args.continue_installed:
+            run([PYTHON,"-B",Path(__file__).resolve(),"--runtime-audit"],"runtime-audit")
+            report["runtime_current_audit"]=json.loads((ROOT/"continuation-runtime-audit.json").read_text())
+        else:
+            run([*cli,"install","--home",HOME,"--runtime-python",PYTHON,"--wheel",WHEEL,"--model",MODEL],"install")
         assert r5_immutable()==immutable_before,"R5 non-cache bytes changed after install"
         config=json.loads((HOME/"deployment.json").read_text())
         assert Path(config["python"]).resolve()==PYTHON.resolve()
