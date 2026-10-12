@@ -1,0 +1,226 @@
+{
+  "asset_root": "C:\\Users\\Tan\\.mb94",
+  "snapshot_manifest_sha256": "27dc14f772e61a351be62bf3c5dfb24397c27cec8894612065139a8677541c65",
+  "files": [
+    {
+      "path": "service-logs/embed.err.log",
+      "asset_original": "C:\\Users\\Tan\\.mb94\\a\\logs\\embed.err.log",
+      "bytes": 3578,
+      "sha256": "e3557691a7e380dd7a7931a9b374bd554d96eba7a6bdc2a14766810af536df28",
+      "raw_bytes_equal": true
+    },
+    {
+      "path": "service-logs/embed.out.log",
+      "asset_original": "C:\\Users\\Tan\\.mb94\\a\\logs\\embed.out.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_bytes_equal": true
+    },
+    {
+      "path": "service-logs/gateway.err.log",
+      "asset_original": "C:\\Users\\Tan\\.mb94\\a\\logs\\gateway.err.log",
+      "bytes": 405,
+      "sha256": "d26c5408552fd64b3c6510f597fe77354d20176140a01fb072a09880254176db",
+      "raw_bytes_equal": true
+    },
+    {
+      "path": "service-logs/gateway.out.log",
+      "asset_original": "C:\\Users\\Tan\\.mb94\\a\\logs\\gateway.out.log",
+      "bytes": 2145,
+      "sha256": "c8e6ae203294716028fb5daf7079f998ce976c7ed1624d1691fc93217dc1c8c5",
+      "raw_bytes_equal": true
+    },
+    {
+      "path": "service-logs/upstream.err.log",
+      "asset_original": "C:\\Users\\Tan\\.mb94\\a\\logs\\upstream.err.log",
+      "bytes": 894,
+      "sha256": "01885148bdad226ade51523509df9c3d2f1eabcb4f702110bb6721acccb7c67d",
+      "raw_bytes_equal": true
+    },
+    {
+      "path": "service-logs/upstream.out.log",
+      "asset_original": "C:\\Users\\Tan\\.mb94\\a\\logs\\upstream.out.log",
+      "bytes": 710,
+      "sha256": "303364ff920050b7089b6f36fe853081a740b503873346d8960e7219611c376d",
+      "raw_bytes_equal": true
+    },
+    {
+      "path": "assets/continuation-live-probe.log",
+      "asset_original": "C:\\Users\\Tan\\.mb94\\continuation-live-probe.log",
+      "bytes": 616,
+      "sha256": "c3ede6a4a8f5107a208917439d0eb25b76102845d529e873df06af4de31850b4",
+      "raw_bytes_equal": true
+    },
+    {
+      "path": "assets/continuation-restore.log",
+      "asset_original": "C:\\Users\\Tan\\.mb94\\continuation-restore.log",
+      "bytes": 203,
+      "sha256": "676ae647b99aaa051eacb0145f5756927e8e542273d56588e7b78f4850e37042",
+      "raw_bytes_equal": true
+    },
+    {
+      "path": "assets/continuation-runtime-audit.json",
+      "asset_original": "C:\\Users\\Tan\\.mb94\\continuation-runtime-audit.json",
+      "bytes": 780,
+      "sha256": "c073302c50fb0225afc17908c576abed98b7733c37a9efbbd318116d7ddf04ba",
+      "raw_bytes_equal": true
+    },
+    {
+      "path": "assets/continuation-runtime-audit.log",
+      "asset_original": "C:\\Users\\Tan\\.mb94\\continuation-runtime-audit.log",
+      "bytes": 709,
+      "sha256": "620b2fbfcb09bb166e31fdc5369823377f915c857c7d1b9addebae832a2ec1f6",
+      "raw_bytes_equal": true
+    },
+    {
+      "path": "assets/continuation-start.log",
+      "asset_original": "C:\\Users\\Tan\\.mb94\\continuation-start.log",
+      "bytes": 1145,
+      "sha256": "7b13cb4c1525002d272287853053858bbdab6d65f7509b3a447bd4173feae1ed",
+      "raw_bytes_equal": true
+    },
+    {
+      "path": "assets/continuation-stop.log",
+      "asset_original": "C:\\Users\\Tan\\.mb94\\continuation-stop.log",
+      "bytes": 49,
+      "sha256": "cf54dfbf516fd0609b696eb6ddd8353f22f6a76f7bdf3c296037de5f6408d18e",
+      "raw_bytes_equal": true
+    },
+    {
+      "path": "assets/delivery-audit.json",
+      "asset_original": "C:\\Users\\Tan\\.mb94\\delivery-audit.json",
+      "bytes": 1136,
+      "sha256": "62812f035903871098426f0e32904c0022c6e227dacf12fabf57e8870428fe84",
+      "raw_bytes_equal": true
+    },
+    {
+      "path": "assets/install-guard-diagnosis.json",
+      "asset_original": "C:\\Users\\Tan\\.mb94\\install-guard-diagnosis.json",
+      "bytes": 3281,
+      "sha256": "8a18875f107b0ae5010e697ee1fc5361574dd8b1539950aafd919271d608d17e",
+      "raw_bytes_equal": true
+    },
+    {
+      "path": "assets/install.log",
+      "asset_original": "C:\\Users\\Tan\\.mb94\\install.log",
+      "bytes": 43796,
+      "sha256": "cba586e9a32b2c3df68384a593e8cb2819924c2754213b18e8b00c8510db418a",
+      "raw_bytes_equal": true
+    },
+    {
+      "path": "assets/probe-continuation-live.json",
+      "asset_original": "C:\\Users\\Tan\\.mb94\\probe-continuation-live.json",
+      "bytes": 2658,
+      "sha256": "9857265fa74a4e4b8bcf74e00de86bb6e8b85c59b2fe1abfb5e230c139cbd359",
+      "raw_bytes_equal": true
+    },
+    {
+      "path": "assets/probe-continuation-live.log",
+      "asset_original": "C:\\Users\\Tan\\.mb94\\probe-continuation-live.log",
+      "bytes": 93,
+      "sha256": "74f615bc3cc0595849dbb373f3f1ed962500a6491f5373d5b7efce540fda95b6",
+      "raw_bytes_equal": true
+    },
+    {
+      "path": "assets/probe-continuation-mcp.stderr.log",
+      "asset_original": "C:\\Users\\Tan\\.mb94\\probe-continuation-mcp.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_bytes_equal": true
+    },
+    {
+      "path": "assets/probe-continuation-processes-before-stop.json",
+      "asset_original": "C:\\Users\\Tan\\.mb94\\probe-continuation-processes-before-stop.json",
+      "bytes": 1421,
+      "sha256": "b609ab8fe49e2251141aba040dc74283e3095b9c2ea28e15fde208b461fa3354",
+      "raw_bytes_equal": true
+    },
+    {
+      "path": "assets/probe-continuation-processes-started.json",
+      "asset_original": "C:\\Users\\Tan\\.mb94\\probe-continuation-processes-started.json",
+      "bytes": 1421,
+      "sha256": "b609ab8fe49e2251141aba040dc74283e3095b9c2ea28e15fde208b461fa3354",
+      "raw_bytes_equal": true
+    },
+    {
+      "path": "assets/probe-continuation-r5-baseline.json",
+      "asset_original": "C:\\Users\\Tan\\.mb94\\probe-continuation-r5-baseline.json",
+      "bytes": 20005,
+      "sha256": "c08cc30c8a34a4527962eb3cbb6489c4caa414c5972395ff31d3bd25bb5ea256",
+      "raw_bytes_equal": true
+    },
+    {
+      "path": "assets/probe-continuation-result.json",
+      "asset_original": "C:\\Users\\Tan\\.mb94\\probe-continuation-result.json",
+      "bytes": 5068,
+      "sha256": "527b2d902949fc7721d4af0bb92a1eaddedcdba782da973107a2f7af7699b821",
+      "raw_bytes_equal": true
+    },
+    {
+      "path": "assets/probe-continuation-start.log",
+      "asset_original": "C:\\Users\\Tan\\.mb94\\probe-continuation-start.log",
+      "bytes": 1145,
+      "sha256": "2fdb2e9c95e41cca20ecfb4c36226b93a7d6bcfb47beac308c91196f9fc8d62a",
+      "raw_bytes_equal": true
+    },
+    {
+      "path": "assets/probe-continuation-stop.log",
+      "asset_original": "C:\\Users\\Tan\\.mb94\\probe-continuation-stop.log",
+      "bytes": 49,
+      "sha256": "cf54dfbf516fd0609b696eb6ddd8353f22f6a76f7bdf3c296037de5f6408d18e",
+      "raw_bytes_equal": true
+    },
+    {
+      "path": "assets/processes-before-stop.json",
+      "asset_original": "C:\\Users\\Tan\\.mb94\\processes-before-stop.json",
+      "bytes": 1422,
+      "sha256": "a789d25b3201f6b292315f521cef6fe8a4ed73c3e1bcb2752fe5dea7319baa3d",
+      "raw_bytes_equal": true
+    },
+    {
+      "path": "assets/processes-started.json",
+      "asset_original": "C:\\Users\\Tan\\.mb94\\processes-started.json",
+      "bytes": 1422,
+      "sha256": "a789d25b3201f6b292315f521cef6fe8a4ed73c3e1bcb2752fe5dea7319baa3d",
+      "raw_bytes_equal": true
+    },
+    {
+      "path": "assets/r5-continuation-baseline.json",
+      "asset_original": "C:\\Users\\Tan\\.mb94\\r5-continuation-baseline.json",
+      "bytes": 20005,
+      "sha256": "c08cc30c8a34a4527962eb3cbb6489c4caa414c5972395ff31d3bd25bb5ea256",
+      "raw_bytes_equal": true
+    },
+    {
+      "path": "assets/r5-immutable-after-install.json",
+      "asset_original": "C:\\Users\\Tan\\.mb94\\r5-immutable-after-install.json",
+      "bytes": 19867,
+      "sha256": "6b7b05e17bff1c227fc1ea3bdf96bd25347117030b2a9da0da6f638321272559",
+      "raw_bytes_equal": true
+    },
+    {
+      "path": "assets/record-semantics-diagnosis.json",
+      "asset_original": "C:\\Users\\Tan\\.mb94\\record-semantics-diagnosis.json",
+      "bytes": 2063,
+      "sha256": "5d977fc675c7860fe555bc8a99915b7834998379984b5ff49ec649c3e3ed36a3",
+      "raw_bytes_equal": true
+    },
+    {
+      "path": "assets/result-continuation.json",
+      "asset_original": "C:\\Users\\Tan\\.mb94\\result-continuation.json",
+      "bytes": 5466,
+      "sha256": "24e8f4fc757507c1ca4f9f3846738200347c5352ab959cf526be56eeceed42ed",
+      "raw_bytes_equal": true
+    },
+    {
+      "path": "assets/result.json",
+      "asset_original": "C:\\Users\\Tan\\.mb94\\result.json",
+      "bytes": 1816,
+      "sha256": "a9cd178e680c98f0d638f0f10775bccc2b446d598ec51cb81b9a14759ae32f2e",
+      "raw_bytes_equal": true
+    }
+  ],
+  "no_snapshot_data_or_memory_bodies_exported": true,
+  "initial_install_guard_failure_and_bad_fixture_failure_retained": true,
+  "final_probe_overall": "PASS"
+}

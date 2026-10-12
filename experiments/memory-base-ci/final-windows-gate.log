@@ -1,0 +1,216 @@
+L0 闸门 (windows-latest · py3.12)	单元测试（回归闸门）	﻿2026-10-12T15:43:04.9776352Z ##[group]Run python -m pytest tests/unit -q
+L0 闸门 (windows-latest · py3.12)	单元测试（回归闸门）	2026-10-12T15:43:04.9776761Z ^[[36;1mpython -m pytest tests/unit -q^[[0m
+L0 闸门 (windows-latest · py3.12)	单元测试（回归闸门）	2026-10-12T15:43:04.9846845Z shell: C:\Program Files\PowerShell\7\pwsh.EXE -command ". '{0}'"
+L0 闸门 (windows-latest · py3.12)	单元测试（回归闸门）	2026-10-12T15:43:04.9847216Z env:
+L0 闸门 (windows-latest · py3.12)	单元测试（回归闸门）	2026-10-12T15:43:04.9847466Z   pythonLocation: C:\hostedtoolcache\windows\Python\3.12.10\x64
+L0 闸门 (windows-latest · py3.12)	单元测试（回归闸门）	2026-10-12T15:43:04.9847912Z   PKG_CONFIG_PATH: C:\hostedtoolcache\windows\Python\3.12.10\x64/lib/pkgconfig
+L0 闸门 (windows-latest · py3.12)	单元测试（回归闸门）	2026-10-12T15:43:04.9848373Z   Python_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.12.10\x64
+L0 闸门 (windows-latest · py3.12)	单元测试（回归闸门）	2026-10-12T15:43:04.9848793Z   Python2_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.12.10\x64
+L0 闸门 (windows-latest · py3.12)	单元测试（回归闸门）	2026-10-12T15:43:04.9849185Z   Python3_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.12.10\x64
+L0 闸门 (windows-latest · py3.12)	单元测试（回归闸门）	2026-10-12T15:43:04.9849491Z ##[endgroup]
+L0 闸门 (windows-latest · py3.12)	单元测试（回归闸门）	2026-10-12T15:43:20.2961312Z ........................................................................ [  8%]
+L0 闸门 (windows-latest · py3.12)	单元测试（回归闸门）	2026-10-12T15:43:24.2922009Z ........................................................................ [ 17%]
+L0 闸门 (windows-latest · py3.12)	单元测试（回归闸门）	2026-10-12T15:43:24.7281014Z ........................................................................ [ 25%]
+L0 闸门 (windows-latest · py3.12)	单元测试（回归闸门）	2026-10-12T15:43:28.4885601Z ........................................................................ [ 34%]
+L0 闸门 (windows-latest · py3.12)	单元测试（回归闸门）	2026-10-12T15:43:31.1142153Z ........................................................................ [ 42%]
+L0 闸门 (windows-latest · py3.12)	单元测试（回归闸门）	2026-10-12T15:43:51.3197689Z ........................................................................ [ 51%]
+L0 闸门 (windows-latest · py3.12)	单元测试（回归闸门）	2026-10-12T15:43:55.7708899Z ........................................................................ [ 59%]
+L0 闸门 (windows-latest · py3.12)	单元测试（回归闸门）	2026-10-12T15:43:57.9688066Z ...................................................................ss... [ 68%]
+L0 闸门 (windows-latest · py3.12)	单元测试（回归闸门）	2026-10-12T15:44:10.5054981Z ........................................................................ [ 76%]
+L0 闸门 (windows-latest · py3.12)	单元测试（回归闸门）	2026-10-12T15:44:15.0890234Z ........................................................................ [ 85%]
+L0 闸门 (windows-latest · py3.12)	单元测试（回归闸门）	2026-10-12T15:44:15.2180098Z .s...................................................................... [ 94%]
+L0 闸门 (windows-latest · py3.12)	单元测试（回归闸门）	2026-10-12T15:44:17.5169724Z ..................................................                       [100%]
+L0 闸门 (windows-latest · py3.12)	单元测试（回归闸门）	2026-10-12T15:44:17.5170375Z ============================== warnings summary ===============================
+L0 闸门 (windows-latest · py3.12)	单元测试（回归闸门）	2026-10-12T15:44:17.5171060Z C:\hostedtoolcache\windows\Python\3.12.10\x64\Lib\site-packages\qdrant_client\qdrant_remote.py:292
+L0 闸门 (windows-latest · py3.12)	单元测试（回归闸门）	2026-10-12T15:44:17.5172628Z   C:\hostedtoolcache\windows\Python\3.12.10\x64\Lib\site-packages\qdrant_client\qdrant_remote.py:292: UserWarning: Failed to obtain server version. Unable to check client-server compatibility. Set check_compatibility=False to skip version check.
+L0 闸门 (windows-latest · py3.12)	单元测试（回归闸门）	2026-10-12T15:44:17.5173980Z     show_warning(
+L0 闸门 (windows-latest · py3.12)	单元测试（回归闸门）	2026-10-12T15:44:17.5174120Z 
+L0 闸门 (windows-latest · py3.12)	单元测试（回归闸门）	2026-10-12T15:44:17.5174358Z -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+L0 闸门 (windows-latest · py3.12)	单元测试（回归闸门）	2026-10-12T15:44:17.5174853Z 839 passed, 3 skipped, 1 warning in 69.75s (0:01:09)
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	﻿2026-10-12T15:44:18.9485575Z ##[group]Run python -m memory_agent.eval.harness --out harness_report.json
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:18.9486217Z ^[[36;1mpython -m memory_agent.eval.harness --out harness_report.json^[[0m
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:18.9559441Z shell: C:\Program Files\PowerShell\7\pwsh.EXE -command ". '{0}'"
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:18.9559792Z env:
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:18.9560055Z   pythonLocation: C:\hostedtoolcache\windows\Python\3.12.10\x64
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:18.9560707Z   PKG_CONFIG_PATH: C:\hostedtoolcache\windows\Python\3.12.10\x64/lib/pkgconfig
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:18.9561183Z   Python_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.12.10\x64
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:18.9561589Z   Python2_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.12.10\x64
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:18.9561986Z   Python3_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.12.10\x64
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:18.9562293Z ##[endgroup]
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3940370Z {
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3940964Z   "analyses": [
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3944024Z     {
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3944493Z       "degenerate": false,
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3945051Z       "hi": 1.0,
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3945469Z       "kind": "rate",
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3945907Z       "lo": 0.285714,
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3946308Z       "mean": 0.714286,
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3946782Z       "metric": "holdout.answer_correct_rate",
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3947242Z       "n": 7,
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3949206Z       "note": "主结论：留出集上的答案正确率（确定性匹配，不调 LLM 裁判）。n = 留出集里可判分的题数 = 7。",
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3949625Z       "significant": true
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3949829Z     },
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3949975Z     {
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3950134Z       "degenerate": true,
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3950323Z       "hi": 1.0,
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3950492Z       "kind": "rate",
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3950667Z       "lo": 1.0,
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3950835Z       "mean": 1.0,
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3951052Z       "metric": "holdout.non_fabrication_rate",
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3951317Z       "n": 3,
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3951674Z       "note": "不作答题（kind=no_answer）里没有编造答案的比例。",
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3951946Z       "significant": true
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3952152Z     },
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3952335Z     {
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3952502Z       "degenerate": false,
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3952697Z       "hi": 1.0,
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3952863Z       "kind": "rate",
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3953086Z       "lo": 0.0,
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3953247Z       "mean": 0.5,
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3953456Z       "metric": "holdout.gold_covered_rate",
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3953689Z       "n": 4,
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3954171Z       "note": "gold 覆盖达标率：展示给模型的证据**覆盖全部 gold** 的题占比（ADR-0030 D7：gold 覆盖只作**筛查**，不作危害证据）。",
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3954527Z       "significant": false
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3954720Z     },
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3954863Z     {
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3955018Z       "degenerate": false,
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3955243Z       "hi": null,
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3955417Z       "kind": "rate",
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3955592Z       "lo": null,
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3955755Z       "mean": null,
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3955979Z       "metric": "holdout_minus_dev.answer_correct_rate",
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3956284Z       "n": 0,
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3957040Z       "note": "dev 与 holdout 的正确率差（paired，按题 id 对齐）。**本场景集两侧题号无交集，故 n=0——这一项在结构上不构成结论**，保留它只为固定报告的字段形状。在 #65 的 in-domain 集上，同一字段即是「机制改动前后」的 paired 比较。",
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3957551Z       "significant": null
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3957747Z     }
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3957947Z   ],
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3958109Z   "bootstrap": {
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3958285Z     "alpha": 0.05,
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3958565Z     "method": "percentile bootstrap（harness/stats.py）",
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3958842Z     "n_boot": 10000,
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3959021Z     "seed": 3630178014
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3959195Z   },
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3959337Z   "counts": {
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3959558Z     "by_kind": {
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3959865Z       "answer": 7,
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3960063Z       "no_answer": 3
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3960237Z     },
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3960390Z     "by_split": {
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3960567Z       "dev": 3,
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3963266Z       "holdout": 7
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3963442Z     },
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3963606Z     "expected_stop": {
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3963800Z       "answer": 5,
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3963971Z       "budget": 2,
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3964159Z       "fallback": 1,
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3964387Z       "insufficient": 1,
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3964776Z       "no_new_ids": 1
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3964960Z     },
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3965111Z     "total": 10
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3965269Z   },
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3965414Z   "notes": [
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3965819Z     "dev 只用于调参 / 人眼观察；对外报数**只报 holdout**（见 scenarios.py 的留出规则）。",
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3966693Z     "bootstrap CI 来自 harness/stats.py::bootstrap_ci（纯计算，无模型）；memory_agent/ 下没有可复用的 bootstrap 工具，故保留在此，不另造第二份。",
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3967965Z     "`significant` 沿用 bootstrap_ci 的语义 = 百分位区间不含 0。本报告**没有对照组**，所以它不是「显著优于某基线」，只是「比例/均值 > 0」；`degenerate=true`（零宽区间，例如全部为 1.0）时该字段没有统计含义。",
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3968837Z     "指标聚合复用 eval/metrics.py::_mean（scorer 不再自写均值）。",
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3969335Z     "`experiments/` 下的 phase_b/analyze.py 属实验产物，本 harness **不 import**。",
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3969858Z     "确定性：stub LLM + stub 工具全程回放，无采样 / 无网络 / 无时钟；同命令两次运行报告逐字节相同。"
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3970135Z   ],
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3970363Z   "scenario_set": "memory_agent/eval/harness/scenarios.json",
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3970876Z   "scenario_set_sha256": "f6d4e750e991ac96f53082ec77ded5e96798b34ea9c325c64b04bf3cd0c0ebb5",
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3971294Z   "schema_version": 1,
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3971479Z   "splits": {
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3971640Z     "dev": {
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3971798Z       "by_stop": {
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3971972Z         "answer": {
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3972165Z           "answer_correct_rate": 1.0,
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3972417Z           "gold_unreached_rate": 0.0,
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3972655Z           "mean_evidence_recall": 1.0,
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3972878Z           "n": 3
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3973046Z         }
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3973205Z       },
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3973369Z       "expectation_matched": 3,
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3973599Z       "expectation_mismatch": [],
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3973825Z       "expectation_total": 3,
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3974052Z       "expected_stop_match_rate": 1.0,
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3974276Z       "ids": [
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3974468Z         "s01-answer-first-hop",
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3974697Z         "s02-multihop-second-hop",
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3974935Z         "s03-multihop-two-extra-hops"
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3975151Z       ],
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3975298Z       "n": 3,
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3975456Z       "overall": {
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3975638Z         "answer_correct_rate": 1.0,
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3975908Z         "gold_unreached_rate": 0.0,
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3976139Z         "mean_evidence_recall": 1.0,
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3976355Z         "n": 3
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3976513Z       }
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3976662Z     },
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3976809Z     "holdout": {
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3976978Z       "by_stop": {
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3977147Z         "answer": {
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3977333Z           "answer_correct_rate": 1.0,
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3977563Z           "gold_unreached_rate": 1.0,
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3977796Z           "mean_evidence_recall": 0.5,
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3978013Z           "n": 2
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3978177Z         },
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3978328Z         "budget": {
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3978513Z           "answer_correct_rate": 0.5,
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3978742Z           "gold_unreached_rate": 0.0,
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3978979Z           "mean_evidence_recall": 1.0,
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3979200Z           "n": 2
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3979357Z         },
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3979514Z         "fallback": {
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3979718Z           "answer_correct_rate": 0.0,
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3980196Z           "gold_unreached_rate": 0.0,
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3980434Z           "mean_evidence_recall": 1.0,
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3980651Z           "n": 1
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3981382Z         },
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3981547Z         "insufficient": {
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3981763Z           "answer_correct_rate": 1.0,
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3982220Z           "gold_unreached_rate": null,
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3982479Z           "mean_evidence_recall": null,
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3982710Z           "n": 1
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3982991Z         },
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3983152Z         "no_new_ids": {
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3983353Z           "answer_correct_rate": 1.0,
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3983590Z           "gold_unreached_rate": null,
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3983827Z           "mean_evidence_recall": null,
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3984042Z           "n": 1
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3984202Z         }
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3984352Z       },
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3984516Z       "expectation_matched": 7,
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3984741Z       "expectation_mismatch": [],
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3984968Z       "expectation_total": 7,
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3985192Z       "expected_stop_match_rate": 1.0,
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3985418Z       "ids": [
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3985602Z         "s04-budget-stop-partial",
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3985843Z         "s05-budget-stop-no-answer",
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3986078Z         "s06-no-new-ids-stop",
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3986295Z         "s07-fallback-stop",
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3986525Z         "s08-insufficient-must-not-answer",
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3986809Z         "s09-gold-unreached-max-evidence",
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3987069Z         "s10-gold-unreached-screening"
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3987290Z       ],
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3987438Z       "n": 7,
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3987598Z       "overall": {
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3987781Z         "answer_correct_rate": 0.714286,
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3988024Z         "gold_unreached_rate": 0.5,
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3988257Z         "mean_evidence_recall": 0.75,
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3988473Z         "n": 7
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3988628Z       }
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3988769Z     }
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3988916Z   }
+L0 闸门 (windows-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:44:19.3989061Z }
+L0 闸门 (windows-latest · py3.12)	接入冒烟（无 opencode serve 则 SKIP，退出码 0）	﻿2026-10-12T15:44:19.5411172Z ##[group]Run python memory_agent/eval/opencode_server_smoke_62.py
+L0 闸门 (windows-latest · py3.12)	接入冒烟（无 opencode serve 则 SKIP，退出码 0）	2026-10-12T15:44:19.5411987Z ^[[36;1mpython memory_agent/eval/opencode_server_smoke_62.py^[[0m
+L0 闸门 (windows-latest · py3.12)	接入冒烟（无 opencode serve 则 SKIP，退出码 0）	2026-10-12T15:44:19.5530628Z shell: C:\Program Files\PowerShell\7\pwsh.EXE -command ". '{0}'"
+L0 闸门 (windows-latest · py3.12)	接入冒烟（无 opencode serve 则 SKIP，退出码 0）	2026-10-12T15:44:19.5531240Z env:
+L0 闸门 (windows-latest · py3.12)	接入冒烟（无 opencode serve 则 SKIP，退出码 0）	2026-10-12T15:44:19.5531702Z   pythonLocation: C:\hostedtoolcache\windows\Python\3.12.10\x64
+L0 闸门 (windows-latest · py3.12)	接入冒烟（无 opencode serve 则 SKIP，退出码 0）	2026-10-12T15:44:19.5532521Z   PKG_CONFIG_PATH: C:\hostedtoolcache\windows\Python\3.12.10\x64/lib/pkgconfig
+L0 闸门 (windows-latest · py3.12)	接入冒烟（无 opencode serve 则 SKIP，退出码 0）	2026-10-12T15:44:19.5533312Z   Python_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.12.10\x64
+L0 闸门 (windows-latest · py3.12)	接入冒烟（无 opencode serve 则 SKIP，退出码 0）	2026-10-12T15:44:19.5534047Z   Python2_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.12.10\x64
+L0 闸门 (windows-latest · py3.12)	接入冒烟（无 opencode serve 则 SKIP，退出码 0）	2026-10-12T15:44:19.5534762Z   Python3_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.12.10\x64
+L0 闸门 (windows-latest · py3.12)	接入冒烟（无 opencode serve 则 SKIP，退出码 0）	2026-10-12T15:44:19.5535315Z ##[endgroup]
+L0 闸门 (windows-latest · py3.12)	接入冒烟（无 opencode serve 则 SKIP，退出码 0）	2026-10-12T15:44:22.2446045Z SKIP：http://127.0.0.1:4096 上没有在跑的 opencode server（`opencode serve --port 4096 --pure`）
+L0 闸门 (windows-latest · py3.12)	接入冒烟（无 opencode serve 则 SKIP，退出码 0）	2026-10-12T15:44:22.2447160Z       探测失败原因：ConnectError: [WinError 10061] No connection could be made because the target machine actively refused it

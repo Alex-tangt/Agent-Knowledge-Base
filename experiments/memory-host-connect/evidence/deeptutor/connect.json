@@ -1,0 +1,236 @@
+{
+  "host": "deeptutor",
+  "driver": "host MCP client path (DeepTutor's own probe_server / MCPConnectionManager)",
+  "deeptutor_version": "1.6.8",
+  "python": "3.12.2",
+  "deep_tutor_home": "C:\\Users\\Tan\\.openviking-mvp-host\\hosts\\deeptutor-home",
+  "mcp_config_path": "C:\\Users\\Tan\\.openviking-mvp-host\\hosts\\deeptutor-home\\data\\user\\settings\\mcp.json",
+  "server": "openviking-mvp",
+  "marker": "M6-DEEPTUTOR",
+  "proxy_env_sanitized": {
+    "NO_PROXY": {
+      "before": "localhost,127.0.0.1,::1,volces.com,volcengine.com,[::1]",
+      "after": "localhost,127.0.0.1,::1,volces.com,volcengine.com,::1"
+    }
+  },
+  "authn": {
+    "mode": "dev (server auto-detected on localhost; dev plugin resolves ROLE=root for every request -- cannot express a read-only identity)",
+    "note": "instance authn mode is a FACT supplied by task-1; 'unknown'/'no key' must NOT be recorded as 'authorized'",
+    "credential_headers": []
+  },
+  "steps": [
+    {
+      "step": "load_mcp_config",
+      "ok": true,
+      "detail": {
+        "servers": [
+          "openviking-mvp"
+        ],
+        "type": "streamableHttp",
+        "url": "http://127.0.0.1:8782/mcp",
+        "enabled": true,
+        "enabled_tools": [
+          "search",
+          "find",
+          "read",
+          "list",
+          "tree",
+          "grep",
+          "glob",
+          "health",
+          "write"
+        ],
+        "disabled_tools": [
+          "forget",
+          "add_skill",
+          "add_resource"
+        ],
+        "headers_keys": [
+          "X-OpenViking-Account",
+          "X-OpenViking-User"
+        ]
+      }
+    },
+    {
+      "step": "tool_whitelist",
+      "ok": true,
+      "detail": {
+        "read_allowed": [
+          "search",
+          "read",
+          "find"
+        ],
+        "write_allowed": true,
+        "forbidden_allowed": {
+          "forget": false,
+          "add_skill": false
+        }
+      }
+    },
+    {
+      "step": "probe_server(list_tools)",
+      "ok": true,
+      "detail": "ok=True tools=20 err="
+    },
+    {
+      "step": "manager.ensure_started",
+      "ok": true,
+      "detail": "status=connected error="
+    },
+    {
+      "step": "readback_matches_write",
+      "ok": true,
+      "detail": {
+        "uri": "viking://resources/mvp-host-connect/deeptutor.md",
+        "written_chars": 82,
+        "readback_chars": 82,
+        "exact_substring": true
+      }
+    },
+    {
+      "step": "cross_host_peer_read",
+      "ok": true,
+      "detail": "opencode.md visible to DeepTutor: True (byte_identical=True)"
+    },
+    {
+      "step": "summary",
+      "ok": true,
+      "detail": "6 PASS / 0 FAIL"
+    }
+  ],
+  "identity": {
+    "account": "mvp-host",
+    "user": "deeptutor-agent",
+    "source": "isolated mcp.json headers"
+  },
+  "probe": {
+    "ok": true,
+    "error": "",
+    "tool_count": 20,
+    "tools": [
+      "list_users",
+      "list_groups",
+      "get_acl",
+      "set_acl",
+      "find",
+      "search",
+      "read",
+      "list",
+      "tree",
+      "remember",
+      "write",
+      "edit",
+      "add_resource",
+      "add_skill",
+      "list_watches",
+      "cancel_watch",
+      "grep",
+      "glob",
+      "forget",
+      "health"
+    ]
+  },
+  "connection_status": [
+    {
+      "name": "openviking-mvp",
+      "transport": "streamableHttp",
+      "status": "connected",
+      "error": "",
+      "tools": [
+        {
+          "name": "mcp_openviking-mvp_find",
+          "description": "[openviking-mvp] Fast semantic retrieval without session context. Returns ranked memories, resources, and skills with URI, abstract, and score. context_type=\"skill\" returns one hit per skill package, pointing at its SKILL.md, and without target_uri searches both the user's own and the account-shared skills."
+        },
+        {
+          "name": "mcp_openviking-mvp_search",
+          "description": "[openviking-mvp] Retrieval with optional session context and intent analysis.\n\n    ``mode=\"list\"`` returns ranked memories, resources, and skills with URI,\n    abstract, and score. ``mode=\"context\"`` returns an injection-ready,\n    token-budgeted context block and supports category quotas, purpose presets,\n    detail tiers, cross-turn deduplication, peer scoping, and optional rewriting.\n    ``target_uri`` is only supported in list mode.\n    "
+        },
+        {
+          "name": "mcp_openviking-mvp_read",
+          "description": "[openviking-mvp] Read one or more viking:// file URIs. Text reads accept line-based offset/limit. Raster images and supported audio return native MCP content blocks. For directory listing, use the list tool instead."
+        },
+        {
+          "name": "mcp_openviking-mvp_list",
+          "description": "[openviking-mvp] List one sorted page under a viking:// directory URI.\n\n    Args:\n        uri: Directory URI to list; defaults to \"viking://\" like tree and glob.\n        recursive: Whether to recursively list descendants.\n        offset: Number of visible entries to skip.\n        limit: Optional maximum number of entries.\n        sort_by: Optional name or modification-time ordering.\n        sort_order: Ascending or descending order.\n\n    Returns:\n        A line-oriented directory listing.\n    "
+        },
+        {
+          "name": "mcp_openviking-mvp_tree",
+          "description": "[openviking-mvp] Show one visible page from a recursive directory tree.\n\n    Args:\n        uri: Directory URI to traverse.\n        level_limit: Maximum traversal depth.\n        node_limit: Existing default result limit.\n        include_abstract: Whether to include directory summaries (a skill directory's\n            summary is its name and description).\n        offset: Number of visible nodes to skip.\n        limit: Optional result limit that overrides node_limit.\n\n    Returns:\n        An indented directory tree.\n    "
+        },
+        {
+          "name": "mcp_openviking-mvp_write",
+          "description": "[openviking-mvp] Write text to a viking:// file. Use this for files you author yourself (notes, profiles, state), the same way you would use a working directory. To change part of an existing file, prefer the edit tool over a full rewrite. To store a file, document, URL, or repo the user gives you, use add_resource; for a skill, use add_skill. Do not copy its text into a file here instead.\n\n    - mode=\"replace\" (default): overwrite the file; creates it and any missing parent directories if needed.\n    - mode=\"create\": fail if the file already exists.\n    - Any new file (whether created by \"replace\" or \"create\") must end in one of: .md .txt .json .yaml .yml .toml .py .js .ts\n    - mode=\"append\": append to the end of an existing file; fails if the file does not exist.\n    - acl: optional shared-resource ACL with acl_mode (inherit/restricted) and entries\n      (principal=user:<id>/group:<id>/user:*, level=read/write/manage). Explicit ACL\n      requires manage on the target, or its parent for a new file. Omit to preserve\n      existing ACL or inherit on creation.\n\n    Writable scopes: viking://resources/, viking://user/{user_id}/, viking://agent/. The viking://~ home alias expands to the caller's user root. The managed user subtrees skills/, peers/, privacy/ and sessions/ are read-only. Do not write inside a skill package under viking://agent/skills/ either: a plain write skips installation, so the skill's abstract, overview and source metadata go stale. Change a skill with the add_skill tool. After a write, semantic search indexes refresh in the background; pass wait=true to block until search reflects the change."
+        },
+        {
+          "name": "mcp_openviking-mvp_grep",
+          "description": "[openviking-mvp] Search content in viking:// files using regex patterns (like grep). Supports multiple patterns searched concurrently. Use this for exact text matching; use the search tool for semantic retrieval."
+        },
+        {
+          "name": "mcp_openviking-mvp_glob",
+          "description": "[openviking-mvp] Find viking:// files matching a glob pattern (e.g. **/*.md, *.py). Use this for filename matching; use the search tool for content-based retrieval."
+        },
+        {
+          "name": "mcp_openviking-mvp_health",
+          "description": "[openviking-mvp] Check whether the OpenViking server is healthy."
+        }
+      ]
+    }
+  ],
+  "tool_calls": [
+    {
+      "tool": "search",
+      "arguments": {
+        "query": "M6-DEEPTUTOR",
+        "limit": 5
+      },
+      "note": "shared read (search)",
+      "response": "Found 4 item(s):\n\n- [resource 83%] viking://resources/mvp-host-connect/deeptutor-b.md\n    (no abstract)\n- [resource 83%] viking://resources/mvp-host-connect/deeptutor.md\n    (no abstract)\n- [resource 67%] viking://resources/.abstract.md\n    [Directory overview is not ready]\n- [resource 65%] viking://resources/mvp-host-connect/.abstract.md\n    [Directory overview is not ready]\n\nUse the read tool to expand a URI."
+    },
+    {
+      "tool": "write",
+      "arguments": {
+        "uri": "viking://resources/mvp-host-connect/deeptutor.md",
+        "content": "# M6 DeepTutor host evidence\n\nmarker=M6-DEEPTUTOR\nwritten_by=deeptutor (isolated)\n",
+        "mode": "replace",
+        "wait": true
+      },
+      "note": "allowed content write",
+      "response": "Wrote 82 bytes to viking://resources/mvp-host-connect/deeptutor.md (mode=replace).\nIndexing: semantic=complete, vector=complete."
+    },
+    {
+      "tool": "read",
+      "arguments": {
+        "uris": "viking://resources/mvp-host-connect/deeptutor.md"
+      },
+      "note": "read-back own write",
+      "response": "# M6 DeepTutor host evidence\n\nmarker=M6-DEEPTUTOR\nwritten_by=deeptutor (isolated)\n"
+    },
+    {
+      "tool": "list",
+      "arguments": {
+        "uri": "viking://resources/mvp-host-connect"
+      },
+      "note": "enumerate shared dir",
+      "response": "[file] deeptutor-b.md\n[file] deeptutor.md\n[file] opencode.md"
+    },
+    {
+      "tool": "read",
+      "arguments": {
+        "uris": "viking://resources/mvp-host-connect/opencode.md"
+      },
+      "note": "read peer host write (may be absent)",
+      "response": "Wrote 3 bytes to viking://resources/mvp-host-connect/opencode.md (mode=replace). Indexing: semantic=queued, vector=queued."
+    }
+  ],
+  "cross_host": {
+    "peer_uri": "viking://resources/mvp-host-connect/opencode.md",
+    "visible": true,
+    "is_error": false,
+    "peer_disk_path": "C:\\Users\\Tan\\.openviking-mvp-host\\data\\viking\\mvp-host\\resources\\mvp-host-connect\\opencode.md",
+    "disk_bytes": 122,
+    "mcp_read_bytes": 122,
+    "disk_sha256": "6a530df1d1ed207fea49e482c74a250c2624d01bae8a59b485d59990d182e51b",
+    "mcp_read_sha256": "6a530df1d1ed207fea49e482c74a250c2624d01bae8a59b485d59990d182e51b",
+    "byte_identical": true
+  }
+}

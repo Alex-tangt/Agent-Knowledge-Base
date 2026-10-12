@@ -1,0 +1,40 @@
+{
+  "verdict": "green",
+  "python_version": "3.10.12 (main, Aug 31 2026, 10:18:17) [GCC 11.4.0]",
+  "fixture_root": "/tmp/agent-kb-97-25qr13wt",
+  "rows": [
+    {
+      "entry": "/tmp/agent-kb-97-25qr13wt/a/bin/python",
+      "resolved_base": "/usr/bin/python3.10",
+      "selected": "/tmp/agent-kb-97-25qr13wt/a/bin/python",
+      "expected": {
+        "entry": "/tmp/agent-kb-97-25qr13wt/a/bin/python",
+        "prefix": "/tmp/agent-kb-97-25qr13wt/a",
+        "purelib": "/tmp/agent-kb-97-25qr13wt/a/lib/python3.10/site-packages"
+      },
+      "observed": {
+        "entry": "/tmp/agent-kb-97-25qr13wt/a/bin/python",
+        "prefix": "/tmp/agent-kb-97-25qr13wt/a",
+        "purelib": "/tmp/agent-kb-97-25qr13wt/a/lib/python3.10/site-packages"
+      },
+      "preserves_environment": true
+    },
+    {
+      "entry": "/tmp/agent-kb-97-25qr13wt/b/bin/python",
+      "resolved_base": "/usr/bin/python3.10",
+      "selected": "/tmp/agent-kb-97-25qr13wt/b/bin/python",
+      "expected": {
+        "entry": "/tmp/agent-kb-97-25qr13wt/b/bin/python",
+        "prefix": "/tmp/agent-kb-97-25qr13wt/b",
+        "purelib": "/tmp/agent-kb-97-25qr13wt/b/lib/python3.10/site-packages"
+      },
+      "observed": {
+        "entry": "/tmp/agent-kb-97-25qr13wt/b/bin/python",
+        "prefix": "/tmp/agent-kb-97-25qr13wt/b",
+        "purelib": "/tmp/agent-kb-97-25qr13wt/b/lib/python3.10/site-packages"
+      },
+      "preserves_environment": true
+    }
+  ],
+  "boundary": "Only real POSIX symlink/prefix/purelib selection; no Python3.12 wheel or dependency-stack acceptance claim."
+}

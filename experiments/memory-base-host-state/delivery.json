@@ -1,0 +1,341 @@
+{
+  "baseline": "0a86cb1013a481aa91b4b97b826d62a4a8456fb8",
+  "candidate_commit": "ba8b5b5c557fceee93c9e5738b43ecee7ec9b156",
+  "candidate_path": "D:\\python_work\\work2026-4\\memory-base-bubble-bridge-assets\\20261012\\candidate93",
+  "files": {
+    "scripts/local-backend.mjs": {
+      "artifact": "artifacts\\scripts\\local-backend.mjs",
+      "git_blob": {
+        "bytes": 9511,
+        "raw_sha256": "fb63de37a3c6f7e358fc0862badf4982557bc23bd788874219f338d64ae5cb5d",
+        "crlf_to_lf_sha256": "fb63de37a3c6f7e358fc0862badf4982557bc23bd788874219f338d64ae5cb5d"
+      },
+      "candidate_working": {
+        "bytes": 9656,
+        "raw_sha256": "638124084640efa82aa242735a8e70bcfdb84b6a80109757c11cadf33ffa0ca9",
+        "crlf_to_lf_sha256": "fb63de37a3c6f7e358fc0862badf4982557bc23bd788874219f338d64ae5cb5d"
+      }
+    },
+    "scripts/host-state.mjs": {
+      "artifact": "artifacts\\scripts\\host-state.mjs",
+      "git_blob": {
+        "bytes": 1911,
+        "raw_sha256": "6482f8b05cf7a42aba7de431fba339f0ab9be1a716f63fdabb8a917a23eb43c0",
+        "crlf_to_lf_sha256": "6482f8b05cf7a42aba7de431fba339f0ab9be1a716f63fdabb8a917a23eb43c0"
+      },
+      "candidate_working": {
+        "bytes": 1911,
+        "raw_sha256": "6482f8b05cf7a42aba7de431fba339f0ab9be1a716f63fdabb8a917a23eb43c0",
+        "crlf_to_lf_sha256": "6482f8b05cf7a42aba7de431fba339f0ab9be1a716f63fdabb8a917a23eb43c0"
+      }
+    },
+    "scripts/tests/local-backend.test.mjs": {
+      "artifact": "artifacts\\scripts\\tests\\local-backend.test.mjs",
+      "git_blob": {
+        "bytes": 13919,
+        "raw_sha256": "9d0f1fae875ca8da4a1ac24bd6ac1c981962bf22c3362ab40c9f3ef91a303b7a",
+        "crlf_to_lf_sha256": "9d0f1fae875ca8da4a1ac24bd6ac1c981962bf22c3362ab40c9f3ef91a303b7a"
+      },
+      "candidate_working": {
+        "bytes": 14121,
+        "raw_sha256": "f15bb6ca572c4ba1314220e84658214d98fc708e637b6d948b64cabca747bef5",
+        "crlf_to_lf_sha256": "9d0f1fae875ca8da4a1ac24bd6ac1c981962bf22c3362ab40c9f3ef91a303b7a"
+      }
+    }
+  },
+  "actual_launcher_raw_unchanged": true,
+  "protected_original_fail_unchanged": {
+    "first_host_failure.json": true,
+    "launcher-original.log": true
+  },
+  "actual_helper_exists_before_lead_application": false,
+  "original_fail_boundary": "Original native Windows EPERM from #92; never overwritten",
+  "fault_boundary": "Actual candidate launcher/backend with explicit fs.renameSync fault injection at state publication; not a native lock reproduction",
+  "readiness_timeout_ms": 120000,
+  "rename_policy": {
+    "codes": [
+      "EPERM",
+      "EACCES",
+      "EBUSY"
+    ],
+    "attempts": 6,
+    "delay_ms": 40,
+    "maximum_retry_pause_ms": 200
+  },
+  "dependencies": "Read-only junction to existing actual node_modules; no install or external LLM",
+  "commands": {
+    "baseline-build": {
+      "command": [
+        "npm",
+        "run",
+        "build"
+      ],
+      "cwd": "D:\\python_work\\work2026-4\\memory-base-bubble-bridge-assets\\20261012\\candidate93",
+      "pid": 44196,
+      "exit_code": 0,
+      "wall_seconds": 17.468100400001276,
+      "raw_output_sha256": "2e2b7151b67960d2dbbdf8f770f4bf6e3f4216452fbc36f01643ab7b0b8f939d"
+    },
+    "fault-green": {
+      "command": [
+        "node",
+        "--test",
+        "--test-name-pattern",
+        "state publication",
+        "scripts/tests/local-backend.test.mjs"
+      ],
+      "cwd": "D:\\python_work\\work2026-4\\memory-base-bubble-bridge-assets\\20261012\\candidate93",
+      "pid": 41992,
+      "exit_code": 0,
+      "wall_seconds": 40.20431770000141,
+      "raw_output_sha256": "0847c87b2f28dbb024ac8c10a87664e919883c55a2c9d671da813290d502b59e"
+    },
+    "fault-red": {
+      "command": [
+        "node",
+        "--test",
+        "--test-name-pattern",
+        "state publication",
+        "scripts/tests/local-backend.test.mjs"
+      ],
+      "cwd": "D:\\python_work\\work2026-4\\memory-base-bubble-bridge-assets\\20261012\\candidate93",
+      "pid": 8404,
+      "exit_code": 1,
+      "wall_seconds": 53.99042470000859,
+      "raw_output_sha256": "c1937997a8704c752f00224a0c1df3a7cb10275340c94f8f000728d64cc059b9"
+    },
+    "final-app": {
+      "command": [
+        "npm",
+        "test"
+      ],
+      "cwd": "D:\\python_work\\work2026-4\\memory-base-bubble-bridge-assets\\20261012\\candidate93",
+      "pid": 25472,
+      "exit_code": 0,
+      "wall_seconds": 37.300256099988474,
+      "raw_output_sha256": "2ea232aa9c3115ac1dd6fa2d1227bd678428985aa04387a1c6315532fef7c2eb"
+    },
+    "final-build": {
+      "command": [
+        "npm",
+        "run",
+        "build"
+      ],
+      "cwd": "D:\\python_work\\work2026-4\\memory-base-bubble-bridge-assets\\20261012\\candidate93",
+      "pid": 42532,
+      "exit_code": 0,
+      "wall_seconds": 18.17634079999698,
+      "raw_output_sha256": "2e2b7151b67960d2dbbdf8f770f4bf6e3f4216452fbc36f01643ab7b0b8f939d"
+    },
+    "final-host": {
+      "command": [
+        "npm",
+        "run",
+        "test:host"
+      ],
+      "cwd": "D:\\python_work\\work2026-4\\memory-base-bubble-bridge-assets\\20261012\\candidate93",
+      "pid": 12932,
+      "exit_code": 0,
+      "wall_seconds": 105.92145989999699,
+      "raw_output_sha256": "cf5ce68ab8219ea1fa3b471456b0e16202a4f7a8a5863c7c9bbb70b4830003b4"
+    },
+    "no-live-child-state": {
+      "command": [
+        "node",
+        "--test",
+        "--test-name-pattern",
+        "state publication failure at",
+        "scripts/tests/local-backend.test.mjs"
+      ],
+      "cwd": "D:\\python_work\\work2026-4\\memory-base-bubble-bridge-assets\\20261012\\candidate93",
+      "pid": 37136,
+      "exit_code": 0,
+      "wall_seconds": 24.100496800005203,
+      "raw_output_sha256": "7d10de35938a7be2c4445e1e0f33b57a3b8fcf0e2ea420987ac6def9af3ef6e7"
+    },
+    "state-unit": {
+      "command": [
+        "node",
+        "--test",
+        "--test-name-pattern",
+        "atomic state|persistent rename retry",
+        "scripts/tests/local-backend.test.mjs"
+      ],
+      "cwd": "D:\\python_work\\work2026-4\\memory-base-bubble-bridge-assets\\20261012\\candidate93",
+      "pid": 44484,
+      "exit_code": 0,
+      "wall_seconds": 0.557253099992522,
+      "raw_output_sha256": "6416a09c43b82144d8654283525b6afb9d4307ea522a89d02be00fa6f4f38ca3"
+    }
+  },
+  "patch": {
+    "bytes": 21164,
+    "raw_sha256": "4a606b6a36ef5c32c915a1b5e5a884b23f1836b7cbfaae0ce2e4923d53a9a705",
+    "crlf_to_lf_sha256": "4a606b6a36ef5c32c915a1b5e5a884b23f1836b7cbfaae0ce2e4923d53a9a705"
+  },
+  "green_fixtures": {
+    "restarting": {
+      "asset": "D:\\python_work\\work2026-4\\memory-base-bubble-bridge-assets\\20261012\\candidate93\\.tools\\state-test-3Ec78j",
+      "result": {
+        "mode": "restarting",
+        "instance": "8bbb3c6e-ecd7-4200-8ced-541ccbafa142",
+        "launcherPid": 35800,
+        "launcherExit": 1,
+        "childPid": 45036,
+        "childStillAlive": false,
+        "backendHealthy": false,
+        "fallbackCleanup": false,
+        "state": null,
+        "lock": null,
+        "boundary": "Actual candidate launcher/backend, explicit rename fault injection; no paid model"
+      },
+      "files": {
+        "fixture-result.json": {
+          "bytes": 361,
+          "raw_sha256": "88d572291f78618047370925e8c786b2aecae248d977bb8ccdfa139d21a8deb9",
+          "crlf_to_lf_sha256": "88d572291f78618047370925e8c786b2aecae248d977bb8ccdfa139d21a8deb9"
+        },
+        "rename-injection.jsonl": {
+          "bytes": 420,
+          "raw_sha256": "9cf257574558335007c2205104804a7ac85a7462c651ccd37dc17be782b80e2c",
+          "crlf_to_lf_sha256": "9cf257574558335007c2205104804a7ac85a7462c651ccd37dc17be782b80e2c"
+        },
+        "child-identity.json": {
+          "bytes": 29,
+          "raw_sha256": "52662a12419c02f506f9449b846cc91359f104b154896cca1257b83ce20c604e",
+          "crlf_to_lf_sha256": "52662a12419c02f506f9449b846cc91359f104b154896cca1257b83ce20c604e"
+        },
+        "launcher-direct.log": {
+          "bytes": 0,
+          "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "crlf_to_lf_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    },
+    "transient": {
+      "asset": "D:\\python_work\\work2026-4\\memory-base-bubble-bridge-assets\\20261012\\candidate93\\.tools\\state-test-bSfZEM",
+      "result": {
+        "mode": "transient",
+        "instance": "03410178-facd-4d53-8b9f-dadbf018eb9c",
+        "launcherPid": 31484,
+        "launcherExit": 0,
+        "childPid": 43680,
+        "childStillAlive": false,
+        "backendHealthy": false,
+        "fallbackCleanup": false,
+        "state": null,
+        "lock": null,
+        "boundary": "Actual candidate launcher/backend, explicit rename fault injection; no paid model"
+      },
+      "files": {
+        "fixture-result.json": {
+          "bytes": 360,
+          "raw_sha256": "214d490448e80ab9970dca2c6fa2cbd14679a195877c14f609e9dccff8e02758",
+          "crlf_to_lf_sha256": "214d490448e80ab9970dca2c6fa2cbd14679a195877c14f609e9dccff8e02758"
+        },
+        "rename-injection.jsonl": {
+          "bytes": 201,
+          "raw_sha256": "0ef2807862ebcc6dc3bfa917624decbfd7c0bb7b4036db5c34e9a11e3be02e4c",
+          "crlf_to_lf_sha256": "0ef2807862ebcc6dc3bfa917624decbfd7c0bb7b4036db5c34e9a11e3be02e4c"
+        },
+        "child-identity.json": {
+          "bytes": 207,
+          "raw_sha256": "1c9900bc50e85de6dff2b469a60021958305c3f668639570ec4865626212e14f",
+          "crlf_to_lf_sha256": "1c9900bc50e85de6dff2b469a60021958305c3f668639570ec4865626212e14f"
+        },
+        "launcher-direct.log": {
+          "bytes": 0,
+          "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "crlf_to_lf_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    },
+    "initial": {
+      "asset": "D:\\python_work\\work2026-4\\memory-base-bubble-bridge-assets\\20261012\\candidate93\\.tools\\state-test-Dly7zO",
+      "result": {
+        "mode": "initial",
+        "instance": "245ffb69-303f-4501-a660-17630ee72365",
+        "launcherPid": 31152,
+        "launcherExit": 1,
+        "childStillAlive": false,
+        "backendHealthy": false,
+        "fallbackCleanup": false,
+        "state": null,
+        "lock": null,
+        "boundary": "Actual candidate launcher/backend, explicit rename fault injection; no paid model"
+      },
+      "files": {
+        "fixture-result.json": {
+          "bytes": 337,
+          "raw_sha256": "f05e61679bc83e48bc3d83ebc6855322de59a9966fb854e1ec020cf9cd8fecbd",
+          "crlf_to_lf_sha256": "f05e61679bc83e48bc3d83ebc6855322de59a9966fb854e1ec020cf9cd8fecbd"
+        },
+        "rename-injection.jsonl": {
+          "bytes": 408,
+          "raw_sha256": "180752e725ef31705071a3d5a58521942d2b2a08afc6995fb4cc1fd19b2d4dee",
+          "crlf_to_lf_sha256": "180752e725ef31705071a3d5a58521942d2b2a08afc6995fb4cc1fd19b2d4dee"
+        },
+        "child-identity.json": {
+          "bytes": 17,
+          "raw_sha256": "b6cbc901f8fd56e07f4a604bbba1fb27e8962203325177755c5f10828b772b47",
+          "crlf_to_lf_sha256": "b6cbc901f8fd56e07f4a604bbba1fb27e8962203325177755c5f10828b772b47"
+        },
+        "launcher-direct.log": {
+          "bytes": 0,
+          "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "crlf_to_lf_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    },
+    "persistent": {
+      "asset": "D:\\python_work\\work2026-4\\memory-base-bubble-bridge-assets\\20261012\\candidate93\\.tools\\state-test-Q94SyN",
+      "result": {
+        "mode": "persistent",
+        "instance": "a337dee1-6fa9-4583-b352-907f1bf83fde",
+        "launcherPid": 39028,
+        "launcherExit": 1,
+        "childPid": 36000,
+        "childStillAlive": false,
+        "backendHealthy": false,
+        "fallbackCleanup": false,
+        "state": null,
+        "lock": null,
+        "boundary": "Actual candidate launcher/backend, explicit rename fault injection; no paid model"
+      },
+      "files": {
+        "fixture-result.json": {
+          "bytes": 361,
+          "raw_sha256": "009312dd8cb9f0e10d823ca6b27bfbd0018133f182ebf16b910f993794265f9f",
+          "crlf_to_lf_sha256": "009312dd8cb9f0e10d823ca6b27bfbd0018133f182ebf16b910f993794265f9f"
+        },
+        "rename-injection.jsonl": {
+          "bytes": 402,
+          "raw_sha256": "3193bc1c93548f2a3fcd216d56e0c50437484712723d2e3ad1ca3858f449c8f5",
+          "crlf_to_lf_sha256": "3193bc1c93548f2a3fcd216d56e0c50437484712723d2e3ad1ca3858f449c8f5"
+        },
+        "child-identity.json": {
+          "bytes": 207,
+          "raw_sha256": "a6a1ea01ae03faddd629b5a5dc454339c15bee35b718d4a7a25adc268e54e426",
+          "crlf_to_lf_sha256": "a6a1ea01ae03faddd629b5a5dc454339c15bee35b718d4a7a25adc268e54e426"
+        },
+        "launcher-direct.log": {
+          "bytes": 0,
+          "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "crlf_to_lf_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    }
+  },
+  "all_state_fixture_assets": [
+    "D:\\python_work\\work2026-4\\memory-base-bubble-bridge-assets\\20261012\\candidate93\\.tools\\state-test-3Ec78j",
+    "D:\\python_work\\work2026-4\\memory-base-bubble-bridge-assets\\20261012\\candidate93\\.tools\\state-test-8z8gjh",
+    "D:\\python_work\\work2026-4\\memory-base-bubble-bridge-assets\\20261012\\candidate93\\.tools\\state-test-bSfZEM",
+    "D:\\python_work\\work2026-4\\memory-base-bubble-bridge-assets\\20261012\\candidate93\\.tools\\state-test-D9RmXW",
+    "D:\\python_work\\work2026-4\\memory-base-bubble-bridge-assets\\20261012\\candidate93\\.tools\\state-test-Dly7zO",
+    "D:\\python_work\\work2026-4\\memory-base-bubble-bridge-assets\\20261012\\candidate93\\.tools\\state-test-fm3IRa",
+    "D:\\python_work\\work2026-4\\memory-base-bubble-bridge-assets\\20261012\\candidate93\\.tools\\state-test-PlUvR0",
+    "D:\\python_work\\work2026-4\\memory-base-bubble-bridge-assets\\20261012\\candidate93\\.tools\\state-test-q7ok7f",
+    "D:\\python_work\\work2026-4\\memory-base-bubble-bridge-assets\\20261012\\candidate93\\.tools\\state-test-Q94SyN",
+    "D:\\python_work\\work2026-4\\memory-base-bubble-bridge-assets\\20261012\\candidate93\\.tools\\state-test-UjvASG"
+  ]
+}

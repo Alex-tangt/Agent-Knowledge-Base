@@ -24,9 +24,10 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # 两条腿都是真实目标：开发机 = Windows，部署与验收 = WSL/Linux（ADR-0028）。
+        # 正式 memory_base 要求 Python 3.12；Windows 为当前产品平台，Ubuntu 保留源码回归。
+        # Ubuntu 单测不代表 POSIX 独立部署已验收（ADR-0032）。
         os: [ubuntu-latest, windows-latest]
-        python-version: ["3.11"]
+        python-version: ["3.12"]
     steps:
       - name: 取源码
         # v5 / v6 = Node 24 运行时（v4 / v5 会被 runner 强制升到 Node 24 并打 deprecation 警告）
@@ -43,9 +44,11 @@ jobs:
 
       # memory_agent/deploy-requirements.txt = 运行时**权威依赖源**（ADR-0028 D3），
       # 并显式固定 sentence-transformers==5.4.1 / transformers==4.57.6 这一已知可用组合（BGE-M3 兼容）。
-      # pytest 只为跑本 workflow。
-      - name: 装运行时依赖 + pytest
-        run: python -m pip install -r memory_agent/deploy-requirements.txt pytest
+      # pytest 为回归闸门；FastAPI 是 memory_base 网关测试的显式依赖，版本与其约束一致。
+      # 旧 memory_agent 运行时不依赖 FastAPI，不能用已排除的 legal_web 依赖补齐 CI。
+      # 单测使用本地 fixture，无需安装 OpenViking/native 模型栈。
+      - name: 装运行时依赖 + pytest + 网关测试依赖
+        run: python -m pip install -r memory_agent/deploy-requirements.txt pytest fastapi==0.143.0
 
       - name: 装两个本地包（editable）
         run: python -m pip install -e ragcore -e memory_agent
@@ -58,7 +61,7 @@ jobs:
       - name: 预热 BM25 词法编码器
         run: python -c "from memory_agent.settings import SPARSE_BM25_CACHE_DIR; from fastembed.sparse import SparseTextEmbedding; SparseTextEmbedding('Qdrant/bm25', cache_dir=SPARSE_BM25_CACHE_DIR); print('bm25 model ready')"
 
-      # 本地基线：579 passed / 3 skipped / 3 xfailed（AGENTS.md「Tests」节）。
+      # 最近 Windows/Python 3.12 本地闸门：833 passed / 5 skipped（45296a5）。
       - name: 单元测试（回归闸门）
         run: python -m pytest tests/unit -q
 

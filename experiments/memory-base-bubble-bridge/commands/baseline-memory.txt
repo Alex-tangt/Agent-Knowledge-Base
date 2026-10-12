@@ -1,0 +1,19 @@
+(node:13808) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node.EXE --trace-warnings ...` to show where the warning was created)
+✔ first article and video summaries are saved byte-exact with provenance; follow-ups are not automatically saved (3971.8246ms)
+✔ ambiguous KB failure preserves answer; retry after app restart reuses the same request and never calls the model again (219.8597ms)
+✔ invalid saved hash is never shown as successfully saved (139.1999ms)
+✔ restart makes an interrupted persisted save retryable without discarding its answer (115.9347ms)
+✔ client distinguishes unavailable KB from successful empty retrieval and returns the original saved body (40.1798ms)
+✔ source injection cannot grant memory_add; explicit user note request can, and tool events contain names only (27.0736ms)
+✔ configuration can disable the integration and credential provider settings do not require a plaintext token (28.5824ms)
+✔ actual pi SDK exposes only the three KB tools and executes search/get through the shared gateway (11800.3142ms)
+✔ memory credential never reaches media subprocesses (202.0766ms)
+ℹ tests 9
+ℹ suites 0
+ℹ pass 9
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 48767.1033

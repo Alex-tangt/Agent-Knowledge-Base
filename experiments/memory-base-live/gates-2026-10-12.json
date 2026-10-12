@@ -1,0 +1,48 @@
+{
+  "date": "2026-10-12",
+  "frozen_implementation": "9252d5281ab69ad418c76e1672af4dc6fbdff9e5",
+  "python": "3.12.14",
+  "implementation_files_still_match_frozen_normalized_text": true,
+  "pytest": {
+    "command": "python -m pytest tests/unit -q",
+    "exit_code": 0,
+    "passed": 824,
+    "skipped": 5,
+    "warnings": 1,
+    "seconds": 195.97,
+    "warning": "Existing Qdrant remote version probe warning"
+  },
+  "harness": {
+    "command": "python -m memory_agent.eval.harness --out <temporary report>",
+    "exit_code": 0,
+    "expectation_matched": 10,
+    "total": 10,
+    "report_sha256": "a1687576d3955bf05d8680619eb8afc7e8ef7bda8ba49a77b983cce2fa9bf6d2"
+  },
+  "opencode_smoke": {
+    "command": "python memory_agent/eval/opencode_server_smoke_62.py",
+    "exit_code": 0,
+    "result": "SKIP",
+    "reason": "No opencode server on 127.0.0.1:4096"
+  },
+  "map_check": {
+    "formal_files_present": [
+      "memory_base/deploy.py",
+      "memory_base/credentials.py",
+      "memory_base/embed.py",
+      "memory_base/gateway.py",
+      "memory_base/upstream.py",
+      "memory_base/mcp_stdio.py",
+      "memory_base/paths.py",
+      "memory_base/sources.py",
+      "memory_base/backup.py",
+      "memory_base/autostart.py",
+      "memory_base/pyproject.toml",
+      "memory_base/requirements.txt",
+      "memory_base/constraints.txt",
+      "memory_base/skill/SKILL.md"
+    ],
+    "root_readme_agents_context_name_formal_package": true
+  },
+  "boundary": "Local Windows/Python3.12 existing full gates. Does not replace independent clean wheel/runtime acceptance or a real DSH/opencode dialogue."
+}

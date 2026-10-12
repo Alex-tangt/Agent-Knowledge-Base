@@ -91,6 +91,13 @@ memory_agent/imports/
 # (ADR-0027 D7 / #51). Create with `python -m venv venv-parse`.
 venv-parse/
 
+# Candidate memory-framework spike environment; NEVER the main venv
+# (experiments/memory-framework-spike/README.md「设置·隔离要求」).
+venv-spike/
+
+# OpenViking trial environment; NEVER the main venv (RFC D9 先尝试 OpenViking).
+venv-ov/
+
 # External benchmark dataset (MultiHop-RAG, ODC-BY) — not committed (issue #47)
 #
 # **保留在本地、不清理**（AGENTS.md「测量基座不许清」，owner 2026-10-07）：不提交 ≠ 可删。

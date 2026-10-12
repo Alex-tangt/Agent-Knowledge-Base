@@ -1,0 +1,974 @@
+{
+  "unit": "M5",
+  "claim": "版本、备份与恢复有效",
+  "generated_at": "2026-10-10T15:24:12+0800",
+  "profile": "authz",
+  "verdict": "FAIL",
+  "checks": [
+    {
+      "id": "M5.1-versions-identifiable",
+      "claim": "历史版本可识别（快照提交可列举、可回看单个文件）",
+      "verdict": "PASS",
+      "detail": {
+        "commit_v1": "242f2da0cc1eb3b39426ba4cdc90cbcb6206b408",
+        "commit_v2": "99d3732372aa80d9b8e6c8d7e227ef1d446c4e0b",
+        "commit_responses": {
+          "v1": {
+            "ok": true,
+            "result": {
+              "result": "noop",
+              "commit_oid": "242f2da0cc1eb3b39426ba4cdc90cbcb6206b408",
+              "ignored": 0
+            },
+            "_returncode": 0
+          },
+          "v2": {
+            "ok": true,
+            "result": {
+              "result": "created",
+              "commit_oid": "99d3732372aa80d9b8e6c8d7e227ef1d446c4e0b",
+              "changed": 1,
+              "ignored": 0
+            },
+            "_returncode": 0
+          }
+        },
+        "snapshot_log_entries": [
+          {
+            "oid": "99d3732372aa80d9b8e6c8d7e227ef1d446c4e0b",
+            "tree": "fe017c0f6b44b5fab68e363c096e2db3234ab317",
+            "parents": [
+              "242f2da0cc1eb3b39426ba4cdc90cbcb6206b408"
+            ],
+            "author": {
+              "name": "viking-bot",
+              "email": "bot@viking.local",
+              "time_seconds": 1791616892,
+              "tz_offset_seconds": 28800
+            },
+            "committer": {
+              "name": "viking-bot",
+              "email": "bot@viking.local",
+              "time_seconds": 1791616892,
+              "tz_offset_seconds": 28800
+            },
+            "message": "M5 v2"
+          },
+          {
+            "oid": "242f2da0cc1eb3b39426ba4cdc90cbcb6206b408",
+            "tree": "eee13728ade1d20fe00f029a1de7e5903a91f09f",
+            "parents": [
+              "c925ca39e597ee0abb5dd9c74548fa70f3abacc2"
+            ],
+            "author": {
+              "name": "viking-bot",
+              "email": "bot@viking.local",
+              "time_seconds": 1791616628,
+              "tz_offset_seconds": 28800
+            },
+            "committer": {
+              "name": "viking-bot",
+              "email": "bot@viking.local",
+              "time_seconds": 1791616628,
+              "tz_offset_seconds": 28800
+            },
+            "message": "M5 rollback to v1"
+          },
+          {
+            "oid": "c925ca39e597ee0abb5dd9c74548fa70f3abacc2",
+            "tree": "fe017c0f6b44b5fab68e363c096e2db3234ab317",
+            "parents": [
+              "82ab3c3467a10a9a6abfcb3e123de59eb3e219d0"
+            ],
+            "author": {
+              "name": "viking-bot",
+              "email": "bot@viking.local",
+              "time_seconds": 1791616627,
+              "tz_offset_seconds": 28800
+            },
+            "committer": {
+              "name": "viking-bot",
+              "email": "bot@viking.local",
+              "time_seconds": 1791616627,
+              "tz_offset_seconds": 28800
+            },
+            "message": "M5 v2"
+          },
+          {
+            "oid": "82ab3c3467a10a9a6abfcb3e123de59eb3e219d0",
+            "tree": "eee13728ade1d20fe00f029a1de7e5903a91f09f",
+            "parents": [
+              "2d1d79acf652af70f4fbd48a4a9b970b9c26e626"
+            ],
+            "author": {
+              "name": "viking-bot",
+              "email": "bot@viking.local",
+              "time_seconds": 1791616233,
+              "tz_offset_seconds": 28800
+            },
+            "committer": {
+              "name": "viking-bot",
+              "email": "bot@viking.local",
+              "time_seconds": 1791616233,
+              "tz_offset_seconds": 28800
+            },
+            "message": "M5 rollback to v1"
+          },
+          {
+            "oid": "2d1d79acf652af70f4fbd48a4a9b970b9c26e626",
+            "tree": "fe017c0f6b44b5fab68e363c096e2db3234ab317",
+            "parents": [
+              "c89c23498c27c1ecb693fee7d7024da64c9ccf0d"
+            ],
+            "author": {
+              "name": "viking-bot",
+              "email": "bot@viking.local",
+              "time_seconds": 1791616232,
+              "tz_offset_seconds": 28800
+            },
+            "committer": {
+              "name": "viking-bot",
+              "email": "bot@viking.local",
+              "time_seconds": 1791616232,
+              "tz_offset_seconds": 28800
+            },
+            "message": "M5 v2"
+          }
+        ],
+        "snapshot_log_raw": {
+          "ok": true,
+          "result": [
+            {
+              "oid": "99d3732372aa80d9b8e6c8d7e227ef1d446c4e0b",
+              "tree": "fe017c0f6b44b5fab68e363c096e2db3234ab317",
+              "parents": [
+                "242f2da0cc1eb3b39426ba4cdc90cbcb6206b408"
+              ],
+              "author": {
+                "name": "viking-bot",
+                "email": "bot@viking.local",
+                "time_seconds": 1791616892,
+                "tz_offset_seconds": 28800
+              },
+              "committer": {
+                "name": "viking-bot",
+                "email": "bot@viking.local",
+                "time_seconds": 1791616892,
+                "tz_offset_seconds": 28800
+              },
+              "message": "M5 v2"
+            },
+            {
+              "oid": "242f2da0cc1eb3b39426ba4cdc90cbcb6206b408",
+              "tree": "eee13728ade1d20fe00f029a1de7e5903a91f09f",
+              "parents": [
+                "c925ca39e597ee0abb5dd9c74548fa70f3abacc2"
+              ],
+              "author": {
+                "name": "viking-bot",
+                "email": "bot@viking.local",
+                "time_seconds": 1791616628,
+                "tz_offset_seconds": 28800
+              },
+              "committer": {
+                "name": "viking-bot",
+                "email": "bot@viking.local",
+                "time_seconds": 1791616628,
+                "tz_offset_seconds": 28800
+              },
+              "message": "M5 rollback to v1"
+            },
+            {
+              "oid": "c925ca39e597ee0abb5dd9c74548fa70f3abacc2",
+              "tree": "fe017c0f6b44b5fab68e363c096e2db3234ab317",
+              "parents": [
+                "82ab3c3467a10a9a6abfcb3e123de59eb3e219d0"
+              ],
+              "author": {
+                "name": "viking-bot",
+                "email": "bot@viking.local",
+                "time_seconds": 1791616627,
+                "tz_offset_seconds": 28800
+              },
+              "committer": {
+                "name": "viking-bot",
+                "email": "bot@viking.local",
+                "time_seconds": 1791616627,
+                "tz_offset_seconds": 28800
+              },
+              "message": "M5 v2"
+            },
+            {
+              "oid": "82ab3c3467a10a9a6abfcb3e123de59eb3e219d0",
+              "tree": "eee13728ade1d20fe00f029a1de7e5903a91f09f",
+              "parents": [
+                "2d1d79acf652af70f4fbd48a4a9b970b9c26e626"
+              ],
+              "author": {
+                "name": "viking-bot",
+                "email": "bot@viking.local",
+                "time_seconds": 1791616233,
+                "tz_offset_seconds": 28800
+              },
+              "committer": {
+                "name": "viking-bot",
+                "email": "bot@viking.local",
+                "time_seconds": 1791616233,
+                "tz_offset_seconds": 28800
+              },
+              "message": "M5 rollback to v1"
+            },
+            {
+              "oid": "2d1d79acf652af70f4fbd48a4a9b970b9c26e626",
+              "tree": "fe017c0f6b44b5fab68e363c096e2db3234ab317",
+              "parents": [
+                "c89c23498c27c1ecb693fee7d7024da64c9ccf0d"
+              ],
+              "author": {
+                "name": "viking-bot",
+                "email": "bot@viking.local",
+                "time_seconds": 1791616232,
+                "tz_offset_seconds": 28800
+              },
+              "committer": {
+                "name": "viking-bot",
+                "email": "bot@viking.local",
+                "time_seconds": 1791616232,
+                "tz_offset_seconds": 28800
+              },
+              "message": "M5 v2"
+            },
+            {
+              "oid": "c89c23498c27c1ecb693fee7d7024da64c9ccf0d",
+              "tree": "eee13728ade1d20fe00f029a1de7e5903a91f09f",
+              "parents": [
+                "e8d96909b222c6995b6cd9ec75a7b81b47a849de"
+              ],
+              "author": {
+                "name": "viking-bot",
+                "email": "bot@viking.local",
+                "time_seconds": 1791615849,
+                "tz_offset_seconds": 28800
+              },
+              "committer": {
+                "name": "viking-bot",
+                "email": "bot@viking.local",
+                "time_seconds": 1791615849,
+                "tz_offset_seconds": 28800
+              },
+              "message": "M5 rollback to v1"
+            },
+            {
+              "oid": "e8d96909b222c6995b6cd9ec75a7b81b47a849de",
+              "tree": "fe017c0f6b44b5fab68e363c096e2db3234ab317",
+              "parents": [
+                "cd53d869ad18136efb324d2e0fc256b4c9d06861"
+              ],
+              "author": {
+                "name": "viking-bot",
+                "email": "bot@viking.local",
+                "time_seconds": 1791615848,
+                "tz_offset_seconds": 28800
+              },
+              "committer": {
+                "name": "viking-bot",
+                "email": "bot@viking.local",
+                "time_seconds": 1791615848,
+                "tz_offset_seconds": 28800
+              },
+              "message": "M5 v2"
+            },
+            {
+              "oid": "cd53d869ad18136efb324d2e0fc256b4c9d06861",
+              "tree": "eee13728ade1d20fe00f029a1de7e5903a91f09f",
+              "parents": [
+                "96bac6898aa100cb4b22e0c03570ded35cdb8513"
+              ],
+              "author": {
+                "name": "viking-bot",
+                "email": "bot@viking.local",
+                "time_seconds": 1791615597,
+                "tz_offset_seconds": 28800
+              },
+              "committer": {
+                "name": "viking-bot",
+                "email": "bot@viking.local",
+                "time_seconds": 1791615597,
+                "tz_offset_seconds": 28800
+              },
+              "message": "M5 rollback to v1"
+            },
+            {
+              "oid": "96bac6898aa100cb4b22e0c03570ded35cdb8513",
+              "tree": "fe017c0f6b44b5fab68e363c096e2db3234ab317",
+              "parents": [
+                "59e783c03abc620115943bc901ee4a154a432274"
+              ],
+              "author": {
+                "name": "viking-bot",
+                "email": "bot@viking.local",
+                "time_seconds": 1791615596,
+                "tz_offset_seconds": 28800
+              },
+              "committer": {
+                "name": "viking-bot",
+                "email": "bot@viking.local",
+                "time_seconds": 1791615596,
+                "tz_offset_seconds": 28800
+              },
+              "message": "M5 v2"
+            },
+            {
+              "oid": "59e783c03abc620115943bc901ee4a154a432274",
+              "tree": "eee13728ade1d20fe00f029a1de7e5903a91f09f",
+              "parents": [
+                "04bc07d8993cea7bda3251719e426a6804843cd8"
+              ],
+              "author": {
+                "name": "viking-bot",
+                "email": "bot@viking.local",
+                "time_seconds": 1791615288,
+                "tz_offset_seconds": 28800
+              },
+              "committer": {
+                "name": "viking-bot",
+                "email": "bot@viking.local",
+                "time_seconds": 1791615288,
+                "tz_offset_seconds": 28800
+              },
+              "message": "M5 rollback to v1"
+            },
+            {
+              "oid": "04bc07d8993cea7bda3251719e426a6804843cd8",
+              "tree": "fe017c0f6b44b5fab68e363c096e2db3234ab317",
+              "parents": [
+                "6f23a986d772a10e20d2344f84e1363631f75efe"
+              ],
+              "author": {
+                "name": "viking-bot",
+                "email": "bot@viking.local",
+                "time_seconds": 1791615287,
+                "tz_offset_seconds": 28800
+              },
+              "committer": {
+                "name": "viking-bot",
+                "email": "bot@viking.local",
+                "time_seconds": 1791615287,
+                "tz_offset_seconds": 28800
+              },
+              "message": "M5 v2"
+            },
+            {
+              "oid": "6f23a986d772a10e20d2344f84e1363631f75efe",
+              "tree": "eee13728ade1d20fe00f029a1de7e5903a91f09f",
+              "parents": [
+                "4785c2daf6e3d43bd491feeead86950386915cf5"
+              ],
+              "author": {
+                "name": "viking-bot",
+                "email": "bot@viking.local",
+                "time_seconds": 1791615058,
+                "tz_offset_seconds": 28800
+              },
+              "committer": {
+                "name": "viking-bot",
+                "email": "bot@viking.local",
+                "time_seconds": 1791615058,
+                "tz_offset_seconds": 28800
+              },
+              "message": "M5 rollback to v1"
+            },
+            {
+              "oid": "4785c2daf6e3d43bd491feeead86950386915cf5",
+              "tree": "fe017c0f6b44b5fab68e363c096e2db3234ab317",
+              "parents": [
+                "a158a119b0fa69e578e612c4fa236d7bdebca4a5"
+              ],
+              "author": {
+                "name": "viking-bot",
+                "email": "bot@viking.local",
+                "time_seconds": 1791615056,
+                "tz_offset_seconds": 28800
+              },
+              "committer": {
+                "name": "viking-bot",
+                "email": "bot@viking.local",
+                "time_seconds": 1791615056,
+                "tz_offset_seconds": 28800
+              },
+              "message": "M5 v2"
+            },
+            {
+              "oid": "a158a119b0fa69e578e612c4fa236d7bdebca4a5",
+              "tree": "eee13728ade1d20fe00f029a1de7e5903a91f09f",
+              "parents": [
+                "993df6369f461afafc60fe34e2568e856acdf7f8"
+              ],
+              "author": {
+                "name": "viking-bot",
+                "email": "bot@viking.local",
+                "time_seconds": 1791614868,
+                "tz_offset_seconds": 28800
+              },
+              "committer": {
+                "name": "viking-bot",
+                "email": "bot@viking.local",
+                "time_seconds": 1791614868,
+                "tz_offset_seconds": 28800
+              },
+              "message": "M5 rollback to v1"
+            },
+            {
+              "oid": "993df6369f461afafc60fe34e2568e856acdf7f8",
+              "tree": "fe017c0f6b44b5fab68e363c096e2db3234ab317",
+              "parents": [
+                "282220205942207ba7bf5c2abbdf18f62209a491"
+              ],
+              "author": {
+                "name": "viking-bot",
+                "email": "bot@viking.local",
+                "time_seconds": 1791614867,
+                "tz_offset_seconds": 28800
+              },
+              "committer": {
+                "name": "viking-bot",
+                "email": "bot@viking.local",
+                "time_seconds": 1791614867,
+                "tz_offset_seconds": 28800
+              },
+              "message": "M5 v2"
+            },
+            {
+              "oid": "282220205942207ba7bf5c2abbdf18f62209a491",
+              "tree": "eee13728ade1d20fe00f029a1de7e5903a91f09f",
+              "parents": [
+                "6be423c74f479c854c3ddc9eb6d02b1b7ec5a88f"
+              ],
+              "author": {
+                "name": "viking-bot",
+                "email": "bot@viking.local",
+                "time_seconds": 1791614866,
+                "tz_offset_seconds": 28800
+              },
+              "committer": {
+                "name": "viking-bot",
+                "email": "bot@viking.local",
+                "time_seconds": 1791614866,
+                "tz_offset_seconds": 28800
+              },
+              "message": "M5 v1"
+            },
+            {
+              "oid": "6be423c74f479c854c3ddc9eb6d02b1b7ec5a88f",
+              "tree": "fe017c0f6b44b5fab68e363c096e2db3234ab317",
+              "parents": [
+                "73da861cfe3f45ebbc9f3c8ef3fab71b069550c3"
+              ],
+              "author": {
+                "name": "viking-bot",
+                "email": "bot@viking.local",
+                "time_seconds": 1791614840,
+                "tz_offset_seconds": 28800
+              },
+              "committer": {
+                "name": "viking-bot",
+                "email": "bot@viking.local",
+                "time_seconds": 1791614840,
+                "tz_offset_seconds": 28800
+              },
+              "message": "M5 v2"
+            },
+            {
+              "oid": "73da861cfe3f45ebbc9f3c8ef3fab71b069550c3",
+              "tree": "eee13728ade1d20fe00f029a1de7e5903a91f09f",
+              "parents": [
+                "fec855a06b2f6ef7db37995cadaf68747aac34f8"
+              ],
+              "author": {
+                "name": "viking-bot",
+                "email": "bot@viking.local",
+                "time_seconds": 1791614839,
+                "tz_offset_seconds": 28800
+              },
+              "committer": {
+                "name": "viking-bot",
+                "email": "bot@viking.local",
+                "time_seconds": 1791614839,
+                "tz_offset_seconds": 28800
+              },
+              "message": "M5 v1"
+            },
+            {
+              "oid": "fec855a06b2f6ef7db37995cadaf68747aac34f8",
+              "tree": "83bfb3d0eee1e4bc7ae97c3daacdfab4b797493a",
+              "parents": [
+                "952b1463f0f89f1ad8ecf5548d3873798a5962db"
+              ],
+              "author": {
+                "name": "viking-bot",
+                "email": "bot@viking.local",
+                "time_seconds": 1791614673,
+                "tz_offset_seconds": 28800
+              },
+              "committer": {
+                "name": "viking-bot",
+                "email": "bot@viking.local",
+                "time_seconds": 1791614673,
+                "tz_offset_seconds": 28800
+              },
+              "message": "M5 v2"
+            },
+            {
+              "oid": "952b1463f0f89f1ad8ecf5548d3873798a5962db",
+              "tree": "65055e7fef46369a7a8ded5d060e7c3263d7624b",
+              "parents": [],
+              "author": {
+                "name": "viking-bot",
+                "email": "bot@viking.local",
+                "time_seconds": 1791614672,
+                "tz_offset_seconds": 28800
+              },
+              "committer": {
+                "name": "viking-bot",
+                "email": "bot@viking.local",
+                "time_seconds": 1791614672,
+                "tz_offset_seconds": 28800
+              },
+              "message": "M5 v1"
+            }
+          ],
+          "_returncode": 0
+        },
+        "show_v1_blob_sha256": "a42242197966a9957345a091630dd6f28077d71c2bc4dcdf312e759ae5c84d78",
+        "v1_content_sha256": "a42242197966a9957345a091630dd6f28077d71c2bc4dcdf312e759ae5c84d78",
+        "show_v1_equals_v1": true
+      }
+    },
+    {
+      "id": "M5.2-historical-restore",
+      "claim": "按公开方式恢复历史版本，内容面与检索面同时生效",
+      "verdict": "PASS",
+      "detail": {
+        "mechanism": "ov snapshot restore 242f2da0cc1eb3b39426ba4cdc90cbcb6206b408 viking://resources/mvp-proj -m '...'（前向提交）",
+        "dry_run_response": {
+          "ok": true,
+          "result": {
+            "result": "dry_run",
+            "head": "99d3732372aa80d9b8e6c8d7e227ef1d446c4e0b",
+            "source": "242f2da0cc1eb3b39426ba4cdc90cbcb6206b408",
+            "diff": {
+              "to_write": [
+                {
+                  "path": "2026-10-10/note/m5-versioned.md",
+                  "oid": "2935fbdba4aca9a56d502c960aadb496ae2271ec"
+                }
+              ],
+              "to_delete": [],
+              "unchanged": [
+                ".abstract.md",
+                ".overview.md",
+                "2026-10-09/.abstract.md",
+                "2026-10-09/.overview.md",
+                "2026-10-09/note/.abstract.md",
+                "2026-10-09/note/.overview.md",
+                "2026-10-09/note/m3-dated.md",
+                "2026-10-10/.abstract.md",
+                "2026-10-10/.overview.md",
+                "2026-10-10/doc/.abstract.md",
+                "2026-10-10/doc/.overview.md",
+                "2026-10-10/doc/m3-spec.md",
+                "2026-10-10/note/.abstract.md",
+                "2026-10-10/note/.overview.md",
+                "2026-10-10/note/m3-scoped.md",
+                "2026-10-10/note/m5-post-backup.md"
+              ]
+            }
+          },
+          "_returncode": 0
+        },
+        "restore_response": {
+          "ok": true,
+          "result": {
+            "result": "applied",
+            "new_commit_oid": "8dc2b201515080523b70ebe34e2a7398402c62e9",
+            "source_commit": "242f2da0cc1eb3b39426ba4cdc90cbcb6206b408",
+            "parent_commit": "99d3732372aa80d9b8e6c8d7e227ef1d446c4e0b",
+            "written": 1,
+            "deleted": 0,
+            "unchanged": 16,
+            "written_paths": [
+              "resources/mvp-proj/2026-10-10/note/m5-versioned.md"
+            ],
+            "deleted_paths": [],
+            "task_id": "2b63b820-9a82-47f8-858c-89907d1f9ee7"
+          },
+          "_returncode": 0
+        },
+        "restore_task_id": "2b63b820-9a82-47f8-858c-89907d1f9ee7",
+        "content_after_restore_sha256": "a42242197966a9957345a091630dd6f28077d71c2bc4dcdf312e759ae5c84d78",
+        "content_equals_v1": true,
+        "retrieval_face": {
+          "exact_content_search_v1_marker": [
+            "viking://resources/mvp-proj/2026-10-10/note/m5-versioned.md"
+          ],
+          "exact_content_search_v2_marker": [],
+          "semantic_find_v1_marker": [
+            "viking://resources/mvp-proj/2026-10-10/note/m5-versioned.md",
+            "viking://resources/mvp-proj/2026-10-10/note/m5-post-backup.md",
+            "viking://resources/mvp-proj/2026-10-10/doc/m3-spec.md",
+            "viking://resources/mvp-proj/2026-10-09/note/m3-dated.md",
+            "viking://resources/mvp-proj/2026-10-10/note/.overview.md",
+            "viking://resources/mvp-proj/2026-10-09/note/.overview.md",
+            "viking://resources/mvp-proj/2026-10-10/.overview.md"
+          ],
+          "served_bytes_sha256_by_uri": {
+            "viking://resources/mvp-proj/2026-10-09/note/.overview.md": "c61bd6f155d78373125f9de77f9c4996b67a7507b82616d5d7d168dc388b72fb",
+            "viking://resources/mvp-proj/2026-10-09/note/m3-dated.md": "0c54ab6b404f906ee918d0eea648d10d3707d6fdbecf7e77570f1101acc8f094",
+            "viking://resources/mvp-proj/2026-10-10/.overview.md": "1c247087a53bb59eccc21f37dda7b9bf0c2c57202f0843f0fccf0af5a84707b1",
+            "viking://resources/mvp-proj/2026-10-10/doc/m3-spec.md": "b492206f7379bc34b719c2a013ff204f68b8c462df17e23d8fbad2a96a84c182",
+            "viking://resources/mvp-proj/2026-10-10/note/.overview.md": "c88222bc1efdaf4c022b0d4b5349ad16590397cc7d58b06bf3aedd9fe9b445b4",
+            "viking://resources/mvp-proj/2026-10-10/note/m5-post-backup.md": "ca9ba77009f49233c3ca6cfc75c5d04e38be5c3e1b149b7071bfd96ffcbd39cf",
+            "viking://resources/mvp-proj/2026-10-10/note/m5-versioned.md": "a42242197966a9957345a091630dd6f28077d71c2bc4dcdf312e759ae5c84d78"
+          },
+          "retrieval_reference_serves_restored_version": true
+        },
+        "requires_manual_curation": false
+      }
+    },
+    {
+      "id": "M5.3-backup-covers-both-faces",
+      "claim": "备份同时覆盖内容面与检索面两处存储",
+      "verdict": "PASS",
+      "detail": {
+        "artifacts": {
+          "with_vectors": {
+            "path": "C:\\Users\\Tan\\.openviking-mvp-spike\\m5-artifacts\\m5-backup-with-vectors.ovpack",
+            "bytes": 167617,
+            "sha256": "e967872a5657666cd78049d184b00bb7d45126f512515f843d926b99e3fb318e",
+            "cli_response": {
+              "ok": true,
+              "result": {
+                "file": "C:\\Users\\Tan\\.openviking-mvp-spike\\m5-artifacts\\m5-backup-with-vectors.ovpack",
+                "message": "Successfully backed up to C:\\Users\\Tan\\.openviking-mvp-spike\\m5-artifacts\\m5-backup-with-vectors.ovpack"
+              },
+              "_returncode": 0
+            }
+          },
+          "content_only": {
+            "path": "C:\\Users\\Tan\\.openviking-mvp-spike\\m5-artifacts\\m5-backup-content-only.ovpack",
+            "bytes": 47142,
+            "sha256": "4281932cf87a6ba0a50512ba1bc439d198daac390f8e6343c0c6d96e7a21d48f",
+            "cli_response": {
+              "ok": true,
+              "result": {
+                "file": "C:\\Users\\Tan\\.openviking-mvp-spike\\m5-artifacts\\m5-backup-content-only.ovpack",
+                "message": "Successfully backed up to C:\\Users\\Tan\\.openviking-mvp-spike\\m5-artifacts\\m5-backup-content-only.ovpack"
+              },
+              "_returncode": 0
+            }
+          }
+        },
+        "zip_entries_with_vectors": [
+          "openviking-backup/",
+          "openviking-backup/files/",
+          "openviking-backup/files/resources/",
+          "openviking-backup/files/resources/mvp-proj/",
+          "openviking-backup/files/resources/mvp-proj/2026-10-09/",
+          "openviking-backup/files/resources/mvp-proj/2026-10-09/note/",
+          "openviking-backup/files/resources/mvp-proj/2026-10-09/note/.abstract.md",
+          "openviking-backup/files/resources/mvp-proj/2026-10-09/note/.overview.md",
+          "openviking-backup/files/resources/mvp-proj/2026-10-09/note/m3-dated.md",
+          "openviking-backup/files/resources/mvp-proj/2026-10-09/.abstract.md",
+          "openviking-backup/files/resources/mvp-proj/2026-10-09/.overview.md",
+          "openviking-backup/files/resources/mvp-proj/2026-10-10/",
+          "openviking-backup/files/resources/mvp-proj/2026-10-10/doc/",
+          "openviking-backup/files/resources/mvp-proj/2026-10-10/doc/.abstract.md",
+          "openviking-backup/files/resources/mvp-proj/2026-10-10/doc/.overview.md",
+          "openviking-backup/files/resources/mvp-proj/2026-10-10/doc/m3-spec.md",
+          "openviking-backup/files/resources/mvp-proj/2026-10-10/note/",
+          "openviking-backup/files/resources/mvp-proj/2026-10-10/note/.abstract.md",
+          "openviking-backup/files/resources/mvp-proj/2026-10-10/note/.overview.md",
+          "openviking-backup/files/resources/mvp-proj/2026-10-10/note/m3-scoped.md"
+        ],
+        "zip_entries_content_only": [
+          "openviking-backup/",
+          "openviking-backup/files/",
+          "openviking-backup/files/resources/",
+          "openviking-backup/files/resources/mvp-proj/",
+          "openviking-backup/files/resources/mvp-proj/2026-10-09/",
+          "openviking-backup/files/resources/mvp-proj/2026-10-09/note/",
+          "openviking-backup/files/resources/mvp-proj/2026-10-09/note/.abstract.md",
+          "openviking-backup/files/resources/mvp-proj/2026-10-09/note/.overview.md",
+          "openviking-backup/files/resources/mvp-proj/2026-10-09/note/m3-dated.md",
+          "openviking-backup/files/resources/mvp-proj/2026-10-09/.abstract.md",
+          "openviking-backup/files/resources/mvp-proj/2026-10-09/.overview.md",
+          "openviking-backup/files/resources/mvp-proj/2026-10-10/",
+          "openviking-backup/files/resources/mvp-proj/2026-10-10/doc/",
+          "openviking-backup/files/resources/mvp-proj/2026-10-10/doc/.abstract.md",
+          "openviking-backup/files/resources/mvp-proj/2026-10-10/doc/.overview.md",
+          "openviking-backup/files/resources/mvp-proj/2026-10-10/doc/m3-spec.md",
+          "openviking-backup/files/resources/mvp-proj/2026-10-10/note/",
+          "openviking-backup/files/resources/mvp-proj/2026-10-10/note/.abstract.md",
+          "openviking-backup/files/resources/mvp-proj/2026-10-10/note/.overview.md",
+          "openviking-backup/files/resources/mvp-proj/2026-10-10/note/m3-scoped.md"
+        ],
+        "has_dense_vectors_with": true,
+        "has_dense_vectors_content_only": false,
+        "has_index_records_with": true,
+        "has_index_records_content_only": true,
+        "stores": {
+          "content_face": "workspace/viking (AGFS) -> ovpack files/",
+          "retrieval_face": "workspace/vectordb -> _ovpack/index_records.jsonl + dense.f32"
+        },
+        "backup_attempts": [
+          {
+            "attempt": 1,
+            "ok": true,
+            "error": null
+          }
+        ],
+        "consistency_after": {
+          "scope": "viking://resources/mvp-proj",
+          "result": {
+            "ok": true,
+            "result": {
+              "ok": true,
+              "expected_count": 16,
+              "missing_record_count": 0,
+              "missing_records": [],
+              "missing_records_truncated": false
+            },
+            "_returncode": 0
+          }
+        },
+        "note": "--include-vectors 是必选项：不加时包内没有 dense.f32，检索面只能靠 --vector-mode recompute 重建。向量索引是异步刷新的，快照恢复后紧接备份会遇到 『Cannot export incomplete OpenViking vector index snapshot』，需先 reindex 再重试（见 backup_attempts）。"
+      }
+    },
+    {
+      "id": "M5.4-clean-room-restore",
+      "claim": "在干净的隔离位置恢复：原文、引用与权限符合登记的恢复语义",
+      "verdict": "FAIL",
+      "detail": {
+        "clean_room": {
+          "workspace": "C:\\Users\\Tan\\.openviking-mvp-spike\\clean-room\\data",
+          "config": "C:\\Users\\Tan\\.openviking-mvp-spike\\clean-room\\ov-restore.conf",
+          "port": 8781,
+          "fresh_workspace_before_restore": true
+        },
+        "registered_restore_semantics": {
+          "content_face": "pack 内 files/ 逐字节还原到同一 URI",
+          "retrieval_face": "pack 内 index_records.jsonl + dense.f32 还原（--vector-mode auto）",
+          "permission_face": "先实测包内带不带 ACL/身份，不带的用登记步骤补"
+        },
+        "restore_command": "ov import m5-resources-scope-with-vectors.ovpack viking://resources --on-conflict overwrite --vector-mode auto --sudo",
+        "restore_pack": {
+          "path": "C:\\Users\\Tan\\.openviking-mvp-spike\\m5-artifacts\\m5-resources-scope-with-vectors.ovpack",
+          "bytes": 85120,
+          "sha256": "cb9617ee619fd68988b3f9e852c04e0e5f5ebdc108a098373d1766145dcf922b",
+          "export_response": {
+            "ok": true,
+            "result": {
+              "file": "C:\\Users\\Tan\\.openviking-mvp-spike\\m5-artifacts\\m5-resources-scope-with-vectors.ovpack",
+              "message": "Successfully exported to C:\\Users\\Tan\\.openviking-mvp-spike\\m5-artifacts\\m5-resources-scope-with-vectors.ovpack"
+            },
+            "_returncode": 0
+          },
+          "export_retry_reason": null,
+          "zip_has_dense": true,
+          "zip_has_index_records": true
+        },
+        "restore_cli_response": {
+          "_returncode": 2
+        },
+        "restore_attempts": [
+          {
+            "attempt": 1,
+            "ok": false,
+            "returncode": 2,
+            "error": null
+          },
+          {
+            "attempt": 2,
+            "ok": false,
+            "returncode": 2,
+            "error": null
+          },
+          {
+            "attempt": 3,
+            "ok": false,
+            "returncode": 2,
+            "error": null
+          }
+        ],
+        "restore_task_id": null,
+        "manual_steps_performed": [
+          "ensure_identities(force=True)：在新位置重新登记两名消费者",
+          "（必要时）重新施加只读策略：restricted + read/write 授权"
+        ],
+        "what_the_pack_carries": {
+          "content_face": "files/ 下的正文（逐字节）",
+          "retrieval_face": "index_records.jsonl + dense.f32（--include-vectors 时）",
+          "identity_registry": {
+            "users_before_restore": [],
+            "users_after_restore_before_reregistration": [],
+            "carried_by_pack": false
+          },
+          "acl_records": {
+            "acl_state_after_restore_before_repair": {
+              "error": 0
+            },
+            "carried_by_pack": true
+          }
+        },
+        "content_face": {
+          "http_status": 404,
+          "sha256": null,
+          "equals_v1_bytes": false
+        },
+        "retrieval_face": {
+          "semantic_find_hits": [],
+          "exact_content_search_hits": [],
+          "index_found_the_content": false
+        },
+        "permission_face": {
+          "acl_policy_reapplied_manually": false,
+          "acl_repair_error": {
+            "status": 404,
+            "body": "{\"status\":\"error\",\"result\":null,\"error\":{\"code\":\"NOT_FOUND\",\"message\":\"Resource not found: viking://resources/mvp-proj\",\"details\":{\"type\":\"resource\",\"resource\":\"viking://resources/mvp-proj\"}},\"telemetry\":null,\"profile\":null}"
+          },
+          "reader_read_status": 200,
+          "reader_write_status": 200,
+          "reader_write_error": null
+        },
+        "data_loss": {
+          "post_backup_entry_present_after_restore": false,
+          "post_backup_entry_sha256": "ca9ba77009f49233c3ca6cfc75c5d04e38be5c3e1b149b7071bfd96ffcbd39cf",
+          "expected": "备份点之后的写入不在包内 → 恢复后不可见"
+        },
+        "runtime_robustness": {
+          "restarts": 1,
+          "ggml_assert_seen": true,
+          "log_tail": "_http_manager.py:164\n                             session manager                                   \n                             started                                           \n\u001b[92m15:19:45 - LiteLLM:WARNING\u001b[0m: get_model_cost_map.py:264 - LiteLLM: Failed to fetch remote model cost map from https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json: timed out. Falling back to local backup.\n2026-10-10 15:20:08.651 | INFO     | openviking.telemetry.tracer:init_tracer_from_server_config:233 - [TRACER] disabled in server.observability.traces\n[10/10/26 15:20:08] INFO     StreamableHTTP      streamable_http_manager.py:164\n                             session manager                                   \n                             started                                           \n\u001b[92m15:21:55 - LiteLLM:WARNING\u001b[0m: get_model_cost_map.py:264 - LiteLLM: Failed to fetch remote model cost map from https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json: [WinError 10054] Զ������ǿ�ȹر���һ�����е����ӡ�. Falling back to local backup.\n2026-10-10 15:22:18.678 | INFO     | openviking.telemetry.tracer:init_tracer_from_server_config:233 - [TRACER] disabled in server.observability.traces\n[10/10/26 15:22:18] INFO     StreamableHTTP      streamable_http_manager.py:164\n                             session manager                                   \n                             started                                           \n"
+        }
+      }
+    },
+    {
+      "id": "M5.5-reference-intact",
+      "claim": "参照实例（主隔离实例）在 clean-room 演练后未被破坏",
+      "verdict": "PASS",
+      "detail": {
+        "health": true,
+        "versioned_content_sha256": "a42242197966a9957345a091630dd6f28077d71c2bc4dcdf312e759ae5c84d78",
+        "post_backup_entry_still_present": true
+      }
+    },
+    {
+      "id": "M5.6-restore-blocker-characterised",
+      "claim": "已定位并登记阻断干净位置恢复的原因（本地嵌入并发原生崩溃）",
+      "verdict": "PASS",
+      "detail": {
+        "blocker": "本地 GGUF 嵌入被并发访问时触发原生 GGML_ASSERT，整进程退出；clean-room 恢复/导入的批量嵌入工作因此无法走完",
+        "standalone_probe_evidence": "D:\\python_work\\work2026-4\\wk-spike\\experiments\\memory-framework-spike\\mvp\\evidence\\local_embedder_crash.json",
+        "probe_verdict": "PASS",
+        "isolated_explanations": {
+          "empty_input": true,
+          "oversized_input": true,
+          "batched_input": true,
+          "serial_threads": true,
+          "concurrent_threads": true
+        },
+        "restore_attempts_in_clean_room": [
+          {
+            "attempt": 1,
+            "ok": false,
+            "returncode": 2,
+            "error": null
+          },
+          {
+            "attempt": 2,
+            "ok": false,
+            "returncode": 2,
+            "error": null
+          },
+          {
+            "attempt": 3,
+            "ok": false,
+            "returncode": 2,
+            "error": null
+          }
+        ],
+        "server_restarts_during_experiment": 1,
+        "ggml_assert_observed": true,
+        "mitigation_tried": "clean-room 配置显式 embedding.max_concurrent=1（不足）",
+        "not_a_restore_semantics_problem": "M5.1/M5.2 证明版本与恢复语义在内容面+检索面都工作；因果在嵌入运行时"
+      }
+    }
+  ],
+  "recoverable_points": {
+    "recovery_points": [
+      {
+        "kind": "workspace snapshot commit",
+        "ref": "242f2da0cc1eb3b39426ba4cdc90cbcb6206b408",
+        "message": "M5 v1",
+        "granularity": "显式提交时的工作区状态；可逐文件回看（ov snapshot show --path）",
+        "retention": "保留在账户快照历史（ov snapshot log），不依赖人工整理；未测保留上限"
+      },
+      {
+        "kind": "workspace snapshot commit",
+        "ref": "99d3732372aa80d9b8e6c8d7e227ef1d446c4e0b",
+        "message": "M5 v2",
+        "granularity": "同上；一次 commit = 一个可恢复点",
+        "retention": "同上"
+      },
+      {
+        "kind": "backup package",
+        "path": "C:\\Users\\Tan\\.openviking-mvp-spike\\m5-artifacts\\m5-backup-with-vectors.ovpack",
+        "created_at": "2026-10-10T15:21:37+0800",
+        "sha256": "e967872a5657666cd78049d184b00bb7d45126f512515f843d926b99e3fb318e",
+        "covers": "内容面 files/ + 检索面 _ovpack/index_records.jsonl + dense.f32",
+        "granularity": "包生成时刻的全量公开范围；恢复是覆盖式（--on-conflict overwrite）"
+      },
+      {
+        "kind": "backup package (content only)",
+        "path": "C:\\Users\\Tan\\.openviking-mvp-spike\\m5-artifacts\\m5-backup-content-only.ovpack",
+        "sha256": "4281932cf87a6ba0a50512ba1bc439d198daac390f8e6343c0c6d96e7a21d48f",
+        "covers": "仅内容面；检索面需 --vector-mode recompute 重建（成本另计）"
+      }
+    ],
+    "data_loss_range": {
+      "from": "最后一次快照提交 / 备份包生成时刻",
+      "to": "故障时刻",
+      "lost": [
+        "备份点之后、下次备份之前的全部写入（实测：备份后写入的条目在 clean-room 恢复后不存在）",
+        "两次快照提交之间写入的内容（快照点是离散的，没有连续日志/时间点恢复）"
+      ],
+      "not_lost": [
+        "备份点之前的正文（恢复后逐字节相同；本次校验 sha256 已记录）",
+        "主实例自身数据（备份不删除源数据；演练后主实例内容仍在）"
+      ],
+      "post_backup_entry_sha256": "ca9ba77009f49233c3ca6cfc75c5d04e38be5c3e1b149b7071bfd96ffcbd39cf",
+      "recovery_point_interval": "由触发频率决定，系统不自动调度（无定时备份/快照机制内置）"
+    },
+    "what_restore_cannot_do": [
+      "无法表达『回到任意时刻』：没有连续日志，只有离散快照点与备份包",
+      "备份包不携带身份/API key 注册表（实测 users 在恢复前为空），必须在新位置重新登记消费者",
+      "备份包不携带 ACL 记录（实测 acl_mode 未随包恢复），只读策略必须在恢复位置重新施加",
+      "身份与 ACL 这两项只能表达为『恢复步骤』，不能在包内表达"
+    ],
+    "restore_entry_points": {
+      "used_in_this_run": "ov backup / ov restore（CLI，--include-vectors、--on-conflict、--vector-mode）",
+      "http_routes_present_in_source": [
+        "POST /api/v1/pack/export",
+        "POST /api/v1/pack/backup",
+        "POST /api/v1/pack/import",
+        "POST /api/v1/pack/restore"
+      ],
+      "note": "HTTP 形态在 0.4.23 的 pack 路由中存在，但本轮未实测；本轮结论只覆盖 CLI 形态。"
+    },
+    "retrieval_rebuild_option": "ov restore --vector-mode recompute（无 dense 快照时重建索引）",
+    "local_curation_required": false
+  },
+  "restore_cli_response": {
+    "_returncode": 2
+  }
+}

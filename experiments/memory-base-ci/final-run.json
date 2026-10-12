@@ -1,0 +1,264 @@
+{
+  "conclusion": "success",
+  "databaseId": 38271905054,
+  "headSha": "a852fab33db109e72a19665877f573e7bd6c2d15",
+  "jobs": [
+    {
+      "completedAt": "2026-10-12T15:42:05Z",
+      "conclusion": "success",
+      "databaseId": 114887951546,
+      "name": "L0 闸门 (ubuntu-latest · py3.12)",
+      "startedAt": "2026-10-12T15:40:05Z",
+      "status": "completed",
+      "steps": [
+        {
+          "completedAt": "2026-10-12T15:40:07Z",
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "startedAt": "2026-10-12T15:40:06Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-12T15:40:09Z",
+          "conclusion": "success",
+          "name": "取源码",
+          "number": 2,
+          "startedAt": "2026-10-12T15:40:07Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-12T15:40:09Z",
+          "conclusion": "success",
+          "name": "装 Python",
+          "number": 3,
+          "startedAt": "2026-10-12T15:40:09Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-12T15:40:35Z",
+          "conclusion": "success",
+          "name": "装 CPU 版 torch",
+          "number": 4,
+          "startedAt": "2026-10-12T15:40:09Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-12T15:41:08Z",
+          "conclusion": "success",
+          "name": "装运行时依赖 + pytest + 网关测试依赖",
+          "number": 5,
+          "startedAt": "2026-10-12T15:40:35Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-12T15:41:29Z",
+          "conclusion": "success",
+          "name": "装两个本地包（editable）",
+          "number": 6,
+          "startedAt": "2026-10-12T15:41:08Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-12T15:41:30Z",
+          "conclusion": "success",
+          "name": "预热 BM25 词法编码器",
+          "number": 7,
+          "startedAt": "2026-10-12T15:41:29Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-12T15:42:01Z",
+          "conclusion": "success",
+          "name": "单元测试（回归闸门）",
+          "number": 8,
+          "startedAt": "2026-10-12T15:41:30Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-12T15:42:01Z",
+          "conclusion": "success",
+          "name": "评测 harness（agent evaluations）",
+          "number": 9,
+          "startedAt": "2026-10-12T15:42:01Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-12T15:42:01Z",
+          "conclusion": "success",
+          "name": "接入冒烟（无 opencode serve 则 SKIP，退出码 0）",
+          "number": 10,
+          "startedAt": "2026-10-12T15:42:01Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-12T15:42:02Z",
+          "conclusion": "success",
+          "name": "Post 装 Python",
+          "number": 19,
+          "startedAt": "2026-10-12T15:42:01Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-12T15:42:02Z",
+          "conclusion": "success",
+          "name": "Post 取源码",
+          "number": 20,
+          "startedAt": "2026-10-12T15:42:02Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-12T15:42:02Z",
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 21,
+          "startedAt": "2026-10-12T15:42:02Z",
+          "status": "completed"
+        }
+      ],
+      "url": "https://github.com/Alex-tangt/Agent-Knowledge-Base/actions/runs/38271905054/job/114887951546"
+    },
+    {
+      "completedAt": "2026-10-12T15:44:26Z",
+      "conclusion": "success",
+      "databaseId": 114887952039,
+      "name": "L0 闸门 (windows-latest · py3.12)",
+      "startedAt": "2026-10-12T15:40:05Z",
+      "status": "completed",
+      "steps": [
+        {
+          "completedAt": "2026-10-12T15:40:07Z",
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "startedAt": "2026-10-12T15:40:07Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-12T15:40:13Z",
+          "conclusion": "success",
+          "name": "取源码",
+          "number": 2,
+          "startedAt": "2026-10-12T15:40:07Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-12T15:40:14Z",
+          "conclusion": "success",
+          "name": "装 Python",
+          "number": 3,
+          "startedAt": "2026-10-12T15:40:13Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-12T15:41:13Z",
+          "conclusion": "success",
+          "name": "装 CPU 版 torch",
+          "number": 4,
+          "startedAt": "2026-10-12T15:40:14Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-12T15:42:18Z",
+          "conclusion": "success",
+          "name": "装运行时依赖 + pytest + 网关测试依赖",
+          "number": 5,
+          "startedAt": "2026-10-12T15:41:13Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-12T15:43:01Z",
+          "conclusion": "success",
+          "name": "装两个本地包（editable）",
+          "number": 6,
+          "startedAt": "2026-10-12T15:42:18Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-12T15:43:04Z",
+          "conclusion": "success",
+          "name": "预热 BM25 词法编码器",
+          "number": 7,
+          "startedAt": "2026-10-12T15:43:01Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-12T15:44:18Z",
+          "conclusion": "success",
+          "name": "单元测试（回归闸门）",
+          "number": 8,
+          "startedAt": "2026-10-12T15:43:04Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-12T15:44:19Z",
+          "conclusion": "success",
+          "name": "评测 harness（agent evaluations）",
+          "number": 9,
+          "startedAt": "2026-10-12T15:44:18Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-12T15:44:22Z",
+          "conclusion": "success",
+          "name": "接入冒烟（无 opencode serve 则 SKIP，退出码 0）",
+          "number": 10,
+          "startedAt": "2026-10-12T15:44:19Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-12T15:44:22Z",
+          "conclusion": "success",
+          "name": "Post 装 Python",
+          "number": 19,
+          "startedAt": "2026-10-12T15:44:22Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-12T15:44:24Z",
+          "conclusion": "success",
+          "name": "Post 取源码",
+          "number": 20,
+          "startedAt": "2026-10-12T15:44:22Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-12T15:44:24Z",
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 21,
+          "startedAt": "2026-10-12T15:44:24Z",
+          "status": "completed"
+        }
+      ],
+      "url": "https://github.com/Alex-tangt/Agent-Knowledge-Base/actions/runs/38271905054/job/114887952039"
+    }
+  ],
+  "status": "completed",
+  "url": "https://github.com/Alex-tangt/Agent-Knowledge-Base/actions/runs/38271905054",
+  "retained_gate_logs": [
+    {
+      "platform": "ubuntu",
+      "job": 114887951546,
+      "conclusion": "success",
+      "path": "final-ubuntu-gate.log",
+      "sha256": "c89f76dde77cd7ceccebfa95d9da3456a87f5ddb76d1edc042854dff4dec6342",
+      "hash_scope": "local archived UTF-8 bytes; Git may normalize line endings",
+      "unit_result": "L0 闸门 (ubuntu-latest · py3.12)\t单元测试（回归闸门）\t2026-10-12T15:41:59.9400202Z 838 passed, 4 skipped, 1 warning in 27.13s",
+      "harness_expectation_matched": 10,
+      "smoke_result": "L0 闸门 (ubuntu-latest · py3.12)\t接入冒烟（无 opencode serve 则 SKIP，退出码 0）\t2026-10-12T15:42:01.8972531Z SKIP：http://127.0.0.1:4096 上没有在跑的 opencode server（`opencode serve --port 4096 --pure`）"
+    },
+    {
+      "platform": "windows",
+      "job": 114887952039,
+      "conclusion": "success",
+      "path": "final-windows-gate.log",
+      "sha256": "3f70ace1fde11ecb2d2367fb89c24a65417452f023336ebe72f37606af229118",
+      "hash_scope": "local archived UTF-8 bytes; Git may normalize line endings",
+      "unit_result": "L0 闸门 (windows-latest · py3.12)\t单元测试（回归闸门）\t2026-10-12T15:44:17.5174853Z 839 passed, 3 skipped, 1 warning in 69.75s (0:01:09)",
+      "harness_expectation_matched": 10,
+      "smoke_result": "L0 闸门 (windows-latest · py3.12)\t接入冒烟（无 opencode serve 则 SKIP，退出码 0）\t2026-10-12T15:44:22.2446045Z SKIP：http://127.0.0.1:4096 上没有在跑的 opencode server（`opencode serve --port 4096 --pure`）"
+    }
+  ],
+  "scope": "Clean Python 3.12 source regression; not native POSIX deployment or actual opencode dialogue."
+}

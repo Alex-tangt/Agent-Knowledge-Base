@@ -1,0 +1,219 @@
+L0 闸门 (ubuntu-latest · py3.12)	单元测试（回归闸门）	﻿2026-10-12T15:41:30.6785578Z ##[group]Run python -m pytest tests/unit -q
+L0 闸门 (ubuntu-latest · py3.12)	单元测试（回归闸门）	2026-10-12T15:41:30.6785965Z ^[[36;1mpython -m pytest tests/unit -q^[[0m
+L0 闸门 (ubuntu-latest · py3.12)	单元测试（回归闸门）	2026-10-12T15:41:30.6853458Z shell: /usr/bin/bash -e {0}
+L0 闸门 (ubuntu-latest · py3.12)	单元测试（回归闸门）	2026-10-12T15:41:30.6853714Z env:
+L0 闸门 (ubuntu-latest · py3.12)	单元测试（回归闸门）	2026-10-12T15:41:30.6853980Z   pythonLocation: /opt/hostedtoolcache/Python/3.12.15/x64
+L0 闸门 (ubuntu-latest · py3.12)	单元测试（回归闸门）	2026-10-12T15:41:30.6854423Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.12.15/x64/lib/pkgconfig
+L0 闸门 (ubuntu-latest · py3.12)	单元测试（回归闸门）	2026-10-12T15:41:30.6854860Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
+L0 闸门 (ubuntu-latest · py3.12)	单元测试（回归闸门）	2026-10-12T15:41:30.6855239Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
+L0 闸门 (ubuntu-latest · py3.12)	单元测试（回归闸门）	2026-10-12T15:41:30.6855614Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
+L0 闸门 (ubuntu-latest · py3.12)	单元测试（回归闸门）	2026-10-12T15:41:30.6855988Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.15/x64/lib
+L0 闸门 (ubuntu-latest · py3.12)	单元测试（回归闸门）	2026-10-12T15:41:30.6856355Z ##[endgroup]
+L0 闸门 (ubuntu-latest · py3.12)	单元测试（回归闸门）	2026-10-12T15:41:41.4454929Z ........................................................................ [  8%]
+L0 闸门 (ubuntu-latest · py3.12)	单元测试（回归闸门）	2026-10-12T15:41:43.0247132Z ........................................................................ [ 17%]
+L0 闸门 (ubuntu-latest · py3.12)	单元测试（回归闸门）	2026-10-12T15:41:43.1540572Z ........................................................................ [ 25%]
+L0 闸门 (ubuntu-latest · py3.12)	单元测试（回归闸门）	2026-10-12T15:41:44.6622047Z ........................................................................ [ 34%]
+L0 闸门 (ubuntu-latest · py3.12)	单元测试（回归闸门）	2026-10-12T15:41:45.1240913Z ...........................s............................................ [ 42%]
+L0 闸门 (ubuntu-latest · py3.12)	单元测试（回归闸门）	2026-10-12T15:41:53.2201784Z ........................................................................ [ 51%]
+L0 闸门 (ubuntu-latest · py3.12)	单元测试（回归闸门）	2026-10-12T15:41:54.5396808Z ........................................................................ [ 59%]
+L0 闸门 (ubuntu-latest · py3.12)	单元测试（回归闸门）	2026-10-12T15:41:56.0321210Z ...................................................................ss... [ 68%]
+L0 闸门 (ubuntu-latest · py3.12)	单元测试（回归闸门）	2026-10-12T15:41:58.2693118Z ........................................................................ [ 76%]
+L0 闸门 (ubuntu-latest · py3.12)	单元测试（回归闸门）	2026-10-12T15:41:58.4151750Z ........................................................................ [ 85%]
+L0 闸门 (ubuntu-latest · py3.12)	单元测试（回归闸门）	2026-10-12T15:41:58.5092876Z .s...................................................................... [ 94%]
+L0 闸门 (ubuntu-latest · py3.12)	单元测试（回归闸门）	2026-10-12T15:41:59.9392892Z ..................................................                       [100%]
+L0 闸门 (ubuntu-latest · py3.12)	单元测试（回归闸门）	2026-10-12T15:41:59.9393792Z =============================== warnings summary ===============================
+L0 闸门 (ubuntu-latest · py3.12)	单元测试（回归闸门）	2026-10-12T15:41:59.9394764Z ../../../../../opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/qdrant_client/qdrant_remote.py:292
+L0 闸门 (ubuntu-latest · py3.12)	单元测试（回归闸门）	2026-10-12T15:41:59.9397333Z   /opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/qdrant_client/qdrant_remote.py:292: UserWarning: Failed to obtain server version. Unable to check client-server compatibility. Set check_compatibility=False to skip version check.
+L0 闸门 (ubuntu-latest · py3.12)	单元测试（回归闸门）	2026-10-12T15:41:59.9398970Z     show_warning(
+L0 闸门 (ubuntu-latest · py3.12)	单元测试（回归闸门）	2026-10-12T15:41:59.9399160Z 
+L0 闸门 (ubuntu-latest · py3.12)	单元测试（回归闸门）	2026-10-12T15:41:59.9399494Z -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+L0 闸门 (ubuntu-latest · py3.12)	单元测试（回归闸门）	2026-10-12T15:41:59.9400202Z 838 passed, 4 skipped, 1 warning in 27.13s
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	﻿2026-10-12T15:42:01.5262923Z ##[group]Run python -m memory_agent.eval.harness --out harness_report.json
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.5263841Z ^[[36;1mpython -m memory_agent.eval.harness --out harness_report.json^[[0m
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.5354586Z shell: /usr/bin/bash -e {0}
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.5354953Z env:
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.5355241Z   pythonLocation: /opt/hostedtoolcache/Python/3.12.15/x64
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.5355702Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.12.15/x64/lib/pkgconfig
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.5356148Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.5356740Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.5357172Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.5357553Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.15/x64/lib
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.5357880Z ##[endgroup]
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6852204Z {
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6852636Z   "analyses": [
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6852961Z     {
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6853185Z       "degenerate": false,
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6853520Z       "hi": 1.0,
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6853837Z       "kind": "rate",
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6854154Z       "lo": 0.285714,
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6854471Z       "mean": 0.714286,
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6854856Z       "metric": "holdout.answer_correct_rate",
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6855290Z       "n": 7,
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6856106Z       "note": "主结论：留出集上的答案正确率（确定性匹配，不调 LLM 裁判）。n = 留出集里可判分的题数 = 7。",
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6856832Z       "significant": true
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6857430Z     },
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6857947Z     {
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6858398Z       "degenerate": true,
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6858907Z       "hi": 1.0,
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6859370Z       "kind": "rate",
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6859928Z       "lo": 1.0,
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6872236Z       "mean": 1.0,
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6872602Z       "metric": "holdout.non_fabrication_rate",
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6873021Z       "n": 3,
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6873592Z       "note": "不作答题（kind=no_answer）里没有编造答案的比例。",
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6874079Z       "significant": true
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6874427Z     },
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6874755Z     {
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6875041Z       "degenerate": false,
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6875379Z       "hi": 1.0,
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6875676Z       "kind": "rate",
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6875977Z       "lo": 0.0,
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6876262Z       "mean": 0.5,
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6876769Z       "metric": "holdout.gold_covered_rate",
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6877180Z       "n": 4,
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6877853Z       "note": "gold 覆盖达标率：展示给模型的证据**覆盖全部 gold** 的题占比（ADR-0030 D7：gold 覆盖只作**筛查**，不作危害证据）。",
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6878472Z       "significant": false
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6878806Z     },
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6879065Z     {
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6879346Z       "degenerate": false,
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6879572Z       "hi": null,
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6879780Z       "kind": "rate",
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6879987Z       "lo": null,
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6880454Z       "mean": null,
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6880710Z       "metric": "holdout_minus_dev.answer_correct_rate",
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6881020Z       "n": 0,
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6881748Z       "note": "dev 与 holdout 的正确率差（paired，按题 id 对齐）。**本场景集两侧题号无交集，故 n=0——这一项在结构上不构成结论**，保留它只为固定报告的字段形状。在 #65 的 in-domain 集上，同一字段即是「机制改动前后」的 paired 比较。",
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6882278Z       "significant": null
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6882500Z     }
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6882675Z   ],
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6882854Z   "bootstrap": {
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6883057Z     "alpha": 0.05,
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6883380Z     "method": "percentile bootstrap（harness/stats.py）",
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6883691Z     "n_boot": 10000,
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6883903Z     "seed": 3630178014
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6884110Z   },
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6884285Z   "counts": {
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6884605Z     "by_kind": {
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6884836Z       "answer": 7,
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6885036Z       "no_answer": 3
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6885232Z     },
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6885433Z     "by_split": {
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6885630Z       "dev": 3,
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6885819Z       "holdout": 7
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6886219Z     },
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6886403Z     "expected_stop": {
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6886896Z       "answer": 5,
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6887100Z       "budget": 2,
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6887290Z       "fallback": 1,
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6887500Z       "insufficient": 1,
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6887721Z       "no_new_ids": 1
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6887921Z     },
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6888109Z     "total": 10
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6888292Z   },
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6888462Z   "notes": [
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6888824Z     "dev 只用于调参 / 人眼观察；对外报数**只报 holdout**（见 scenarios.py 的留出规则）。",
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6889762Z     "bootstrap CI 来自 harness/stats.py::bootstrap_ci（纯计算，无模型）；memory_agent/ 下没有可复用的 bootstrap 工具，故保留在此，不另造第二份。",
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6890654Z     "`significant` 沿用 bootstrap_ci 的语义 = 百分位区间不含 0。本报告**没有对照组**，所以它不是「显著优于某基线」，只是「比例/均值 > 0」；`degenerate=true`（零宽区间，例如全部为 1.0）时该字段没有统计含义。",
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6891508Z     "指标聚合复用 eval/metrics.py::_mean（scorer 不再自写均值）。",
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6891998Z     "`experiments/` 下的 phase_b/analyze.py 属实验产物，本 harness **不 import**。",
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6892516Z     "确定性：stub LLM + stub 工具全程回放，无采样 / 无网络 / 无时钟；同命令两次运行报告逐字节相同。"
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6892819Z   ],
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6893078Z   "scenario_set": "memory_agent/eval/harness/scenarios.json",
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6893564Z   "scenario_set_sha256": "5ec21cf848d2080634f50256534f6f708f06e51fd1a75b6a0933931601bc41ae",
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6893985Z   "schema_version": 1,
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6894203Z   "splits": {
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6894394Z     "dev": {
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6894579Z       "by_stop": {
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6894774Z         "answer": {
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6894991Z           "answer_correct_rate": 1.0,
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6895255Z           "gold_unreached_rate": 0.0,
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6895506Z           "mean_evidence_recall": 1.0,
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6895751Z           "n": 3
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6896119Z         }
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6896297Z       },
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6896666Z       "expectation_matched": 3,
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6896952Z       "expectation_mismatch": [],
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6897207Z       "expectation_total": 3,
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6897453Z       "expected_stop_match_rate": 1.0,
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6897697Z       "ids": [
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6897900Z         "s01-answer-first-hop",
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6898154Z         "s02-multihop-second-hop",
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6898419Z         "s03-multihop-two-extra-hops"
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6898660Z       ],
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6898836Z       "n": 3,
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6899026Z       "overall": {
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6899239Z         "answer_correct_rate": 1.0,
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6899515Z         "gold_unreached_rate": 0.0,
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6899773Z         "mean_evidence_recall": 1.0,
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6900018Z         "n": 3
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6900201Z       }
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6900378Z     },
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6900555Z     "holdout": {
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6900762Z       "by_stop": {
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6900966Z         "answer": {
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6901191Z           "answer_correct_rate": 1.0,
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6901454Z           "gold_unreached_rate": 1.0,
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6901709Z           "mean_evidence_recall": 0.5,
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6901976Z           "n": 2
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6902169Z         },
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6902354Z         "budget": {
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6902574Z           "answer_correct_rate": 0.5,
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6902830Z           "gold_unreached_rate": 0.0,
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6903080Z           "mean_evidence_recall": 1.0,
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6903320Z           "n": 2
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6903506Z         },
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6903685Z         "fallback": {
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6903905Z           "answer_correct_rate": 0.0,
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6904157Z           "gold_unreached_rate": 0.0,
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6904411Z           "mean_evidence_recall": 1.0,
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6904648Z           "n": 1
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6904836Z         },
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6905027Z         "insufficient": {
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6905427Z           "answer_correct_rate": 1.0,
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6905687Z           "gold_unreached_rate": null,
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6905947Z           "mean_evidence_recall": null,
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6906194Z           "n": 1
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6906380Z         },
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6906785Z         "no_new_ids": {
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6907013Z           "answer_correct_rate": 1.0,
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6907271Z           "gold_unreached_rate": null,
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6907532Z           "mean_evidence_recall": null,
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6907774Z           "n": 1
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6907955Z         }
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6908131Z       },
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6908324Z       "expectation_matched": 7,
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6908573Z       "expectation_mismatch": [],
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6908826Z       "expectation_total": 7,
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6909071Z       "expected_stop_match_rate": 1.0,
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6909323Z       "ids": [
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6909540Z         "s04-budget-stop-partial",
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6909817Z         "s05-budget-stop-no-answer",
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6910079Z         "s06-no-new-ids-stop",
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6910322Z         "s07-fallback-stop",
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6910589Z         "s08-insufficient-must-not-answer",
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6910892Z         "s09-gold-unreached-max-evidence",
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6911178Z         "s10-gold-unreached-screening"
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6911418Z       ],
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6911595Z       "n": 7,
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6911782Z       "overall": {
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6911993Z         "answer_correct_rate": 0.714286,
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6912267Z         "gold_unreached_rate": 0.5,
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6912522Z         "mean_evidence_recall": 0.75,
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6912760Z         "n": 7
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6912944Z       }
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6913114Z     }
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6913282Z   }
+L0 闸门 (ubuntu-latest · py3.12)	评测 harness（agent evaluations）	2026-10-12T15:42:01.6913448Z }
+L0 闸门 (ubuntu-latest · py3.12)	接入冒烟（无 opencode serve 则 SKIP，退出码 0）	﻿2026-10-12T15:42:01.7002976Z ##[group]Run python memory_agent/eval/opencode_server_smoke_62.py
+L0 闸门 (ubuntu-latest · py3.12)	接入冒烟（无 opencode serve 则 SKIP，退出码 0）	2026-10-12T15:42:01.7003456Z ^[[36;1mpython memory_agent/eval/opencode_server_smoke_62.py^[[0m
+L0 闸门 (ubuntu-latest · py3.12)	接入冒烟（无 opencode serve 则 SKIP，退出码 0）	2026-10-12T15:42:01.7071361Z shell: /usr/bin/bash -e {0}
+L0 闸门 (ubuntu-latest · py3.12)	接入冒烟（无 opencode serve 则 SKIP，退出码 0）	2026-10-12T15:42:01.7071611Z env:
+L0 闸门 (ubuntu-latest · py3.12)	接入冒烟（无 opencode serve 则 SKIP，退出码 0）	2026-10-12T15:42:01.7071875Z   pythonLocation: /opt/hostedtoolcache/Python/3.12.15/x64
+L0 闸门 (ubuntu-latest · py3.12)	接入冒烟（无 opencode serve 则 SKIP，退出码 0）	2026-10-12T15:42:01.7072313Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.12.15/x64/lib/pkgconfig
+L0 闸门 (ubuntu-latest · py3.12)	接入冒烟（无 opencode serve 则 SKIP，退出码 0）	2026-10-12T15:42:01.7072740Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
+L0 闸门 (ubuntu-latest · py3.12)	接入冒烟（无 opencode serve 则 SKIP，退出码 0）	2026-10-12T15:42:01.7073115Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
+L0 闸门 (ubuntu-latest · py3.12)	接入冒烟（无 opencode serve 则 SKIP，退出码 0）	2026-10-12T15:42:01.7073490Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
+L0 闸门 (ubuntu-latest · py3.12)	接入冒烟（无 opencode serve 则 SKIP，退出码 0）	2026-10-12T15:42:01.7073863Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.15/x64/lib
+L0 闸门 (ubuntu-latest · py3.12)	接入冒烟（无 opencode serve 则 SKIP，退出码 0）	2026-10-12T15:42:01.7074182Z ##[endgroup]
+L0 闸门 (ubuntu-latest · py3.12)	接入冒烟（无 opencode serve 则 SKIP，退出码 0）	2026-10-12T15:42:01.8972531Z SKIP：http://127.0.0.1:4096 上没有在跑的 opencode server（`opencode serve --port 4096 --pure`）
+L0 闸门 (ubuntu-latest · py3.12)	接入冒烟（无 opencode serve 则 SKIP，退出码 0）	2026-10-12T15:42:01.8973466Z       探测失败原因：ConnectError: [Errno 111] Connection refused

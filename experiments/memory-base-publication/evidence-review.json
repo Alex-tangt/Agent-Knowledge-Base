@@ -1,0 +1,122 @@
+{
+  "base": "4dadc407d39b26855a96079ce8561e8983dc4401",
+  "core_all_tracked": [
+    {
+      "path": "memory_base/__init__.py",
+      "normalized_equal": true
+    },
+    {
+      "path": "memory_base/__main__.py",
+      "normalized_equal": true
+    },
+    {
+      "path": "memory_base/autostart.py",
+      "normalized_equal": true
+    },
+    {
+      "path": "memory_base/backup.py",
+      "normalized_equal": true
+    },
+    {
+      "path": "memory_base/constraints.txt",
+      "normalized_equal": true
+    },
+    {
+      "path": "memory_base/credentials.py",
+      "normalized_equal": true
+    },
+    {
+      "path": "memory_base/deploy.py",
+      "normalized_equal": true
+    },
+    {
+      "path": "memory_base/embed.py",
+      "normalized_equal": true
+    },
+    {
+      "path": "memory_base/gateway.py",
+      "normalized_equal": true
+    },
+    {
+      "path": "memory_base/mcp_stdio.py",
+      "normalized_equal": true
+    },
+    {
+      "path": "memory_base/paths.py",
+      "normalized_equal": true
+    },
+    {
+      "path": "memory_base/pyproject.toml",
+      "normalized_equal": true
+    },
+    {
+      "path": "memory_base/requirements.txt",
+      "normalized_equal": true
+    },
+    {
+      "path": "memory_base/skill/SKILL.md",
+      "normalized_equal": true
+    },
+    {
+      "path": "memory_base/sources.py",
+      "normalized_equal": true
+    },
+    {
+      "path": "memory_base/upstream.py",
+      "normalized_equal": true
+    }
+  ],
+  "aoci_history_blobs": [
+    {
+      "blob": "9cfdab2a1a953ce7542d618e1269e6b64063184a",
+      "path": "docs/aoci-commit-sync.md"
+    },
+    {
+      "blob": "05f34b9c2d09edca3dd457c831abfd6674f39d13",
+      "path": "docs/aoci-read-policy.md"
+    },
+    {
+      "blob": "c5ae7428f6d0c4bb65205e58f4c76f73a6c9f464",
+      "path": "scripts/aoci-commit-sync.ps1"
+    }
+  ],
+  "current_aoci_paths": [],
+  "evidence_statuses": {
+    "experiments/memory-base-package/cold-final-2026-10-12/results.json": {
+      "overall": "PASS"
+    },
+    "experiments/memory-base-package/cold-final-2026-10-12/native.json": {
+      "overall": "PASS"
+    },
+    "experiments/memory-base-live/lead-formal-restore-2026-10-12.json": {
+      "overall": "PASS"
+    },
+    "experiments/memory-base-live/note-intent-formal-tool-2026-10-12.json": {
+      "overall": "PASS"
+    },
+    "experiments/memory-base-live/note-intent-formal-pi-2026-10-12.json": {
+      "overall": "PASS"
+    }
+  },
+  "documentation_review": [
+    {
+      "path": "docs/memory-base-deployment.md",
+      "line": 90,
+      "category": "historical_not_restored_wording_needs_current_status_clarity",
+      "paired_current_pass_lines": [
+        102,
+        104
+      ]
+    },
+    {
+      "path": "docs/memory-base-delivery-plan-2026-10-11.md",
+      "line": 78,
+      "category": "explicit_ADB_real_login_DSH_opencode_remaining"
+    }
+  ],
+  "limits": [
+    "Only fixed-tree existing evidence inspected; no acceptance reruns.",
+    "Later Lead docs/CI corrections excluded.",
+    "AOCI objects scanned in memory only; no restore/install/execution."
+  ]
+}

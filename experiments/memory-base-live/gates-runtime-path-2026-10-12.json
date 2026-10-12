@@ -1,0 +1,33 @@
+{
+  "observed_at": "2026-10-12T23:39:49.301360+08:00",
+  "frozen_repository": "4fc5aa96fcbc16c532728fbba026ba77600cb471",
+  "implementation_commit": "4498aea",
+  "python": "3.12.14",
+  "pytest": {
+    "command": "python -m pytest tests/unit -q",
+    "exec_session": 69061,
+    "exit_code": 0,
+    "passed": 837,
+    "skipped": 5,
+    "warnings": 1,
+    "seconds": 289.64,
+    "warning": "Existing Qdrant remote version probe warning"
+  },
+  "harness": {
+    "exit_code": 0,
+    "expectation_matched": 10,
+    "total": 10,
+    "sha256": "a1687576d3955bf05d8680619eb8afc7e8ef7bda8ba49a77b983cce2fa9bf6d2"
+  },
+  "opencode_smoke": {
+    "exit_code": 0,
+    "result": "SKIP",
+    "reason": "No opencode server on 127.0.0.1:4096"
+  },
+  "source_matches_final_worker_hashes": true,
+  "core_change_from_prior_gate": [
+    "memory_base/deploy.py",
+    "tests/unit/test_memory_base_deploy.py"
+  ],
+  "boundary": "Lead final frozen Windows all existing gates, including both real wheel fixture modes. Existing R5/native proof remains scoped to45296a5; no new native-stack install or POSIX deployment claim. Real Ubuntu3.12 final CI still required."
+}

@@ -1,0 +1,14 @@
+{
+  "command": [
+    "node",
+    "--import",
+    "tsx",
+    "--test",
+    "server/tests/memory-base.test.ts"
+  ],
+  "cwd": "D:\\python_work\\work2026-4\\memory-base-bubble-bridge-assets\\20261012\\candidate",
+  "started_at_utc": "2026-10-12T01:08:28.320535+00:00",
+  "seconds": 21.297,
+  "exit_code": 0,
+  "output": "four-tools-memory.txt"
+}

@@ -1,0 +1,26 @@
+{
+  "home": "C:\\Users\\Tan\\.mb86\\r4\\f",
+  "processes_before_stop": {
+    "embed": {
+      "pid": 39116,
+      "created": "2026-10-12T07:52:34.2221350Z",
+      "command": "C:\\Users\\Tan\\.mb86\\r4\\f\\runtime\\Scripts\\python.exe -c \"import os,runpy,sys;os.environ['MEMORY_BASE_HOME']=sys.argv[1];module=sys.argv[2];sys.argv=[module,*sys.argv[3:]];runpy.run_module(module,run_name='__main__',alter_sys=True)\" C:\\Users\\Tan\\.mb86\\r4\\f memory_base.embed --port 53655 --model C:\\Users\\Tan\\.cache\\openviking\\models\\bge-small-zh-v1.5-f16.gguf",
+      "port": 53655
+    },
+    "upstream": {
+      "pid": 34652,
+      "created": "2026-10-12T07:52:42.6782680Z",
+      "command": "C:\\Users\\Tan\\.mb86\\r4\\f\\runtime\\Scripts\\python.exe -c \"import os,runpy,sys;os.environ['MEMORY_BASE_HOME']=sys.argv[1];module=sys.argv[2];sys.argv=[module,*sys.argv[3:]];runpy.run_module(module,run_name='__main__',alter_sys=True)\" C:\\Users\\Tan\\.mb86\\r4\\f openviking_cli.server_bootstrap --config C:\\Users\\Tan\\.mb86\\r4\\f\\openviking.conf --host 127.0.0.1 --port 53653",
+      "port": 53653
+    }
+  },
+  "processes_after_stop": {},
+  "native_stop_log": "C:\\Users\\Tan\\.mb86\\r4\\normal-native\\native-stop.log",
+  "native_stop_log_sha256": "cf54dfbf516fd0609b696eb6ddd8353f22f6a76f7bdf3c296037de5f6408d18e",
+  "native_start_log": "C:\\Users\\Tan\\.mb86\\r4\\normal-native\\native-start.log",
+  "native_start_log_sha256": "80c2cdb617723975f361ea3b810a7c1443cc92513e4a27fb7bc8a83fbf56d768",
+  "observed_upstream_stdout_bytes": 0,
+  "observed_upstream_stderr_bytes": 0,
+  "stop_exit_code": 0,
+  "no_remaining_records_or_fixture_ports": true
+}

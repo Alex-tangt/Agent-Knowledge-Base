@@ -1,0 +1,17 @@
+{
+    "captured_at_utc":  "2026-10-10T07:32:24.1882033Z",
+    "files":  {
+                  "opencode_json":  {
+                                        "path":  "C:\\Users\\Tan\\.config\\opencode\\opencode.json",
+                                        "sha256":  "a2157e84514ccc0496cc79c141e0ef57c893b5d182240cce18f2905a91ca549f"
+                                    },
+                  "deeptutor_mcp_json":  {
+                                             "path":  "D:\\Study\\my-deeptutor\\data\\user\\settings\\mcp.json",
+                                             "sha256":  "7073b474fa9c07bdc5cb3fd621d32d60432d1dfd196c91b27be9a552f29dc083"
+                                         },
+                  "deeptutor_catalog_json":  {
+                                                 "path":  "D:\\Study\\my-deeptutor\\data\\user\\settings\\model_catalog.json",
+                                                 "sha256":  "faf5838167e48cc43185672d287b2b4b4dfe92e9387203c6adaf52037649769b"
+                                             }
+              }
+}

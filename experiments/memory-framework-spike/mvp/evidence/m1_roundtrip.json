@@ -1,0 +1,166 @@
+{
+  "unit": "M1",
+  "claim": "应用输入原样保存、跨消费者共享、重启后可读、重复提交不产生第二条",
+  "generated_at": "2026-10-10T14:25:28+0800",
+  "uri": "viking://user/default/resources/mvp-spike/2026-10-10/note/m1-app-submit.md",
+  "payload": {
+    "path": "D:\\python_work\\work2026-4\\wk-spike\\experiments\\memory-framework-spike\\mvp\\payload\\m1-app-submit.md",
+    "bytes": 555,
+    "sha256": "2d5f97940eca9f3c4261a2a7cc4daec48d26b5c5b0cdc5e7d97cb0badc3143e1"
+  },
+  "verdict": "PASS",
+  "checks": [
+    {
+      "id": "M1.1-submit",
+      "claim": "公开入口提交成功且报告写入字节数",
+      "verdict": "PASS",
+      "detail": {
+        "request": {
+          "method": "POST",
+          "path": "/api/v1/content/write",
+          "body": {
+            "uri": "viking://user/default/resources/mvp-spike/2026-10-10/note/m1-app-submit.md",
+            "mode": "create",
+            "wait": true,
+            "content_bytes": 555,
+            "content_sha256": "2d5f97940eca9f3c4261a2a7cc4daec48d26b5c5b0cdc5e7d97cb0badc3143e1"
+          }
+        },
+        "response": {
+          "status": "ok",
+          "result": {
+            "uri": "viking://user/default/resources/mvp-spike/2026-10-10/note/m1-app-submit.md",
+            "root_uri": "viking://user/default/resources/mvp-spike/2026-10-10/note",
+            "context_type": "resource",
+            "mode": "create",
+            "written_bytes": 555,
+            "content_updated": true,
+            "semantic_status": "complete",
+            "vector_status": "complete",
+            "queue_status": {
+              "Semantic": {
+                "processed": 1,
+                "requeue_count": 0,
+                "error_count": 0,
+                "errors": []
+              },
+              "Embedding": {
+                "processed": 3,
+                "requeue_count": 0,
+                "error_count": 0,
+                "errors": []
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "M1.2-disk-bytes",
+      "claim": "磁盘上存下来的字节 == 提交输入字节",
+      "verdict": "PASS",
+      "detail": {
+        "disk_path": "C:\\Users\\Tan\\.openviking-mvp-spike\\data\\viking\\default\\user\\default\\resources\\mvp-spike\\2026-10-10\\note\\m1-app-submit.md",
+        "disk_bytes": 555,
+        "input_bytes": 555,
+        "disk_sha256": "2d5f97940eca9f3c4261a2a7cc4daec48d26b5c5b0cdc5e7d97cb0badc3143e1",
+        "input_sha256": "2d5f97940eca9f3c4261a2a7cc4daec48d26b5c5b0cdc5e7d97cb0badc3143e1",
+        "byte_identical": true
+      }
+    },
+    {
+      "id": "M1.3-api-bytes",
+      "claim": "写/读接口取回的正文 == 提交输入字节",
+      "verdict": "PASS",
+      "detail": {
+        "endpoint": "GET /api/v1/content/read?raw=true",
+        "bytes": 555,
+        "sha256": "2d5f97940eca9f3c4261a2a7cc4daec48d26b5c5b0cdc5e7d97cb0badc3143e1",
+        "byte_identical": true
+      }
+    },
+    {
+      "id": "M1.4-download-bytes",
+      "claim": "原始字节下载端点 == 提交输入字节",
+      "verdict": "PASS",
+      "detail": {
+        "endpoint": "GET /api/v1/content/download",
+        "bytes": 555,
+        "sha256": "2d5f97940eca9f3c4261a2a7cc4daec48d26b5c5b0cdc5e7d97cb0badc3143e1",
+        "byte_identical": true
+      }
+    },
+    {
+      "id": "M1.5-second-consumer",
+      "claim": "第二消费者（独立进程 ov CLI）读同一引用得到同一正文",
+      "verdict": "PASS",
+      "detail": {
+        "consumer": "ov read <uri> -o json (separate process)",
+        "bytes": 555,
+        "sha256": "2d5f97940eca9f3c4261a2a7cc4daec48d26b5c5b0cdc5e7d97cb0badc3143e1",
+        "byte_identical": true
+      }
+    },
+    {
+      "id": "M1.6-survives-restart",
+      "claim": "服务重启后同一引用仍读出同一正文",
+      "verdict": "PASS",
+      "detail": {
+        "stop_start_ok": true,
+        "restart_seconds": 32.4,
+        "health_after": 200,
+        "bytes": 555,
+        "sha256": "2d5f97940eca9f3c4261a2a7cc4daec48d26b5c5b0cdc5e7d97cb0badc3143e1",
+        "byte_identical": true,
+        "entries_before_restart": 1,
+        "entries_after_restart": 1
+      }
+    },
+    {
+      "id": "M1.7-duplicate-no-second-entry",
+      "claim": "同一请求重复提交不产生第二条",
+      "verdict": "PASS",
+      "detail": {
+        "entries_before": 1,
+        "entries_after": 1,
+        "entries": [
+          "viking://user/default/resources/mvp-spike/2026-10-10/note/m1-app-submit.md"
+        ],
+        "duplicate_mode_create": {
+          "http_status": 409,
+          "error": {
+            "status": "error",
+            "result": null,
+            "error": {
+              "code": "ALREADY_EXISTS",
+              "message": "File already exists: viking://user/default/resources/mvp-spike/2026-10-10/note/m1-app-submit.md",
+              "details": {
+                "resource": "viking://user/default/resources/mvp-spike/2026-10-10/note/m1-app-submit.md",
+                "type": "file"
+              }
+            },
+            "telemetry": null,
+            "profile": null
+          }
+        },
+        "duplicate_mode_replace": {
+          "status": "ok",
+          "written_bytes": 555
+        },
+        "body_unchanged_after_duplicate": true,
+        "body_sha256_after_duplicate": "2d5f97940eca9f3c4261a2a7cc4daec48d26b5c5b0cdc5e7d97cb0badc3143e1"
+      }
+    }
+  ],
+  "processing_side_effects": {
+    "semantic_status": "complete",
+    "vector_status": "complete",
+    "written_bytes": 555,
+    "embedding_items_processed": 3,
+    "semantic_items_processed": 1,
+    "cloud_model_calls": 0,
+    "cloud_model_cost": 0.0,
+    "note": "embedding provider = local GGUF (bge-small-zh-v1.5-f16); no VLM provider is configured, so the semantic/overview step completes without any model call and writes '[Directory overview is not ready]' placeholders. 原文保存与读取不经过 LLM。"
+  },
+  "elapsed_seconds": 36.3
+}

@@ -4,7 +4,15 @@ FastAPI + vanilla-JS RAG 应用，已重构为三模块单仓：`ragcore/`（可
 
 ## 目录布局
 
+**正式个人记忆基座**：`memory_base/`（固定 OpenViking 部署、外部串行嵌入、HTTP/MCP 四工具）与 `install-memory-base.ps1/.sh`；部署和真实宿主验收见 `docs/memory-base-deployment.md`。旧 `memory_agent` 引擎冻结，以下旧入口只用于保留资产。Bubble 实际 pi 总结读写已验收；当前扩充为项目只读映射、路径权限、完整恢复与登录启动（ADR-0032 D13–D16；任务状态见 `docs/memory-base-delivery-plan-2026-10-11.md`）。
+
 ```
+memory_base/        # 正式个人记忆基座（OpenViking 薄运行包）；独立安装
+  deploy.py  credentials.py  embed.py  gateway.py  upstream.py  mcp_stdio.py
+  paths.py  sources.py    # 规范路径/范围规则、登记项目的实时只读 Markdown
+  backup.py  autostart.py # 完整冷备份/空数据根恢复、Windows 当前用户登录启动
+  pyproject.toml  requirements.txt  constraints.txt  skill/SKILL.md
+install-memory-base.ps1  install-memory-base.sh  # 当前部署薄壳；Windows 已实测
 ragcore/            # 可复用核心（零 FastAPI 依赖）；真包
   __init__.py  pyproject.toml
   services/  strategies/  models/  config/  utils/  agents/   # 各含 __init__.py
@@ -344,6 +352,8 @@ The `warmup()` function (called from `app.py` lifespan) eagerly triggers BGE-M3 
 
 **两条轨道 + 一个冻结区**（这是**计划**，不是纪律）：
 
+- **新阶段 = 个人记忆基座（2026-10-10；`ADR-0032` proposed）**：**先采用 OpenViking 0.4.23 跑通 MVP**，阶段 1（MVP）**已执行完毕**——M0–M6 均有真实实测证据，逐项判定与读法前提见 `experiments/memory-framework-spike/mvp-protocol.md` § 结论。**能**：原文原样保存/读回（磁盘字节=接口正文）、跨消费者共享、ACL 范围授权、不可用显式报错、双面备份 +（**嵌入提供方进程外**时的）干净位置恢复、两个真实宿主（opencode + DeepTutor）接同一实例。**不能**：就地挂载本地来源 —— 实为**导入快照 + 显式重推，且在进程内嵌入并发下 restore/import 会整进程 abort**。证据：`experiments/memory-framework-spike/mvp/`、`experiments/memory-host-connect/`、`experiments/memory-spike-verify/`（独立复核）；恢复手册 `mvp/RECOVERY.md`。**阶段 2 第一顺位 = 给"来源新鲜度"补信号**（读到旧快照目前无任何提示）。旧自研引擎按 `ADR-0032` D5 冻结，**接入面与评测资产保留并继续演进**。
+
 - **主线 = 个人模式**（唯一开发重点，**功能票全部闭环 ✅**）：✅ **#41 一步安装 + 第二消费者** · ✅ **#43 embedding 绑本机 BGE-M3** · ✅ **#45 命名 + 域可见（`section` / 命中 `owner`）** · ✅ **#44 第二消费者共享可读写全局 KB**（`ADR-0025` D19 修订 D17）· ✅ **#42 agent loop**（skill + 读侧 `exclude_retired` + 场景评测）· ✅ **#46 HF 离线运行时兜底**（#18 未覆盖回归）· **余：收尾（文档 / 证据整理 / 地图复核）**。
   **模型（`ADR-0025` D19）**：**读 = 整张基表**（本地统一向量索引 `memory_entries`）；**写 = 全局知识库**（唯一经工具可写域，**所有 agent 可读写**，经写入网关 + 单 daemon 串行化）；其它域由 agent 自己写文件、我们只读索引。**写侧无域寻址**。
   **检索沿用现状、主线不碰检索**（owner 决定 2026-09-16「B」）。
@@ -463,3 +473,9 @@ Five canonical roles, default strings. See `docs/agents/triage-labels.md`.
 ### Domain docs
 
 Single-context: `CONTEXT.md` + `docs/adr/`. See `docs/agents/domain.md`.
+
+## 外部组件引入与退出（owner 决定，2026-10-12）
+
+**AOCI 已从本仓库移除。** MCP 注册、提交钩子、同步脚本、索引、日志及存档已删除。开发直接读取实际源码、必要测试、ADR 与项目说明；禁止自动安装或恢复 AOCI，重新引入需 owner 明确批准。
+
+**引入新的 MVP、开源项目或 skill 前必须评估。** 先明确本项目的实际需求，再调查社区使用反馈、已知缺陷、维护状况及接入成本；在隔离的小范围试用中核验收益、失败行为和退出方式，通过后才正式采用。不能因 README 宣传或一时兴奋直接下载并接入。没有明确收益或副作用过大时及时停用，避免维护工具挤占产品开发。

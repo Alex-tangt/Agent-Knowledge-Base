@@ -1,0 +1,31 @@
+{
+  "overall": "PASS",
+  "audited_at": "2026-10-12T13:42:51.751230+00:00",
+  "snapshot": {
+    "manifest_sha256": "27dc14f772e61a351be62bf3c5dfb24397c27cec8894612065139a8677541c65",
+    "files": 67,
+    "directories": 39,
+    "inventory_sha256": "0d0187c9e26bcb3a5cc4b08958db9882992af848480adbb2e2e0c7a478ced50c",
+    "bytes": 7229794
+  },
+  "owned_pid_birth_command_survivors": {
+    "embed": false,
+    "upstream": false,
+    "gateway": false
+  },
+  "ports_busy": {
+    "upstream": false,
+    "gateway": false,
+    "embed": false
+  },
+  "process_records": {},
+  "current_r5_baseline_files_unchanged": 133,
+  "original_failures_retained": 2,
+  "original_memory_physical_hash_checks": 3,
+  "current_project_hash_checks": 2,
+  "scanned_credentials": 27,
+  "private_body_url_title_patterns": 8,
+  "scanned_asset_report_and_log_files": 30,
+  "credential_or_private_text_matches": 0,
+  "boundary": "Only metadata/log records are exportable; no snapshot data, memory bodies, source URL, credentials. Earlier R5 launcher/RECORD reinstallation and missing old baseline are explicitly retained as limitations."
+}

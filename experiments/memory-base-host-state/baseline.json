@@ -1,0 +1,38 @@
+{
+  "baseline_commit": "0a86cb1013a481aa91b4b97b826d62a4a8456fb8",
+  "files": {
+    "actual": {
+      "root": "D:\\python_work\\work2026-10\\Agent-bubble",
+      "path": "scripts/local-backend.mjs",
+      "bytes": 8785,
+      "raw_sha256": "b4896de296d068f7605d93b5549ee623ff58f6fe44bff1caee5edd3ec5d9c6ad",
+      "crlf_to_lf_sha256": "b4896de296d068f7605d93b5549ee623ff58f6fe44bff1caee5edd3ec5d9c6ad"
+    },
+    "candidate": {
+      "root": "D:\\python_work\\work2026-4\\memory-base-bubble-bridge-assets\\20261012\\candidate93",
+      "path": "scripts/local-backend.mjs",
+      "bytes": 8919,
+      "raw_sha256": "a1646e0e3cb7661ac0a1571d55cdc78e7c8aab6ff9475e5515a09da252d3b326",
+      "crlf_to_lf_sha256": "b4896de296d068f7605d93b5549ee623ff58f6fe44bff1caee5edd3ec5d9c6ad"
+    },
+    "git_blob": {
+      "bytes": 8785,
+      "raw_sha256": "b4896de296d068f7605d93b5549ee623ff58f6fe44bff1caee5edd3ec5d9c6ad",
+      "crlf_to_lf_sha256": "b4896de296d068f7605d93b5549ee623ff58f6fe44bff1caee5edd3ec5d9c6ad"
+    }
+  },
+  "original_failure": {
+    "first_host_failure.json": {
+      "source": "C:\\Users\\Tan\\.codex\\worktrees\\memory-bootstrap-fix\\Agent-Knowledge-Base\\experiments\\memory-base-note-intent\\first_host_failure.json",
+      "bytes": 1260,
+      "raw_sha256": "8fdc2478fb569c0c30c4c2f44154cfe9684e37c1bd7223fb913f806b0043996f",
+      "crlf_to_lf_sha256": "d2c3113435f90ce861269ad60d4db5ee3cc894d5dbe640821e706ec11717798f"
+    },
+    "launcher-original.log": {
+      "source": "D:\\python_work\\work2026-4\\memory-base-bubble-bridge-assets\\20261012\\candidate92\\.tools\\host-test-w6CFiU\\host\\logs\\launcher.log",
+      "bytes": 1294,
+      "raw_sha256": "3d413d5c17ec887716cd2cdcf32b7704b1a6238be85042b270c590adbcd2f819",
+      "crlf_to_lf_sha256": "8e3a6dbf6987b633eaa2481bb738e829ab8f7587cdbf34b0bbd950fca9f4250f"
+    }
+  }
+}

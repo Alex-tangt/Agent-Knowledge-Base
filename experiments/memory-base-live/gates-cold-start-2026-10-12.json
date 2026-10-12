@@ -1,0 +1,32 @@
+{
+  "date": "2026-10-12",
+  "frozen_implementation": "dc3168d",
+  "frozen_repository": "45296a58fe2559e0b92f4af851c018b56148865a",
+  "python": "3.12.14",
+  "pytest": {
+    "command": "python -m pytest tests/unit -q",
+    "exec_session": 46259,
+    "exit_code": 0,
+    "passed": 833,
+    "skipped": 5,
+    "warnings": 1,
+    "seconds": 360.25,
+    "warning": "Existing Qdrant remote version probe warning"
+  },
+  "harness": {
+    "command": "python -m memory_agent.eval.harness --out .scratch/lead-gates-91-harness.json",
+    "exit_code": 0,
+    "expectation_matched": 10,
+    "total": 10,
+    "report_sha256": "a1687576d3955bf05d8680619eb8afc7e8ef7bda8ba49a77b983cce2fa9bf6d2"
+  },
+  "opencode_smoke": {
+    "command": "python memory_agent/eval/opencode_server_smoke_62.py",
+    "exit_code": 0,
+    "result": "SKIP",
+    "reason": "No opencode server on 127.0.0.1:4096"
+  },
+  "boundary": "Lead full existing Windows gates on frozen source. New package default-first-start remains separate #86 evidence. Harness is deterministic mechanism regression, not a model or retrieval quality benchmark.",
+  "all_frozen_package_files_match_normalized_text": true,
+  "frozen_package_files": 16
+}

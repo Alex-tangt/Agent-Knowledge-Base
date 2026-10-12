@@ -1,0 +1,21 @@
+{
+  "source_commit": "df32bf6e50a40843438f9491a26069ca4bd08f1f",
+  "source_tag": "v0.4.23",
+  "wheel_version": "0.4.23",
+  "source_python_files": 704,
+  "installed_python_files": 705,
+  "shared_python_files": 704,
+  "normalized_text_equal_count": 704,
+  "ast_equal_count": 704,
+  "ast_different": [],
+  "parse_errors": [],
+  "source_only": [],
+  "installed_only": [
+    "_version.py"
+  ],
+  "limits": [
+    "Python files only; native RAGFS/AGFS libraries and vector backend binaries are not compared.",
+    "AST equality is source correspondence, not a runtime behavior or end-to-end test.",
+    "No upstream packages were imported and no production data or services were accessed."
+  ]
+}

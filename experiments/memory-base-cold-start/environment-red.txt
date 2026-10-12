@@ -1,0 +1,67 @@
+FF                                                                       [100%]
+================================== FAILURES ===================================
+_ test_actual_target_preparation_compiles_only_own_lark_and_keeps_valid_caches _
+
+tmp_path = WindowsPath('C:/Users/Tan/AppData/Local/Temp/pytest-of-Tan/pytest-111/test_actual_target_preparation0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x000001A9F66050A0>
+
+    def test_actual_target_preparation_compiles_only_own_lark_and_keeps_valid_caches(tmp_path, monkeypatch):
+        python, site = _preparation_venv(tmp_path)
+        root = _lark_fixture(site)
+        other = site / "unused_cloud_provider"
+        other.mkdir()
+        (other / "__init__.py").write_text("VALUE = 1\n")
+        sources = {path: path.read_bytes() for path in root.glob("*.py")}
+        monkeypatch.setenv("PYTHONPATH", str(tmp_path / "untrusted-provider"))
+        monkeypatch.setenv("PYTHONPYCACHEPREFIX", str(tmp_path / "outside-cache"))
+        monkeypatch.setenv("PYTHONDONTWRITEBYTECODE", "1")
+        monkeypatch.setenv("PYTHONOPTIMIZE", "2")
+        first = deploy._prepare_runtime(python)
+        assert first["origin"] == str(root.resolve()) and first["force"] is False
+>       assert first["pycache_prefix"] is None and first["interpreter_optimize"] == 0
+               ^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'pycache_prefix'
+
+tests\unit\test_memory_base_deploy.py:166: KeyError
+_ test_actual_spawn_uses_prepared_cache_policy_without_changing_user_environment _
+
+tmp_path = WindowsPath('C:/Users/Tan/AppData/Local/Temp/pytest-of-Tan/pytest-111/test_actual_spawn_uses_prepare0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x000001A9F60005F0>
+
+    def test_actual_spawn_uses_prepared_cache_policy_without_changing_user_environment(tmp_path, monkeypatch):
+        package = tmp_path / "memory_base"
+        package.mkdir()
+        (package / "__init__.py").write_text("")
+        (package / "embed.py").write_text(textwrap.dedent("""
+            import json, os, sys
+            from http.server import BaseHTTPRequestHandler, HTTPServer
+            state = {'service':'memory-base-embedding', 'pid':os.getpid(),
+                     'pycache_prefix':sys.pycache_prefix, 'optimize':sys.flags.optimize,
+                     'cache_tag':sys.implementation.cache_tag,
+                     'flags_present':any(name in os.environ for name in ('PYTHONPYCACHEPREFIX','PYTHONOPTIMIZE'))}
+            class Handler(BaseHTTPRequestHandler):
+                def do_GET(self):
+                    self.send_response(200); self.send_header('Content-Type','application/json'); self.end_headers()
+                    self.wfile.write(json.dumps(state).encode())
+                def log_message(self, *args): pass
+            HTTPServer(('127.0.0.1',int(sys.argv[sys.argv.index('--port')+1])), Handler).serve_forever()
+        """))
+        with socket.socket() as listener:
+            listener.bind(("127.0.0.1", 0))
+            port = listener.getsockname()[1]
+        config = {"python": sys.executable, "source": str(tmp_path), "ports": {"embed": port}, "model": "unused-fixture.gguf"}
+        deploy._write_json(tmp_path / "deployment.json", config)
+        monkeypatch.setenv("PYTHONPYCACHEPREFIX", str(tmp_path / "user-cache"))
+        monkeypatch.setenv("PYTHONOPTIMIZE", "2")
+        records = {}
+        try:
+            deploy._spawn("embed", tmp_path, config, records, 30)
+            state = deploy._health("embed", config)
+>           assert state and state["pycache_prefix"] is None and state["optimize"] == 0
+E           AssertionError: assert ({'service': 'memory-base-embedding', 'pid': 42612, 'pycache_prefix': 'C:\\Users\\Tan\\AppData\\Local\\Temp\\pytest-of-Tan\\pytest-111\\test_actual_spawn_uses_prepare0\\user-cache', 'optimize': 2, ...} and 'C:\\Users\\Tan\\AppData\\Local\\Temp\\pytest-of-Tan\\pytest-111\\test_actual_spawn_uses_prepare0\\user-cache' is None)
+
+tests\unit\test_memory_base_deploy.py:584: AssertionError
+=========================== short test summary info ===========================
+FAILED tests/unit/test_memory_base_deploy.py::test_actual_target_preparation_compiles_only_own_lark_and_keeps_valid_caches
+FAILED tests/unit/test_memory_base_deploy.py::test_actual_spawn_uses_prepared_cache_policy_without_changing_user_environment
+2 failed, 62 deselected in 13.15s

@@ -1,0 +1,17 @@
+{
+  "date": "2026-10-12",
+  "exec_session": 45231,
+  "exit_code": 1,
+  "stage": "Lead native foreign-account permission check",
+  "cause": "Wrong management API path /api/v1/admin/users returned404, which cannot prove permission denial.",
+  "partial_report": "lead-formal-restore-first-partial-2026-10-12.json",
+  "proved_before_failure": [
+    "67 snapshot files/39directories",
+    "31 archive-original pairs before Lead start",
+    "three original receipt bytes/revisions",
+    "current project revision",
+    "gateway scope403",
+    "owned cleanup and snapshot unchanged"
+  ],
+  "next": "Only correct actual route /api/v1/admin/accounts/mb94-unowned/users and independently recheck that remaining permission item; no install/restore or first-start claim."
+}

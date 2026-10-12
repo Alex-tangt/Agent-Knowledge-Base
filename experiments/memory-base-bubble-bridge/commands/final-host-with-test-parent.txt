@@ -1,0 +1,17 @@
+
+> agent-bubble@0.1.0 test:host
+> node --test scripts/tests/backend-readiness.test.mjs scripts/tests/local-backend.test.mjs
+
+✔ a 61 second Windows cold start must not be reported as a failed startup (5.2555ms)
+✔ an existing launcher in starting phase is not a successful backend until HTTP is healthy (0.5013ms)
+✔ a failed launcher stops waiting immediately (0.4021ms)
+✔ an alive launcher with a permanently unreachable HTTP backend cannot report ready (0.4399ms)
+✔ local launcher: start, duplicate start, crash recovery, graceful stop, unmanaged process (46283.5576ms)
+ℹ tests 5
+ℹ suites 0
+ℹ pass 5
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 46522.4073

@@ -1,0 +1,138 @@
+{
+  "baseline_commit": "a1f5426adbf7de8efb7877181717ee4385388f10",
+  "candidate_commit": "0a86cb1013a481aa91b4b97b826d62a4a8456fb8",
+  "candidate_path": "D:\\python_work\\work2026-4\\memory-base-bubble-bridge-assets\\20261012\\candidate",
+  "allowed_source_files": [
+    "server/memory-base.ts",
+    "server/memory-tools.ts",
+    "server/agent.ts",
+    "server/tests/memory-base.test.ts"
+  ],
+  "patch": {
+    "file": "bubble-four-tools.patch",
+    "bytes": 40184,
+    "raw_sha256": "f65c17ddd0ef1211aae374a533c0aa9decc62b626c5196dd7c321152139aedf8",
+    "source_text": "Git LF-normalized blobs; compare raw working files separately with final-hashes.json"
+  },
+  "node": "v24.14.1",
+  "installed_dependencies": {
+    "@earendil-works/pi-ai": "1.1.0",
+    "@earendil-works/pi-coding-agent": "1.1.0",
+    "typebox": "1.3.27",
+    "zod": "4.6.5",
+    "typescript": "5.9.3",
+    "tsx": "4.23.15"
+  },
+  "dependencies_boundary": "Existing actual Bubble node_modules junction; no installation or modification",
+  "model_boundary": "Real pi SDK; model is local synthetic OpenAI-compatible SSE, no external LLM",
+  "gateway_boundary": "Local HTTP protocol fixtures, not formal gateway or real OpenViking/project sources",
+  "host_boundary": "Existing host tests launch candidate dist only with separate test DATA_DIR, free loopback port, fake provider key and memory integration disabled; formal host untouched",
+  "host_test_assets": [
+    "D:\\python_work\\work2026-4\\memory-base-bubble-bridge-assets\\20261012\\candidate\\.tools\\host-test-GjWIlM"
+  ],
+  "commands": {
+    "baseline-memory": {
+      "command": [
+        "node",
+        "--import",
+        "tsx",
+        "--test",
+        "server/tests/memory-base.test.ts"
+      ],
+      "cwd": "D:\\python_work\\work2026-4\\memory-base-bubble-bridge-assets\\20261012\\candidate",
+      "started_at_utc": "2026-10-12T01:02:42.081231+00:00",
+      "seconds": 49.094,
+      "exit_code": 0,
+      "output": "baseline-memory.txt"
+    },
+    "client-build": {
+      "command": [
+        "npm",
+        "run",
+        "build"
+      ],
+      "cwd": "D:\\python_work\\work2026-4\\memory-base-bubble-bridge-assets\\20261012\\candidate",
+      "started_at_utc": "2026-10-12T01:05:06.753757+00:00",
+      "seconds": 58.062,
+      "exit_code": 0,
+      "output": "client-build.txt"
+    },
+    "client-contract": {
+      "command": [
+        "node",
+        "--import",
+        "tsx",
+        "--test",
+        "--test-name-pattern",
+        "scoped client|client rejects|known gateway",
+        "server/tests/memory-base.test.ts"
+      ],
+      "cwd": "D:\\python_work\\work2026-4\\memory-base-bubble-bridge-assets\\20261012\\candidate",
+      "started_at_utc": "2026-10-12T01:04:45.636481+00:00",
+      "seconds": 18.656,
+      "exit_code": 0,
+      "output": "client-contract.txt"
+    },
+    "final-build": {
+      "command": [
+        "npm",
+        "run",
+        "build"
+      ],
+      "cwd": "D:\\python_work\\work2026-4\\memory-base-bubble-bridge-assets\\20261012\\candidate",
+      "started_at_utc": "2026-10-12T01:09:35.490858+00:00",
+      "seconds": 20.141,
+      "exit_code": 0,
+      "output": "final-build.txt"
+    },
+    "final-host-with-test-parent": {
+      "command": [
+        "npm",
+        "run",
+        "test:host"
+      ],
+      "cwd": "D:\\python_work\\work2026-4\\memory-base-bubble-bridge-assets\\20261012\\candidate",
+      "started_at_utc": "2026-10-12T01:10:47.899542+00:00",
+      "seconds": 48.703,
+      "exit_code": 0,
+      "output": "final-host-with-test-parent.txt"
+    },
+    "final-host": {
+      "command": [
+        "npm",
+        "run",
+        "test:host"
+      ],
+      "cwd": "D:\\python_work\\work2026-4\\memory-base-bubble-bridge-assets\\20261012\\candidate",
+      "started_at_utc": "2026-10-12T01:10:12.102192+00:00",
+      "seconds": 2.547,
+      "exit_code": 1,
+      "output": "final-host.txt"
+    },
+    "final-tests": {
+      "command": [
+        "npm",
+        "test"
+      ],
+      "cwd": "D:\\python_work\\work2026-4\\memory-base-bubble-bridge-assets\\20261012\\candidate",
+      "started_at_utc": "2026-10-12T01:10:12.068042+00:00",
+      "seconds": 26.063,
+      "exit_code": 0,
+      "output": "final-tests.txt"
+    },
+    "four-tools-memory": {
+      "command": [
+        "node",
+        "--import",
+        "tsx",
+        "--test",
+        "server/tests/memory-base.test.ts"
+      ],
+      "cwd": "D:\\python_work\\work2026-4\\memory-base-bubble-bridge-assets\\20261012\\candidate",
+      "started_at_utc": "2026-10-12T01:08:28.320535+00:00",
+      "seconds": 21.297,
+      "exit_code": 0,
+      "output": "four-tools-memory.txt"
+    }
+  }
+}

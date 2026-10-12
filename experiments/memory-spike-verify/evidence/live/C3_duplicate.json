@@ -1,0 +1,295 @@
+{
+  "create_first": {
+    "content_updated": true,
+    "context_type": "resource",
+    "mode": "create",
+    "queue_status": {
+      "Embedding": {
+        "error_count": 0,
+        "errors": [],
+        "processed": 3,
+        "requeue_count": 0
+      },
+      "Semantic": {
+        "error_count": 0,
+        "errors": [],
+        "processed": 1,
+        "requeue_count": 0
+      }
+    },
+    "root_uri": "viking://user/default/verify/20261010T153910-e48bc7/idem",
+    "semantic_status": "complete",
+    "uri": "viking://user/default/verify/20261010T153910-e48bc7/idem/create-twice.md",
+    "vector_status": "complete",
+    "written_bytes": 519
+  },
+  "create_name_count": 1,
+  "create_second_error": {
+    "exception": "AlreadyExistsError",
+    "message": "File already exists: viking://user/default/verify/20261010T153910-e48bc7/idem/create-twice.md",
+    "module": "openviking_sdk.errors"
+  },
+  "ls_idem_parent": [
+    "viking://user/default/verify/20261010T153910-e48bc7/idem/.abstract.md",
+    "viking://user/default/verify/20261010T153910-e48bc7/idem/.overview.md",
+    "viking://user/default/verify/20261010T153910-e48bc7/idem/replace-twice.md"
+  ],
+  "ls_idem_parent_2": [
+    "viking://user/default/verify/20261010T153910-e48bc7/idem/.abstract.md",
+    "viking://user/default/verify/20261010T153910-e48bc7/idem/.overview.md",
+    "viking://user/default/verify/20261010T153910-e48bc7/idem/create-twice.md",
+    "viking://user/default/verify/20261010T153910-e48bc7/idem/replace-twice.md"
+  ],
+  "ls_to_parent": [
+    "viking://resources/verify-20261010T153910-e48bc7/dup-parent",
+    "viking://resources/verify-20261010T153910-e48bc7/idem-src",
+    "viking://resources/verify-20261010T153910-e48bc7/src",
+    "viking://resources/verify-20261010T153910-e48bc7/.abstract.md",
+    "viking://resources/verify-20261010T153910-e48bc7/.overview.md"
+  ],
+  "replace_name_count": 1,
+  "replace_write_1": {
+    "content_updated": true,
+    "context_type": "resource",
+    "mode": "replace",
+    "queue_status": {
+      "Embedding": {
+        "error_count": 0,
+        "errors": [],
+        "processed": 3,
+        "requeue_count": 0
+      },
+      "Semantic": {
+        "error_count": 0,
+        "errors": [],
+        "processed": 1,
+        "requeue_count": 0
+      }
+    },
+    "root_uri": "viking://user/default/verify/20261010T153910-e48bc7/idem",
+    "semantic_status": "complete",
+    "uri": "viking://user/default/verify/20261010T153910-e48bc7/idem/replace-twice.md",
+    "vector_status": "complete",
+    "written_bytes": 519
+  },
+  "replace_write_2": {
+    "content_updated": true,
+    "context_type": "resource",
+    "mode": "replace",
+    "queue_status": {
+      "Embedding": {
+        "error_count": 0,
+        "errors": [],
+        "processed": 3,
+        "requeue_count": 0
+      },
+      "Semantic": {
+        "error_count": 0,
+        "errors": [],
+        "processed": 1,
+        "requeue_count": 0
+      }
+    },
+    "root_uri": "viking://user/default/verify/20261010T153910-e48bc7/idem",
+    "semantic_status": "complete",
+    "uri": "viking://user/default/verify/20261010T153910-e48bc7/idem/replace-twice.md",
+    "vector_status": "complete",
+    "written_bytes": 519
+  },
+  "request_id_probe": {
+    "body": "{\"status\":\"error\",\"error\":{\"code\":\"INVALID_ARGUMENT\",\"message\":\"Invalid request parameters: body.request_id: Extra inputs are not permitted\",\"details\":{\"validation_errors\":[{\"loc\":[\"body\",\"request_id\"],\"message\":\"Extra inputs are not permitted\",\"type\":\"extra_forbidden\"}]}}}",
+    "status": 400
+  },
+  "to": "viking://resources/verify-20261010T153910-e48bc7/idem-src",
+  "to_add_1": {
+    "context_count": 7,
+    "errors": [],
+    "meta": {
+      "file_count": 3,
+      "repo_name": "repository"
+    },
+    "queue_status": {
+      "Embedding": {
+        "error_count": 0,
+        "errors": [],
+        "processed": 7,
+        "requeue_count": 0
+      },
+      "Semantic": {
+        "error_count": 0,
+        "errors": [],
+        "processed": 1,
+        "requeue_count": 0
+      }
+    },
+    "root_uri": "viking://resources/verify-20261010T153910-e48bc7/idem-src",
+    "source_path": "source-tree",
+    "status": "success",
+    "telemetry": {
+      "id": "tm_26fe5c6e4628498ab4c9a5ff3f58e648",
+      "summary": {
+        "duration_ms": 586.513,
+        "operation": "add_resource_job",
+        "queue": {
+          "embedding": {
+            "execute": {
+              "duration_ms": 472.674
+            },
+            "processed": 7,
+            "queue_wait": {
+              "duration_ms": 218.949
+            }
+          },
+          "semantic": {
+            "execute": {
+              "duration_ms": 145.742
+            },
+            "processed": 1,
+            "queue_wait": {
+              "duration_ms": 56.698
+            }
+          }
+        },
+        "resource": {
+          "content_commit": {
+            "duration_ms": 11.488
+          },
+          "derived_enqueue": {
+            "duration_ms": 1.732
+          },
+          "embedding": {
+            "execute": {
+              "duration_ms": 472.674
+            },
+            "queue_wait": {
+              "duration_ms": 218.949
+            }
+          },
+          "flags": {
+            "build_index": true,
+            "summarize": false,
+            "wait": false,
+            "watch_enabled": false
+          },
+          "parse_artifact": {
+            "duration_ms": 265.755
+          },
+          "semantic": {
+            "execute": {
+              "duration_ms": 145.742
+            },
+            "queue_wait": {
+              "duration_ms": 56.698
+            }
+          },
+          "source_execute": {
+            "duration_ms": 320.903
+          },
+          "source_prepare": {
+            "duration_ms": 25.462
+          },
+          "target_resolve": {
+            "duration_ms": 1.543
+          },
+          "total": {
+            "duration_ms": 586.509
+          },
+          "update_plan": {
+            "artifact_inventory": {
+              "duration_ms": 7.266
+            },
+            "diff_and_compile": {
+              "duration_ms": 0.803
+            },
+            "duration_ms": 9.364,
+            "rnfv_snapshot": {
+              "duration_ms": 1.198
+            }
+          }
+        },
+        "semantic_nodes": {
+          "done": 5,
+          "total": 5
+        },
+        "status": "ok"
+      }
+    },
+    "temp_uri": "viking://temp/default/10101542_d4817d/repository"
+  },
+  "to_add_2": {
+    "context_count": 0,
+    "errors": [],
+    "meta": {
+      "file_count": 3,
+      "repo_name": "repository"
+    },
+    "queue_status": {
+      "Embedding": {
+        "error_count": 0,
+        "errors": [],
+        "processed": 0,
+        "requeue_count": 0
+      },
+      "Semantic": {
+        "error_count": 0,
+        "errors": [],
+        "processed": 0,
+        "requeue_count": 0
+      }
+    },
+    "root_uri": "viking://resources/verify-20261010T153910-e48bc7/idem-src",
+    "source_path": "source-tree",
+    "status": "success",
+    "telemetry": {
+      "id": "tm_2e4c969da16e47059feab103bc8eb67b",
+      "summary": {
+        "duration_ms": 341.437,
+        "operation": "add_resource_job",
+        "resource": {
+          "content_commit": {
+            "duration_ms": 0.011
+          },
+          "derived_enqueue": {
+            "duration_ms": 2.667
+          },
+          "flags": {
+            "build_index": true,
+            "summarize": false,
+            "wait": false,
+            "watch_enabled": false
+          },
+          "parse_artifact": {
+            "duration_ms": 262.496
+          },
+          "source_execute": {
+            "duration_ms": 311.139
+          },
+          "source_prepare": {
+            "duration_ms": 18.742
+          },
+          "target_resolve": {
+            "duration_ms": 1.867
+          },
+          "total": {
+            "duration_ms": 341.434
+          },
+          "update_plan": {
+            "artifact_inventory": {
+              "duration_ms": 6.754
+            },
+            "diff_and_compile": {
+              "duration_ms": 0.558
+            },
+            "duration_ms": 11.064,
+            "rnfv_snapshot": {
+              "duration_ms": 3.651
+            }
+          }
+        },
+        "status": "ok"
+      }
+    },
+    "temp_uri": "viking://temp/default/10101542_4eaea5/repository"
+  },
+  "to_entry_count": 1
+}

@@ -1,0 +1,550 @@
+{
+  "counts": {
+    "template_or_embedded_code_fragment": 90
+  },
+  "locations": [
+    {
+      "blob": "aa0c0fa5f4962d29c5be07242c698eec5e818376",
+      "path": "experiments/memory-base-cold-start/native_probe_91.py",
+      "line": 95,
+      "criterion": "template_or_embedded_code_fragment"
+    },
+    {
+      "blob": "ed58a76f27807e577a209e0b4bee939f4caf30c4",
+      "path": "experiments/memory-base-cold-start/native_probe_resume.py",
+      "line": 95,
+      "criterion": "template_or_embedded_code_fragment"
+    },
+    {
+      "blob": "c1480ebf4435ef6df4035b3c3e31ed17c1d4e74d",
+      "path": "experiments/memory-base-formal-restore/run_restore.py",
+      "line": 154,
+      "criterion": "template_or_embedded_code_fragment"
+    },
+    {
+      "blob": "c1480ebf4435ef6df4035b3c3e31ed17c1d4e74d",
+      "path": "experiments/memory-base-formal-restore/run_restore.py",
+      "line": 155,
+      "criterion": "template_or_embedded_code_fragment"
+    },
+    {
+      "blob": "522cc227ccc4876a9e54361afe31d113b7c77d22",
+      "path": "experiments/memory-base-live/lead_formal_restore.py",
+      "line": 67,
+      "criterion": "template_or_embedded_code_fragment"
+    },
+    {
+      "blob": "522cc227ccc4876a9e54361afe31d113b7c77d22",
+      "path": "experiments/memory-base-live/lead_formal_restore.py",
+      "line": 95,
+      "criterion": "template_or_embedded_code_fragment"
+    },
+    {
+      "blob": "522cc227ccc4876a9e54361afe31d113b7c77d22",
+      "path": "experiments/memory-base-live/lead_formal_restore.py",
+      "line": 143,
+      "criterion": "template_or_embedded_code_fragment"
+    },
+    {
+      "blob": "2255e7942c867bd6ecffa69ddce8be217a8ba86c",
+      "path": "experiments/memory-base-live/runtime_probe.py",
+      "line": 39,
+      "criterion": "template_or_embedded_code_fragment"
+    },
+    {
+      "blob": "2255e7942c867bd6ecffa69ddce8be217a8ba86c",
+      "path": "experiments/memory-base-live/runtime_probe.py",
+      "line": 40,
+      "criterion": "template_or_embedded_code_fragment"
+    },
+    {
+      "blob": "c9298e7749785871c41e31c9f11ba1143590bd52",
+      "path": "experiments/memory-base-package/cold-final-2026-10-12/native_probe.py",
+      "line": 99,
+      "criterion": "template_or_embedded_code_fragment"
+    },
+    {
+      "blob": "04f521d6acf16408369da51dd51af70fb43a74a8",
+      "path": "experiments/memory-base-package/recheck-2026-10-12/native_probe.py",
+      "line": 98,
+      "criterion": "template_or_embedded_code_fragment"
+    },
+    {
+      "blob": "1796669076277cdd6c425bc9b348c582fb80a8be",
+      "path": "experiments/memory-base-recovery/run_native.py",
+      "line": 192,
+      "criterion": "template_or_embedded_code_fragment"
+    },
+    {
+      "blob": "1796669076277cdd6c425bc9b348c582fb80a8be",
+      "path": "experiments/memory-base-recovery/run_native.py",
+      "line": 201,
+      "criterion": "template_or_embedded_code_fragment"
+    },
+    {
+      "blob": "1796669076277cdd6c425bc9b348c582fb80a8be",
+      "path": "experiments/memory-base-recovery/run_native.py",
+      "line": 206,
+      "criterion": "template_or_embedded_code_fragment"
+    },
+    {
+      "blob": "1796669076277cdd6c425bc9b348c582fb80a8be",
+      "path": "experiments/memory-base-recovery/run_native.py",
+      "line": 552,
+      "criterion": "template_or_embedded_code_fragment"
+    },
+    {
+      "blob": "31753483a2f250352cbac2a36147ff171440a4b0",
+      "path": "memory_base/deploy.py",
+      "line": 133,
+      "criterion": "template_or_embedded_code_fragment"
+    },
+    {
+      "blob": "31753483a2f250352cbac2a36147ff171440a4b0",
+      "path": "memory_base/deploy.py",
+      "line": 380,
+      "criterion": "template_or_embedded_code_fragment"
+    },
+    {
+      "blob": "31753483a2f250352cbac2a36147ff171440a4b0",
+      "path": "memory_base/deploy.py",
+      "line": 467,
+      "criterion": "template_or_embedded_code_fragment"
+    },
+    {
+      "blob": "31753483a2f250352cbac2a36147ff171440a4b0",
+      "path": "memory_base/deploy.py",
+      "line": 552,
+      "criterion": "template_or_embedded_code_fragment"
+    },
+    {
+      "blob": "31753483a2f250352cbac2a36147ff171440a4b0",
+      "path": "memory_base/deploy.py",
+      "line": 607,
+      "criterion": "template_or_embedded_code_fragment"
+    },
+    {
+      "blob": "08dd86bdf55b3abaea6113b0846c0785cd485987",
+      "path": "experiments/memory-base-formal-restore/run_restore.py",
+      "line": 153,
+      "criterion": "template_or_embedded_code_fragment"
+    },
+    {
+      "blob": "08dd86bdf55b3abaea6113b0846c0785cd485987",
+      "path": "experiments/memory-base-formal-restore/run_restore.py",
+      "line": 154,
+      "criterion": "template_or_embedded_code_fragment"
+    },
+    {
+      "blob": "dd97faf29499838b79adbc0e67f9e911aeda97d2",
+      "path": "experiments/memory-base-formal-restore/run_restore.py",
+      "line": 153,
+      "criterion": "template_or_embedded_code_fragment"
+    },
+    {
+      "blob": "dd97faf29499838b79adbc0e67f9e911aeda97d2",
+      "path": "experiments/memory-base-formal-restore/run_restore.py",
+      "line": 154,
+      "criterion": "template_or_embedded_code_fragment"
+    },
+    {
+      "blob": "e37e2226ecba2a053d2097abbcb98c2adad069f2",
+      "path": "experiments/memory-base-formal-restore/run_restore.py",
+      "line": 148,
+      "criterion": "template_or_embedded_code_fragment"
+    },
+    {
+      "blob": "e37e2226ecba2a053d2097abbcb98c2adad069f2",
+      "path": "experiments/memory-base-formal-restore/run_restore.py",
+      "line": 149,
+      "criterion": "template_or_embedded_code_fragment"
+    },
+    {
+      "blob": "45fc6ae553e1a7fa94dcf76b3b0463cbcdb287c0",
+      "path": "experiments/memory-base-formal-restore/run_restore.py",
+      "line": 147,
+      "criterion": "template_or_embedded_code_fragment"
+    },
+    {
+      "blob": "45fc6ae553e1a7fa94dcf76b3b0463cbcdb287c0",
+      "path": "experiments/memory-base-formal-restore/run_restore.py",
+      "line": 148,
+      "criterion": "template_or_embedded_code_fragment"
+    },
+    {
+      "blob": "9b3d1f2391756ac1dd569d9e405e63d8fbfccb9b",
+      "path": "memory_base/deploy.py",
+      "line": 133,
+      "criterion": "template_or_embedded_code_fragment"
+    },
+    {
+      "blob": "9b3d1f2391756ac1dd569d9e405e63d8fbfccb9b",
+      "path": "memory_base/deploy.py",
+      "line": 334,
+      "criterion": "template_or_embedded_code_fragment"
+    },
+    {
+      "blob": "9b3d1f2391756ac1dd569d9e405e63d8fbfccb9b",
+      "path": "memory_base/deploy.py",
+      "line": 421,
+      "criterion": "template_or_embedded_code_fragment"
+    },
+    {
+      "blob": "9b3d1f2391756ac1dd569d9e405e63d8fbfccb9b",
+      "path": "memory_base/deploy.py",
+      "line": 502,
+      "criterion": "template_or_embedded_code_fragment"
+    },
+    {
+      "blob": "9b3d1f2391756ac1dd569d9e405e63d8fbfccb9b",
+      "path": "memory_base/deploy.py",
+      "line": 557,
+      "criterion": "template_or_embedded_code_fragment"
+    },
+    {
+      "blob": "6de0345662a46cb94825b9065b3a531c6a4ec1c1",
+      "path": "experiments/memory-base-package/recheck-2026-10-12/native_probe.py",
+      "line": 92,
+      "criterion": "template_or_embedded_code_fragment"
+    },
+    {
+      "blob": "f109ca365215237d859919a094f9637998f1f1d3",
+      "path": "experiments/memory-base-package/recheck-2026-10-12/native_probe.py",
+      "line": 92,
+      "criterion": "template_or_embedded_code_fragment"
+    },
+    {
+      "blob": "1c1e825b69e93f39ad24eb4aa5d4e175e6632e73",
+      "path": "memory_base/deploy.py",
+      "line": 120,
+      "criterion": "template_or_embedded_code_fragment"
+    },
+    {
+      "blob": "1c1e825b69e93f39ad24eb4aa5d4e175e6632e73",
+      "path": "memory_base/deploy.py",
+      "line": 210,
+      "criterion": "template_or_embedded_code_fragment"
+    },
+    {
+      "blob": "1c1e825b69e93f39ad24eb4aa5d4e175e6632e73",
+      "path": "memory_base/deploy.py",
+      "line": 297,
+      "criterion": "template_or_embedded_code_fragment"
+    },
+    {
+      "blob": "1c1e825b69e93f39ad24eb4aa5d4e175e6632e73",
+      "path": "memory_base/deploy.py",
+      "line": 378,
+      "criterion": "template_or_embedded_code_fragment"
+    },
+    {
+      "blob": "1c1e825b69e93f39ad24eb4aa5d4e175e6632e73",
+      "path": "memory_base/deploy.py",
+      "line": 433,
+      "criterion": "template_or_embedded_code_fragment"
+    },
+    {
+      "blob": "bf5b32c89ab6f703501da3d5ef6f38abdd101ddd",
+      "path": "memory_base/deploy.py",
+      "line": 116,
+      "criterion": "template_or_embedded_code_fragment"
+    },
+    {
+      "blob": "bf5b32c89ab6f703501da3d5ef6f38abdd101ddd",
+      "path": "memory_base/deploy.py",
+      "line": 206,
+      "criterion": "template_or_embedded_code_fragment"
+    },
+    {
+      "blob": "bf5b32c89ab6f703501da3d5ef6f38abdd101ddd",
+      "path": "memory_base/deploy.py",
+      "line": 290,
+      "criterion": "template_or_embedded_code_fragment"
+    },
+    {
+      "blob": "bf5b32c89ab6f703501da3d5ef6f38abdd101ddd",
+      "path": "memory_base/deploy.py",
+      "line": 371,
+      "criterion": "template_or_embedded_code_fragment"
+    },
+    {
+      "blob": "bf5b32c89ab6f703501da3d5ef6f38abdd101ddd",
+      "path": "memory_base/deploy.py",
+      "line": 426,
+      "criterion": "template_or_embedded_code_fragment"
+    },
+    {
+      "blob": "db887b0516cec02c3b371f06afdccc9ceb1efdab",
+      "path": "memory_base/deploy.py",
+      "line": 116,
+      "criterion": "template_or_embedded_code_fragment"
+    },
+    {
+      "blob": "db887b0516cec02c3b371f06afdccc9ceb1efdab",
+      "path": "memory_base/deploy.py",
+      "line": 206,
+      "criterion": "template_or_embedded_code_fragment"
+    },
+    {
+      "blob": "db887b0516cec02c3b371f06afdccc9ceb1efdab",
+      "path": "memory_base/deploy.py",
+      "line": 290,
+      "criterion": "template_or_embedded_code_fragment"
+    },
+    {
+      "blob": "db887b0516cec02c3b371f06afdccc9ceb1efdab",
+      "path": "memory_base/deploy.py",
+      "line": 371,
+      "criterion": "template_or_embedded_code_fragment"
+    },
+    {
+      "blob": "db887b0516cec02c3b371f06afdccc9ceb1efdab",
+      "path": "memory_base/deploy.py",
+      "line": 426,
+      "criterion": "template_or_embedded_code_fragment"
+    },
+    {
+      "blob": "98e9d91d7794ec850291fc7a682ef4c3eeca131a",
+      "path": "memory_base/deploy.py",
+      "line": 116,
+      "criterion": "template_or_embedded_code_fragment"
+    },
+    {
+      "blob": "98e9d91d7794ec850291fc7a682ef4c3eeca131a",
+      "path": "memory_base/deploy.py",
+      "line": 206,
+      "criterion": "template_or_embedded_code_fragment"
+    },
+    {
+      "blob": "98e9d91d7794ec850291fc7a682ef4c3eeca131a",
+      "path": "memory_base/deploy.py",
+      "line": 290,
+      "criterion": "template_or_embedded_code_fragment"
+    },
+    {
+      "blob": "98e9d91d7794ec850291fc7a682ef4c3eeca131a",
+      "path": "memory_base/deploy.py",
+      "line": 369,
+      "criterion": "template_or_embedded_code_fragment"
+    },
+    {
+      "blob": "98e9d91d7794ec850291fc7a682ef4c3eeca131a",
+      "path": "memory_base/deploy.py",
+      "line": 424,
+      "criterion": "template_or_embedded_code_fragment"
+    },
+    {
+      "blob": "6a29f94071dde14e2166cc6fbf62ed01d596974e",
+      "path": "memory_base/deploy.py",
+      "line": 116,
+      "criterion": "template_or_embedded_code_fragment"
+    },
+    {
+      "blob": "6a29f94071dde14e2166cc6fbf62ed01d596974e",
+      "path": "memory_base/deploy.py",
+      "line": 206,
+      "criterion": "template_or_embedded_code_fragment"
+    },
+    {
+      "blob": "6a29f94071dde14e2166cc6fbf62ed01d596974e",
+      "path": "memory_base/deploy.py",
+      "line": 290,
+      "criterion": "template_or_embedded_code_fragment"
+    },
+    {
+      "blob": "6a29f94071dde14e2166cc6fbf62ed01d596974e",
+      "path": "memory_base/deploy.py",
+      "line": 369,
+      "criterion": "template_or_embedded_code_fragment"
+    },
+    {
+      "blob": "6a29f94071dde14e2166cc6fbf62ed01d596974e",
+      "path": "memory_base/deploy.py",
+      "line": 424,
+      "criterion": "template_or_embedded_code_fragment"
+    },
+    {
+      "blob": "1c0b9791df5d38875bd02ee9e63a4f74f55e4595",
+      "path": "memory_base/deploy.py",
+      "line": 113,
+      "criterion": "template_or_embedded_code_fragment"
+    },
+    {
+      "blob": "1c0b9791df5d38875bd02ee9e63a4f74f55e4595",
+      "path": "memory_base/deploy.py",
+      "line": 203,
+      "criterion": "template_or_embedded_code_fragment"
+    },
+    {
+      "blob": "1c0b9791df5d38875bd02ee9e63a4f74f55e4595",
+      "path": "memory_base/deploy.py",
+      "line": 258,
+      "criterion": "template_or_embedded_code_fragment"
+    },
+    {
+      "blob": "1c0b9791df5d38875bd02ee9e63a4f74f55e4595",
+      "path": "memory_base/deploy.py",
+      "line": 336,
+      "criterion": "template_or_embedded_code_fragment"
+    },
+    {
+      "blob": "1c0b9791df5d38875bd02ee9e63a4f74f55e4595",
+      "path": "memory_base/deploy.py",
+      "line": 390,
+      "criterion": "template_or_embedded_code_fragment"
+    },
+    {
+      "blob": "67a09a35a8c786911a6bacb2012f6a2ab68c5d42",
+      "path": "memory_base/deploy.py",
+      "line": 113,
+      "criterion": "template_or_embedded_code_fragment"
+    },
+    {
+      "blob": "67a09a35a8c786911a6bacb2012f6a2ab68c5d42",
+      "path": "memory_base/deploy.py",
+      "line": 201,
+      "criterion": "template_or_embedded_code_fragment"
+    },
+    {
+      "blob": "67a09a35a8c786911a6bacb2012f6a2ab68c5d42",
+      "path": "memory_base/deploy.py",
+      "line": 256,
+      "criterion": "template_or_embedded_code_fragment"
+    },
+    {
+      "blob": "67a09a35a8c786911a6bacb2012f6a2ab68c5d42",
+      "path": "memory_base/deploy.py",
+      "line": 334,
+      "criterion": "template_or_embedded_code_fragment"
+    },
+    {
+      "blob": "67a09a35a8c786911a6bacb2012f6a2ab68c5d42",
+      "path": "memory_base/deploy.py",
+      "line": 388,
+      "criterion": "template_or_embedded_code_fragment"
+    },
+    {
+      "blob": "fa588f5c3dc5ce5473c7f5e867d00e821c8e2209",
+      "path": "memory_base/deploy.py",
+      "line": 113,
+      "criterion": "template_or_embedded_code_fragment"
+    },
+    {
+      "blob": "fa588f5c3dc5ce5473c7f5e867d00e821c8e2209",
+      "path": "memory_base/deploy.py",
+      "line": 203,
+      "criterion": "template_or_embedded_code_fragment"
+    },
+    {
+      "blob": "fa588f5c3dc5ce5473c7f5e867d00e821c8e2209",
+      "path": "memory_base/deploy.py",
+      "line": 258,
+      "criterion": "template_or_embedded_code_fragment"
+    },
+    {
+      "blob": "fa588f5c3dc5ce5473c7f5e867d00e821c8e2209",
+      "path": "memory_base/deploy.py",
+      "line": 336,
+      "criterion": "template_or_embedded_code_fragment"
+    },
+    {
+      "blob": "fa588f5c3dc5ce5473c7f5e867d00e821c8e2209",
+      "path": "memory_base/deploy.py",
+      "line": 390,
+      "criterion": "template_or_embedded_code_fragment"
+    },
+    {
+      "blob": "0be1a80d4cafbedd970813b3195c48213dd14df2",
+      "path": "memory_base/deploy.py",
+      "line": 113,
+      "criterion": "template_or_embedded_code_fragment"
+    },
+    {
+      "blob": "0be1a80d4cafbedd970813b3195c48213dd14df2",
+      "path": "memory_base/deploy.py",
+      "line": 203,
+      "criterion": "template_or_embedded_code_fragment"
+    },
+    {
+      "blob": "0be1a80d4cafbedd970813b3195c48213dd14df2",
+      "path": "memory_base/deploy.py",
+      "line": 258,
+      "criterion": "template_or_embedded_code_fragment"
+    },
+    {
+      "blob": "0be1a80d4cafbedd970813b3195c48213dd14df2",
+      "path": "memory_base/deploy.py",
+      "line": 336,
+      "criterion": "template_or_embedded_code_fragment"
+    },
+    {
+      "blob": "0be1a80d4cafbedd970813b3195c48213dd14df2",
+      "path": "memory_base/deploy.py",
+      "line": 390,
+      "criterion": "template_or_embedded_code_fragment"
+    },
+    {
+      "blob": "cc4dc618383242471817f47b47ec6577153228f6",
+      "path": "memory_base/deploy.py",
+      "line": 113,
+      "criterion": "template_or_embedded_code_fragment"
+    },
+    {
+      "blob": "cc4dc618383242471817f47b47ec6577153228f6",
+      "path": "memory_base/deploy.py",
+      "line": 203,
+      "criterion": "template_or_embedded_code_fragment"
+    },
+    {
+      "blob": "cc4dc618383242471817f47b47ec6577153228f6",
+      "path": "memory_base/deploy.py",
+      "line": 258,
+      "criterion": "template_or_embedded_code_fragment"
+    },
+    {
+      "blob": "cc4dc618383242471817f47b47ec6577153228f6",
+      "path": "memory_base/deploy.py",
+      "line": 333,
+      "criterion": "template_or_embedded_code_fragment"
+    },
+    {
+      "blob": "cc4dc618383242471817f47b47ec6577153228f6",
+      "path": "memory_base/deploy.py",
+      "line": 387,
+      "criterion": "template_or_embedded_code_fragment"
+    },
+    {
+      "blob": "6a575eca90f1d655970f7d6193e67e90066a069f",
+      "path": "memory_base/deploy.py",
+      "line": 113,
+      "criterion": "template_or_embedded_code_fragment"
+    },
+    {
+      "blob": "6a575eca90f1d655970f7d6193e67e90066a069f",
+      "path": "memory_base/deploy.py",
+      "line": 200,
+      "criterion": "template_or_embedded_code_fragment"
+    },
+    {
+      "blob": "6a575eca90f1d655970f7d6193e67e90066a069f",
+      "path": "memory_base/deploy.py",
+      "line": 255,
+      "criterion": "template_or_embedded_code_fragment"
+    },
+    {
+      "blob": "6a575eca90f1d655970f7d6193e67e90066a069f",
+      "path": "memory_base/deploy.py",
+      "line": 330,
+      "criterion": "template_or_embedded_code_fragment"
+    },
+    {
+      "blob": "6a575eca90f1d655970f7d6193e67e90066a069f",
+      "path": "memory_base/deploy.py",
+      "line": 384,
+      "criterion": "template_or_embedded_code_fragment"
+    }
+  ],
+  "limits": [
+    "Malformed template fragments are not parsed as real URLs; no matched URL is serialized."
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "embed": {
+    "pid": 41704,
+    "created": "2026-10-12T08:31:51.5287810Z",
+    "command": "C:\\Users\\Tan\\.mb86\\r4\\d\\runtime\\Scripts\\python.exe -c \"import os,runpy,sys;os.environ['MEMORY_BASE_HOME']=sys.argv[1];module=sys.argv[2];sys.argv=[module,*sys.argv[3:]];runpy.run_module(module,run_name='__main__',alter_sys=True)\" C:\\Users\\Tan\\.mb86\\r4\\d memory_base.embed --port 63097 --model C:\\Users\\Tan\\.cache\\openviking\\models\\bge-small-zh-v1.5-f16.gguf",
+    "port": 63097
+  },
+  "upstream": {
+    "pid": 44896,
+    "created": "2026-10-12T08:31:58.6925570Z",
+    "command": "C:\\Users\\Tan\\.mb86\\r4\\d\\runtime\\Scripts\\python.exe -c \"import os,runpy,sys;os.environ['MEMORY_BASE_HOME']=sys.argv[1];module=sys.argv[2];sys.argv=[module,*sys.argv[3:]];runpy.run_module(module,run_name='__main__',alter_sys=True)\" C:\\Users\\Tan\\.mb86\\r4\\d openviking_cli.server_bootstrap --config C:\\Users\\Tan\\.mb86\\r4\\d\\openviking.conf --host 127.0.0.1 --port 63095",
+    "port": 63095
+  },
+  "gateway": {
+    "pid": 24000,
+    "created": "2026-10-12T08:34:50.9578110Z",
+    "command": "C:\\Users\\Tan\\.mb86\\r4\\d\\runtime\\Scripts\\python.exe -c \"import os,runpy,sys;os.environ['MEMORY_BASE_HOME']=sys.argv[1];module=sys.argv[2];sys.argv=[module,*sys.argv[3:]];runpy.run_module(module,run_name='__main__',alter_sys=True)\" C:\\Users\\Tan\\.mb86\\r4\\d memory_base.gateway",
+    "port": 63096
+  }
+}

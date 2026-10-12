@@ -1,0 +1,12 @@
+✔ atomic state retries EPERM synchronously without partial JSON or stale phases (56.0895ms)
+✔ atomic state retries EACCES synchronously without partial JSON or stale phases (43.7578ms)
+✔ atomic state retries EBUSY synchronously without partial JSON or stale phases (44.235ms)
+✔ persistent rename retry is bounded and cleanup preserves foreign owner files (34.6824ms)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 4
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 393.2634

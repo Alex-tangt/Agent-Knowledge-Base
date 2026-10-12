@@ -1,0 +1,6 @@
+*.patch -text
+original-fail/* -text
+artifacts/** -text
+commands/* -text
+fault-red/** -text
+fault-green/** -text

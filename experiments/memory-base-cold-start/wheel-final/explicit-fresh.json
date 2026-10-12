@@ -1,0 +1,130 @@
+{
+  "config": {
+    "schema": 1,
+    "python": "C:\\Users\\Tan\\.mb86\\r4\\cold-start-91\\wheel-final-20261012-91\\test_real_wheel_bootstraps_ind1\\deployment\\runtime\\Scripts\\python.exe",
+    "model": "C:\\Users\\Tan\\.mb86\\r4\\cold-start-91\\wheel-final-20261012-91\\test_real_wheel_bootstraps_ind1\\model.gguf",
+    "ports": {
+      "upstream": 8786,
+      "gateway": 8788,
+      "embed": 8796
+    },
+    "source": "C:\\Users\\Tan\\.mb86\\r4\\cold-start-91\\wheel-final-20261012-91\\test_real_wheel_bootstraps_ind1\\deployment\\runtime\\Lib\\site-packages",
+    "account": "personal",
+    "user": "gateway",
+    "versions": {
+      "openviking": "0.4.23",
+      "openviking-sdk": "0.1.13",
+      "mcp": "1.30.0",
+      "llama-cpp-python": "0.3.36",
+      "volcengine-python-sdk": "5.0.51",
+      "openai": "2.54.0"
+    },
+    "model_sha256": "ffe3b47204fa39c4c5fe7355212b66eb9161478fa5c3a2a23668fe636802084d"
+  },
+  "calls": [
+    [
+      "C:\\Users\\Tan\\.mb86\\r4\\cold-start-91\\wheel-final-20261012-91\\test_real_wheel_bootstraps_ind1\\deployment\\runtime\\Scripts\\python.exe",
+      "-m",
+      "pip",
+      "install",
+      "--no-compile",
+      "-r",
+      "C:\\Users\\Tan\\.mb86\\r4\\cold-start-91\\wheel-final-20261012-91\\test_real_wheel_bootstraps_ind1\\launcher\\Lib\\site-packages\\memory_base\\requirements.txt"
+    ],
+    [
+      "C:\\Users\\Tan\\.mb86\\r4\\cold-start-91\\wheel-final-20261012-91\\test_real_wheel_bootstraps_ind1\\deployment\\runtime\\Scripts\\python.exe",
+      "-m",
+      "pip",
+      "install",
+      "--no-deps",
+      "--ignore-installed",
+      "C:\\Users\\Tan\\.mb86\\r4\\cold-start-91\\wheel-final-20261012-91\\test_real_wheel_bootstraps_ind1\\wheels\\agent_memory_base-0.1.0-py3-none-any.whl"
+    ],
+    [
+      "C:\\Users\\Tan\\.mb86\\r4\\cold-start-91\\wheel-final-20261012-91\\test_real_wheel_bootstraps_ind1\\deployment\\runtime\\Scripts\\python.exe",
+      "-c",
+      "import json,sys,sysconfig,importlib.metadata as m;import memory_base;d=m.distribution('agent-memory-base');print(json.dumps({'python':sys.executable,'file':memory_base.__file__,'version':memory_base.__version__,'distribution_version':d.version,'site':sysconfig.get_path('purelib'),'distribution_root':str(d.locate_file(''))}))"
+    ]
+  ],
+  "launcher_origin": "C:\\Users\\Tan\\.mb86\\r4\\cold-start-91\\wheel-final-20261012-91\\test_real_wheel_bootstraps_ind1\\launcher\\Lib\\site-packages\\memory_base\\deploy.py",
+  "mode": "explicit-fresh",
+  "target_origin": "C:\\Users\\Tan\\.mb86\\r4\\cold-start-91\\wheel-final-20261012-91\\test_real_wheel_bootstraps_ind1\\deployment\\runtime\\Lib\\site-packages\\memory_base\\__init__.py",
+  "wheel": "C:\\Users\\Tan\\.mb86\\r4\\cold-start-91\\wheel-final-20261012-91\\test_real_wheel_bootstraps_ind1\\wheels\\agent_memory_base-0.1.0-py3-none-any.whl",
+  "wheel_sha256": "80ba679dc92739849e4b262dafce93a42cee92fedbf967f27706bdb6198d81ea",
+  "commands": [
+    [
+      "D:\\python_work\\work2026-4\\Agent-Knowledge-Base\\venv\\Scripts\\python.exe",
+      "-m",
+      "pip",
+      "wheel",
+      "C:\\Users\\Tan\\.mb86\\r4\\cold-start-91\\wheel-final-20261012-91\\test_real_wheel_bootstraps_ind1\\build-source",
+      "--no-deps",
+      "--no-build-isolation",
+      "--no-index",
+      "--wheel-dir",
+      "C:\\Users\\Tan\\.mb86\\r4\\cold-start-91\\wheel-final-20261012-91\\test_real_wheel_bootstraps_ind1\\wheels"
+    ],
+    [
+      "D:\\python_work\\work2026-4\\Agent-Knowledge-Base\\venv\\Scripts\\python.exe",
+      "-m",
+      "venv",
+      "--without-pip",
+      "--system-site-packages",
+      "C:\\Users\\Tan\\.mb86\\r4\\cold-start-91\\wheel-final-20261012-91\\test_real_wheel_bootstraps_ind1\\launcher"
+    ],
+    [
+      "C:\\Users\\Tan\\.mb86\\r4\\cold-start-91\\wheel-final-20261012-91\\test_real_wheel_bootstraps_ind1\\launcher\\Scripts\\python.exe",
+      "-c",
+      "import sysconfig;print(sysconfig.get_path('purelib'))"
+    ],
+    [
+      "D:\\python_work\\work2026-4\\Agent-Knowledge-Base\\venv\\Scripts\\python.exe",
+      "-m",
+      "venv",
+      "--without-pip",
+      "--system-site-packages",
+      "C:\\Users\\Tan\\.mb86\\r4\\cold-start-91\\wheel-final-20261012-91\\test_real_wheel_bootstraps_ind1\\deployment\\runtime"
+    ],
+    [
+      "C:\\Users\\Tan\\.mb86\\r4\\cold-start-91\\wheel-final-20261012-91\\test_real_wheel_bootstraps_ind1\\deployment\\runtime\\Scripts\\python.exe",
+      "-c",
+      "import sysconfig;print(sysconfig.get_path('purelib'))"
+    ],
+    [
+      "C:\\Users\\Tan\\.mb86\\r4\\cold-start-91\\wheel-final-20261012-91\\test_real_wheel_bootstraps_ind1\\launcher\\Scripts\\python.exe",
+      "-m",
+      "pip",
+      "install",
+      "--no-deps",
+      "--no-index",
+      "--ignore-installed",
+      "C:\\Users\\Tan\\.mb86\\r4\\cold-start-91\\wheel-final-20261012-91\\test_real_wheel_bootstraps_ind1\\wheels\\agent_memory_base-0.1.0-py3-none-any.whl"
+    ],
+    [
+      "C:\\Users\\Tan\\.mb86\\r4\\cold-start-91\\wheel-final-20261012-91\\test_real_wheel_bootstraps_ind1\\launcher\\Scripts\\python.exe",
+      "-c",
+      "\nimport json, subprocess, sys\nfrom pathlib import Path\nfrom memory_base import deploy\noriginal = subprocess.run\ncalls = []\ndef staged_run(command, **kwargs):\n    calls.append([str(item) for item in command])\n    if command[1:5] == ['-m', 'pip', 'install', '--no-compile']:\n        return subprocess.CompletedProcess(command, 0, '', '')\n    return original(command, **kwargs)\ndeploy.subprocess.run = staged_run\ndeploy._versions = lambda python: dict(deploy.PINS)\ndeploy._prepare_runtime = lambda python: {'fixture': 'Upstream SDK preparation is not measured here'}\ndeploy._ensure_secret = lambda *args: 'synthetic-not-persisted'\nhome, model, mode, wheel = sys.argv[1:]\nargv = ['install', '--home', home, '--model', model]\nif mode == 'explicit-fresh':\n    argv += ['--fresh-runtime', '--wheel', wheel]\nassert deploy.main(argv) == 0\nconfig = json.loads((Path(home)/'deployment.json').read_text())\nprint('WHEEL_PROOF=' + json.dumps({'config':config,'calls':calls,'launcher_origin':deploy.__file__}))\n",
+      "C:\\Users\\Tan\\.mb86\\r4\\cold-start-91\\wheel-final-20261012-91\\test_real_wheel_bootstraps_ind1\\deployment",
+      "C:\\Users\\Tan\\.mb86\\r4\\cold-start-91\\wheel-final-20261012-91\\test_real_wheel_bootstraps_ind1\\model.gguf",
+      "explicit-fresh",
+      "C:\\Users\\Tan\\.mb86\\r4\\cold-start-91\\wheel-final-20261012-91\\test_real_wheel_bootstraps_ind1\\wheels\\agent_memory_base-0.1.0-py3-none-any.whl"
+    ],
+    [
+      "C:\\Users\\Tan\\.mb86\\r4\\cold-start-91\\wheel-final-20261012-91\\test_real_wheel_bootstraps_ind1\\deployment\\runtime\\Scripts\\python.exe",
+      "-c",
+      "import memory_base;print(memory_base.__file__)"
+    ],
+    [
+      "C:\\Users\\Tan\\.mb86\\r4\\cold-start-91\\wheel-final-20261012-91\\test_real_wheel_bootstraps_ind1\\deployment\\runtime\\Scripts\\python.exe",
+      "-m",
+      "memory_base",
+      "--help"
+    ],
+    [
+      "C:\\Users\\Tan\\.mb86\\r4\\cold-start-91\\wheel-final-20261012-91\\test_real_wheel_bootstraps_ind1\\deployment\\runtime\\Scripts\\memory-base.exe",
+      "--help"
+    ]
+  ],
+  "dependency_provider": "D:\\python_work\\work2026-4\\Agent-Knowledge-Base\\venv\\Lib\\site-packages",
+  "boundary": "Real wheel build/package pip installs. Upstream dependency install/version checks, SDK cold-start preparation and vault writes are fixtures; no clean dependency-stack installation or cold startup is claimed."
+}

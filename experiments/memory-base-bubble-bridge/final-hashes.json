@@ -1,0 +1,128 @@
+{
+  "captured_at_utc": "2026-10-12T07:50:59.007111+00:00",
+  "normalization": "replace CRLF bytes with LF only",
+  "roots": {
+    "actual": {
+      "path": "D:\\python_work\\work2026-10\\Agent-bubble",
+      "files": {
+        "server/memory-base.ts": {
+          "bytes": 3917,
+          "raw_sha256": "d622c7569b5e529605b47a252d7de2a3fc416894fde1891bfa63e2bbf7ed6295",
+          "crlf_to_lf_sha256": "d622c7569b5e529605b47a252d7de2a3fc416894fde1891bfa63e2bbf7ed6295"
+        },
+        "server/memory-tools.ts": {
+          "bytes": 2588,
+          "raw_sha256": "05713a0d468a81a7da0b02059d9abf01f35d6e2c233b2246d4e88ad9ad3b745b",
+          "crlf_to_lf_sha256": "05713a0d468a81a7da0b02059d9abf01f35d6e2c233b2246d4e88ad9ad3b745b"
+        },
+        "server/agent.ts": {
+          "bytes": 6885,
+          "raw_sha256": "e9522a953dc7b31a7e750853d7d050f6c18a5114c1ca604f647616610f5cb55c",
+          "crlf_to_lf_sha256": "e9522a953dc7b31a7e750853d7d050f6c18a5114c1ca604f647616610f5cb55c"
+        },
+        "server/tests/memory-base.test.ts": {
+          "bytes": 14313,
+          "raw_sha256": "229ca9757677aef9b54fe28a4b7bdc072df789a309e5854e9b0af9085fdd188d",
+          "crlf_to_lf_sha256": "229ca9757677aef9b54fe28a4b7bdc072df789a309e5854e9b0af9085fdd188d"
+        }
+      }
+    },
+    "source": {
+      "path": "D:\\python_work\\work2026-4\\memory-base-bubble-bridge-assets\\20261012\\source",
+      "files": {
+        "server/memory-base.ts": {
+          "bytes": 3917,
+          "raw_sha256": "d622c7569b5e529605b47a252d7de2a3fc416894fde1891bfa63e2bbf7ed6295",
+          "crlf_to_lf_sha256": "d622c7569b5e529605b47a252d7de2a3fc416894fde1891bfa63e2bbf7ed6295"
+        },
+        "server/memory-tools.ts": {
+          "bytes": 2588,
+          "raw_sha256": "05713a0d468a81a7da0b02059d9abf01f35d6e2c233b2246d4e88ad9ad3b745b",
+          "crlf_to_lf_sha256": "05713a0d468a81a7da0b02059d9abf01f35d6e2c233b2246d4e88ad9ad3b745b"
+        },
+        "server/agent.ts": {
+          "bytes": 6885,
+          "raw_sha256": "e9522a953dc7b31a7e750853d7d050f6c18a5114c1ca604f647616610f5cb55c",
+          "crlf_to_lf_sha256": "e9522a953dc7b31a7e750853d7d050f6c18a5114c1ca604f647616610f5cb55c"
+        },
+        "server/tests/memory-base.test.ts": {
+          "bytes": 14313,
+          "raw_sha256": "229ca9757677aef9b54fe28a4b7bdc072df789a309e5854e9b0af9085fdd188d",
+          "crlf_to_lf_sha256": "229ca9757677aef9b54fe28a4b7bdc072df789a309e5854e9b0af9085fdd188d"
+        }
+      },
+      "commit": "a1f5426adbf7de8efb7877181717ee4385388f10",
+      "git_blobs": {
+        "server/memory-base.ts": {
+          "bytes": 3917,
+          "raw_sha256": "d622c7569b5e529605b47a252d7de2a3fc416894fde1891bfa63e2bbf7ed6295",
+          "crlf_to_lf_sha256": "d622c7569b5e529605b47a252d7de2a3fc416894fde1891bfa63e2bbf7ed6295"
+        },
+        "server/memory-tools.ts": {
+          "bytes": 2588,
+          "raw_sha256": "05713a0d468a81a7da0b02059d9abf01f35d6e2c233b2246d4e88ad9ad3b745b",
+          "crlf_to_lf_sha256": "05713a0d468a81a7da0b02059d9abf01f35d6e2c233b2246d4e88ad9ad3b745b"
+        },
+        "server/agent.ts": {
+          "bytes": 6885,
+          "raw_sha256": "e9522a953dc7b31a7e750853d7d050f6c18a5114c1ca604f647616610f5cb55c",
+          "crlf_to_lf_sha256": "e9522a953dc7b31a7e750853d7d050f6c18a5114c1ca604f647616610f5cb55c"
+        },
+        "server/tests/memory-base.test.ts": {
+          "bytes": 14313,
+          "raw_sha256": "229ca9757677aef9b54fe28a4b7bdc072df789a309e5854e9b0af9085fdd188d",
+          "crlf_to_lf_sha256": "229ca9757677aef9b54fe28a4b7bdc072df789a309e5854e9b0af9085fdd188d"
+        }
+      }
+    },
+    "candidate": {
+      "path": "D:\\python_work\\work2026-4\\memory-base-bubble-bridge-assets\\20261012\\candidate",
+      "files": {
+        "server/memory-base.ts": {
+          "bytes": 9361,
+          "raw_sha256": "fa93fe91683bbbaac9b872e37bf9e92216d51fc060b9cd1bfc32782d094950bd",
+          "crlf_to_lf_sha256": "926ccfa38c19fd8fa887e8fc8476c65146faed4a7a10c93c89e5971052a642d8"
+        },
+        "server/memory-tools.ts": {
+          "bytes": 4563,
+          "raw_sha256": "ba64dc4d9cfd92f3e324a8d420d2f086d848cc70610a5409a10e72b49e3da4af",
+          "crlf_to_lf_sha256": "339a852a374af74e471502afa083c48ca6787811bd57cdded03f08bd0b4ee686"
+        },
+        "server/agent.ts": {
+          "bytes": 7750,
+          "raw_sha256": "614308eccc3ace396f83a4957a1539719c3956f4ce004ce1509bc06c4460a41e",
+          "crlf_to_lf_sha256": "05a04daa658689a6ffbd5faabcd13a5d91fb2df84fa132cd50de53cb642acb93"
+        },
+        "server/tests/memory-base.test.ts": {
+          "bytes": 29965,
+          "raw_sha256": "137b4b586a9018f36c8101fd9da00c4907a539853e046143cfb2630678020bae",
+          "crlf_to_lf_sha256": "6dc351fd6a015d8a98011e4f83b2f7c791de112a3652f2c738871999e8017256"
+        }
+      },
+      "commit": "0a86cb1013a481aa91b4b97b826d62a4a8456fb8",
+      "git_blobs": {
+        "server/memory-base.ts": {
+          "bytes": 9235,
+          "raw_sha256": "926ccfa38c19fd8fa887e8fc8476c65146faed4a7a10c93c89e5971052a642d8",
+          "crlf_to_lf_sha256": "926ccfa38c19fd8fa887e8fc8476c65146faed4a7a10c93c89e5971052a642d8"
+        },
+        "server/memory-tools.ts": {
+          "bytes": 4529,
+          "raw_sha256": "339a852a374af74e471502afa083c48ca6787811bd57cdded03f08bd0b4ee686",
+          "crlf_to_lf_sha256": "339a852a374af74e471502afa083c48ca6787811bd57cdded03f08bd0b4ee686"
+        },
+        "server/agent.ts": {
+          "bytes": 7654,
+          "raw_sha256": "05a04daa658689a6ffbd5faabcd13a5d91fb2df84fa132cd50de53cb642acb93",
+          "crlf_to_lf_sha256": "05a04daa658689a6ffbd5faabcd13a5d91fb2df84fa132cd50de53cb642acb93"
+        },
+        "server/tests/memory-base.test.ts": {
+          "bytes": 29641,
+          "raw_sha256": "6dc351fd6a015d8a98011e4f83b2f7c791de112a3652f2c738871999e8017256",
+          "crlf_to_lf_sha256": "6dc351fd6a015d8a98011e4f83b2f7c791de112a3652f2c738871999e8017256"
+        }
+      }
+    }
+  },
+  "actual_raw_unchanged": true
+}

@@ -1,0 +1,352 @@
+{
+  "frozen_sha": "d8a670905f93c86b36c6957b601fd8c2f02d0f45",
+  "preregistration_commit": "fc0b0e9dcb418b3b8b6cf8d93247198c541eb162",
+  "started_utc": "20261011T172343Z",
+  "platform": "win32",
+  "store": "C:\\Users\\Tan\\.codex\\worktrees\\memory-package-acceptance\\Agent-Knowledge-Base\\experiments\\memory-base-package\\store\\run-20261011T172343Z",
+  "commands": [
+    {
+      "command": [
+        "git",
+        "merge-base",
+        "--is-ancestor",
+        "fc0b0e9dcb418b3b8b6cf8d93247198c541eb162",
+        "HEAD"
+      ],
+      "cwd": "C:\\Users\\Tan\\.codex\\worktrees\\memory-package-acceptance\\Agent-Knowledge-Base",
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "",
+      "pythonpath": null
+    },
+    {
+      "command": [
+        "D:\\python_work\\work2026-4\\Agent-Knowledge-Base\\venv\\Scripts\\python.exe",
+        "-c",
+        "import sys,sysconfig,importlib.metadata as m,json;print(json.dumps({'python':sys.version,'executable':sys.executable,'base_prefix':sys.base_prefix,'purelib':sysconfig.get_path('purelib'),'pip':m.version('pip')}))"
+      ],
+      "cwd": "C:\\Users\\Tan\\.codex\\worktrees\\memory-package-acceptance\\Agent-Knowledge-Base",
+      "exit_code": 0,
+      "stdout": "{\"python\": \"3.12.14 (main, Aug 25 2026, 14:01:42) [MSC v.1944 64 bit (AMD64)]\", \"executable\": \"D:\\\\python_work\\\\work2026-4\\\\Agent-Knowledge-Base\\\\venv\\\\Scripts\\\\python.exe\", \"base_prefix\": \"C:\\\\Users\\\\Tan\\\\.cache\\\\codex-runtimes\\\\codex-primary-runtime\\\\dependencies\\\\python\", \"purelib\": \"D:\\\\python_work\\\\work2026-4\\\\Agent-Knowledge-Base\\\\venv\\\\Lib\\\\site-packages\", \"pip\": \"24.0\"}\n",
+      "stderr": "",
+      "pythonpath": null
+    },
+    {
+      "command": [
+        "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Scripts\\python.exe",
+        "-c",
+        "import sys,sysconfig,importlib.metadata as m,json;print(json.dumps({'python':sys.version,'executable':sys.executable,'base_prefix':sys.base_prefix,'purelib':sysconfig.get_path('purelib'),'pip':m.version('pip')}))"
+      ],
+      "cwd": "C:\\Users\\Tan\\.codex\\worktrees\\memory-package-acceptance\\Agent-Knowledge-Base",
+      "exit_code": 0,
+      "stdout": "{\"python\": \"3.12.14 (main, Aug 25 2026, 14:01:42) [MSC v.1944 64 bit (AMD64)]\", \"executable\": \"C:\\\\Users\\\\Tan\\\\.agent-memory-base\\\\runtime\\\\Scripts\\\\python.exe\", \"base_prefix\": \"C:\\\\Users\\\\Tan\\\\.cache\\\\codex-runtimes\\\\codex-primary-runtime\\\\dependencies\\\\python\", \"purelib\": \"C:\\\\Users\\\\Tan\\\\.agent-memory-base\\\\runtime\\\\Lib\\\\site-packages\", \"pip\": \"25.0.1\"}\n",
+      "stderr": "",
+      "pythonpath": null
+    },
+    {
+      "command": [
+        "git",
+        "archive",
+        "--format=zip",
+        "--output",
+        "C:\\Users\\Tan\\.codex\\worktrees\\memory-package-acceptance\\Agent-Knowledge-Base\\experiments\\memory-base-package\\store\\run-20261011T172343Z\\source.zip",
+        "d8a670905f93c86b36c6957b601fd8c2f02d0f45",
+        "memory_base"
+      ],
+      "cwd": "C:\\Users\\Tan\\.codex\\worktrees\\memory-package-acceptance\\Agent-Knowledge-Base",
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "",
+      "pythonpath": null
+    },
+    {
+      "command": [
+        "D:\\python_work\\work2026-4\\Agent-Knowledge-Base\\venv\\Scripts\\python.exe",
+        "-m",
+        "pip",
+        "wheel",
+        "C:\\Users\\Tan\\.codex\\worktrees\\memory-package-acceptance\\Agent-Knowledge-Base\\experiments\\memory-base-package\\store\\run-20261011T172343Z\\source\\memory_base",
+        "--no-deps",
+        "--no-build-isolation",
+        "--no-index",
+        "--wheel-dir",
+        "C:\\Users\\Tan\\.codex\\worktrees\\memory-package-acceptance\\Agent-Knowledge-Base\\experiments\\memory-base-package\\store\\run-20261011T172343Z\\wheels"
+      ],
+      "cwd": "C:\\Users\\Tan\\.codex\\worktrees\\memory-package-acceptance\\Agent-Knowledge-Base",
+      "exit_code": 0,
+      "stdout": "Processing c:\\users\\tan\\.codex\\worktrees\\memory-package-acceptance\\agent-knowledge-base\\experiments\\memory-base-package\\store\\run-20261011t172343z\\source\\memory_base\n  Preparing metadata (pyproject.toml): started\n  Preparing metadata (pyproject.toml): finished with status 'done'\nBuilding wheels for collected packages: agent-memory-base\n  Building wheel for agent-memory-base (pyproject.toml): started\n  Building wheel for agent-memory-base (pyproject.toml): finished with status 'done'\n  Created wheel for agent-memory-base: filename=agent_memory_base-0.1.0-py3-none-any.whl size=42831 sha256=08dc33eba08d9ac65bec429e928516c082c4318b2ec594f9dc140372317f1f29\n  Stored in directory: C:\\Users\\Tan\\AppData\\Local\\Temp\\pip-ephem-wheel-cache-e6shpdk3\\wheels\\e6\\42\\e3\\d127e1401a6f93e70b4486648c1c00b8d4d871232485fac03e\nSuccessfully built agent-memory-base\n",
+      "stderr": "",
+      "pythonpath": null
+    },
+    {
+      "command": [
+        "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Scripts\\python.exe",
+        "-m",
+        "venv",
+        "--system-site-packages",
+        "C:\\Users\\Tan\\.codex\\worktrees\\memory-package-acceptance\\Agent-Knowledge-Base\\experiments\\memory-base-package\\store\\run-20261011T172343Z\\venv"
+      ],
+      "cwd": "C:\\Users\\Tan\\.codex\\worktrees\\memory-package-acceptance\\Agent-Knowledge-Base",
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "",
+      "pythonpath": null
+    },
+    {
+      "command": [
+        "C:\\Users\\Tan\\.codex\\worktrees\\memory-package-acceptance\\Agent-Knowledge-Base\\experiments\\memory-base-package\\store\\run-20261011T172343Z\\venv\\Scripts\\python.exe",
+        "-c",
+        "import sys,sysconfig,importlib.metadata as m,json;print(json.dumps({'python':sys.version,'executable':sys.executable,'base_prefix':sys.base_prefix,'purelib':sysconfig.get_path('purelib'),'pip':m.version('pip')}))"
+      ],
+      "cwd": "C:\\Users\\Tan\\.codex\\worktrees\\memory-package-acceptance\\Agent-Knowledge-Base",
+      "exit_code": 0,
+      "stdout": "{\"python\": \"3.12.14 (main, Aug 25 2026, 14:01:42) [MSC v.1944 64 bit (AMD64)]\", \"executable\": \"C:\\\\Users\\\\Tan\\\\.codex\\\\worktrees\\\\memory-package-acceptance\\\\Agent-Knowledge-Base\\\\experiments\\\\memory-base-package\\\\store\\\\run-20261011T172343Z\\\\venv\\\\Scripts\\\\python.exe\", \"base_prefix\": \"C:\\\\Users\\\\Tan\\\\.cache\\\\codex-runtimes\\\\codex-primary-runtime\\\\dependencies\\\\python\", \"purelib\": \"C:\\\\Users\\\\Tan\\\\.codex\\\\worktrees\\\\memory-package-acceptance\\\\Agent-Knowledge-Base\\\\experiments\\\\memory-base-package\\\\store\\\\run-20261011T172343Z\\\\venv\\\\Lib\\\\site-packages\", \"pip\": \"25.0.1\"}\n",
+      "stderr": "",
+      "pythonpath": null
+    },
+    {
+      "command": [
+        "C:\\Users\\Tan\\.codex\\worktrees\\memory-package-acceptance\\Agent-Knowledge-Base\\experiments\\memory-base-package\\store\\run-20261011T172343Z\\venv\\Scripts\\python.exe",
+        "-m",
+        "pip",
+        "install",
+        "--no-deps",
+        "--no-index",
+        "--ignore-installed",
+        "C:\\Users\\Tan\\.codex\\worktrees\\memory-package-acceptance\\Agent-Knowledge-Base\\experiments\\memory-base-package\\store\\run-20261011T172343Z\\wheels\\agent_memory_base-0.1.0-py3-none-any.whl"
+      ],
+      "cwd": "C:\\Users\\Tan\\.codex\\worktrees\\memory-package-acceptance\\Agent-Knowledge-Base",
+      "exit_code": 0,
+      "stdout": "Processing c:\\users\\tan\\.codex\\worktrees\\memory-package-acceptance\\agent-knowledge-base\\experiments\\memory-base-package\\store\\run-20261011t172343z\\wheels\\agent_memory_base-0.1.0-py3-none-any.whl\nInstalling collected packages: agent-memory-base\nSuccessfully installed agent-memory-base-0.1.0\n",
+      "stderr": "WARNING: Ignoring invalid distribution ~illow (C:\\Users\\Tan\\AppData\\Roaming\\Python\\Python312\\site-packages)\n",
+      "pythonpath": null
+    },
+    {
+      "command": [
+        "C:\\Users\\Tan\\.codex\\worktrees\\memory-package-acceptance\\Agent-Knowledge-Base\\experiments\\memory-base-package\\store\\run-20261011T172343Z\\venv\\Scripts\\python.exe",
+        "C:\\Users\\Tan\\.codex\\worktrees\\memory-package-acceptance\\Agent-Knowledge-Base\\experiments\\memory-base-package\\probe_installed.py",
+        "imports",
+        "--site",
+        "C:\\Users\\Tan\\.codex\\worktrees\\memory-package-acceptance\\Agent-Knowledge-Base\\experiments\\memory-base-package\\store\\run-20261011T172343Z\\venv\\Lib\\site-packages",
+        "--modules",
+        "memory_base",
+        "memory_base.__main__",
+        "memory_base.autostart",
+        "memory_base.backup",
+        "memory_base.credentials",
+        "memory_base.deploy",
+        "memory_base.embed",
+        "memory_base.gateway",
+        "memory_base.mcp_stdio",
+        "memory_base.paths",
+        "memory_base.sources",
+        "memory_base.upstream"
+      ],
+      "cwd": "C:\\Users\\Tan\\AppData\\Local\\Temp",
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "Traceback (most recent call last):\n  File \"C:\\Users\\Tan\\.codex\\worktrees\\memory-package-acceptance\\Agent-Knowledge-Base\\experiments\\memory-base-package\\probe_installed.py\", line 192, in <module>\n    main()\n  File \"C:\\Users\\Tan\\.codex\\worktrees\\memory-package-acceptance\\Agent-Knowledge-Base\\experiments\\memory-base-package\\probe_installed.py\", line 183, in main\n    result = imports(args.site.resolve(), args.modules)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\Tan\\.codex\\worktrees\\memory-package-acceptance\\Agent-Knowledge-Base\\experiments\\memory-base-package\\probe_installed.py\", line 39, in imports\n    module = importlib.import_module(name)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\Tan\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\Lib\\importlib\\__init__.py\", line 90, in import_module\n    return _bootstrap._gcd_import(name[level:], package, level)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<frozen importlib._bootstrap>\", line 1387, in _gcd_import\n  File \"<frozen importlib._bootstrap>\", line 1360, in _find_and_load\n  File \"<frozen importlib._bootstrap>\", line 1331, in _find_and_load_unlocked\n  File \"<frozen importlib._bootstrap>\", line 935, in _load_unlocked\n  File \"<frozen importlib._bootstrap_external>\", line 999, in exec_module\n  File \"<frozen importlib._bootstrap>\", line 488, in _call_with_frames_removed\n  File \"C:\\Users\\Tan\\.codex\\worktrees\\memory-package-acceptance\\Agent-Knowledge-Base\\experiments\\memory-base-package\\store\\run-20261011T172343Z\\venv\\Lib\\site-packages\\memory_base\\mcp_stdio.py\", line 15, in <module>\n    from mcp.types import ToolAnnotations\n  File \"C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\mcp\\__init__.py\", line 2, in <module>\n    from .client.session_group import ClientSessionGroup\n  File \"C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\mcp\\client\\session_group.py\", line 28, in <module>\n    from mcp.client.stdio import StdioServerParameters\n  File \"C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\mcp\\client\\stdio\\__init__.py\", line 17, in <module>\n    from mcp.os.win32.utilities import (\n  File \"C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\mcp\\os\\win32\\utilities.py\", line 22, in <module>\n    import pywintypes\nModuleNotFoundError: No module named 'pywintypes'\n",
+      "pythonpath": null
+    }
+  ],
+  "checks": {
+    "wheel_inventory_and_record": "PASS",
+    "wheel_no_deps_install": "PASS"
+  },
+  "limitations": [
+    "Dependencies are reused read-only from the formal Python 3.12 runtime and base system site-packages.",
+    "No clean-environment upstream dependency installation was attempted.",
+    "MCP HTTP gateway uses synthetic responses; real OpenViking behavior belongs to #85.",
+    "Installer subprocess and credential operations are stubbed for boundary observation only.",
+    "Windows/Python 3.12 evidence only; POSIX first credential persistence remains unverified/limited."
+  ],
+  "identities": {
+    "build": {
+      "python": "3.12.14 (main, Aug 25 2026, 14:01:42) [MSC v.1944 64 bit (AMD64)]",
+      "executable": "D:\\python_work\\work2026-4\\Agent-Knowledge-Base\\venv\\Scripts\\python.exe",
+      "base_prefix": "C:\\Users\\Tan\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python",
+      "purelib": "D:\\python_work\\work2026-4\\Agent-Knowledge-Base\\venv\\Lib\\site-packages",
+      "pip": "24.0"
+    },
+    "formal_readonly": {
+      "python": "3.12.14 (main, Aug 25 2026, 14:01:42) [MSC v.1944 64 bit (AMD64)]",
+      "executable": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Scripts\\python.exe",
+      "base_prefix": "C:\\Users\\Tan\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python",
+      "purelib": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages",
+      "pip": "25.0.1"
+    }
+  },
+  "package_config": {
+    "build-system": {
+      "requires": [
+        "setuptools>=68"
+      ],
+      "build-backend": "setuptools.build_meta"
+    },
+    "project": {
+      "name": "agent-memory-base",
+      "version": "0.1.0",
+      "description": "Pinned OpenViking personal memory deployment and host gateway",
+      "requires-python": ">=3.12,<3.13",
+      "dependencies": [
+        "openviking==0.4.23",
+        "openviking-sdk==0.1.13",
+        "mcp==1.30.0",
+        "llama-cpp-python==0.3.36",
+        "volcengine-python-sdk[ark]==5.0.51",
+        "openai==2.54.0"
+      ],
+      "scripts": {
+        "memory-base": "memory_base.deploy:main"
+      }
+    },
+    "tool": {
+      "setuptools": {
+        "packages": [
+          "memory_base"
+        ],
+        "package-dir": {
+          "memory_base": "."
+        },
+        "package-data": {
+          "memory_base": [
+            "requirements.txt",
+            "constraints.txt",
+            "skill/SKILL.md"
+          ]
+        }
+      }
+    }
+  },
+  "wheel": {
+    "path": "C:\\Users\\Tan\\.codex\\worktrees\\memory-package-acceptance\\Agent-Knowledge-Base\\experiments\\memory-base-package\\store\\run-20261011T172343Z\\wheels\\agent_memory_base-0.1.0-py3-none-any.whl",
+    "sha256": "08dc33eba08d9ac65bec429e928516c082c4318b2ec594f9dc140372317f1f29",
+    "bytes": 42831,
+    "inventory": [
+      {
+        "path": "agent_memory_base-0.1.0.dist-info/METADATA",
+        "bytes": 392,
+        "sha256": "6875b78a50c795b07eac9968bf40c1e3ac27042c3cf9b6cecb055fba6620f1fd"
+      },
+      {
+        "path": "agent_memory_base-0.1.0.dist-info/RECORD",
+        "bytes": 1647,
+        "sha256": "e2634e8a8b8813ca38c728d21bd9b45c16f734af76a7f074b3b4b48c3148dc5f"
+      },
+      {
+        "path": "agent_memory_base-0.1.0.dist-info/WHEEL",
+        "bytes": 91,
+        "sha256": "60b2577585d0d8543452a9f627eea21080bede239ecbc947df10adbc52e477c4"
+      },
+      {
+        "path": "agent_memory_base-0.1.0.dist-info/entry_points.txt",
+        "bytes": 56,
+        "sha256": "f773c9cadbc2c22f1071f0c951db4ac7b291ab478622cce95a3f9879684f2086"
+      },
+      {
+        "path": "agent_memory_base-0.1.0.dist-info/top_level.txt",
+        "bytes": 12,
+        "sha256": "db1d6a2ce3d8efbdfbc0dd69a66763d2fa1d301bcad774223ee5f3b47843437b"
+      },
+      {
+        "path": "memory_base/__init__.py",
+        "bytes": 105,
+        "sha256": "de4f114fc3136f47fe31db2f94787039d6ef67e66da8c8e3b9a168558a088f0a"
+      },
+      {
+        "path": "memory_base/__main__.py",
+        "bytes": 65,
+        "sha256": "a12437bac114788f3a6077f4e34d080460618640f8a632f52fe80c7dab2db729"
+      },
+      {
+        "path": "memory_base/autostart.py",
+        "bytes": 5860,
+        "sha256": "b82a59900f9f5c50d1e39d08ca9278a5d0b42efe1dfe89b3e7a5ad85b4693565"
+      },
+      {
+        "path": "memory_base/backup.py",
+        "bytes": 15087,
+        "sha256": "481cc29e47f9c732be14bde141dcaaf7ab9f72432ad9e18118ca7de77a699106"
+      },
+      {
+        "path": "memory_base/constraints.txt",
+        "bytes": 3708,
+        "sha256": "eb43f8369e316bfe040e457a6f0a815ab1b1b1c11e3dfcf7043a2a60e7ec32ca"
+      },
+      {
+        "path": "memory_base/credentials.py",
+        "bytes": 3697,
+        "sha256": "b8ca897ac3fc2310133219ddc1537ff437de8a369cb67626faab98ca7bf4607d"
+      },
+      {
+        "path": "memory_base/deploy.py",
+        "bytes": 33822,
+        "sha256": "d4412655637a2eae8be9867a02fed0ab5690c3108f5a91d08caf31d23ef3cecf"
+      },
+      {
+        "path": "memory_base/embed.py",
+        "bytes": 4010,
+        "sha256": "d481c7f11bf28697aac82c93c429ca9accf082153a7c3a19f5a0c50d7005405a"
+      },
+      {
+        "path": "memory_base/gateway.py",
+        "bytes": 24975,
+        "sha256": "3dd26546bafa6a8db67f5065e5ecd7edc3ae25353330f0a40a9f00d86714a9fb"
+      },
+      {
+        "path": "memory_base/mcp_stdio.py",
+        "bytes": 7197,
+        "sha256": "d31c183a896f226ba45e7849c4c6572e1350b125751e6caa18e3b6237f57f1e8"
+      },
+      {
+        "path": "memory_base/paths.py",
+        "bytes": 4724,
+        "sha256": "9fa05d72f153b7c44af922a2b6424c4c58d8a66340333b3e7b9a1ad01d11c446"
+      },
+      {
+        "path": "memory_base/requirements.txt",
+        "bytes": 421,
+        "sha256": "d4f68d45c950dbd63082adbef1ddcbad71cf517ce8aeb63e5ddff393f5d5c38c"
+      },
+      {
+        "path": "memory_base/skill/SKILL.md",
+        "bytes": 2105,
+        "sha256": "6d7e62498229280faf84dbd8033ec698f201a98da9417bec97a91665eb7aa049"
+      },
+      {
+        "path": "memory_base/sources.py",
+        "bytes": 13087,
+        "sha256": "923338fe4f093e09c2f836420d357aaf4fbe9a13a6ac416534bf6e8973a1a3c0"
+      },
+      {
+        "path": "memory_base/upstream.py",
+        "bytes": 6618,
+        "sha256": "0b35b1626d1123bbf6c4eb78d16fad81ffa686145da666dc3c679fd7b55df426"
+      }
+    ],
+    "requires_python": "<3.13,>=3.12",
+    "requires_dist": [
+      "openviking==0.4.23",
+      "openviking-sdk==0.1.13",
+      "mcp==1.30.0",
+      "llama-cpp-python==0.3.36",
+      "volcengine-python-sdk[ark]==5.0.51",
+      "openai==2.54.0"
+    ],
+    "entry_points": "[console_scripts]\nmemory-base = memory_base.deploy:main\n",
+    "record_verified": true,
+    "source_bytes_match": true
+  },
+  "dependency_reuse": {
+    "venv_system_site_packages": true,
+    "formal_sitepackages": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages",
+    "base_prefix": "C:\\Users\\Tan\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python",
+    "pth": "C:\\Users\\Tan\\.codex\\worktrees\\memory-package-acceptance\\Agent-Knowledge-Base\\experiments\\memory-base-package\\store\\run-20261011T172343Z\\venv\\Lib\\site-packages\\formal-dependencies-readonly.pth",
+    "pth_sha256": "922a99e1616c171e43ff5bede91913f2070ebf8a887853955c12fb745b4d4015"
+  },
+  "overall": "FAIL",
+  "failure": {
+    "type": "AssertionError",
+    "message": "{'command': ['C:\\\\Users\\\\Tan\\\\.codex\\\\worktrees\\\\memory-package-acceptance\\\\Agent-Knowledge-Base\\\\experiments\\\\memory-base-package\\\\store\\\\run-20261011T172343Z\\\\venv\\\\Scripts\\\\python.exe', 'C:\\\\Users\\\\Tan\\\\.codex\\\\worktrees\\\\memory-package-acceptance\\\\Agent-Knowledge-Base\\\\experiments\\\\memory-base-package\\\\probe_installed.py', 'imports', '--site', 'C:\\\\Users\\\\Tan\\\\.codex\\\\worktrees\\\\memory-package-acceptance\\\\Agent-Knowledge-Base\\\\experiments\\\\memory-base-package\\\\store\\\\run-20261011T172343Z\\\\venv\\\\Lib\\\\site-packages', '--modules', 'memory_base', 'memory_base.__main__', 'memory_base.autostart', 'memory_base.backup', 'memory_base.credentials', 'memory_base.deploy', 'memory_base.embed', 'memory_base.gateway', 'memory_base.mcp_stdio', 'memory_base.paths', 'memory_base.sources', 'memory_base.upstream'], 'exit_code': 1, 'stderr': 'Traceback (most recent call last):\\n  File \"C:\\\\Users\\\\Tan\\\\.codex\\\\worktrees\\\\memory-package-acceptance\\\\Agent-Knowledge-Base\\\\experiments\\\\memory-base-package\\\\probe_installed.py\", line 192, in <module>\\n    main()\\n  File \"C:\\\\Users\\\\Tan\\\\.codex\\\\worktrees\\\\memory-package-acceptance\\\\Agent-Knowledge-Base\\\\experiments\\\\memory-base-package\\\\probe_installed.py\", line 183, in main\\n    result = imports(args.site.resolve(), args.modules)\\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\\n  File \"C:\\\\Users\\\\Tan\\\\.codex\\\\worktrees\\\\memory-package-acceptance\\\\Agent-Knowledge-Base\\\\experiments\\\\memory-base-package\\\\probe_installed.py\", line 39, in imports\\n    module = importlib.import_module(name)\\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\\n  File \"C:\\\\Users\\\\Tan\\\\.cache\\\\codex-runtimes\\\\codex-primary-runtime\\\\dependencies\\\\python\\\\Lib\\\\importlib\\\\__init__.py\", line 90, in import_module\\n    return _bootstrap._gcd_import(name[level:], package, level)\\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\\n  File \"<frozen importlib._bootstrap>\", line 1387, in _gcd_import\\n  File \"<frozen importlib._bootstrap>\", line 1360, in _find_and_load\\n  File \"<frozen importlib._bootstrap>\", line 1331, in _find_and_load_unlocked\\n  File \"<frozen importlib._bootstrap>\", line 935, in _load_unlocked\\n  File \"<frozen importlib._bootstrap_external>\", line 999, in exec_module\\n  File \"<frozen importlib._bootstrap>\", line 488, in _call_with_frames_removed\\n  File \"C:\\\\Users\\\\Tan\\\\.codex\\\\worktrees\\\\memory-package-acceptance\\\\Agent-Knowledge-Base\\\\experiments\\\\memory-base-package\\\\store\\\\run-20261011T172343Z\\\\venv\\\\Lib\\\\site-packages\\\\memory_base\\\\mcp_stdio.py\", line 15, in <module>\\n    from mcp.types import ToolAnnotations\\n  File \"C:\\\\Users\\\\Tan\\\\.agent-memory-base\\\\runtime\\\\Lib\\\\site-packages\\\\mcp\\\\__init__.py\", line 2, in <module>\\n    from .client.session_group import ClientSessionGroup\\n  File \"C:\\\\Users\\\\Tan\\\\.agent-memory-base\\\\runtime\\\\Lib\\\\site-packages\\\\mcp\\\\client\\\\session_group.py\", line 28, in <module>\\n    from mcp.client.stdio import StdioServerParameters\\n  File \"C:\\\\Users\\\\Tan\\\\.agent-memory-base\\\\runtime\\\\Lib\\\\site-packages\\\\mcp\\\\client\\\\stdio\\\\__init__.py\", line 17, in <module>\\n    from mcp.os.win32.utilities import (\\n  File \"C:\\\\Users\\\\Tan\\\\.agent-memory-base\\\\runtime\\\\Lib\\\\site-packages\\\\mcp\\\\os\\\\win32\\\\utilities.py\", line 22, in <module>\\n    import pywintypes\\nModuleNotFoundError: No module named \\'pywintypes\\'\\n'}"
+  }
+}

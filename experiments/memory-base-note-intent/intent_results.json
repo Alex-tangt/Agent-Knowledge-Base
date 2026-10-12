@@ -1,0 +1,17 @@
+{
+  "candidate_commit": "36f9bf294e4117bf36a4228d63b3a3c7ad715af1",
+  "tested_seam": "memoryTools.memory_add.execute and actual pi SDK 1.1.0 local synthetic SSE",
+  "direct_rejected_cases": 44,
+  "direct_positive_cases": 13,
+  "legacy_request_key_and_explicit_date_regression": "PASS",
+  "forced_sdk_add_attempts": 9,
+  "forced_sdk_error_feedback": 9,
+  "local_sse_requests": 18,
+  "unauthorized_gateway_calls": 0,
+  "unauthorized_tool_callbacks": 0,
+  "actual_deployed_files_unchanged": true,
+  "new_dependencies": false,
+  "actual_model_or_formal_gateway_calls": false,
+  "source_json_grants_intent": false,
+  "scope": "Only the two candidate files; all repository evidence within this experiment directory"
+}

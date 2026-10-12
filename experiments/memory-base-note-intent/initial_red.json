@@ -1,0 +1,14 @@
+{
+  "command": [
+    "node",
+    "--import",
+    "tsx",
+    "--test",
+    "--test-name-pattern=memory_add refuses a user who explicitly",
+    "server/tests/memory-base.test.ts"
+  ],
+  "cwd": "D:\\python_work\\work2026-4\\memory-base-bubble-bridge-assets\\20261012\\candidate92",
+  "exit_code": 1,
+  "log": "C:\\Users\\Tan\\.codex\\worktrees\\memory-bootstrap-fix\\Agent-Knowledge-Base\\experiments\\memory-base-note-intent\\store\\initial-red.log",
+  "before_implementation": true
+}

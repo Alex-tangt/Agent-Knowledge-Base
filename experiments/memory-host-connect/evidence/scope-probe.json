@@ -1,0 +1,86 @@
+{
+  "base_url": "http://127.0.0.1:8782",
+  "uri": "viking://resources/mvp-host-connect/scope-probe.md",
+  "workspace": "C:\\Users\\Tan\\.openviking-mvp-host\\data",
+  "probes": {
+    "write_as_A_a1": {
+      "status": 200,
+      "body": {
+        "status": "ok",
+        "result": {
+          "uri": "viking://resources/mvp-host-connect/scope-probe.md",
+          "root_uri": "viking://resources/mvp-host-connect",
+          "context_type": "resource",
+          "mode": "replace",
+          "written_bytes": 36,
+          "content_updated": true,
+          "semantic_status": "complete",
+          "vector_status": "complete",
+          "queue_status": {
+            "Semantic": {
+              "processed": 1,
+              "requeue_count": 0,
+              "error_count": 0,
+              "errors": []
+            },
+            "Embedding": {
+              "processed": 3,
+              "requeue_count": 0,
+              "error_count": 0,
+              "errors": []
+            }
+          }
+        }
+      }
+    },
+    "read_same_identity_A_a1": {
+      "identity": {
+        "X-OpenViking-Account": "scope-a",
+        "X-OpenViking-User": "user-a1"
+      },
+      "status": 200,
+      "visible": true,
+      "content_head": "SCOPE-PROBE marker=mvp-host-connect\n",
+      "error": ""
+    },
+    "read_other_account_B": {
+      "identity": {
+        "X-OpenViking-Account": "scope-b",
+        "X-OpenViking-User": "user-a1"
+      },
+      "status": 404,
+      "visible": false,
+      "content_head": "",
+      "error": "{\"status\":\"error\",\"result\":null,\"error\":{\"code\":\"NOT_FOUND\",\"message\":\"File not found: viking://resources/mvp-host-connect/scope-probe.md\",\"details\":{\"type\":\"file\",\"resource\":\"viking://resources/mvp-host-connect/scope-probe.md\"}},\"telemetry\":null,\"profile\":null}"
+    },
+    "read_other_user_same_account": {
+      "identity": {
+        "X-OpenViking-Account": "scope-a",
+        "X-OpenViking-User": "user-a2"
+      },
+      "status": 200,
+      "visible": true,
+      "content_head": "SCOPE-PROBE marker=mvp-host-connect\n",
+      "error": ""
+    },
+    "read_no_identity": {
+      "identity": {},
+      "status": 404,
+      "visible": false,
+      "content_head": "",
+      "error": "{\"status\":\"error\",\"result\":null,\"error\":{\"code\":\"NOT_FOUND\",\"message\":\"File not found: viking://resources/mvp-host-connect/scope-probe.md\",\"details\":{\"type\":\"file\",\"resource\":\"viking://resources/mvp-host-connect/scope-probe.md\"}},\"telemetry\":null,\"profile\":null}"
+    }
+  },
+  "landed_on_disk": [
+    {
+      "path": "C:\\Users\\Tan\\.openviking-mvp-host\\data\\viking\\scope-a\\resources\\mvp-host-connect\\scope-probe.md",
+      "bytes": 36
+    }
+  ],
+  "accounts_on_disk": [
+    "backend_meta.json",
+    "default",
+    "mvp-host",
+    "scope-a"
+  ]
+}

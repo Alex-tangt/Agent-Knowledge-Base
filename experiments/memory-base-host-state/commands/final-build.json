@@ -1,0 +1,12 @@
+{
+  "command": [
+    "npm",
+    "run",
+    "build"
+  ],
+  "cwd": "D:\\python_work\\work2026-4\\memory-base-bubble-bridge-assets\\20261012\\candidate93",
+  "pid": 42532,
+  "exit_code": 0,
+  "wall_seconds": 18.17634079999698,
+  "raw_output_sha256": "2e2b7151b67960d2dbbdf8f770f4bf6e3f4216452fbc36f01643ab7b0b8f939d"
+}

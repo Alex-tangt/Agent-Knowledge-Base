@@ -1,0 +1,13 @@
+(node:21368) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node.EXE --trace-warnings ...` to show where the warning was created)
+✔ scoped client retains live project revision, completeness and list pagination; old calls keep their payload (182.2541ms)
+✔ client rejects successful-but-wrong revisions, missing revisions and corrupted bodies without echoing source content (75.125ms)
+✔ known gateway failures remain actionable errors and arbitrary error bodies or codes never leak (121.0509ms)
+ℹ tests 3
+ℹ suites 0
+ℹ pass 3
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 18466.856

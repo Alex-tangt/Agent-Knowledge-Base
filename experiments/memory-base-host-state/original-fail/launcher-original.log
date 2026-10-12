@@ -1,0 +1,19 @@
+node:fs:1012
+  binding.rename(
+          ^
+
+Error: EPERM: operation not permitted, rename 'D:\python_work\work2026-4\memory-base-bubble-bridge-assets\20261012\candidate92\.tools\host-test-w6CFiU\host\state.json.78ed2b48-6493-45fd-86ce-90a261cf501f.tmp' -> 'D:\python_work\work2026-4\memory-base-bubble-bridge-assets\20261012\candidate92\.tools\host-test-w6CFiU\host\state.json'
+    at renameSync (node:fs:1012:11)
+    at save (file:///D:/python_work/work2026-4/memory-base-bubble-bridge-assets/20261012/candidate92/scripts/local-backend.mjs:48:5)
+    at ChildProcess.<anonymous> (file:///D:/python_work/work2026-4/memory-base-bubble-bridge-assets/20261012/candidate92/scripts/local-backend.mjs:80:75)
+    at ChildProcess.emit (node:events:508:28)
+    at emit (node:internal/child_process:948:14)
+    at process.processTicksAndRejections (node:internal/process/task_queues:91:21) {
+  errno: -4048,
+  code: 'EPERM',
+  syscall: 'rename',
+  path: 'D:\\python_work\\work2026-4\\memory-base-bubble-bridge-assets\\20261012\\candidate92\\.tools\\host-test-w6CFiU\\host\\state.json.78ed2b48-6493-45fd-86ce-90a261cf501f.tmp',
+  dest: 'D:\\python_work\\work2026-4\\memory-base-bubble-bridge-assets\\20261012\\candidate92\\.tools\\host-test-w6CFiU\\host\\state.json'
+}
+
+Node.js v24.14.1

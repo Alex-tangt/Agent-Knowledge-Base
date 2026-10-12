@@ -1,0 +1,53 @@
+{
+  "observed_at": "2026-10-12T22:54:53.622588+08:00",
+  "base": "4dadc407d39b26855a96079ce8561e8983dc4401",
+  "head": "0113d3c5f473774953a526ecde7617f3df91df60",
+  "mode": "post-base new unique Git blob generic scan; no vault/environment/HTTP reads",
+  "new_unique_blobs": 25,
+  "bytes": 436927,
+  "criterion_counts": {
+    "package_inventory_or_noncredential_field": 2,
+    "unresolved_literal_owner_review": 1,
+    "number_boolean_null": 1
+  },
+  "findings": [
+    {
+      "blob": "22b348685b917588252d43c46901a930399e8c73",
+      "path": "experiments/memory-base-publication/audit.py",
+      "category": "credential_assignment_review",
+      "line": 126,
+      "criterion": "package_inventory_or_noncredential_field"
+    },
+    {
+      "blob": "22b348685b917588252d43c46901a930399e8c73",
+      "path": "experiments/memory-base-publication/audit.py",
+      "category": "credential_assignment_review",
+      "line": 288,
+      "criterion": "unresolved_literal_owner_review"
+    },
+    {
+      "blob": "f672a0f246f2845eb20c9a566070ed5a44f1ef59",
+      "path": "experiments/memory-base-publication/scan-4dadc40.json",
+      "category": "credential_assignment_review",
+      "line": 337,
+      "criterion": "number_boolean_null"
+    },
+    {
+      "blob": "b9182dd5fc77f1e6c38619c1a2f4b503b9c1e1db",
+      "path": "experiments/memory-base-publication/audit.py",
+      "category": "credential_assignment_review",
+      "line": 125,
+      "criterion": "package_inventory_or_noncredential_field"
+    }
+  ],
+  "boundary": "Complements fixed-base #95 actual-source comparison. Reports only locations/categories, never matched values; template/fixture/code syntax is subject to explicit review. No previous scan is overwritten and no full core gates/native checks repeated.",
+  "lead_resolutions": [
+    {
+      "blob": "22b348685b917588252d43c46901a930399e8c73",
+      "line": 288,
+      "criterion": "synthetic_detector_smoke_constructs_public_repeated_character_key",
+      "literal_is_not_actual_credential": true
+    }
+  ],
+  "overall": "PASS_FOR_DOCUMENTED_SCOPE"
+}

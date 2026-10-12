@@ -1,0 +1,242 @@
+{
+  "conclusion": "failure",
+  "databaseId": 38266677403,
+  "headSha": "7b0b2953c2d018df7004eff378d7164ea8064a00",
+  "jobs": [
+    {
+      "completedAt": "2026-10-12T15:01:25Z",
+      "conclusion": "failure",
+      "databaseId": 114870494016,
+      "name": "L0 闸门 (windows-latest · py3.12)",
+      "startedAt": "2026-10-12T14:57:27Z",
+      "status": "completed",
+      "steps": [
+        {
+          "completedAt": "2026-10-12T14:57:29Z",
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "startedAt": "2026-10-12T14:57:28Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-12T14:57:34Z",
+          "conclusion": "success",
+          "name": "取源码",
+          "number": 2,
+          "startedAt": "2026-10-12T14:57:29Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-12T14:57:34Z",
+          "conclusion": "success",
+          "name": "装 Python",
+          "number": 3,
+          "startedAt": "2026-10-12T14:57:34Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-12T14:58:53Z",
+          "conclusion": "success",
+          "name": "装 CPU 版 torch",
+          "number": 4,
+          "startedAt": "2026-10-12T14:57:34Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-12T15:00:20Z",
+          "conclusion": "success",
+          "name": "装运行时依赖 + pytest",
+          "number": 5,
+          "startedAt": "2026-10-12T14:58:53Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-12T15:01:00Z",
+          "conclusion": "success",
+          "name": "装两个本地包（editable）",
+          "number": 6,
+          "startedAt": "2026-10-12T15:00:20Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-12T15:01:04Z",
+          "conclusion": "success",
+          "name": "预热 BM25 词法编码器",
+          "number": 7,
+          "startedAt": "2026-10-12T15:01:00Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-12T15:01:22Z",
+          "conclusion": "failure",
+          "name": "单元测试（回归闸门）",
+          "number": 8,
+          "startedAt": "2026-10-12T15:01:04Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-12T15:01:22Z",
+          "conclusion": "skipped",
+          "name": "评测 harness（agent evaluations）",
+          "number": 9,
+          "startedAt": "2026-10-12T15:01:22Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-12T15:01:22Z",
+          "conclusion": "skipped",
+          "name": "接入冒烟（无 opencode serve 则 SKIP，退出码 0）",
+          "number": 10,
+          "startedAt": "2026-10-12T15:01:22Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-12T15:01:22Z",
+          "conclusion": "skipped",
+          "name": "Post 装 Python",
+          "number": 19,
+          "startedAt": "2026-10-12T15:01:22Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-12T15:01:24Z",
+          "conclusion": "success",
+          "name": "Post 取源码",
+          "number": 20,
+          "startedAt": "2026-10-12T15:01:22Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-12T15:01:24Z",
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 21,
+          "startedAt": "2026-10-12T15:01:24Z",
+          "status": "completed"
+        }
+      ],
+      "url": "https://github.com/Alex-tangt/Agent-Knowledge-Base/actions/runs/38266677403/job/114870494016"
+    },
+    {
+      "completedAt": "2026-10-12T14:59:02Z",
+      "conclusion": "failure",
+      "databaseId": 114870494423,
+      "name": "L0 闸门 (ubuntu-latest · py3.12)",
+      "startedAt": "2026-10-12T14:57:27Z",
+      "status": "completed",
+      "steps": [
+        {
+          "completedAt": "2026-10-12T14:57:29Z",
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "startedAt": "2026-10-12T14:57:29Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-12T14:57:31Z",
+          "conclusion": "success",
+          "name": "取源码",
+          "number": 2,
+          "startedAt": "2026-10-12T14:57:29Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-12T14:57:31Z",
+          "conclusion": "success",
+          "name": "装 Python",
+          "number": 3,
+          "startedAt": "2026-10-12T14:57:31Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-12T14:57:56Z",
+          "conclusion": "success",
+          "name": "装 CPU 版 torch",
+          "number": 4,
+          "startedAt": "2026-10-12T14:57:31Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-12T14:58:27Z",
+          "conclusion": "success",
+          "name": "装运行时依赖 + pytest",
+          "number": 5,
+          "startedAt": "2026-10-12T14:57:56Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-12T14:58:45Z",
+          "conclusion": "success",
+          "name": "装两个本地包（editable）",
+          "number": 6,
+          "startedAt": "2026-10-12T14:58:27Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-12T14:58:46Z",
+          "conclusion": "success",
+          "name": "预热 BM25 词法编码器",
+          "number": 7,
+          "startedAt": "2026-10-12T14:58:45Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-12T14:59:00Z",
+          "conclusion": "failure",
+          "name": "单元测试（回归闸门）",
+          "number": 8,
+          "startedAt": "2026-10-12T14:58:46Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-12T14:59:00Z",
+          "conclusion": "skipped",
+          "name": "评测 harness（agent evaluations）",
+          "number": 9,
+          "startedAt": "2026-10-12T14:59:00Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-12T14:59:00Z",
+          "conclusion": "skipped",
+          "name": "接入冒烟（无 opencode serve 则 SKIP，退出码 0）",
+          "number": 10,
+          "startedAt": "2026-10-12T14:59:00Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-12T14:59:00Z",
+          "conclusion": "skipped",
+          "name": "Post 装 Python",
+          "number": 19,
+          "startedAt": "2026-10-12T14:59:00Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-12T14:59:00Z",
+          "conclusion": "success",
+          "name": "Post 取源码",
+          "number": 20,
+          "startedAt": "2026-10-12T14:59:00Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-12T14:59:00Z",
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 21,
+          "startedAt": "2026-10-12T14:59:00Z",
+          "status": "completed"
+        }
+      ],
+      "url": "https://github.com/Alex-tangt/Agent-Knowledge-Base/actions/runs/38266677403/job/114870494423"
+    }
+  ],
+  "status": "completed",
+  "url": "https://github.com/Alex-tangt/Agent-Knowledge-Base/actions/runs/38266677403",
+  "observed_at": "2026-10-12T23:03:44.715483+08:00",
+  "diagnosis": "Both clean runners omit FastAPI: legacy memory_agent dependencies deliberately exclude it; new memory_base gateway unit suite imports it. Local venv had FastAPI 0.135.3, formal product pins 0.143.0.",
+  "fix_scope": "Existing CI dependency step only: add fastapi==0.143.0, matching formal constraint. No legal_web dependency install, native product install, test skip or application source changes."
+}

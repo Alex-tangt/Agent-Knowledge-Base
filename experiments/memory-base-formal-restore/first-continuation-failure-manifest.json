@@ -1,0 +1,68 @@
+{
+  "files": [
+    {
+      "path": "first-continuation-result-continuation.json",
+      "asset_original": "C:\\Users\\Tan\\.mb94\\result-continuation.json",
+      "bytes": 5466,
+      "sha256": "24e8f4fc757507c1ca4f9f3846738200347c5352ab959cf526be56eeceed42ed"
+    },
+    {
+      "path": "first-continuation-r5-continuation-baseline.json",
+      "asset_original": "C:\\Users\\Tan\\.mb94\\r5-continuation-baseline.json",
+      "bytes": 20005,
+      "sha256": "c08cc30c8a34a4527962eb3cbb6489c4caa414c5972395ff31d3bd25bb5ea256"
+    },
+    {
+      "path": "first-continuation-continuation-runtime-audit.json",
+      "asset_original": "C:\\Users\\Tan\\.mb94\\continuation-runtime-audit.json",
+      "bytes": 780,
+      "sha256": "c073302c50fb0225afc17908c576abed98b7733c37a9efbbd318116d7ddf04ba"
+    },
+    {
+      "path": "first-continuation-continuation-runtime-audit.log",
+      "asset_original": "C:\\Users\\Tan\\.mb94\\continuation-runtime-audit.log",
+      "bytes": 709,
+      "sha256": "620b2fbfcb09bb166e31fdc5369823377f915c857c7d1b9addebae832a2ec1f6"
+    },
+    {
+      "path": "first-continuation-continuation-restore.log",
+      "asset_original": "C:\\Users\\Tan\\.mb94\\continuation-restore.log",
+      "bytes": 203,
+      "sha256": "676ae647b99aaa051eacb0145f5756927e8e542273d56588e7b78f4850e37042"
+    },
+    {
+      "path": "first-continuation-continuation-start.log",
+      "asset_original": "C:\\Users\\Tan\\.mb94\\continuation-start.log",
+      "bytes": 1145,
+      "sha256": "7b13cb4c1525002d272287853053858bbdab6d65f7509b3a447bd4173feae1ed"
+    },
+    {
+      "path": "first-continuation-continuation-live-probe.log",
+      "asset_original": "C:\\Users\\Tan\\.mb94\\continuation-live-probe.log",
+      "bytes": 616,
+      "sha256": "c3ede6a4a8f5107a208917439d0eb25b76102845d529e873df06af4de31850b4"
+    },
+    {
+      "path": "first-continuation-continuation-stop.log",
+      "asset_original": "C:\\Users\\Tan\\.mb94\\continuation-stop.log",
+      "bytes": 49,
+      "sha256": "cf54dfbf516fd0609b696eb6ddd8353f22f6a76f7bdf3c296037de5f6408d18e"
+    },
+    {
+      "path": "first-continuation-processes-started.json",
+      "asset_original": "C:\\Users\\Tan\\.mb94\\processes-started.json",
+      "bytes": 1422,
+      "sha256": "a789d25b3201f6b292315f521cef6fe8a4ed73c3e1bcb2752fe5dea7319baa3d"
+    },
+    {
+      "path": "first-continuation-processes-before-stop.json",
+      "asset_original": "C:\\Users\\Tan\\.mb94\\processes-before-stop.json",
+      "bytes": 1422,
+      "sha256": "a789d25b3201f6b292315f521cef6fe8a4ed73c3e1bcb2752fe5dea7319baa3d"
+    }
+  ],
+  "restore_pass": true,
+  "default_first_start_pass": true,
+  "live_probe_fail": "invalid reader fixture missing required title; HTTP422",
+  "owned_cleanup_pass": true
+}

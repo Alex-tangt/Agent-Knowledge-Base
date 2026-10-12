@@ -1,0 +1,380 @@
+{
+  "unit": "M3",
+  "claim": "路径范围与授权一致",
+  "generated_at": "2026-10-10T14:37:34+0800",
+  "profile": "authz",
+  "identities": {
+    "writer": "user:mem-rw (role=admin, ACL write)",
+    "reader": "user:mem-ro (role=user, ACL read)",
+    "root": "server root API key (admin plane only; ROOT keys cannot touch data APIs)"
+  },
+  "verdict": "PASS",
+  "checks": [
+    {
+      "id": "M3.0-seed",
+      "claim": "播种日期/类型/项目路径内容 + 未授权 restricted 子树",
+      "verdict": "PASS",
+      "detail": {
+        "seeded": {
+          "2026-10-09/note/m3-dated.md": {
+            "uri": "viking://resources/mvp-proj/2026-10-09/note/m3-dated.md",
+            "http_status": 200,
+            "ok": true
+          },
+          "2026-10-10/note/m3-scoped.md": {
+            "uri": "viking://resources/mvp-proj/2026-10-10/note/m3-scoped.md",
+            "http_status": 200,
+            "ok": true
+          },
+          "2026-10-10/doc/m3-spec.md": {
+            "uri": "viking://resources/mvp-proj/2026-10-10/doc/m3-spec.md",
+            "http_status": 200,
+            "ok": true
+          }
+        },
+        "outside_uri": "viking://resources/spike-outside-2026-10-10/note/outside.md",
+        "acl_on_scope": {
+          "uri": "viking://resources/mvp-proj",
+          "acl_mode": "restricted",
+          "direct_entries": [
+            {
+              "principal": "user:mem-ro",
+              "level": "read"
+            },
+            {
+              "principal": "user:mem-rw",
+              "level": "write"
+            }
+          ],
+          "inherited_entries": [
+            {
+              "principal": "user:*",
+              "level": "manage"
+            }
+          ],
+          "effective_entries": [
+            {
+              "principal": "user:mem-ro",
+              "level": "read"
+            },
+            {
+              "principal": "user:mem-rw",
+              "level": "write"
+            }
+          ]
+        },
+        "acl_on_outside_tree": {
+          "uri": "viking://resources/spike-outside-2026-10-10",
+          "acl_mode": "restricted",
+          "direct_entries": [
+            {
+              "principal": "user:mem-rw",
+              "level": "write"
+            }
+          ],
+          "inherited_entries": [
+            {
+              "principal": "user:*",
+              "level": "manage"
+            }
+          ],
+          "effective_entries": [
+            {
+              "principal": "user:mem-rw",
+              "level": "write"
+            }
+          ]
+        },
+        "private_uri_readable_by_writer": 403
+      }
+    },
+    {
+      "id": "M3.0b-acl-default-off",
+      "claim": "账户级 ACL 默认关闭：同一身份同一操作在开关前后的可观测差异",
+      "verdict": "PASS",
+      "detail": {
+        "switch": {
+          "config_layer": "account runtime config（AGFS 文档）",
+          "config_document": "C:\\Users\\Tan\\.openviking-mvp-spike\\data\\viking\\default\\_system\\setting.json",
+          "key_path": "acl.enabled",
+          "api": "PATCH /api/v1/admin/accounts/default/settings  {\"acl\":{\"enabled\": <bool>}}",
+          "read_api": "GET /api/v1/admin/accounts/default/settings",
+          "code_reader": "openviking.storage.acl.AclManager.is_enabled(account_id) → runtime_config.get_account(account_id, 'acl')"
+        },
+        "identity": "user:mem-ro (role=user, ACL level=read on the scope)",
+        "operation": "POST /api/v1/content/write mode=replace uri=viking://resources/mvp-proj/2026-10-10/note/m3-scoped.md",
+        "acl_off": {
+          "acl_enabled": false,
+          "http_status": 200,
+          "response_status_field": "ok",
+          "written_bytes": 49,
+          "read_back_after_write": "# 只读身份写入尝试（ACL 开关对照）\n"
+        },
+        "acl_on": {
+          "acl_enabled": true,
+          "http_status": 403,
+          "error_code": "PERMISSION_DENIED",
+          "error_message": "Access denied for viking://resources/mvp-proj/2026-10-10/note/m3-scoped.md: write permission required",
+          "full_error_body": {
+            "code": "PERMISSION_DENIED",
+            "message": "Access denied for viking://resources/mvp-proj/2026-10-10/note/m3-scoped.md: write permission required",
+            "details": {
+              "resource": "viking://resources/mvp-proj/2026-10-10/note/m3-scoped.md"
+            }
+          }
+        },
+        "statement": "默认状态下（acl.enabled 未设置 = false）只读身份也能写；restricted 与 grant 记录仍在，但不生效。",
+        "config_document_contains_acl": true,
+        "config_document_excerpt": "{\n  \"acl\": {\n    \"enabled\": true\n  }\n}"
+      }
+    },
+    {
+      "id": "M3.1-path-addressing",
+      "claim": "能按日期/类型/项目路径列举",
+      "verdict": "PASS",
+      "detail": {
+        "project": {
+          "uri": "viking://resources/mvp-proj",
+          "http_status": 200,
+          "returned": [
+            "viking://resources/mvp-proj/2026-10-09",
+            "viking://resources/mvp-proj/2026-10-10"
+          ]
+        },
+        "date": {
+          "uri": "viking://resources/mvp-proj/2026-10-10",
+          "http_status": 200,
+          "returned": [
+            "viking://resources/mvp-proj/2026-10-10/doc",
+            "viking://resources/mvp-proj/2026-10-10/note"
+          ]
+        },
+        "date+type": {
+          "uri": "viking://resources/mvp-proj/2026-10-10/note",
+          "http_status": 200,
+          "returned": [
+            "viking://resources/mvp-proj/2026-10-10/note/m3-scoped.md"
+          ]
+        }
+      }
+    },
+    {
+      "id": "M3.2-search-then-read",
+      "claim": "检索返回引用，且能读回该引用的正文",
+      "verdict": "PASS",
+      "detail": {
+        "query": "M3-SCOPE-2026-10-10-DOC",
+        "target_uri": "viking://resources/mvp-proj",
+        "returned_uris": [
+          "viking://resources/mvp-proj/2026-10-10/doc/m3-spec.md",
+          "viking://resources/mvp-proj/2026-10-10/note/m3-scoped.md",
+          "viking://resources/mvp-proj/2026-10-09/note/m3-dated.md",
+          "viking://resources/mvp-proj/2026-10-10/doc/.overview.md",
+          "viking://resources/mvp-proj/2026-10-10/note/.overview.md",
+          "viking://resources/mvp-proj/2026-10-10/.overview.md",
+          "viking://resources/mvp-proj/2026-10-09/note/.overview.md"
+        ],
+        "read_back_uri": "viking://resources/mvp-proj/2026-10-10/doc/m3-spec.md",
+        "read_back_http_status": 200,
+        "read_back_contains_marker": true
+      }
+    },
+    {
+      "id": "M3.3-readonly-identity",
+      "claim": "只读身份可读授权范围，且写/建目录/删/移全部被拒绝",
+      "verdict": "PASS",
+      "detail": {
+        "identity": "user:mem-ro (role=user, ACL level=read)",
+        "read": {
+          "http_status": 200,
+          "content_ok": true
+        },
+        "write": {
+          "http_status": 403,
+          "code": "PERMISSION_DENIED"
+        },
+        "mkdir": {
+          "http_status": 403,
+          "code": "PERMISSION_DENIED"
+        },
+        "delete": {
+          "http_status": 403,
+          "code": "PERMISSION_DENIED"
+        },
+        "move": {
+          "http_status": 403,
+          "code": "PERMISSION_DENIED"
+        }
+      }
+    },
+    {
+      "id": "M3.4-out-of-scope-direct-read-denied",
+      "claim": "范围外（未授权的 restricted 子树 / 他用户私有命名空间）的直接读取不能泄露内容",
+      "verdict": "PASS",
+      "detail": {
+        "ungranted_restricted_subtree": {
+          "uri": "viking://resources/spike-outside-2026-10-10/note/outside.md",
+          "http_status": 403,
+          "code": "PERMISSION_DENIED",
+          "body_leaks_content": false
+        },
+        "other_user_private": {
+          "uri": "viking://user/default/resources/mvp-spike/2026-10-10/note/m1-app-submit.md",
+          "http_status": 403,
+          "code": "PERMISSION_DENIED",
+          "body_leaks_content": false
+        },
+        "other_user_ls": {
+          "uri": "viking://user/default/resources",
+          "http_status": 403,
+          "code": "PERMISSION_DENIED",
+          "returned": null
+        },
+        "note": "边界是『他用户私有命名空间』与『restricted 且未授予的子树』。账户内共享的 viking://resources/ 下未被 restricted 的子树对所有用户可读，这是框架默认语义，不算越权泄露。"
+      }
+    },
+    {
+      "id": "M3.5-out-of-scope-retrieval-no-leak",
+      "claim": "范围外的检索不能泄露内容（含 grep 越界与『返回即不可读』不一致）",
+      "verdict": "PASS",
+      "detail": {
+        "find_probes": {
+          "private_marker": {
+            "query": "MVP-SPIKE-2026-10-10-A1",
+            "http_status": 200,
+            "returned_uris": [
+              "viking://resources/mvp-proj/2026-10-10/.overview.md",
+              "viking://resources/mvp-proj/2026-10-10/note/.abstract.md",
+              "viking://resources/mvp-proj/2026-10-10/doc/.abstract.md",
+              "viking://resources/mvp-proj/2026-10-09/note/.abstract.md",
+              "viking://resources/mvp-proj/2026-10-09/.overview.md",
+              "viking://resources/mvp-proj/.overview.md",
+              "viking://resources/mvp-proj/2026-10-10/note/m3-scoped.md",
+              "viking://resources/mvp-proj/2026-10-10/doc/m3-spec.md",
+              "viking://resources/mvp-proj/2026-10-09/note/m3-dated.md",
+              "viking://resources/wk-spike-source/source-repo/README.md",
+              "viking://resources/wk-spike-source/.overview.md",
+              "viking://resources/wk-spike-source/source-repo/docs/spec.md",
+              "viking://resources/wk-spike-source/source-repo/.abstract.md"
+            ],
+            "leaks_private": false,
+            "leaks_outside_restricted": false
+          },
+          "private_topic": {
+            "query": "个人记忆基座 MVP 测试条目",
+            "http_status": 200,
+            "returned_uris": [
+              "viking://resources/wk-spike-source/source-repo/README.md",
+              "viking://resources/wk-spike-source/source-repo/docs/spec.md",
+              "viking://resources/mvp-proj/.overview.md",
+              "viking://resources/mvp-proj/2026-10-10/note/.overview.md",
+              "viking://resources/mvp-proj/2026-10-09/note/.overview.md",
+              "viking://resources/mvp-proj/2026-10-10/doc/.overview.md",
+              "viking://resources/mvp-proj/2026-10-10/.abstract.md",
+              "viking://resources/mvp-proj/2026-10-09/.abstract.md",
+              "viking://resources/mvp-proj/2026-10-09/note/m3-dated.md",
+              "viking://resources/mvp-proj/2026-10-10/note/m3-scoped.md",
+              "viking://resources/mvp-proj/2026-10-10/doc/m3-spec.md",
+              "viking://user/mem-ro/.abstract.md"
+            ],
+            "leaks_private": false,
+            "leaks_outside_restricted": false
+          },
+          "outside_marker": {
+            "query": "M3-OUTSIDE-2026-10-10",
+            "http_status": 200,
+            "returned_uris": [
+              "viking://resources/mvp-proj/2026-10-10/note/m3-scoped.md",
+              "viking://resources/mvp-proj/2026-10-10/doc/m3-spec.md",
+              "viking://resources/mvp-proj/2026-10-09/note/m3-dated.md",
+              "viking://resources/mvp-proj/2026-10-10/note/.abstract.md",
+              "viking://resources/mvp-proj/2026-10-10/.overview.md",
+              "viking://resources/mvp-proj/2026-10-10/doc/.abstract.md",
+              "viking://resources/mvp-proj/2026-10-09/note/.abstract.md",
+              "viking://user/mem-ro/.overview.md",
+              "viking://resources/mvp-proj/2026-10-09/.abstract.md",
+              "viking://resources/wk-spike-source/source-repo/.overview.md",
+              "viking://resources/wk-spike-source/.overview.md",
+              "viking://resources/wk-spike-source/source-repo/README.md"
+            ],
+            "leaks_private": false,
+            "leaks_outside_restricted": false
+          }
+        },
+        "forbidden_uris_returned": [],
+        "readability_of_every_returned_uri": {
+          "viking://resources/mvp-proj/.overview.md": 200,
+          "viking://resources/mvp-proj/2026-10-09/.abstract.md": 200,
+          "viking://resources/mvp-proj/2026-10-09/.overview.md": 200,
+          "viking://resources/mvp-proj/2026-10-09/note/.abstract.md": 200,
+          "viking://resources/mvp-proj/2026-10-09/note/.overview.md": 200,
+          "viking://resources/mvp-proj/2026-10-09/note/m3-dated.md": 200,
+          "viking://resources/mvp-proj/2026-10-10/.abstract.md": 200,
+          "viking://resources/mvp-proj/2026-10-10/.overview.md": 200,
+          "viking://resources/mvp-proj/2026-10-10/doc/.abstract.md": 200,
+          "viking://resources/mvp-proj/2026-10-10/doc/.overview.md": 200,
+          "viking://resources/mvp-proj/2026-10-10/doc/m3-spec.md": 200,
+          "viking://resources/mvp-proj/2026-10-10/note/.abstract.md": 200,
+          "viking://resources/mvp-proj/2026-10-10/note/.overview.md": 200,
+          "viking://resources/mvp-proj/2026-10-10/note/m3-scoped.md": 200,
+          "viking://resources/wk-spike-source/.overview.md": 200,
+          "viking://resources/wk-spike-source/source-repo/.abstract.md": 200,
+          "viking://resources/wk-spike-source/source-repo/.overview.md": 200,
+          "viking://resources/wk-spike-source/source-repo/README.md": 200,
+          "viking://resources/wk-spike-source/source-repo/docs/spec.md": 200,
+          "viking://user/mem-ro/.abstract.md": 200,
+          "viking://user/mem-ro/.overview.md": 200
+        },
+        "unreadable_but_returned": [],
+        "readable_by_design": {
+          "viking://resources/mvp-proj/**": "M3 授予 reader read",
+          "viking://resources/wk-spike-source/**": "M2 授予 reader read",
+          "viking://user/mem-ro/**": "reader 自己的私有命名空间"
+        },
+        "grep_out_of_scope": {
+          "target": "viking://user/default/resources",
+          "http_status": 403,
+          "code": "PERMISSION_DENIED",
+          "leaks_marker": false
+        }
+      }
+    },
+    {
+      "id": "M3.6-errors-identifiable",
+      "claim": "无凭据 / 坏凭据 / 越权 / 不存在 四类错误可识别",
+      "verdict": "PASS",
+      "detail": {
+        "no_credential": {
+          "http_status": 401,
+          "code": "UNAUTHENTICATED"
+        },
+        "bad_credential": {
+          "http_status": 401,
+          "code": "UNAUTHENTICATED"
+        },
+        "permission_denied": {
+          "http_status": 403,
+          "code": "PERMISSION_DENIED"
+        },
+        "not_found": {
+          "http_status": 404,
+          "code": "NOT_FOUND"
+        },
+        "distinct_pairs": [
+          [
+            401,
+            "UNAUTHENTICATED"
+          ],
+          [
+            403,
+            "PERMISSION_DENIED"
+          ],
+          [
+            404,
+            "NOT_FOUND"
+          ]
+        ]
+      }
+    }
+  ]
+}

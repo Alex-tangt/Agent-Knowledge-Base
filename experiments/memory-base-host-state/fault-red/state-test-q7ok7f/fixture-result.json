@@ -1,0 +1,23 @@
+{
+  "mode": "persistent",
+  "instance": "71826bc3-edaa-45fc-81b1-4600de7d7d1f",
+  "launcherPid": 36268,
+  "launcherExit": 1,
+  "childPid": 44936,
+  "childStillAlive": false,
+  "backendHealthy": false,
+  "fallbackCleanup": false,
+  "state": {
+    "pid": 36268,
+    "instance": "71826bc3-edaa-45fc-81b1-4600de7d7d1f",
+    "phase": "starting",
+    "childPid": 44936,
+    "port": 63954,
+    "startedAt": "2026-10-12T13:12:26.693Z"
+  },
+  "lock": {
+    "pid": 36268,
+    "instance": "71826bc3-edaa-45fc-81b1-4600de7d7d1f"
+  },
+  "boundary": "Actual candidate launcher/backend, explicit rename fault injection; no paid model"
+}

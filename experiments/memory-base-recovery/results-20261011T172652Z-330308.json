@@ -1,0 +1,377 @@
+{
+  "schema": 1,
+  "run_id": "20261011T172652Z-330308",
+  "frozen_code": "d8a670905f93c86b36c6957b601fd8c2f02d0f45",
+  "script_commit": "7768344504c32967ef504fc6bf07af2692f205f4",
+  "script_sha256": "ae5c231f405bb45417c7ba03cb2f2474720ccd9601ce4df102a162def549e5d6",
+  "homes": [
+    "C:\\Users\\Tan\\.memory-base-acceptance\\20261011T172652Z-330308\\source",
+    "D:\\python_work\\work2026-4\\memory-base-recovery-assets\\20261011T172652Z-330308\\target"
+  ],
+  "snapshot": "D:\\python_work\\work2026-4\\memory-base-recovery-assets\\20261011T172652Z-330308\\snapshot",
+  "checks": [
+    {
+      "name": "independent_deployments",
+      "passed": true,
+      "evidence": {
+        "ports": [
+          {
+            "embed": 62868,
+            "upstream": 62869,
+            "gateway": 62870
+          },
+          {
+            "embed": 62871,
+            "upstream": 62872,
+            "gateway": 62873
+          }
+        ],
+        "source_import": true,
+        "empty_target_data": true,
+        "distinct_vault_namespaces": true
+      },
+      "seconds": 66.813
+    },
+    {
+      "name": "captures_exact_http",
+      "passed": true,
+      "evidence": {
+        "uri": "viking://resources/captures/c50fb929940c50d4d02927868097392fc422a7cf50546bbb12740f0ea4b97925/content.md",
+        "path": "captures/2026-10-10/article_summary/c50fb929940c50d4d02927868097392fc422a7cf50546bbb12740f0ea4b97925/content.md",
+        "original_sha256": "fb293f648b23f906db14fd25c4e4d9ebdd878ed4673331494fa624be20ea5f63",
+        "profiles": [
+          "codex",
+          "dsh",
+          "reader"
+        ],
+        "outside_count": 3
+      },
+      "seconds": 13.5
+    },
+    {
+      "name": "legacy_schema1_replay",
+      "passed": true,
+      "evidence": {
+        "legacy_uri": "viking://resources/captures/372a8e8457fa34aa295d28d8ab1f8fc91af3f5b993420e554e84641687a162f7/content.md",
+        "legacy_request_sha256": "16c0df95fc71afe52967716e1499dcd6e72e3a8bad05b7aef3f1c8cb28e2ece2",
+        "replay": "exists"
+      },
+      "seconds": 2.718
+    },
+    {
+      "name": "native_prefilter_scope",
+      "passed": true,
+      "evidence": {
+        "list_count": 2,
+        "top1_uri": "viking://resources/captures/c50fb929940c50d4d02927868097392fc422a7cf50546bbb12740f0ea4b97925/content.md",
+        "native_unrestricted_top1_uri": "viking://resources/captures/f301505bf450f98744a179f912af27e8fe0ae95d02224af8bbff86e3e287d314/content.md",
+        "native_filtered_top1_uri": "viking://resources/captures/c50fb929940c50d4d02927868097392fc422a7cf50546bbb12740f0ea4b97925/content.md",
+        "effective_scope": [
+          "captures/2026-10-10/article_summary"
+        ]
+      },
+      "seconds": 8.188
+    },
+    {
+      "name": "live_sources",
+      "passed": true,
+      "evidence": {
+        "live_revision": "2c5b85a4746b20b10131231153dc4ddb7958ad037988f99ea9ead22fe591b1e4",
+        "source_files": [
+          "projects/fixture/README.md",
+          "projects/fixture/docs/new.md"
+        ],
+        "uncommitted_changes": true,
+        "offline_status": 503,
+        "size_limit_status": 413
+      },
+      "seconds": 2.328
+    },
+    {
+      "name": "windows_junction",
+      "passed": true,
+      "evidence": {
+        "actual_windows_reparse": true,
+        "outside_target_intact": true
+      },
+      "seconds": 0.516
+    },
+    {
+      "name": "native_acl_and_session",
+      "passed": true,
+      "evidence": {
+        "native_denial_status": 403,
+        "acl_sha256": "7fc13ae6037fa4f08d01056ccbb3b59b3e27db497cae697998ff7715675a2b03",
+        "session_context_sha256": "14e61fcb37a15eb08163b023de40fea338dafaac2522dc649e5ad447652978c7",
+        "native_identity_roster_sha256": "449f1cd1d3ec88e6fcc8fe40a88c6a1ce43cf9ea1279c2f1dc785afe80406602"
+      },
+      "seconds": 3.609
+    },
+    {
+      "name": "verified_cold_backup",
+      "passed": true,
+      "evidence": {
+        "manifest_sha256": "11bab9545ff8c245d9b7c4c8ac0ad5e898b4dbcf1c0fa11ef93eda98cff4864d",
+        "file_count": 85,
+        "directories": 50,
+        "cold_source_inventory_sha256": "ce678e99b6d0156b3ddf4594456a790fa03692b4da091274b5be032a61be9368",
+        "complete_cold_source_copy": true,
+        "running_set_restored": [
+          "embed",
+          "upstream",
+          "gateway"
+        ],
+        "preflight_and_cold_failure_running_set_restored": true,
+        "queue": [
+          {
+            "path": "data/_system/queue/queue.db",
+            "sha256": "42f6846a1f2028a457d6b98aba191c71f826da80b60783bad4556568392b263a",
+            "tables": 0,
+            "integrity": "ok"
+          }
+        ]
+      },
+      "seconds": 182.406
+    },
+    {
+      "name": "empty_target_restore",
+      "passed": true,
+      "evidence": {
+        "target_config_preserved": true,
+        "new_vault_keys": true,
+        "restored_original_sha256": "fb293f648b23f906db14fd25c4e4d9ebdd878ed4673331494fa624be20ea5f63",
+        "published_inventory_exact": true,
+        "native_acl_preserved": true,
+        "native_denial_status": 403,
+        "native_identity_roster_sha256": "449f1cd1d3ec88e6fcc8fe40a88c6a1ce43cf9ea1279c2f1dc785afe80406602",
+        "session_context_sha256": "14e61fcb37a15eb08163b023de40fea338dafaac2522dc649e5ad447652978c7",
+        "live_source_revision": "2c5b85a4746b20b10131231153dc4ddb7958ad037988f99ea9ead22fe591b1e4",
+        "scope": {
+          "list_count": 2,
+          "top1_uri": "viking://resources/captures/c50fb929940c50d4d02927868097392fc422a7cf50546bbb12740f0ea4b97925/content.md",
+          "native_unrestricted_top1_uri": "viking://resources/captures/f301505bf450f98744a179f912af27e8fe0ae95d02224af8bbff86e3e287d314/content.md",
+          "native_filtered_top1_uri": "viking://resources/captures/c50fb929940c50d4d02927868097392fc422a7cf50546bbb12740f0ea4b97925/content.md",
+          "effective_scope": [
+            "captures/2026-10-10/article_summary"
+          ]
+        },
+        "damaged_copy_rejected": true,
+        "damaged_target_unpublished": true
+      },
+      "seconds": 79.281
+    },
+    {
+      "name": "actual_mcp_stdio",
+      "passed": true,
+      "evidence": {
+        "tools": [
+          "memory_add",
+          "memory_get",
+          "memory_list",
+          "memory_search"
+        ],
+        "reader_hash": "fb293f648b23f906db14fd25c4e4d9ebdd878ed4673331494fa624be20ea5f63",
+        "scope_denials": true
+      },
+      "seconds": 12.563
+    },
+    {
+      "name": "actual_autostart_command",
+      "passed": true,
+      "evidence": {
+        "manual_pythonw_ready": true,
+        "run_baseline_sha256": "e0ba0f494d5158d4fca5b163533399887158f996df0e5848ad118ce87b6b1cb5",
+        "baseline_restored": true,
+        "actual_logon_tested": false
+      },
+      "seconds": 89.078
+    }
+  ],
+  "process_history": [
+    {
+      "phase": "start",
+      "home": "C:\\Users\\Tan\\.memory-base-acceptance\\20261011T172652Z-330308\\source",
+      "records": {
+        "embed": {
+          "pid": 2564,
+          "created": "2026-10-11T17:26:55.7785500Z",
+          "command": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Scripts\\python.exe -c \"import os,runpy,sys;os.environ['MEMORY_BASE_HOME']=sys.argv[1];module=sys.argv[2];sys.argv=[module,*sys.argv[3:]];runpy.run_module(module,run_name='__main__',alter_sys=True)\" C:\\Users\\Tan\\.memory-base-acceptance\\20261011T172652Z-330308\\source memory_base.embed --port 62868 --model C:\\Users\\Tan\\.cache\\openviking\\models\\bge-small-zh-v1.5-f16.gguf",
+          "port": 62868
+        },
+        "upstream": {
+          "pid": 5160,
+          "created": "2026-10-11T17:26:57.6880340Z",
+          "command": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Scripts\\python.exe -c \"import os,runpy,sys;os.environ['MEMORY_BASE_HOME']=sys.argv[1];module=sys.argv[2];sys.argv=[module,*sys.argv[3:]];runpy.run_module(module,run_name='__main__',alter_sys=True)\" C:\\Users\\Tan\\.memory-base-acceptance\\20261011T172652Z-330308\\source openviking_cli.server_bootstrap --config C:\\Users\\Tan\\.memory-base-acceptance\\20261011T172652Z-330308\\source\\openviking.conf --host 127.0.0.1 --port 62869",
+          "port": 62869
+        },
+        "gateway": {
+          "pid": 22540,
+          "created": "2026-10-11T17:27:48.3504090Z",
+          "command": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Scripts\\python.exe -c \"import os,runpy,sys;os.environ['MEMORY_BASE_HOME']=sys.argv[1];module=sys.argv[2];sys.argv=[module,*sys.argv[3:]];runpy.run_module(module,run_name='__main__',alter_sys=True)\" C:\\Users\\Tan\\.memory-base-acceptance\\20261011T172652Z-330308\\source memory_base.gateway",
+          "port": 62870
+        }
+      }
+    },
+    {
+      "phase": "backup_restarted",
+      "home": "C:\\Users\\Tan\\.memory-base-acceptance\\20261011T172652Z-330308\\source",
+      "records": {
+        "embed": {
+          "pid": 6216,
+          "created": "2026-10-11T17:28:55.6483590Z",
+          "command": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Scripts\\python.exe -c \"import os,runpy,sys;os.environ['MEMORY_BASE_HOME']=sys.argv[1];module=sys.argv[2];sys.argv=[module,*sys.argv[3:]];runpy.run_module(module,run_name='__main__',alter_sys=True)\" C:\\Users\\Tan\\.memory-base-acceptance\\20261011T172652Z-330308\\source memory_base.embed --port 62868 --model C:\\Users\\Tan\\.cache\\openviking\\models\\bge-small-zh-v1.5-f16.gguf",
+          "port": 62868
+        },
+        "upstream": {
+          "pid": 23964,
+          "created": "2026-10-11T17:28:57.5392610Z",
+          "command": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Scripts\\python.exe -c \"import os,runpy,sys;os.environ['MEMORY_BASE_HOME']=sys.argv[1];module=sys.argv[2];sys.argv=[module,*sys.argv[3:]];runpy.run_module(module,run_name='__main__',alter_sys=True)\" C:\\Users\\Tan\\.memory-base-acceptance\\20261011T172652Z-330308\\source openviking_cli.server_bootstrap --config C:\\Users\\Tan\\.memory-base-acceptance\\20261011T172652Z-330308\\source\\openviking.conf --host 127.0.0.1 --port 62869",
+          "port": 62869
+        },
+        "gateway": {
+          "pid": 16520,
+          "created": "2026-10-11T17:29:46.9046280Z",
+          "command": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Scripts\\python.exe -c \"import os,runpy,sys;os.environ['MEMORY_BASE_HOME']=sys.argv[1];module=sys.argv[2];sys.argv=[module,*sys.argv[3:]];runpy.run_module(module,run_name='__main__',alter_sys=True)\" C:\\Users\\Tan\\.memory-base-acceptance\\20261011T172652Z-330308\\source memory_base.gateway",
+          "port": 62870
+        }
+      }
+    },
+    {
+      "phase": "failed_cold_backup_restarted",
+      "home": "C:\\Users\\Tan\\.memory-base-acceptance\\20261011T172652Z-330308\\source",
+      "records": {
+        "embed": {
+          "pid": 26028,
+          "created": "2026-10-11T17:30:26.4847450Z",
+          "command": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Scripts\\python.exe -c \"import os,runpy,sys;os.environ['MEMORY_BASE_HOME']=sys.argv[1];module=sys.argv[2];sys.argv=[module,*sys.argv[3:]];runpy.run_module(module,run_name='__main__',alter_sys=True)\" C:\\Users\\Tan\\.memory-base-acceptance\\20261011T172652Z-330308\\source memory_base.embed --port 62868 --model C:\\Users\\Tan\\.cache\\openviking\\models\\bge-small-zh-v1.5-f16.gguf",
+          "port": 62868
+        },
+        "upstream": {
+          "pid": 18788,
+          "created": "2026-10-11T17:30:28.5222700Z",
+          "command": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Scripts\\python.exe -c \"import os,runpy,sys;os.environ['MEMORY_BASE_HOME']=sys.argv[1];module=sys.argv[2];sys.argv=[module,*sys.argv[3:]];runpy.run_module(module,run_name='__main__',alter_sys=True)\" C:\\Users\\Tan\\.memory-base-acceptance\\20261011T172652Z-330308\\source openviking_cli.server_bootstrap --config C:\\Users\\Tan\\.memory-base-acceptance\\20261011T172652Z-330308\\source\\openviking.conf --host 127.0.0.1 --port 62869",
+          "port": 62869
+        },
+        "gateway": {
+          "pid": 3132,
+          "created": "2026-10-11T17:31:17.8378120Z",
+          "command": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Scripts\\python.exe -c \"import os,runpy,sys;os.environ['MEMORY_BASE_HOME']=sys.argv[1];module=sys.argv[2];sys.argv=[module,*sys.argv[3:]];runpy.run_module(module,run_name='__main__',alter_sys=True)\" C:\\Users\\Tan\\.memory-base-acceptance\\20261011T172652Z-330308\\source memory_base.gateway",
+          "port": 62870
+        }
+      }
+    },
+    {
+      "phase": "start",
+      "home": "D:\\python_work\\work2026-4\\memory-base-recovery-assets\\20261011T172652Z-330308\\target",
+      "records": {
+        "embed": {
+          "pid": 23632,
+          "created": "2026-10-11T17:31:37.7146500Z",
+          "command": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Scripts\\python.exe -c \"import os,runpy,sys;os.environ['MEMORY_BASE_HOME']=sys.argv[1];module=sys.argv[2];sys.argv=[module,*sys.argv[3:]];runpy.run_module(module,run_name='__main__',alter_sys=True)\" D:\\python_work\\work2026-4\\memory-base-recovery-assets\\20261011T172652Z-330308\\target memory_base.embed --port 62871 --model C:\\Users\\Tan\\.cache\\openviking\\models\\bge-small-zh-v1.5-f16.gguf",
+          "port": 62871
+        },
+        "upstream": {
+          "pid": 3084,
+          "created": "2026-10-11T17:31:39.6310220Z",
+          "command": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Scripts\\python.exe -c \"import os,runpy,sys;os.environ['MEMORY_BASE_HOME']=sys.argv[1];module=sys.argv[2];sys.argv=[module,*sys.argv[3:]];runpy.run_module(module,run_name='__main__',alter_sys=True)\" D:\\python_work\\work2026-4\\memory-base-recovery-assets\\20261011T172652Z-330308\\target openviking_cli.server_bootstrap --config D:\\python_work\\work2026-4\\memory-base-recovery-assets\\20261011T172652Z-330308\\target\\openviking.conf --host 127.0.0.1 --port 62872",
+          "port": 62872
+        },
+        "gateway": {
+          "pid": 13476,
+          "created": "2026-10-11T17:32:26.9334370Z",
+          "command": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Scripts\\python.exe -c \"import os,runpy,sys;os.environ['MEMORY_BASE_HOME']=sys.argv[1];module=sys.argv[2];sys.argv=[module,*sys.argv[3:]];runpy.run_module(module,run_name='__main__',alter_sys=True)\" D:\\python_work\\work2026-4\\memory-base-recovery-assets\\20261011T172652Z-330308\\target memory_base.gateway",
+          "port": 62873
+        }
+      }
+    },
+    {
+      "phase": "mcp_stdio",
+      "home": "D:\\python_work\\work2026-4\\memory-base-recovery-assets\\20261011T172652Z-330308\\target",
+      "records": {
+        "stdio": {
+          "pid": 11456,
+          "created": "2026-10-11T17:32:54.0781160Z",
+          "command": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Scripts\\python.exe -m memory_base.mcp_stdio --profile reader --home D:\\python_work\\work2026-4\\memory-base-recovery-assets\\20261011T172652Z-330308\\target --url http://127.0.0.1:62873"
+        }
+      }
+    },
+    {
+      "phase": "stop",
+      "home": "C:\\Users\\Tan\\.memory-base-acceptance\\20261011T172652Z-330308\\source",
+      "records": {}
+    },
+    {
+      "phase": "manual_autostart",
+      "home": "C:\\Users\\Tan\\.memory-base-acceptance\\20261011T172652Z-330308\\source",
+      "records": {
+        "launcher": {
+          "pid": 23796,
+          "created": "2026-10-11T17:33:18.4528990Z",
+          "command": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Scripts\\pythonw.exe -m memory_base start --home C:\\Users\\Tan\\.memory-base-acceptance\\20261011T172652Z-330308\\source"
+        }
+      }
+    },
+    {
+      "phase": "manual_autostart_ready",
+      "home": "C:\\Users\\Tan\\.memory-base-acceptance\\20261011T172652Z-330308\\source",
+      "records": {
+        "embed": {
+          "pid": 8572,
+          "created": "2026-10-11T17:33:22.9916290Z",
+          "command": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Scripts\\python.exe -c \"import os,runpy,sys;os.environ['MEMORY_BASE_HOME']=sys.argv[1];module=sys.argv[2];sys.argv=[module,*sys.argv[3:]];runpy.run_module(module,run_name='__main__',alter_sys=True)\" C:\\Users\\Tan\\.memory-base-acceptance\\20261011T172652Z-330308\\source memory_base.embed --port 62868 --model C:\\Users\\Tan\\.cache\\openviking\\models\\bge-small-zh-v1.5-f16.gguf",
+          "port": 62868
+        },
+        "upstream": {
+          "pid": 28024,
+          "created": "2026-10-11T17:33:24.8979000Z",
+          "command": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Scripts\\python.exe -c \"import os,runpy,sys;os.environ['MEMORY_BASE_HOME']=sys.argv[1];module=sys.argv[2];sys.argv=[module,*sys.argv[3:]];runpy.run_module(module,run_name='__main__',alter_sys=True)\" C:\\Users\\Tan\\.memory-base-acceptance\\20261011T172652Z-330308\\source openviking_cli.server_bootstrap --config C:\\Users\\Tan\\.memory-base-acceptance\\20261011T172652Z-330308\\source\\openviking.conf --host 127.0.0.1 --port 62869",
+          "port": 62869
+        },
+        "gateway": {
+          "pid": 8260,
+          "created": "2026-10-11T17:34:17.8666350Z",
+          "command": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Scripts\\python.exe -c \"import os,runpy,sys;os.environ['MEMORY_BASE_HOME']=sys.argv[1];module=sys.argv[2];sys.argv=[module,*sys.argv[3:]];runpy.run_module(module,run_name='__main__',alter_sys=True)\" C:\\Users\\Tan\\.memory-base-acceptance\\20261011T172652Z-330308\\source memory_base.gateway",
+          "port": 62870
+        }
+      }
+    },
+    {
+      "phase": "stop",
+      "home": "C:\\Users\\Tan\\.memory-base-acceptance\\20261011T172652Z-330308\\source",
+      "records": {}
+    },
+    {
+      "phase": "stop",
+      "home": "D:\\python_work\\work2026-4\\memory-base-recovery-assets\\20261011T172652Z-330308\\target",
+      "records": {}
+    }
+  ],
+  "limitations": [
+    "shared installed runtime; no fresh dependency installation",
+    "logical volumes only; physical disks not inferred",
+    "queue integrity and file coverage, not pending-task semantics",
+    "2 MiB per-file source limit tested; no scan file-count limit implemented or tested",
+    "manual pythonw command execution, not actual logon trigger"
+  ],
+  "versions": {
+    "openviking": "0.4.23",
+    "openviking-sdk": "0.1.13",
+    "mcp": "1.30.0",
+    "llama-cpp-python": "0.3.36",
+    "volcengine-python-sdk": "5.0.51",
+    "openai": "2.54.0"
+  },
+  "python_version": "3.12.14",
+  "model_sha256": "ab9b81d9cd329c712eee379cf0068eabe6a5e2a01d0def61535eba9384085e2c",
+  "vault_namespaces": [
+    "8af003f75078ea4e",
+    "b3ee485947a9f954"
+  ],
+  "initialization": "verified shared runtime; install-shaped local configuration and new vault credentials",
+  "cleanup": {
+    "passed": true,
+    "errors": [],
+    "assets_retained": true
+  },
+  "passed": true
+}

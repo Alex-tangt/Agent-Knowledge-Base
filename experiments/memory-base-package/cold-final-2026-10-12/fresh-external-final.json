@@ -1,0 +1,134 @@
+{
+  "overall": "PASS",
+  "fresh_home_model_ports_marker_verified_offline": true,
+  "gguf_sha256": "ab9b81d9cd329c712eee379cf0068eabe6a5e2a01d0def61535eba9384085e2c",
+  "commands": [
+    {
+      "command": [
+        "C:\\Users\\Tan\\.mb86\\r5\\f\\runtime\\Scripts\\python.exe",
+        "-B",
+        "C:\\Users\\Tan\\.codex\\worktrees\\memory-package-acceptance\\Agent-Knowledge-Base\\experiments\\memory-base-package\\cold-final-2026-10-12\\probe_installed.py",
+        "imports",
+        "--site",
+        "C:\\Users\\Tan\\.mb86\\r5\\f\\runtime\\Lib\\site-packages",
+        "--modules",
+        "memory_base",
+        "memory_base.__main__",
+        "memory_base.autostart",
+        "memory_base.backup",
+        "memory_base.credentials",
+        "memory_base.deploy",
+        "memory_base.embed",
+        "memory_base.gateway",
+        "memory_base.mcp_stdio",
+        "memory_base.paths",
+        "memory_base.sources",
+        "memory_base.upstream"
+      ],
+      "cwd": "C:\\Users\\Tan\\AppData\\Local\\Temp",
+      "exit_code": 0,
+      "stdout": "{\n  \"identity\": {\n    \"python\": \"3.12.14 (main, Aug 25 2026, 14:01:42) [MSC v.1944 64 bit (AMD64)]\",\n    \"executable\": \"C:\\\\Users\\\\Tan\\\\.mb86\\\\r5\\\\f\\\\runtime\\\\Scripts\\\\python.exe\",\n    \"prefix\": \"C:\\\\Users\\\\Tan\\\\.mb86\\\\r5\\\\f\\\\runtime\",\n    \"base_prefix\": \"C:\\\\Users\\\\Tan\\\\.cache\\\\codex-runtimes\\\\codex-primary-runtime\\\\dependencies\\\\python\",\n    \"sitepackages\": \"C:\\\\Users\\\\Tan\\\\.mb86\\\\r5\\\\f\\\\runtime\\\\Lib\\\\site-packages\",\n    \"sys_path\": [\n      \"C:\\\\Users\\\\Tan\\\\.codex\\\\worktrees\\\\memory-package-acceptance\\\\Agent-Knowledge-Base\\\\experiments\\\\memory-base-package\\\\cold-final-2026-10-12\",\n      \"C:\\\\Users\\\\Tan\\\\.cache\\\\codex-runtimes\\\\codex-primary-runtime\\\\dependencies\\\\python\\\\python312.zip\",\n      \"C:\\\\Users\\\\Tan\\\\.cache\\\\codex-runtimes\\\\codex-primary-runtime\\\\dependencies\\\\python\\\\DLLs\",\n      \"C:\\\\Users\\\\Tan\\\\.cache\\\\codex-runtimes\\\\codex-primary-runtime\\\\dependencies\\\\python\\\\Lib\",\n      \"C:\\\\Users\\\\Tan\\\\.cache\\\\codex-runtimes\\\\codex-primary-runtime\\\\dependencies\\\\python\",\n      \"C:\\\\Users\\\\Tan\\\\.mb86\\\\r5\\\\f\\\\runtime\",\n      \"C:\\\\Users\\\\Tan\\\\.mb86\\\\r5\\\\f\\\\runtime\\\\Lib\\\\site-packages\",\n      \"C:\\\\Users\\\\Tan\\\\.mb86\\\\r5\\\\f\\\\runtime\\\\Lib\\\\site-packages\\\\win32\",\n      \"C:\\\\Users\\\\Tan\\\\.mb86\\\\r5\\\\f\\\\runtime\\\\Lib\\\\site-packages\\\\win32\\\\lib\",\n      \"C:\\\\Users\\\\Tan\\\\.mb86\\\\r5\\\\f\\\\runtime\\\\Lib\\\\site-packages\\\\pythonwin\"\n    ],\n    \"cwd\": \"C:\\\\Users\\\\Tan\\\\AppData\\\\Local\\\\Temp\",\n    \"pythonpath\": null,\n    \"distribution\": \"C:\\\\Users\\\\Tan\\\\.mb86\\\\r5\\\\f\\\\runtime\\\\Lib\\\\site-packages\\\\agent_memory_base-0.1.0.dist-info\"\n  },\n  \"modules\": {\n    \"memory_base\": {\n      \"file\": \"C:\\\\Users\\\\Tan\\\\.mb86\\\\r5\\\\f\\\\runtime\\\\Lib\\\\site-packages\\\\memory_base\\\\__init__.py\",\n      \"mode\": \"imported\"\n    },\n    \"memory_base.__main__\": {\n      \"file\": \"C:\\\\Users\\\\Tan\\\\.mb86\\\\r5\\\\f\\\\runtime\\\\Lib\\\\site-packages\\\\memory_base\\\\__main__.py\",\n      \"mode\": \"imported_with_help_and_expected_exit_0\"\n    },\n    \"memory_base.autostart\": {\n      \"file\": \"C:\\\\Users\\\\Tan\\\\.mb86\\\\r5\\\\f\\\\runtime\\\\Lib\\\\site-packages\\\\memory_base\\\\autostart.py\",\n      \"mode\": \"imported\"\n    },\n    \"memory_base.backup\": {\n      \"file\": \"C:\\\\Users\\\\Tan\\\\.mb86\\\\r5\\\\f\\\\runtime\\\\Lib\\\\site-packages\\\\memory_base\\\\backup.py\",\n      \"mode\": \"imported\"\n    },\n    \"memory_base.credentials\": {\n      \"file\": \"C:\\\\Users\\\\Tan\\\\.mb86\\\\r5\\\\f\\\\runtime\\\\Lib\\\\site-packages\\\\memory_base\\\\credentials.py\",\n      \"mode\": \"imported\"\n    },\n    \"memory_base.deploy\": {\n      \"file\": \"C:\\\\Users\\\\Tan\\\\.mb86\\\\r5\\\\f\\\\runtime\\\\Lib\\\\site-packages\\\\memory_base\\\\deploy.py\",\n      \"mode\": \"imported\"\n    },\n    \"memory_base.embed\": {\n      \"file\": \"C:\\\\Users\\\\Tan\\\\.mb86\\\\r5\\\\f\\\\runtime\\\\Lib\\\\site-packages\\\\memory_base\\\\embed.py\",\n      \"mode\": \"imported\"\n    },\n    \"memory_base.gateway\": {\n      \"file\": \"C:\\\\Users\\\\Tan\\\\.mb86\\\\r5\\\\f\\\\runtime\\\\Lib\\\\site-packages\\\\memory_base\\\\gateway.py\",\n      \"mode\": \"imported\"\n    },\n    \"memory_base.mcp_stdio\": {\n      \"file\": \"C:\\\\Users\\\\Tan\\\\.mb86\\\\r5\\\\f\\\\runtime\\\\Lib\\\\site-packages\\\\memory_base\\\\mcp_stdio.py\",\n      \"mode\": \"imported\"\n    },\n    \"memory_base.paths\": {\n      \"file\": \"C:\\\\Users\\\\Tan\\\\.mb86\\\\r5\\\\f\\\\runtime\\\\Lib\\\\site-packages\\\\memory_base\\\\paths.py\",\n      \"mode\": \"imported\"\n    },\n    \"memory_base.sources\": {\n      \"file\": \"C:\\\\Users\\\\Tan\\\\.mb86\\\\r5\\\\f\\\\runtime\\\\Lib\\\\site-packages\\\\memory_base\\\\sources.py\",\n      \"mode\": \"imported\"\n    },\n    \"memory_base.upstream\": {\n      \"file\": \"C:\\\\Users\\\\Tan\\\\.mb86\\\\r5\\\\f\\\\runtime\\\\Lib\\\\site-packages\\\\memory_base\\\\upstream.py\",\n      \"mode\": \"imported\"\n    }\n  },\n  \"loaded_excluded_namespaces\": [],\n  \"dependency_providers\": {\n    \"fastapi\": {\n      \"version\": \"0.143.0\",\n      \"file\": \"C:\\\\Users\\\\Tan\\\\.mb86\\\\r5\\\\f\\\\runtime\\\\Lib\\\\site-packages\\\\fastapi\\\\__init__.py\"\n    },\n    \"pydantic\": {\n      \"version\": \"2.14.0\",\n      \"file\": \"C:\\\\Users\\\\Tan\\\\.mb86\\\\r5\\\\f\\\\runtime\\\\Lib\\\\site-packages\\\\pydantic\\\\__init__.py\"\n    },\n    \"mcp\": {\n      \"version\": \"1.30.0\",\n      \"file\": \"C:\\\\Users\\\\Tan\\\\.mb86\\\\r5\\\\f\\\\runtime\\\\Lib\\\\site-packages\\\\mcp\\\\__init__.py\"\n    }\n  }\n}\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "C:\\Users\\Tan\\.mb86\\r5\\f\\runtime\\Scripts\\python.exe",
+        "-B",
+        "-m",
+        "memory_base",
+        "--help"
+      ],
+      "cwd": "C:\\Users\\Tan\\AppData\\Local\\Temp",
+      "exit_code": 0,
+      "stdout": "usage: memory-base [-h] [--home HOME] [--runtime-python RUNTIME_PYTHON]\n                   [--fresh-runtime] [--wheel WHEEL] [--model MODEL]\n                   [--profile {agent-bubble,codex,dsh,opencode,reader}]\n                   [--components COMPONENTS] [--lines LINES]\n                   [--timeout TIMEOUT] [--destination DESTINATION]\n                   [--backup BACKUP] [--name NAME] [--root ROOT]\n                   [--include INCLUDE] [--exclude EXCLUDE] [--replace]\n                   [--read-scope READ_SCOPE] [--write-scope WRITE_SCOPE]\n                   [--deny-read] [--deny-write]\n                   [--mode {enable,disable,status}]\n                   {install,start,stop,restart,status,logs,host-token,backup,restore,source-add,source-list,source-remove,access-set,autostart}\n\npositional arguments:\n  {install,start,stop,restart,status,logs,host-token,backup,restore,source-add,source-list,source-remove,access-set,autostart}\n\noptions:\n  -h, --help            show this help message and exit\n  --home HOME\n  --runtime-python RUNTIME_PYTHON\n                        Explicit existing runtime; versions are checked\n                        against pins\n  --fresh-runtime       Select the dedicated <home>/runtime venv instead of an\n                        adopted runtime\n  --wheel WHEEL         Local product wheel for installing memory-base into\n                        the target runtime\n  --model MODEL\n  --profile {agent-bubble,codex,dsh,opencode,reader}\n                        Host-token defaults to agent-bubble; access-set\n                        requires a profile\n  --components COMPONENTS\n  --lines LINES\n  --timeout TIMEOUT\n  --destination DESTINATION\n                        New backup directory outside deployment and source\n                        roots\n  --backup BACKUP       Verified cold backup to restore into this installed\n                        empty deployment\n  --name NAME           Registered project name\n  --root ROOT           Local read-only project root\n  --include INCLUDE     Relative Markdown glob; repeat to add patterns\n  --exclude EXCLUDE     Relative exclusion glob; repeat to add patterns\n  --replace             Explicitly replace an existing source registration\n  --read-scope READ_SCOPE\n                        Replace profile read scopes; repeat; root grants all\n  --write-scope WRITE_SCOPE\n                        Replace profile write scopes; repeat\n  --deny-read           Explicitly deny every read scope for this profile\n  --deny-write          Explicitly deny every write scope for this profile\n  --mode {enable,disable,status}\n                        Automatic logon startup registration; status is read-\n                        only\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "C:\\Users\\Tan\\.mb86\\r5\\f\\runtime\\Scripts\\memory-base.exe",
+        "--help"
+      ],
+      "cwd": "C:\\Users\\Tan\\AppData\\Local\\Temp",
+      "exit_code": 0,
+      "stdout": "usage: memory-base [-h] [--home HOME] [--runtime-python RUNTIME_PYTHON]\n                   [--fresh-runtime] [--wheel WHEEL] [--model MODEL]\n                   [--profile {agent-bubble,codex,dsh,opencode,reader}]\n                   [--components COMPONENTS] [--lines LINES]\n                   [--timeout TIMEOUT] [--destination DESTINATION]\n                   [--backup BACKUP] [--name NAME] [--root ROOT]\n                   [--include INCLUDE] [--exclude EXCLUDE] [--replace]\n                   [--read-scope READ_SCOPE] [--write-scope WRITE_SCOPE]\n                   [--deny-read] [--deny-write]\n                   [--mode {enable,disable,status}]\n                   {install,start,stop,restart,status,logs,host-token,backup,restore,source-add,source-list,source-remove,access-set,autostart}\n\npositional arguments:\n  {install,start,stop,restart,status,logs,host-token,backup,restore,source-add,source-list,source-remove,access-set,autostart}\n\noptions:\n  -h, --help            show this help message and exit\n  --home HOME\n  --runtime-python RUNTIME_PYTHON\n                        Explicit existing runtime; versions are checked\n                        against pins\n  --fresh-runtime       Select the dedicated <home>/runtime venv instead of an\n                        adopted runtime\n  --wheel WHEEL         Local product wheel for installing memory-base into\n                        the target runtime\n  --model MODEL\n  --profile {agent-bubble,codex,dsh,opencode,reader}\n                        Host-token defaults to agent-bubble; access-set\n                        requires a profile\n  --components COMPONENTS\n  --lines LINES\n  --timeout TIMEOUT\n  --destination DESTINATION\n                        New backup directory outside deployment and source\n                        roots\n  --backup BACKUP       Verified cold backup to restore into this installed\n                        empty deployment\n  --name NAME           Registered project name\n  --root ROOT           Local read-only project root\n  --include INCLUDE     Relative Markdown glob; repeat to add patterns\n  --exclude EXCLUDE     Relative exclusion glob; repeat to add patterns\n  --replace             Explicitly replace an existing source registration\n  --read-scope READ_SCOPE\n                        Replace profile read scopes; repeat; root grants all\n  --write-scope WRITE_SCOPE\n                        Replace profile write scopes; repeat\n  --deny-read           Explicitly deny every read scope for this profile\n  --deny-write          Explicitly deny every write scope for this profile\n  --mode {enable,disable,status}\n                        Automatic logon startup registration; status is read-\n                        only\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "C:\\Users\\Tan\\.mb86\\r5\\f\\runtime\\Scripts\\python.exe",
+        "-B",
+        "-m",
+        "memory_base.mcp_stdio",
+        "--help"
+      ],
+      "cwd": "C:\\Users\\Tan\\AppData\\Local\\Temp",
+      "exit_code": 0,
+      "stdout": "usage: mcp_stdio.py [-h] [--profile PROFILE] [--home HOME] [--url URL]\n\nForward personal memory MCP tools to the shared gateway\n\noptions:\n  -h, --help         show this help message and exit\n  --profile PROFILE\n  --home HOME\n  --url URL\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "C:\\Users\\Tan\\.mb86\\r5\\f\\runtime\\Scripts\\python.exe",
+        "-B",
+        "C:\\Users\\Tan\\.codex\\worktrees\\memory-package-acceptance\\Agent-Knowledge-Base\\experiments\\memory-base-package\\cold-final-2026-10-12\\probe_installed.py",
+        "imports",
+        "--site",
+        "C:\\Users\\Tan\\.mb86\\r5\\f\\runtime\\Lib\\site-packages",
+        "--modules",
+        "memory_base",
+        "memory_base.__main__",
+        "memory_base.autostart",
+        "memory_base.backup",
+        "memory_base.credentials",
+        "memory_base.deploy",
+        "memory_base.embed",
+        "memory_base.gateway",
+        "memory_base.mcp_stdio",
+        "memory_base.paths",
+        "memory_base.sources",
+        "memory_base.upstream"
+      ],
+      "cwd": "C:\\WINDOWS\\System32",
+      "exit_code": 0,
+      "stdout": "{\n  \"identity\": {\n    \"python\": \"3.12.14 (main, Aug 25 2026, 14:01:42) [MSC v.1944 64 bit (AMD64)]\",\n    \"executable\": \"C:\\\\Users\\\\Tan\\\\.mb86\\\\r5\\\\f\\\\runtime\\\\Scripts\\\\python.exe\",\n    \"prefix\": \"C:\\\\Users\\\\Tan\\\\.mb86\\\\r5\\\\f\\\\runtime\",\n    \"base_prefix\": \"C:\\\\Users\\\\Tan\\\\.cache\\\\codex-runtimes\\\\codex-primary-runtime\\\\dependencies\\\\python\",\n    \"sitepackages\": \"C:\\\\Users\\\\Tan\\\\.mb86\\\\r5\\\\f\\\\runtime\\\\Lib\\\\site-packages\",\n    \"sys_path\": [\n      \"C:\\\\Users\\\\Tan\\\\.codex\\\\worktrees\\\\memory-package-acceptance\\\\Agent-Knowledge-Base\\\\experiments\\\\memory-base-package\\\\cold-final-2026-10-12\",\n      \"C:\\\\Users\\\\Tan\\\\.cache\\\\codex-runtimes\\\\codex-primary-runtime\\\\dependencies\\\\python\\\\python312.zip\",\n      \"C:\\\\Users\\\\Tan\\\\.cache\\\\codex-runtimes\\\\codex-primary-runtime\\\\dependencies\\\\python\\\\DLLs\",\n      \"C:\\\\Users\\\\Tan\\\\.cache\\\\codex-runtimes\\\\codex-primary-runtime\\\\dependencies\\\\python\\\\Lib\",\n      \"C:\\\\Users\\\\Tan\\\\.cache\\\\codex-runtimes\\\\codex-primary-runtime\\\\dependencies\\\\python\",\n      \"C:\\\\Users\\\\Tan\\\\.mb86\\\\r5\\\\f\\\\runtime\",\n      \"C:\\\\Users\\\\Tan\\\\.mb86\\\\r5\\\\f\\\\runtime\\\\Lib\\\\site-packages\",\n      \"C:\\\\Users\\\\Tan\\\\.mb86\\\\r5\\\\f\\\\runtime\\\\Lib\\\\site-packages\\\\win32\",\n      \"C:\\\\Users\\\\Tan\\\\.mb86\\\\r5\\\\f\\\\runtime\\\\Lib\\\\site-packages\\\\win32\\\\lib\",\n      \"C:\\\\Users\\\\Tan\\\\.mb86\\\\r5\\\\f\\\\runtime\\\\Lib\\\\site-packages\\\\pythonwin\"\n    ],\n    \"cwd\": \"C:\\\\WINDOWS\\\\System32\",\n    \"pythonpath\": null,\n    \"distribution\": \"C:\\\\Users\\\\Tan\\\\.mb86\\\\r5\\\\f\\\\runtime\\\\Lib\\\\site-packages\\\\agent_memory_base-0.1.0.dist-info\"\n  },\n  \"modules\": {\n    \"memory_base\": {\n      \"file\": \"C:\\\\Users\\\\Tan\\\\.mb86\\\\r5\\\\f\\\\runtime\\\\Lib\\\\site-packages\\\\memory_base\\\\__init__.py\",\n      \"mode\": \"imported\"\n    },\n    \"memory_base.__main__\": {\n      \"file\": \"C:\\\\Users\\\\Tan\\\\.mb86\\\\r5\\\\f\\\\runtime\\\\Lib\\\\site-packages\\\\memory_base\\\\__main__.py\",\n      \"mode\": \"imported_with_help_and_expected_exit_0\"\n    },\n    \"memory_base.autostart\": {\n      \"file\": \"C:\\\\Users\\\\Tan\\\\.mb86\\\\r5\\\\f\\\\runtime\\\\Lib\\\\site-packages\\\\memory_base\\\\autostart.py\",\n      \"mode\": \"imported\"\n    },\n    \"memory_base.backup\": {\n      \"file\": \"C:\\\\Users\\\\Tan\\\\.mb86\\\\r5\\\\f\\\\runtime\\\\Lib\\\\site-packages\\\\memory_base\\\\backup.py\",\n      \"mode\": \"imported\"\n    },\n    \"memory_base.credentials\": {\n      \"file\": \"C:\\\\Users\\\\Tan\\\\.mb86\\\\r5\\\\f\\\\runtime\\\\Lib\\\\site-packages\\\\memory_base\\\\credentials.py\",\n      \"mode\": \"imported\"\n    },\n    \"memory_base.deploy\": {\n      \"file\": \"C:\\\\Users\\\\Tan\\\\.mb86\\\\r5\\\\f\\\\runtime\\\\Lib\\\\site-packages\\\\memory_base\\\\deploy.py\",\n      \"mode\": \"imported\"\n    },\n    \"memory_base.embed\": {\n      \"file\": \"C:\\\\Users\\\\Tan\\\\.mb86\\\\r5\\\\f\\\\runtime\\\\Lib\\\\site-packages\\\\memory_base\\\\embed.py\",\n      \"mode\": \"imported\"\n    },\n    \"memory_base.gateway\": {\n      \"file\": \"C:\\\\Users\\\\Tan\\\\.mb86\\\\r5\\\\f\\\\runtime\\\\Lib\\\\site-packages\\\\memory_base\\\\gateway.py\",\n      \"mode\": \"imported\"\n    },\n    \"memory_base.mcp_stdio\": {\n      \"file\": \"C:\\\\Users\\\\Tan\\\\.mb86\\\\r5\\\\f\\\\runtime\\\\Lib\\\\site-packages\\\\memory_base\\\\mcp_stdio.py\",\n      \"mode\": \"imported\"\n    },\n    \"memory_base.paths\": {\n      \"file\": \"C:\\\\Users\\\\Tan\\\\.mb86\\\\r5\\\\f\\\\runtime\\\\Lib\\\\site-packages\\\\memory_base\\\\paths.py\",\n      \"mode\": \"imported\"\n    },\n    \"memory_base.sources\": {\n      \"file\": \"C:\\\\Users\\\\Tan\\\\.mb86\\\\r5\\\\f\\\\runtime\\\\Lib\\\\site-packages\\\\memory_base\\\\sources.py\",\n      \"mode\": \"imported\"\n    },\n    \"memory_base.upstream\": {\n      \"file\": \"C:\\\\Users\\\\Tan\\\\.mb86\\\\r5\\\\f\\\\runtime\\\\Lib\\\\site-packages\\\\memory_base\\\\upstream.py\",\n      \"mode\": \"imported\"\n    }\n  },\n  \"loaded_excluded_namespaces\": [],\n  \"dependency_providers\": {\n    \"fastapi\": {\n      \"version\": \"0.143.0\",\n      \"file\": \"C:\\\\Users\\\\Tan\\\\.mb86\\\\r5\\\\f\\\\runtime\\\\Lib\\\\site-packages\\\\fastapi\\\\__init__.py\"\n    },\n    \"pydantic\": {\n      \"version\": \"2.14.0\",\n      \"file\": \"C:\\\\Users\\\\Tan\\\\.mb86\\\\r5\\\\f\\\\runtime\\\\Lib\\\\site-packages\\\\pydantic\\\\__init__.py\"\n    },\n    \"mcp\": {\n      \"version\": \"1.30.0\",\n      \"file\": \"C:\\\\Users\\\\Tan\\\\.mb86\\\\r5\\\\f\\\\runtime\\\\Lib\\\\site-packages\\\\mcp\\\\__init__.py\"\n    }\n  }\n}\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "C:\\Users\\Tan\\.mb86\\r5\\f\\runtime\\Scripts\\python.exe",
+        "-B",
+        "-m",
+        "memory_base",
+        "--help"
+      ],
+      "cwd": "C:\\WINDOWS\\System32",
+      "exit_code": 0,
+      "stdout": "usage: memory-base [-h] [--home HOME] [--runtime-python RUNTIME_PYTHON]\n                   [--fresh-runtime] [--wheel WHEEL] [--model MODEL]\n                   [--profile {agent-bubble,codex,dsh,opencode,reader}]\n                   [--components COMPONENTS] [--lines LINES]\n                   [--timeout TIMEOUT] [--destination DESTINATION]\n                   [--backup BACKUP] [--name NAME] [--root ROOT]\n                   [--include INCLUDE] [--exclude EXCLUDE] [--replace]\n                   [--read-scope READ_SCOPE] [--write-scope WRITE_SCOPE]\n                   [--deny-read] [--deny-write]\n                   [--mode {enable,disable,status}]\n                   {install,start,stop,restart,status,logs,host-token,backup,restore,source-add,source-list,source-remove,access-set,autostart}\n\npositional arguments:\n  {install,start,stop,restart,status,logs,host-token,backup,restore,source-add,source-list,source-remove,access-set,autostart}\n\noptions:\n  -h, --help            show this help message and exit\n  --home HOME\n  --runtime-python RUNTIME_PYTHON\n                        Explicit existing runtime; versions are checked\n                        against pins\n  --fresh-runtime       Select the dedicated <home>/runtime venv instead of an\n                        adopted runtime\n  --wheel WHEEL         Local product wheel for installing memory-base into\n                        the target runtime\n  --model MODEL\n  --profile {agent-bubble,codex,dsh,opencode,reader}\n                        Host-token defaults to agent-bubble; access-set\n                        requires a profile\n  --components COMPONENTS\n  --lines LINES\n  --timeout TIMEOUT\n  --destination DESTINATION\n                        New backup directory outside deployment and source\n                        roots\n  --backup BACKUP       Verified cold backup to restore into this installed\n                        empty deployment\n  --name NAME           Registered project name\n  --root ROOT           Local read-only project root\n  --include INCLUDE     Relative Markdown glob; repeat to add patterns\n  --exclude EXCLUDE     Relative exclusion glob; repeat to add patterns\n  --replace             Explicitly replace an existing source registration\n  --read-scope READ_SCOPE\n                        Replace profile read scopes; repeat; root grants all\n  --write-scope WRITE_SCOPE\n                        Replace profile write scopes; repeat\n  --deny-read           Explicitly deny every read scope for this profile\n  --deny-write          Explicitly deny every write scope for this profile\n  --mode {enable,disable,status}\n                        Automatic logon startup registration; status is read-\n                        only\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "C:\\Users\\Tan\\.mb86\\r5\\f\\runtime\\Scripts\\memory-base.exe",
+        "--help"
+      ],
+      "cwd": "C:\\WINDOWS\\System32",
+      "exit_code": 0,
+      "stdout": "usage: memory-base [-h] [--home HOME] [--runtime-python RUNTIME_PYTHON]\n                   [--fresh-runtime] [--wheel WHEEL] [--model MODEL]\n                   [--profile {agent-bubble,codex,dsh,opencode,reader}]\n                   [--components COMPONENTS] [--lines LINES]\n                   [--timeout TIMEOUT] [--destination DESTINATION]\n                   [--backup BACKUP] [--name NAME] [--root ROOT]\n                   [--include INCLUDE] [--exclude EXCLUDE] [--replace]\n                   [--read-scope READ_SCOPE] [--write-scope WRITE_SCOPE]\n                   [--deny-read] [--deny-write]\n                   [--mode {enable,disable,status}]\n                   {install,start,stop,restart,status,logs,host-token,backup,restore,source-add,source-list,source-remove,access-set,autostart}\n\npositional arguments:\n  {install,start,stop,restart,status,logs,host-token,backup,restore,source-add,source-list,source-remove,access-set,autostart}\n\noptions:\n  -h, --help            show this help message and exit\n  --home HOME\n  --runtime-python RUNTIME_PYTHON\n                        Explicit existing runtime; versions are checked\n                        against pins\n  --fresh-runtime       Select the dedicated <home>/runtime venv instead of an\n                        adopted runtime\n  --wheel WHEEL         Local product wheel for installing memory-base into\n                        the target runtime\n  --model MODEL\n  --profile {agent-bubble,codex,dsh,opencode,reader}\n                        Host-token defaults to agent-bubble; access-set\n                        requires a profile\n  --components COMPONENTS\n  --lines LINES\n  --timeout TIMEOUT\n  --destination DESTINATION\n                        New backup directory outside deployment and source\n                        roots\n  --backup BACKUP       Verified cold backup to restore into this installed\n                        empty deployment\n  --name NAME           Registered project name\n  --root ROOT           Local read-only project root\n  --include INCLUDE     Relative Markdown glob; repeat to add patterns\n  --exclude EXCLUDE     Relative exclusion glob; repeat to add patterns\n  --replace             Explicitly replace an existing source registration\n  --read-scope READ_SCOPE\n                        Replace profile read scopes; repeat; root grants all\n  --write-scope WRITE_SCOPE\n                        Replace profile write scopes; repeat\n  --deny-read           Explicitly deny every read scope for this profile\n  --deny-write          Explicitly deny every write scope for this profile\n  --mode {enable,disable,status}\n                        Automatic logon startup registration; status is read-\n                        only\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "C:\\Users\\Tan\\.mb86\\r5\\f\\runtime\\Scripts\\python.exe",
+        "-B",
+        "-m",
+        "memory_base.mcp_stdio",
+        "--help"
+      ],
+      "cwd": "C:\\WINDOWS\\System32",
+      "exit_code": 0,
+      "stdout": "usage: mcp_stdio.py [-h] [--profile PROFILE] [--home HOME] [--url URL]\n\nForward personal memory MCP tools to the shared gateway\n\noptions:\n  -h, --help         show this help message and exit\n  --profile PROFILE\n  --home HOME\n  --url URL\n",
+      "stderr": ""
+    }
+  ],
+  "boundary": "Read-only foreign cwd imports/help against fresh f only; no service restart/native repetition/LLM."
+}

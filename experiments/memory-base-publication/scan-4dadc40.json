@@ -1,0 +1,446 @@
+{
+  "base": "4dadc407d39b26855a96079ce8561e8983dc4401",
+  "upstream": "4270f13f418c5069316ba819cec11bb5910dcefc",
+  "wheel_reference": "45296a58fe2559e0b92f4af851c018b56148865a",
+  "commit_count": 121,
+  "coverage": {
+    "tree_files": 989,
+    "tree_unique_blobs": 927,
+    "history_unique_blobs": 630,
+    "union_unique_blobs": 1131,
+    "history_bytes": 6490039,
+    "tree_bytes": 20181200
+  },
+  "sensitive_sources": [
+    {
+      "source": "audit-process-credential-environment",
+      "values": 2
+    },
+    {
+      "source": "bubble-env",
+      "values": 3
+    },
+    {
+      "source": "memory-agent-env",
+      "values": 1
+    },
+    {
+      "source": "formal-vault",
+      "values": 7
+    },
+    {
+      "source": "r4-default-vault",
+      "values": 7
+    },
+    {
+      "source": "r4-fresh-vault",
+      "values": 6
+    },
+    {
+      "source": "r5-default-vault",
+      "values": 7
+    },
+    {
+      "source": "r5-fresh-vault",
+      "values": 6
+    },
+    {
+      "source": "94-target-vault",
+      "values": 7
+    },
+    {
+      "source": "formal-embed-process-env",
+      "values": 2
+    },
+    {
+      "source": "formal-upstream-process-env",
+      "values": 3
+    },
+    {
+      "source": "formal-gateway-process-env",
+      "values": 4
+    },
+    {
+      "source": "formal-owned-processes",
+      "processes": 3
+    },
+    {
+      "source": "r4-default-owned-processes",
+      "processes": 0
+    },
+    {
+      "source": "r4-fresh-owned-processes",
+      "processes": 0
+    },
+    {
+      "source": "r5-default-owned-processes",
+      "processes": 0
+    },
+    {
+      "source": "r5-fresh-owned-processes",
+      "processes": 0
+    },
+    {
+      "source": "94-target-owned-processes",
+      "processes": 0
+    },
+    {
+      "source": "bubble-owned-process-env",
+      "values": 5
+    },
+    {
+      "source": "bubble-owned-process-env",
+      "values": 6
+    },
+    {
+      "source": "bubble-owned-processes",
+      "processes": 2
+    },
+    {
+      "source": "three-whitelist-original-receipts",
+      "expected": 3,
+      "bodies": 3,
+      "metadata": 3,
+      "titles_for_summary_review": 3,
+      "private_urls": 1
+    }
+  ],
+  "gaps": [
+    "r4-fresh:missing-vault-entries",
+    "r5-fresh:missing-vault-entries"
+  ],
+  "findings": [
+    {
+      "blob": "000983db4bd6a771410fb9819a35733a17e63ada",
+      "paths": [
+        "experiments/memory-base-live/README.md"
+      ],
+      "sets": [
+        "history"
+      ],
+      "categories": [
+        "actual_title_public_summary_review"
+      ]
+    },
+    {
+      "blob": "1b730e704eee95aaefd7a3396efe746bb98dcdd8",
+      "paths": [
+        "experiments/memory-base-bubble-bridge/bubble-four-tools.patch"
+      ],
+      "sets": [
+        "tree",
+        "history"
+      ],
+      "categories": [
+        "credential_assignment_review"
+      ]
+    },
+    {
+      "blob": "26086d6e286839a33c438b6915e4e1e3f6086d51",
+      "paths": [
+        "experiments/memory-base-live/README.md"
+      ],
+      "sets": [
+        "history"
+      ],
+      "categories": [
+        "actual_title_public_summary_review"
+      ]
+    },
+    {
+      "blob": "50711aababf5e9efaf5a89f5c49b9d0d3921eb39",
+      "paths": [
+        "experiments/memory-spike-verify/verify_env.py"
+      ],
+      "sets": [
+        "tree",
+        "history"
+      ],
+      "categories": [
+        "credential_assignment_review"
+      ]
+    },
+    {
+      "blob": "53b4ce8091286a1714f747f9a4159a58788f1076",
+      "paths": [
+        "experiments/memory-base-note-intent/artifacts/server/tests/memory-base.test.ts"
+      ],
+      "sets": [
+        "tree",
+        "history"
+      ],
+      "categories": [
+        "credential_assignment_review"
+      ]
+    },
+    {
+      "blob": "8432d877ffb5cf0104e4d326bcdefb77508da022",
+      "paths": [
+        "experiments/memory-base-live/README.md"
+      ],
+      "sets": [
+        "history"
+      ],
+      "categories": [
+        "actual_title_public_summary_review"
+      ]
+    },
+    {
+      "blob": "8ceaec2d1afc3e5dc4a5fe7d066079c5072b68da",
+      "paths": [
+        "memory_agent/gateway/identity.py"
+      ],
+      "sets": [
+        "tree"
+      ],
+      "categories": [
+        "credential_assignment_review"
+      ]
+    },
+    {
+      "blob": "9f7949bee40db60029dde159e2583628bd195401",
+      "paths": [
+        "experiments/memory-base-live/README.md"
+      ],
+      "sets": [
+        "history"
+      ],
+      "categories": [
+        "actual_title_public_summary_review"
+      ]
+    },
+    {
+      "blob": "a1742f168b6fd3b2e2763364ab65a0ad2c1c688e",
+      "paths": [
+        "experiments/memory-base-live/README.md"
+      ],
+      "sets": [
+        "history"
+      ],
+      "categories": [
+        "actual_title_public_summary_review"
+      ]
+    },
+    {
+      "blob": "ae881fd239c2c97f818cdb2de8bf0c8ff8edd0d2",
+      "paths": [
+        "experiments/memory-base-live/README.md"
+      ],
+      "sets": [
+        "history"
+      ],
+      "categories": [
+        "actual_title_public_summary_review"
+      ]
+    },
+    {
+      "blob": "b9cdba84d29136f331fda64dd1897630a8dd2eef",
+      "paths": [
+        "experiments/memory-base-live/bubble.json"
+      ],
+      "sets": [
+        "tree",
+        "history"
+      ],
+      "categories": [
+        "actual_title_public_summary_review"
+      ]
+    },
+    {
+      "blob": "c0128fb842bf7af36ff8f4f51d073ed4d4eea006",
+      "paths": [
+        "experiments/memory-base-live/README.md"
+      ],
+      "sets": [
+        "history"
+      ],
+      "categories": [
+        "actual_title_public_summary_review"
+      ]
+    },
+    {
+      "blob": "d766458096646647addee06a035399fa38621df3",
+      "paths": [
+        "experiments/memory-base-live/README.md"
+      ],
+      "sets": [
+        "tree",
+        "history"
+      ],
+      "categories": [
+        "actual_title_public_summary_review"
+      ]
+    },
+    {
+      "blob": "df53c1433835a8a0364e1cbdfbc99a5ff2d3d6c7",
+      "paths": [
+        "memory_agent/eval/shared_service_41.py"
+      ],
+      "sets": [
+        "tree"
+      ],
+      "categories": [
+        "credential_assignment_review"
+      ]
+    },
+    {
+      "blob": "e98be5e2c418b66c9fd3ba4e3a8f6cd5e5fd79a7",
+      "paths": [
+        "experiments/memory-framework-spike/mvp/RECOVERY.md"
+      ],
+      "sets": [
+        "history"
+      ],
+      "categories": [
+        "credential_assignment_review"
+      ]
+    },
+    {
+      "blob": "eaa313ee3c6296c294732430588584adfd8a7ae7",
+      "paths": [
+        "experiments/memory-framework-spike/mvp/RECOVERY.md"
+      ],
+      "sets": [
+        "tree",
+        "history"
+      ],
+      "categories": [
+        "credential_assignment_review"
+      ]
+    },
+    {
+      "blob": "eabe9c5146aff38433f36b1597d0149c22da54d2",
+      "paths": [
+        "experiments/memory-base-live/README.md"
+      ],
+      "sets": [
+        "history"
+      ],
+      "categories": [
+        "actual_title_public_summary_review"
+      ]
+    },
+    {
+      "blob": "ecc885f670fd4e63898455a04bae3c89b3769349",
+      "paths": [
+        "experiments/memory-base-live/README.md"
+      ],
+      "sets": [
+        "history"
+      ],
+      "categories": [
+        "actual_title_public_summary_review"
+      ]
+    }
+  ],
+  "generic_fixture_matches": {
+    "unknown_token_shape": 0,
+    "credential_assignment_review": 19
+  },
+  "maps": {
+    "changed_markdown": 67,
+    "local_links_checked": 205,
+    "external_links_excluded": 133,
+    "anchor_only_excluded": 0,
+    "findings": [],
+    "payload": [
+      {
+        "path": "memory_base/__init__.py",
+        "normalized_equal": true
+      },
+      {
+        "path": "memory_base/__main__.py",
+        "normalized_equal": true
+      },
+      {
+        "path": "memory_base/deploy.py",
+        "normalized_equal": true
+      },
+      {
+        "path": "memory_base/credentials.py",
+        "normalized_equal": true
+      },
+      {
+        "path": "memory_base/embed.py",
+        "normalized_equal": true
+      },
+      {
+        "path": "memory_base/gateway.py",
+        "normalized_equal": true
+      },
+      {
+        "path": "memory_base/upstream.py",
+        "normalized_equal": true
+      },
+      {
+        "path": "memory_base/mcp_stdio.py",
+        "normalized_equal": true
+      },
+      {
+        "path": "memory_base/paths.py",
+        "normalized_equal": true
+      },
+      {
+        "path": "memory_base/sources.py",
+        "normalized_equal": true
+      },
+      {
+        "path": "memory_base/backup.py",
+        "normalized_equal": true
+      },
+      {
+        "path": "memory_base/autostart.py",
+        "normalized_equal": true
+      },
+      {
+        "path": "memory_base/requirements.txt",
+        "normalized_equal": true
+      },
+      {
+        "path": "memory_base/constraints.txt",
+        "normalized_equal": true
+      },
+      {
+        "path": "memory_base/skill/SKILL.md",
+        "normalized_equal": true
+      }
+    ],
+    "map_paths": [
+      {
+        "map": "README.md",
+        "path": "install-memory-base.ps1",
+        "exists": true
+      },
+      {
+        "map": "README.md",
+        "path": "install-memory-base.sh",
+        "exists": true
+      },
+      {
+        "map": "README.md",
+        "path": "memory_base",
+        "exists": true
+      },
+      {
+        "map": "AGENTS.md",
+        "path": "install-memory-base.ps1/.sh",
+        "exists": false
+      },
+      {
+        "map": "AGENTS.md",
+        "path": "memory_base",
+        "exists": true
+      }
+    ]
+  },
+  "limits": [
+    "Only currently available authorized credentials; rotated historical values unknown.",
+    "Exact UTF-8/UTF-16LE, normalized newline and JSON-escaped literals; no OCR, archive expansion, base64 or arbitrary encoding proof.",
+    "Three explicit original receipts; no unrelated user files or all-user-corpus scan.",
+    "Title matches are owner summary review, not automatic privacy violations.",
+    "Credential assignments require review; placeholder heuristic is not proof of safety.",
+    "Local link existence only; no external fetching or anchor validity claim.",
+    "Fixed 4dadc40 excludes later documentation and CI corrections; no whole-goal acceptance claim."
+  ],
+  "elapsed_seconds": 38.17
+}

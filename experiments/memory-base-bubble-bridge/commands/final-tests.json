@@ -1,0 +1,11 @@
+{
+  "command": [
+    "npm",
+    "test"
+  ],
+  "cwd": "D:\\python_work\\work2026-4\\memory-base-bubble-bridge-assets\\20261012\\candidate",
+  "started_at_utc": "2026-10-12T01:10:12.068042+00:00",
+  "seconds": 26.063,
+  "exit_code": 0,
+  "output": "final-tests.txt"
+}

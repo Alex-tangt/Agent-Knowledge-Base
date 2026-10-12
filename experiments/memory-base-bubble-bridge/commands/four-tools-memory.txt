@@ -1,0 +1,23 @@
+(node:5092) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node.EXE --trace-warnings ...` to show where the warning was created)
+✔ first article and video summaries are saved byte-exact with provenance; follow-ups are not automatically saved (1406.2795ms)
+✔ ambiguous KB failure preserves answer; retry after app restart reuses the same request and never calls the model again (181.6123ms)
+✔ invalid saved hash is never shown as successfully saved (131.9844ms)
+✔ restart makes an interrupted persisted save retryable without discarding its answer (100.981ms)
+✔ client distinguishes unavailable KB from successful empty retrieval and returns the original saved body (29.5699ms)
+✔ scoped client retains live project revision, completeness and list pagination; old calls keep their payload (52.9373ms)
+✔ client rejects successful-but-wrong revisions, missing revisions and corrupted bodies without echoing source content (43.0567ms)
+✔ known gateway failures remain actionable errors and arbitrary error bodies or codes never leak (102.3001ms)
+✔ source injection cannot grant memory_add; explicit notes retain the legacy key and explicit contact dates distinguish requests (30.543ms)
+✔ configuration can disable the integration and credential provider settings do not require a plaintext token (21.5139ms)
+✔ actual pi SDK exposes four KB tools and still executes legacy search/get calls (1990.9208ms)
+✔ actual pi SDK round-trips project scope, list pages, revision get and an explicitly dated note with a local SSE model (578.5871ms)
+✔ memory credential never reaches media subprocesses (193.0165ms)
+ℹ tests 13
+ℹ suites 0
+ℹ pass 13
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 21143.2641

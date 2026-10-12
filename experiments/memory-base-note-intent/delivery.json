@@ -1,0 +1,31 @@
+{
+  "candidate_commit": "36f9bf294e4117bf36a4228d63b3a3c7ad715af1",
+  "base_commit": "0a86cb1013a481aa91b4b97b826d62a4a8456fb8",
+  "files": [
+    {
+      "path": "server/memory-tools.ts",
+      "artifact": "C:\\Users\\Tan\\.codex\\worktrees\\memory-bootstrap-fix\\Agent-Knowledge-Base\\experiments\\memory-base-note-intent\\artifacts\\server\\memory-tools.ts",
+      "artifact_sha256": "2dfe82df62eb129564a76586bebdb40998e06a964c1e99393310ef911d1353de",
+      "candidate_raw_sha256": "27cdb47943d5e13c431a5579978cbc0d2b61a8d4683f9504978814723197f18d",
+      "candidate_lf_sha256": "2dfe82df62eb129564a76586bebdb40998e06a964c1e99393310ef911d1353de",
+      "candidate_crlf": 53,
+      "actual_raw_sha256": "339a852a374af74e471502afa083c48ca6787811bd57cdded03f08bd0b4ee686",
+      "baseline_candidate_raw_sha256": "ba64dc4d9cfd92f3e324a8d420d2f086d848cc70610a5409a10e72b49e3da4af",
+      "baseline_normalized_sha256": "339a852a374af74e471502afa083c48ca6787811bd57cdded03f08bd0b4ee686"
+    },
+    {
+      "path": "server/tests/memory-base.test.ts",
+      "artifact": "C:\\Users\\Tan\\.codex\\worktrees\\memory-bootstrap-fix\\Agent-Knowledge-Base\\experiments\\memory-base-note-intent\\artifacts\\server\\tests\\memory-base.test.ts",
+      "artifact_sha256": "1d1e25b86c1b5168a0ebaec3fad1a5e9a415a90440ac23ca358b6b8ca1c6a13c",
+      "candidate_raw_sha256": "677464e56353f9f919a7cdb141cfe536af2d570b8cdbf463f113cbab0079eae7",
+      "candidate_lf_sha256": "1d1e25b86c1b5168a0ebaec3fad1a5e9a415a90440ac23ca358b6b8ca1c6a13c",
+      "candidate_crlf": 439,
+      "actual_raw_sha256": "6dc351fd6a015d8a98011e4f83b2f7c791de112a3652f2c738871999e8017256",
+      "baseline_candidate_raw_sha256": "137b4b586a9018f36c8101fd9da00c4907a539853e046143cfb2630678020bae",
+      "baseline_normalized_sha256": "6dc351fd6a015d8a98011e4f83b2f7c791de112a3652f2c738871999e8017256"
+    }
+  ],
+  "actual_files_unchanged": true,
+  "candidate_clean": true,
+  "patch_sha256": "e65750b6e5b9af3be35e76f5dd78fac1d04989d7ba9c42ea7d080770dc6d467c"
+}

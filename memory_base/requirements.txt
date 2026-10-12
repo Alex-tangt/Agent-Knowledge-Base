@@ -1,0 +1,11 @@
+--extra-index-url https://abetlen.github.io/llama-cpp-python/whl/cpu
+--only-binary llama-cpp-python
+-c constraints.txt
+openviking==0.4.23
+openviking-sdk==0.1.13
+mcp==1.30.0
+llama-cpp-python==0.3.36
+# Match the verified runtime. Later SDK releases pull all cloud-service packages,
+# and the OpenAI major version is outside this pinned server's tested boundary.
+volcengine-python-sdk[ark]==5.0.51
+openai==2.54.0

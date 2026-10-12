@@ -1,0 +1,76 @@
+{
+  "checks": [
+    "four_concurrent_embedding_batches_eight_vectors",
+    "upstream_outage_explicit_error",
+    "upstream_recovery_exact_content",
+    "all_services_restart_same_uri_and_content"
+  ],
+  "versions": {
+    "openviking": "0.4.23",
+    "openviking-sdk": "0.1.13",
+    "mcp": "1.30.0",
+    "llama-cpp-python": "0.3.36",
+    "volcengine-python-sdk": "5.0.51",
+    "openai": "2.54.0"
+  },
+  "runtime": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Scripts\\python.exe",
+  "source": "D:\\python_work\\work2026-4\\Agent-Knowledge-Base",
+  "uri": "viking://resources/captures/4b24c835877cfaa5666c2ba322431a663aab3fdd17c3196ac99274e94fcf591d/content.md",
+  "upstream_outage": {
+    "http_status": 503,
+    "code": "UPSTREAM_UNAVAILABLE"
+  },
+  "content_hash": "a773d1d44eb19f2b3e061417b37aabfc728a1878bf50f0918eb994e1746b8095",
+  "final_status": {
+    "status": "ready",
+    "home": "C:\\Users\\Tan\\.agent-memory-base",
+    "url": "http://127.0.0.1:8788",
+    "versions": {
+      "openviking": "0.4.23",
+      "openviking-sdk": "0.1.13",
+      "mcp": "1.30.0",
+      "llama-cpp-python": "0.3.36",
+      "volcengine-python-sdk": "5.0.51",
+      "openai": "2.54.0"
+    },
+    "services": {
+      "embed": {
+        "pid": 27372,
+        "owned": true,
+        "port": 8796,
+        "health": {
+          "status": "ok",
+          "service": "memory-base-embedding",
+          "model": "bge-small-zh-v1.5-f16",
+          "serialized": true,
+          "pid": 27068,
+          "calls": 0,
+          "items": 0
+        }
+      },
+      "upstream": {
+        "pid": 37776,
+        "owned": true,
+        "port": 8786,
+        "health": {
+          "status": "ok",
+          "healthy": true,
+          "version": "0.4.23",
+          "auth_mode": "api_key"
+        }
+      },
+      "gateway": {
+        "pid": 29632,
+        "owned": true,
+        "port": 8788,
+        "health": {
+          "service": "memory-base-gateway",
+          "pid": 36192,
+          "status": "ready",
+          "scope": "viking://resources/captures"
+        }
+      }
+    }
+  },
+  "passed": true
+}

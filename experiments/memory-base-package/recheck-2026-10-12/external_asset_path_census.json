@@ -1,0 +1,1088 @@
+{
+  "formal_record_count": 175,
+  "record_entry_count": 101336,
+  "target_site": "C:\\Users\\Tan\\.mb86\\r4\\d\\runtime\\Lib\\site-packages",
+  "target_site_characters": 49,
+  "longest_five": [
+    [
+      197,
+      "volcenginesdkmlplatform20240701/models/__pycache__/matching_reservation_plan_time_config_for_update_resource_reservation_plan_input.cpython-312.pyc",
+      "volcengine_python_sdk-5.0.51.dist-info"
+    ],
+    [
+      197,
+      "volcenginesdkmlplatform20240701/models/__pycache__/available_resource_for_list_resource_reservation_plan_available_resources_output.cpython-312.pyc",
+      "volcengine_python_sdk-5.0.51.dist-info"
+    ],
+    [
+      197,
+      "volcenginesdkarkclaw/models/__pycache__/external_identity_provider_configuration_for_update_identity_provider_token_exchange_output.cpython-312.pyc",
+      "volcengine_python_sdk-5.0.51.dist-info"
+    ],
+    [
+      197,
+      "volcenginesdkarkclaw/models/__pycache__/external_identity_provider_configuration_for_create_identity_provider_token_exchange_output.cpython-312.pyc",
+      "volcengine_python_sdk-5.0.51.dist-info"
+    ],
+    [
+      196,
+      "volcenginesdktransitrouter/models/__pycache__/transit_router_multicast_domain_for_describe_transit_router_multicast_domains_output.cpython-312.pyc",
+      "volcengine_python_sdk-5.0.51.dist-info"
+    ]
+  ],
+  "target_paths_ge_250": 0,
+  "all_proposed_paths_lt250": true,
+  "records": [
+    {
+      "distribution": "agent_memory_base-0.1.0.dist-info",
+      "record_sha256": "1d05ceebb6af51a70e53f705e48d2aa9da659f16d667060c32a1b53d7df937e2",
+      "file_count": 12,
+      "maximum_target_path_characters": 121
+    },
+    {
+      "distribution": "aiohappyeyeballs-2.7.1.dist-info",
+      "record_sha256": "0939cbd125f0904d6ae35ca9fd47c8aba9e9e9b91e850278ef953b375727cdfb",
+      "file_count": 16,
+      "maximum_target_path_characters": 105
+    },
+    {
+      "distribution": "aiohttp-3.14.4.dist-info",
+      "record_sha256": "7ac080690af81d0d8eaacc3a90ab693d449acd79fd212e9960fcb1b61ca22135",
+      "file_count": 128,
+      "maximum_target_path_characters": 115
+    },
+    {
+      "distribution": "aiosignal-1.4.0.dist-info",
+      "record_sha256": "0f47f05db68c527ed1fe2f23c79ef1e846e1009ec04e7ef47f300db855ed9c74",
+      "file_count": 9,
+      "maximum_target_path_characters": 96
+    },
+    {
+      "distribution": "annotated_doc-0.0.5.dist-info",
+      "record_sha256": "fcf4349c991a1d7052ef1648bc52ac31cc9322856d65512cbd7c186844054185",
+      "file_count": 11,
+      "maximum_target_path_characters": 100
+    },
+    {
+      "distribution": "annotated_types-0.8.0.dist-info",
+      "record_sha256": "906944aac6c7f85a4ebedde03e8fc1fcc2e4b99ec400b60bc088c9ae321d2c82",
+      "file_count": 10,
+      "maximum_target_path_characters": 104
+    },
+    {
+      "distribution": "anyio-4.15.1.dist-info",
+      "record_sha256": "355dd9cacd66cf28a25030f5380ac56a5cb6cbd8086423ccf1a46433d420f763",
+      "file_count": 100,
+      "maximum_target_path_characters": 114
+    },
+    {
+      "distribution": "apscheduler-3.11.3.dist-info",
+      "record_sha256": "af1dd26f2503746e858e18230bb7c4246d42f508a47e19c2cea0048378baad93",
+      "file_count": 87,
+      "maximum_target_path_characters": 115
+    },
+    {
+      "distribution": "argon2_cffi-25.1.0.dist-info",
+      "record_sha256": "a6d99732a61a1b7dc5dcadfa0a1c8ecd20ab6b342a99d1deec9879ec9406a77f",
+      "file_count": 22,
+      "maximum_target_path_characters": 101
+    },
+    {
+      "distribution": "argon2_cffi_bindings-26.1.0.dist-info",
+      "record_sha256": "bdae404910ff051a4bb20ca6f61f610a6398d026ca61978286591c6814ddefec",
+      "file_count": 8,
+      "maximum_target_path_characters": 108
+    },
+    {
+      "distribution": "attrs-26.1.0.dist-info",
+      "record_sha256": "a5151f0461f45abf44fdc57c2ccdb73151bb54a0abfd22133f7ea7ad48f8dc23",
+      "file_count": 55,
+      "maximum_target_path_characters": 96
+    },
+    {
+      "distribution": "automat-25.4.16.dist-info",
+      "record_sha256": "b8680df5308d0d3eb6ebbed65fa8713044fe3299a160197a7db18c5e60a4d2dd",
+      "file_count": 39,
+      "maximum_target_path_characters": 107
+    },
+    {
+      "distribution": "babel-2.18.0.dist-info",
+      "record_sha256": "c66dbf112bec7ec00420e80b048cf0e09e51bc3181bfd6aea9c840245a006c88",
+      "file_count": 1148,
+      "maximum_target_path_characters": 112
+    },
+    {
+      "distribution": "backports_zstd-1.7.0.dist-info",
+      "record_sha256": "d6cb40b9648b813229ca6c3dc5bff09453273967671e1bce28576cd4fda70a7c",
+      "file_count": 32,
+      "maximum_target_path_characters": 106
+    },
+    {
+      "distribution": "beautifulsoup4-4.15.0.dist-info",
+      "record_sha256": "e711fd13c2c3eb28c6a5853b39edae8c28ab49253b5cd54e26682e5fdd1582d3",
+      "file_count": 37,
+      "maximum_target_path_characters": 101
+    },
+    {
+      "distribution": "brotli-1.2.0.dist-info",
+      "record_sha256": "4b09e801fcd2cbf97b59d38f59860d3eb878170a384bda2fa944e33e21262d0a",
+      "file_count": 9,
+      "maximum_target_path_characters": 89
+    },
+    {
+      "distribution": "certifi-2026.7.22.dist-info",
+      "record_sha256": "54fa8ebe7e5d1cd4a48064f94e706e5f7a6cdcccef364379692ed7657bfed982",
+      "file_count": 18,
+      "maximum_target_path_characters": 104
+    },
+    {
+      "distribution": "cffi-2.1.1.dist-info",
+      "record_sha256": "d0142714c4e0b0cca50b7a3439d199048ee2f968a99f909d4e66ca2b1a53a12d",
+      "file_count": 53,
+      "maximum_target_path_characters": 102
+    },
+    {
+      "distribution": "charset_normalizer-3.5.2.dist-info",
+      "record_sha256": "b721369a6efbe12d205943cc22730d0f9a47a325bca09e4c97e51b660303bc47",
+      "file_count": 35,
+      "maximum_target_path_characters": 109
+    },
+    {
+      "distribution": "click-8.5.0.dist-info",
+      "record_sha256": "43d8bb1ce44dea5d9423b7eae1d6ba911974425b96acc170b036e1655a901e10",
+      "file_count": 40,
+      "maximum_target_path_characters": 100
+    },
+    {
+      "distribution": "colorama-0.4.6.dist-info",
+      "record_sha256": "24ecf55e9e177d90edaf7e688cc0d1944d32d35027e53f2c51d076cb9f4e103d",
+      "file_count": 31,
+      "maximum_target_path_characters": 109
+    },
+    {
+      "distribution": "constantly-23.10.4.dist-info",
+      "record_sha256": "7e8cac9554b61ddfba448407e41994e4dc08e26c6a0f185d3c2255d73c523d6c",
+      "file_count": 16,
+      "maximum_target_path_characters": 108
+    },
+    {
+      "distribution": "courlan-1.4.0.dist-info",
+      "record_sha256": "bf15e84263de872514d1274ab47af3e577d11100f75b431ecb77cc0bf3d6fecb",
+      "file_count": 31,
+      "maximum_target_path_characters": 94
+    },
+    {
+      "distribution": "cryptography-50.0.2.dist-info",
+      "record_sha256": "2b3cbe1deb5ef6689bc2379c516d4ff72773781fb07ea358bec2b654baa478d1",
+      "file_count": 199,
+      "maximum_target_path_characters": 131
+    },
+    {
+      "distribution": "cssselect-1.5.0.dist-info",
+      "record_sha256": "e149dcc8f3f5ca0f8e15bd1b605a799d138e02ce9018ebb4f20375b3cd4c0789",
+      "file_count": 10,
+      "maximum_target_path_characters": 92
+    },
+    {
+      "distribution": "dateparser-1.4.3.dist-info",
+      "record_sha256": "452f24ff58523f1715d5e9127df311cc52ee09b90f4305b0e4a4590f4bcf6e3b",
+      "file_count": 513,
+      "maximum_target_path_characters": 135
+    },
+    {
+      "distribution": "decorator-5.3.1.dist-info",
+      "record_sha256": "01897326e2ccc7b1bbb9ea2727663e6fc591679b279bf44d56e39e3598bccb11",
+      "file_count": 10,
+      "maximum_target_path_characters": 96
+    },
+    {
+      "distribution": "defusedxml-0.7.1.dist-info",
+      "record_sha256": "d5bf1cc282d7d85ab0432e77a778fcbb6349aec6a15073d4480e12900a1636a7",
+      "file_count": 28,
+      "maximum_target_path_characters": 101
+    },
+    {
+      "distribution": "diskcache-5.6.3.dist-info",
+      "record_sha256": "feacf65817ecae344cb3dc6103a59f783ca8174c2b005b4f4066cc339f64258a",
+      "file_count": 20,
+      "maximum_target_path_characters": 99
+    },
+    {
+      "distribution": "distro-1.9.0.dist-info",
+      "record_sha256": "e08e800ccdd4345f518f99a32b1b7493951d404a2abc7bf17af96495051d690b",
+      "file_count": 15,
+      "maximum_target_path_characters": 93
+    },
+    {
+      "distribution": "fastapi-0.143.0.dist-info",
+      "record_sha256": "b014591bca3b250efd269b4a0fa901a4b73577fcd12294bee4beafa6e16e6660",
+      "file_count": 119,
+      "maximum_target_path_characters": 114
+    },
+    {
+      "distribution": "fastuuid-0.14.0.dist-info",
+      "record_sha256": "ba3264791d384b7c9a979e1e98efa35ff031a4e1342309335a22bca331a575e8",
+      "file_count": 10,
+      "maximum_target_path_characters": 95
+    },
+    {
+      "distribution": "feedparser-6.0.14.dist-info",
+      "record_sha256": "49c37c3c79b9cdfc5c20d6c117e7bb12c32e2f5397799786d768d2c4b0b3de92",
+      "file_count": 70,
+      "maximum_target_path_characters": 108
+    },
+    {
+      "distribution": "feedparser_sgmllib-2.1.0.dist-info",
+      "record_sha256": "2430621b2e4d51094936593757294e1325a3002f9525d1b03bb8bff273a20b1a",
+      "file_count": 10,
+      "maximum_target_path_characters": 105
+    },
+    {
+      "distribution": "filelock-4.0.12.dist-info",
+      "record_sha256": "715ae88a281d8ee7efd08d241bea95e07c1d6874dc431e6ae8bde1ca4b790653",
+      "file_count": 29,
+      "maximum_target_path_characters": 92
+    },
+    {
+      "distribution": "firecrawl_anydoc-0.2.4.dist-info",
+      "record_sha256": "59beaf8ff36ec750ff61841a5a5bc0f0eb6d0e54a444db917bf373e7bd3e871b",
+      "file_count": 10,
+      "maximum_target_path_characters": 117
+    },
+    {
+      "distribution": "frozenlist-1.8.0.dist-info",
+      "record_sha256": "15c3d8e70b1eb1253440a3ad7113065129563459d36e31ff72e75bdfd98d1c20",
+      "file_count": 12,
+      "maximum_target_path_characters": 97
+    },
+    {
+      "distribution": "fsspec-2026.9.0.dist-info",
+      "record_sha256": "ad06cc55ee7a2f52c7799fbd41788af9edbc1eba223e1df398998d44874924db",
+      "file_count": 121,
+      "maximum_target_path_characters": 115
+    },
+    {
+      "distribution": "google-3.0.0.dist-info",
+      "record_sha256": "9cc4638ad411d8f9cf0f104a3c5c5575e2385201f26b1c9159915d2a750963b1",
+      "file_count": 11,
+      "maximum_target_path_characters": 99
+    },
+    {
+      "distribution": "googleapis_common_protos-1.75.5.dist-info",
+      "record_sha256": "54bed31b2f6cb453ae46e0d5755e135fe274bede5a39ebf4c5cdf65402e82002",
+      "file_count": 268,
+      "maximum_target_path_characters": 118
+    },
+    {
+      "distribution": "grep_ast-0.9.0.dist-info",
+      "record_sha256": "b66281523fb2d135cb4cd1b55ad30ca22148a3ca46f3051ab6146ecd1f3d692f",
+      "file_count": 21,
+      "maximum_target_path_characters": 95
+    },
+    {
+      "distribution": "grpcio-1.84.0.dist-info",
+      "record_sha256": "2537ce7c3bcef25d9b13209110d9047e13063a56eaab8d02e85601688a67154b",
+      "file_count": 123,
+      "maximum_target_path_characters": 123
+    },
+    {
+      "distribution": "h11-0.16.0.dist-info",
+      "record_sha256": "ac020206998e31ee6a749a207c7746245805e64814bb88642302a572f557fb24",
+      "file_count": 29,
+      "maximum_target_path_characters": 96
+    },
+    {
+      "distribution": "hf_xet-1.7.0.dist-info",
+      "record_sha256": "f362d167a25c4495b30ed20ecfc193260da73e37308b0b84dc454f08ee15770a",
+      "file_count": 9,
+      "maximum_target_path_characters": 100
+    },
+    {
+      "distribution": "htmldate-1.11.0.dist-info",
+      "record_sha256": "06c5824dfa0b1673c7648160e8be9b02601e32d771503ecb742748f65f17cb7a",
+      "file_count": 25,
+      "maximum_target_path_characters": 97
+    },
+    {
+      "distribution": "httpcore-1.0.9.dist-info",
+      "record_sha256": "b2dabdfa67b814f4441d3ff8ccb37ffb2f6262970d605b49115641e382c9745f",
+      "file_count": 68,
+      "maximum_target_path_characters": 109
+    },
+    {
+      "distribution": "httpcore2-2.13.1.dist-info",
+      "record_sha256": "3a91ba5cb15292167fbd1ad10b6b3e325edaf6001567db1a0b25fd4cf76a8d99",
+      "file_count": 68,
+      "maximum_target_path_characters": 110
+    },
+    {
+      "distribution": "httpx-0.28.1.dist-info",
+      "record_sha256": "016fe3dd8d68c04fa276a8397611a5beeb9ca679eb215296372980e1311c5498",
+      "file_count": 54,
+      "maximum_target_path_characters": 104
+    },
+    {
+      "distribution": "httpx2-2.13.1.dist-info",
+      "record_sha256": "e3f1d59b297bb8f8c4e9e7865e52f283810d8ad39c44cd50a9d168fcf0c40f03",
+      "file_count": 68,
+      "maximum_target_path_characters": 107
+    },
+    {
+      "distribution": "httpx_sse-0.4.3.dist-info",
+      "record_sha256": "42c71a02ad152e1387aca1a0f5329f3efcd4c5b4b8f88d05334579a1f7186d22",
+      "file_count": 17,
+      "maximum_target_path_characters": 99
+    },
+    {
+      "distribution": "huggingface_hub-2.2.0.dist-info",
+      "record_sha256": "cdb61669cef88099141e9b0719e04a204a3bd999185223ca055b7cef68b907d0",
+      "file_count": 374,
+      "maximum_target_path_characters": 151
+    },
+    {
+      "distribution": "hyperlink-21.0.0.dist-info",
+      "record_sha256": "4a6ae5974b61e316c766a9c87062790e0b6a66d8fcc76ed4f885a17fb4b8f058",
+      "file_count": 34,
+      "maximum_target_path_characters": 117
+    },
+    {
+      "distribution": "idna-3.20.dist-info",
+      "record_sha256": "baf2e704399308d5a59a7677ed273caac4ed0fb384ffa7f9d6b4d401b4e932af",
+      "file_count": 28,
+      "maximum_target_path_characters": 95
+    },
+    {
+      "distribution": "importlib_metadata-8.9.0.dist-info",
+      "record_sha256": "508847e7a04a410646dd8d88733a468337242a9d0f5e10a737a164fcf39aefa1",
+      "file_count": 31,
+      "maximum_target_path_characters": 112
+    },
+    {
+      "distribution": "incremental-24.11.0.dist-info",
+      "record_sha256": "6193a96bd1d28c7d0082400b50d9cf3d75b7f6a3e4bc9d2ae2e3f7e1c7b1f74e",
+      "file_count": 24,
+      "maximum_target_path_characters": 110
+    },
+    {
+      "distribution": "itemadapter-0.13.1.dist-info",
+      "record_sha256": "0f1760b41bc507b6d9fe5fe3cbce5b450f39f2043dd4d03eb776938e4b41e603",
+      "file_count": 16,
+      "maximum_target_path_characters": 102
+    },
+    {
+      "distribution": "itemloaders-1.5.0.dist-info",
+      "record_sha256": "be553d5b7b68da8bce196860acd7a489047d01dd25888b96e2e4cf7583a22923",
+      "file_count": 14,
+      "maximum_target_path_characters": 100
+    },
+    {
+      "distribution": "jinja2-3.1.6.dist-info",
+      "record_sha256": "1bb3b46d00f55f63d24c3a34a7f955ef6692d4691217a53b15261769607f9f7c",
+      "file_count": 57,
+      "maximum_target_path_characters": 96
+    },
+    {
+      "distribution": "jiter-0.17.0.dist-info",
+      "record_sha256": "5cdb55a9a80fe9c5649a884b702aaeb682b129a3bf3609af519a050bc1ae6f6b",
+      "file_count": 11,
+      "maximum_target_path_characters": 106
+    },
+    {
+      "distribution": "jmespath-1.1.0.dist-info",
+      "record_sha256": "1bfac0a1d67222424feb5641a1d12017651a401e31fbfc5be31667cfd42a4f05",
+      "file_count": 24,
+      "maximum_target_path_characters": 97
+    },
+    {
+      "distribution": "json_repair-0.64.0.dist-info",
+      "record_sha256": "c19f04ca6a38ee661b2b56e7d2744c8ebeb5616d716dfce2d1c13fc77a1d22af",
+      "file_count": 53,
+      "maximum_target_path_characters": 132
+    },
+    {
+      "distribution": "jsonschema-4.26.0.dist-info",
+      "record_sha256": "655f92abe3b171173a742980bd8d2180df05c5aa239ef148bbc9bb466720f0c4",
+      "file_count": 82,
+      "maximum_target_path_characters": 145
+    },
+    {
+      "distribution": "jsonschema_specifications-2025.9.1.dist-info",
+      "record_sha256": "9cc3b56b6becdd45482310d7d2ff9d98dbf8a5775e36f7ccde49a09146e389da",
+      "file_count": 33,
+      "maximum_target_path_characters": 140
+    },
+    {
+      "distribution": "justext-3.0.2.dist-info",
+      "record_sha256": "b01c21ee6961583fc47418f2527c977bb6b829ecf236740a19bb77a04b415ba6",
+      "file_count": 118,
+      "maximum_target_path_characters": 95
+    },
+    {
+      "distribution": "lark_oapi-1.7.3.dist-info",
+      "record_sha256": "1edc758a18fba0f25496a6ac44c366e327019d1d9bd5a3d4953d00a9e7a4c685",
+      "file_count": 21460,
+      "maximum_target_path_characters": 193
+    },
+    {
+      "distribution": "litellm-1.91.1.dist-info",
+      "record_sha256": "4406ebe890bd9b36483fde84ec1b12e3709d946c281aaa6df5bf6e5b26d28e7f",
+      "file_count": 2994,
+      "maximum_target_path_characters": 178
+    },
+    {
+      "distribution": "llama_cpp_python-0.3.36.dist-info",
+      "record_sha256": "85776589ceecb0c16c0f5861bad266ed8c6cbb520b7ea6f0b687b66ce24bcdec",
+      "file_count": 107,
+      "maximum_target_path_characters": 106
+    },
+    {
+      "distribution": "loguru-0.7.3.dist-info",
+      "record_sha256": "283b5cc25508060ffc5600c1c492658d97c89ac75cc9ab27b0557c6bd2010ea0",
+      "file_count": 44,
+      "maximum_target_path_characters": 103
+    },
+    {
+      "distribution": "lxml-6.1.3.dist-info",
+      "record_sha256": "0a57067788984fcb25224fc66f829c9d05a7b4758dc27c48355bf70b18451b2c",
+      "file_count": 208,
+      "maximum_target_path_characters": 141
+    },
+    {
+      "distribution": "lxml_html_clean-0.4.5.dist-info",
+      "record_sha256": "4a0219b79ba91b0099bb30731979c7daa59d0c896be3120a7276f7c1c9153f65",
+      "file_count": 13,
+      "maximum_target_path_characters": 102
+    },
+    {
+      "distribution": "markdown_it_py-4.2.0.dist-info",
+      "record_sha256": "74430fe41b29a41c6e53580c10c9681eff548775d6e7264799b52ef059cc8193",
+      "file_count": 142,
+      "maximum_target_path_characters": 120
+    },
+    {
+      "distribution": "markupsafe-3.0.4.dist-info",
+      "record_sha256": "4fb848896dddbef0cb0421320e55ab2855fabfe2dc7d9667d3ecea106620e031",
+      "file_count": 14,
+      "maximum_target_path_characters": 97
+    },
+    {
+      "distribution": "mcp-1.30.0.dist-info",
+      "record_sha256": "fa1c72899240ad9e43b69a76e910b10fffea64f78e35b0002aa6b2082897f7a9",
+      "file_count": 229,
+      "maximum_target_path_characters": 128
+    },
+    {
+      "distribution": "mdurl-0.1.2.dist-info",
+      "record_sha256": "a3797f66c73175d124fc5a6bee5088b8da9437dc3a71d54d407cf8812bac0de1",
+      "file_count": 18,
+      "maximum_target_path_characters": 92
+    },
+    {
+      "distribution": "multidict-6.9.1.dist-info",
+      "record_sha256": "ea6589e62038b9c07b2dd240e59376d596959438145ebb6100a0cb755781ae29",
+      "file_count": 16,
+      "maximum_target_path_characters": 101
+    },
+    {
+      "distribution": "numpy-2.5.3.dist-info",
+      "record_sha256": "f70f2e1613b85aaaee4508277d897f8b4c144cce2a1a4a5ba2ca20e0706c121d",
+      "file_count": 1355,
+      "maximum_target_path_characters": 133
+    },
+    {
+      "distribution": "openai-2.54.0.dist-info",
+      "record_sha256": "aada9926a82c14b92c1a6d872b89f6eae083559781be116f5525d9d9746546c3",
+      "file_count": 3006,
+      "maximum_target_path_characters": 164
+    },
+    {
+      "distribution": "opentelemetry_api-1.45.1.dist-info",
+      "record_sha256": "980833d9eda713a4fe500be23e02e0fbc05dd15dbb5dd6a6fb3c7cc9586c5df2",
+      "file_count": 78,
+      "maximum_target_path_characters": 122
+    },
+    {
+      "distribution": "opentelemetry_exporter_http_transport-0.66b1.dist-info",
+      "record_sha256": "864da71d3ee0b619a4bec2b870afaa52e2de8eafc3171713dfbf35ff5b8c9915",
+      "file_count": 17,
+      "maximum_target_path_characters": 132
+    },
+    {
+      "distribution": "opentelemetry_exporter_otlp_common-0.66b1.dist-info",
+      "record_sha256": "1ea8fb9f4a1b390ae547b91d72ed8f9703bdb40c872d9bc1e24b3753ea72e881",
+      "file_count": 16,
+      "maximum_target_path_characters": 130
+    },
+    {
+      "distribution": "opentelemetry_exporter_otlp_proto_common-1.45.1.dist-info",
+      "record_sha256": "0f720e7df52d8680afec6835aa85573a701d898839a99ba0ddecae7232f9a06b",
+      "file_count": 24,
+      "maximum_target_path_characters": 153
+    },
+    {
+      "distribution": "opentelemetry_exporter_otlp_proto_grpc-1.45.1.dist-info",
+      "record_sha256": "29a70d0b916e511041cb71cc311eed65a567bdbb15a59d8b21653308a16fe220",
+      "file_count": 19,
+      "maximum_target_path_characters": 141
+    },
+    {
+      "distribution": "opentelemetry_exporter_otlp_proto_http-1.45.1.dist-info",
+      "record_sha256": "2f4a8e0421060723217f1657bbc4aad9bec98e9d92e1a3629dba300d2e3e880f",
+      "file_count": 21,
+      "maximum_target_path_characters": 148
+    },
+    {
+      "distribution": "opentelemetry_instrumentation-0.66b1.dist-info",
+      "record_sha256": "3205fb23d584685aa0a77868e39b9f2c2fe16e781e28a9454f1c4adc0fe68c09",
+      "file_count": 45,
+      "maximum_target_path_characters": 142
+    },
+    {
+      "distribution": "opentelemetry_instrumentation_asyncio-0.66b1.dist-info",
+      "record_sha256": "333becf59855b103a47f8d311ac490e0c77a43e37fa573f56f6bf5bb40c9544b",
+      "file_count": 18,
+      "maximum_target_path_characters": 137
+    },
+    {
+      "distribution": "opentelemetry_proto-1.45.1.dist-info",
+      "record_sha256": "cf0369af20d32254a9e7101622b8611bbb70a010acc4721751f0331c5f023257",
+      "file_count": 74,
+      "maximum_target_path_characters": 156
+    },
+    {
+      "distribution": "opentelemetry_sdk-1.45.1.dist-info",
+      "record_sha256": "89755a4e20b0ca85c170d887513189b17af1c7e4d0a0f03fb7953b240a8d773b",
+      "file_count": 132,
+      "maximum_target_path_characters": 161
+    },
+    {
+      "distribution": "opentelemetry_semantic_conventions-0.66b1.dist-info",
+      "record_sha256": "efa96bbc15630a6a0d582a3136617e3818437aea4428f2e3c1cbea2b9ad8e88f",
+      "file_count": 260,
+      "maximum_target_path_characters": 147
+    },
+    {
+      "distribution": "openviking-0.4.23.dist-info",
+      "record_sha256": "12afbaf03ece228a894f4254393b5bd5188c2ffc2d092274ab9b9d4066abcd8c",
+      "file_count": 1539,
+      "maximum_target_path_characters": 142
+    },
+    {
+      "distribution": "openviking_sdk-0.1.13.dist-info",
+      "record_sha256": "92f2e3844517772fa3735615c0f3ffc97c63779e5ca137ef121ff311524b6182",
+      "file_count": 24,
+      "maximum_target_path_characters": 103
+    },
+    {
+      "distribution": "packaging-26.3.dist-info",
+      "record_sha256": "a2cd431afc6ca596c9bf35faf2b902709cad9c48a55d264a71c71e70c6cb2e7a",
+      "file_count": 52,
+      "maximum_target_path_characters": 105
+    },
+    {
+      "distribution": "parsel-1.12.1.dist-info",
+      "record_sha256": "e7d0239de5f75e96bf78ae98ec59008147ea7768de5d999742ba865d7a9fbb41",
+      "file_count": 16,
+      "maximum_target_path_characters": 98
+    },
+    {
+      "distribution": "pathspec-1.1.1.dist-info",
+      "record_sha256": "c48a2a73ecd6bcdf7f6bd4d8dfe3b2aaf86770626d13aa6c636004161f2bf96d",
+      "file_count": 68,
+      "maximum_target_path_characters": 116
+    },
+    {
+      "distribution": "pdfminer_six-20260107.dist-info",
+      "record_sha256": "61e35be19d2aedde87bc3b41e10d095a714a01511e2da0adfd41708950632a6d",
+      "file_count": 224,
+      "maximum_target_path_characters": 102
+    },
+    {
+      "distribution": "pdfplumber-0.11.10.dist-info",
+      "record_sha256": "090e5d9b4c28f398727aaf29b53500f0b068d0ee8d536e6f5f0a87c9573f6a76",
+      "file_count": 49,
+      "maximum_target_path_characters": 107
+    },
+    {
+      "distribution": "pillow-12.3.0.dist-info",
+      "record_sha256": "541a3487a26b0b07fa1c1f0bfe90490676b0d76bb4a2687e9f794854b288705f",
+      "file_count": 219,
+      "maximum_target_path_characters": 102
+    },
+    {
+      "distribution": "pip-25.0.1.dist-info",
+      "record_sha256": "f4af2871eba080839b9fc56c44827d4581395489fa37974c6bd10e049ba97fc5",
+      "file_count": 854,
+      "maximum_target_path_characters": 133
+    },
+    {
+      "distribution": "platformdirs-4.12.4.dist-info",
+      "record_sha256": "71b02b7c499dbd5d3940e397b67bedc70f21641cecf60a56296bc9137c1984db",
+      "file_count": 31,
+      "maximum_target_path_characters": 104
+    },
+    {
+      "distribution": "propcache-0.5.4.dist-info",
+      "record_sha256": "fc6809aa9341a4437796f0d25e18b8aabb1f1c847c273dd6e6bcb730a8b8f88b",
+      "file_count": 18,
+      "maximum_target_path_characters": 99
+    },
+    {
+      "distribution": "protego-0.7.0.dist-info",
+      "record_sha256": "2304faff5bd2c77da1100df821a2ff58637a90c7113b07065763e9d45435f0f9",
+      "file_count": 16,
+      "maximum_target_path_characters": 97
+    },
+    {
+      "distribution": "protobuf-7.36.2.dist-info",
+      "record_sha256": "b4167a226de8984f504df8af04d349ab5f1cf66b6e7dd26ea03c76953ce59ff1",
+      "file_count": 122,
+      "maximum_target_path_characters": 126
+    },
+    {
+      "distribution": "py-1.11.0.dist-info",
+      "record_sha256": "4cc76fd93aa776355f066ba38175f396d218a98f9c943f1660dab52688fd9b32",
+      "file_count": 101,
+      "maximum_target_path_characters": 118
+    },
+    {
+      "distribution": "pycparser-3.11.dist-info",
+      "record_sha256": "2f51bf961775a0854dc5dd245806c6e8811c4d4f2c7dcef4418b9e79ddaeed98",
+      "file_count": 21,
+      "maximum_target_path_characters": 102
+    },
+    {
+      "distribution": "pycryptodome-3.24.0.dist-info",
+      "record_sha256": "7094792ca5b2bba2fbda278002b3f15f0c9ac5e4d4a5aaea6b24087b43594b78",
+      "file_count": 559,
+      "maximum_target_path_characters": 126
+    },
+    {
+      "distribution": "pydantic-2.14.0.dist-info",
+      "record_sha256": "c384b51a0fc7c4649793e34166b5534bf993154a2411bfe37b0433485b2774dd",
+      "file_count": 217,
+      "maximum_target_path_characters": 122
+    },
+    {
+      "distribution": "pydantic_core-2.50.0.dist-info",
+      "record_sha256": "e925ef388088418aada534f93a808dd887a8c9cdb3e76f4d7aeea97c4a6ae950",
+      "file_count": 14,
+      "maximum_target_path_characters": 115
+    },
+    {
+      "distribution": "pydantic_settings-2.15.0.dist-info",
+      "record_sha256": "ecc2d851a6966a870a88d3db96787e863d4f4dcbaa1cc0d06edca602d675bb9e",
+      "file_count": 50,
+      "maximum_target_path_characters": 128
+    },
+    {
+      "distribution": "PyDispatcher-2.0.7.dist-info",
+      "record_sha256": "3b04f5b15293fa347720ffd4de11102a9131fbe2908a0545acacbde17be9e9bc",
+      "file_count": 17,
+      "maximum_target_path_characters": 100
+    },
+    {
+      "distribution": "pygments-2.21.0.dist-info",
+      "record_sha256": "69f150c7b02f5cf7f99db16dbb36129aad6efb924edb4c20aae39795d7a18e42",
+      "file_count": 694,
+      "maximum_target_path_characters": 113
+    },
+    {
+      "distribution": "pyjwt-2.15.1.dist-info",
+      "record_sha256": "216dce80600f08cbfaad9f1cb70ba9de6b7ac597e35d06ee0e20d3e57f64a2b7",
+      "file_count": 32,
+      "maximum_target_path_characters": 95
+    },
+    {
+      "distribution": "pyopenssl-26.4.0.dist-info",
+      "record_sha256": "4f2ed1399534cc000f14c97375a95ffeb975e247878fca04fdfdbac11074d2f2",
+      "file_count": 21,
+      "maximum_target_path_characters": 94
+    },
+    {
+      "distribution": "pypdfium2-5.14.0.dist-info",
+      "record_sha256": "a853bd27ccac46aba15777d7d5e093c1d3417ae993803a5b26f2220c3c8e8389",
+      "file_count": 118,
+      "maximum_target_path_characters": 137
+    },
+    {
+      "distribution": "python_dateutil-2.9.0.post0.dist-info",
+      "record_sha256": "0c26b4b1542dbd1ebd8d2babdd501aed583d6ada9595517f936f00fe4ff9d254",
+      "file_count": 44,
+      "maximum_target_path_characters": 104
+    },
+    {
+      "distribution": "python_dotenv-1.2.4.dist-info",
+      "record_sha256": "92a38b3f0e3657fa7c7487923e9232d7b5243f003860d7b34fdfcf5c929643c7",
+      "file_count": 25,
+      "maximum_target_path_characters": 96
+    },
+    {
+      "distribution": "python_multipart-0.0.32.dist-info",
+      "record_sha256": "9fdadb95f80c48cbd2fde15ba5c79436a6d3667dabc8867f71f7c774d0062a63",
+      "file_count": 22,
+      "maximum_target_path_characters": 105
+    },
+    {
+      "distribution": "pytz-2026.5.dist-info",
+      "record_sha256": "98f1905cde8d8b04c65ab1c971aa8fbe2fb8ba2ed31f45e25bc18b69d854bdac",
+      "file_count": 623,
+      "maximum_target_path_characters": 96
+    },
+    {
+      "distribution": "pywin32-312.dist-info",
+      "record_sha256": "24a8d1cc50e5875d8ddb3fe2194291e2dbc2567b169aaadb70424e1f7622e070",
+      "file_count": 1067,
+      "maximum_target_path_characters": 129
+    },
+    {
+      "distribution": "pyyaml-6.0.3.dist-info",
+      "record_sha256": "ff25f9939487eaabf6e6da28b74a1e419aff9587664e2d17997cf3c207531b41",
+      "file_count": 43,
+      "maximum_target_path_characters": 94
+    },
+    {
+      "distribution": "queuelib-1.10.0.dist-info",
+      "record_sha256": "c7cc0ba00008dd8b03ee06bd791ca46d2c78ea35e14811876f4d80be2554d893",
+      "file_count": 22,
+      "maximum_target_path_characters": 105
+    },
+    {
+      "distribution": "rapidfuzz-3.14.6.dist-info",
+      "record_sha256": "44c3c5be611e1836b78f48f66df7aecfe857e609f70ec210cae8fe5ef3c6e8f1",
+      "file_count": 107,
+      "maximum_target_path_characters": 126
+    },
+    {
+      "distribution": "referencing-0.37.0.dist-info",
+      "record_sha256": "6bb85471519901d877804e8dc05f032e6fa362b72c8a73b21b7486517e36c90e",
+      "file_count": 33,
+      "maximum_target_path_characters": 118
+    },
+    {
+      "distribution": "regex-2026.9.29.dist-info",
+      "record_sha256": "b2e4a745311a052d0fe63df2d84546bc1b0de833319d6fd34e40c27f16f376a2",
+      "file_count": 15,
+      "maximum_target_path_characters": 100
+    },
+    {
+      "distribution": "requests-2.34.2.dist-info",
+      "record_sha256": "9fe8a6fba6bb2091ccd8e5c3d279392ba36c03fc42e7854c792c74c98d5b3e91",
+      "file_count": 46,
+      "maximum_target_path_characters": 102
+    },
+    {
+      "distribution": "requests_file-3.0.1.dist-info",
+      "record_sha256": "de715ce1bfb519b38ccda72d6ddef19136cad56fdda8147f520ca33cf279894d",
+      "file_count": 9,
+      "maximum_target_path_characters": 100
+    },
+    {
+      "distribution": "requests_toolbelt-1.0.0.dist-info",
+      "record_sha256": "db2b27302832d03211832b29c4102af9b80ebd54db4b3b4c9cb209fc949b3a38",
+      "file_count": 75,
+      "maximum_target_path_characters": 120
+    },
+    {
+      "distribution": "retry-0.9.2.dist-info",
+      "record_sha256": "dcc47f2f57df6b09e24a84381fdacb722783408741b0e674b3dcd0ccfd35b20c",
+      "file_count": 18,
+      "maximum_target_path_characters": 100
+    },
+    {
+      "distribution": "rich-15.0.0.dist-info",
+      "record_sha256": "ee3acd23cbe4ef74867591cee90c13a5f90a59535d839b1cd66d1dd3e6ee50e2",
+      "file_count": 206,
+      "maximum_target_path_characters": 110
+    },
+    {
+      "distribution": "rpds_py-2026.9.1.dist-info",
+      "record_sha256": "b955f53609d0ded4da7ed2318a211995d043ce5fc680e689f0912c8cc7f5c9ec",
+      "file_count": 11,
+      "maximum_target_path_characters": 105
+    },
+    {
+      "distribution": "scrapy-2.19.0.dist-info",
+      "record_sha256": "19bb6d5890399c039a433ec7a271362a1d500a4e2ea671d4b3c825b2e3968b52",
+      "file_count": 378,
+      "maximum_target_path_characters": 126
+    },
+    {
+      "distribution": "service_identity-26.1.0.dist-info",
+      "record_sha256": "2dfceab9de06eb909311cf22aa72f153431e18ac0ebc2018abf0bfa433683d75",
+      "file_count": 16,
+      "maximum_target_path_characters": 107
+    },
+    {
+      "distribution": "shellingham-1.5.4.dist-info",
+      "record_sha256": "4f601f28fc1b92239c2113210f513e3b9c74836511db4021d49c4ccf39aecdfe",
+      "file_count": 21,
+      "maximum_target_path_characters": 104
+    },
+    {
+      "distribution": "six-1.17.0.dist-info",
+      "record_sha256": "d834e846ba51c0e7371968d0b5a0cdebdaa2f9ea2f0447a40b594fa96ca5d89f",
+      "file_count": 8,
+      "maximum_target_path_characters": 84
+    },
+    {
+      "distribution": "sniffio-1.3.1.dist-info",
+      "record_sha256": "47b1f08125b75fc6504a3ca37e9a2d9a268fd115fcf0bcf082a1e8df1befbb9b",
+      "file_count": 19,
+      "maximum_target_path_characters": 105
+    },
+    {
+      "distribution": "soupsieve-2.10.dist-info",
+      "record_sha256": "5178a71881d46d56c0b59d559c6f1c517a326e6d10d20b33371cca01d9aebbd5",
+      "file_count": 13,
+      "maximum_target_path_characters": 94
+    },
+    {
+      "distribution": "sse_starlette-3.5.0.dist-info",
+      "record_sha256": "37f008c95458e8ea9e53641cb68370da58db659b8d87e3d65f880cf10b00880b",
+      "file_count": 16,
+      "maximum_target_path_characters": 100
+    },
+    {
+      "distribution": "starlette-1.7.0.dist-info",
+      "record_sha256": "a16dd8abf0cf941129317a2f5aed069da0bf51414b21447fab57f9478f15cca4",
+      "file_count": 78,
+      "maximum_target_path_characters": 113
+    },
+    {
+      "distribution": "tabulate-0.10.0.dist-info",
+      "record_sha256": "4807e2fd7c5455263b3b95c2694c13b0a33bad7dc7c6d177f238460468a260fe",
+      "file_count": 10,
+      "maximum_target_path_characters": 95
+    },
+    {
+      "distribution": "tenacity-9.2.1.dist-info",
+      "record_sha256": "ebde0d60a50380cc0f8a60e5a70129163adb69cb7b4623a487216fbb8d5de7a2",
+      "file_count": 32,
+      "maximum_target_path_characters": 103
+    },
+    {
+      "distribution": "tiktoken-0.14.0.dist-info",
+      "record_sha256": "367d67ea1b48ac0511b80edb0dfb43f8ceeee9dc788254feb848bdfcbad1dbb1",
+      "file_count": 22,
+      "maximum_target_path_characters": 104
+    },
+    {
+      "distribution": "tld-0.13.2.dist-info",
+      "record_sha256": "f071a655b3b9b65ccfe982805527d61d1bdd0a517e621ce44a5c951e1ab05ffb",
+      "file_count": 45,
+      "maximum_target_path_characters": 101
+    },
+    {
+      "distribution": "tldextract-5.4.0.dist-info",
+      "record_sha256": "3dfe6c4dc38c452379e6289434ee5e1b11fe0736c783b4a0fd73ad9fb38aeb39",
+      "file_count": 26,
+      "maximum_target_path_characters": 100
+    },
+    {
+      "distribution": "tokenizers-0.23.3.dist-info",
+      "record_sha256": "ef146ddf0283f8f069e838ffaefa1d0bde2a7409ac5b75945a4049988bf61222",
+      "file_count": 48,
+      "maximum_target_path_characters": 126
+    },
+    {
+      "distribution": "tqdm-4.70.1.dist-info",
+      "record_sha256": "dde0b9d576d2e13bd9ce9032c3fee9881e3d4d359bd8e87ddb3ff55fd16adbf9",
+      "file_count": 72,
+      "maximum_target_path_characters": 103
+    },
+    {
+      "distribution": "trafilatura-2.3.1.dist-info",
+      "record_sha256": "e1b3219680704487e27fad12d73b284123ab8a6350f2c2913ae88598cd921578",
+      "file_count": 53,
+      "maximum_target_path_characters": 106
+    },
+    {
+      "distribution": "tree_sitter-0.25.2.dist-info",
+      "record_sha256": "77a56ff0cc9be9aa997ec58016cba47ce3d535fc404d7cfc92fba56b3f91af43",
+      "file_count": 11,
+      "maximum_target_path_characters": 98
+    },
+    {
+      "distribution": "tree_sitter_c_sharp-0.23.1.dist-info",
+      "record_sha256": "1c9990bd1255d0c0593050643615a1ccfa63d598c00257db9a874efab05ceabd",
+      "file_count": 14,
+      "maximum_target_path_characters": 106
+    },
+    {
+      "distribution": "tree_sitter_cpp-0.23.4.dist-info",
+      "record_sha256": "7a961b4d435ab85602a0dbd0639499280326eae9519468841777658a12261180",
+      "file_count": 15,
+      "maximum_target_path_characters": 102
+    },
+    {
+      "distribution": "tree_sitter_go-0.25.0.dist-info",
+      "record_sha256": "915ef6e677e3a4b6debc86865d31784ea85d68a92d29ae9fa127b87df8bd1741",
+      "file_count": 14,
+      "maximum_target_path_characters": 101
+    },
+    {
+      "distribution": "tree_sitter_java-0.23.5.dist-info",
+      "record_sha256": "fbfad8bbbaf57f1d9a1ee61190d8d6979fac801d0c51885a5c89a4c1edab1791",
+      "file_count": 14,
+      "maximum_target_path_characters": 103
+    },
+    {
+      "distribution": "tree_sitter_javascript-0.25.0.dist-info",
+      "record_sha256": "cce1923e3d3e61fdebfbefcb4d5254178a5e893ca1621448648908326b7818f8",
+      "file_count": 18,
+      "maximum_target_path_characters": 109
+    },
+    {
+      "distribution": "tree_sitter_language_pack-1.13.3.dist-info",
+      "record_sha256": "8db3f76a33a5e3012743e9b2f8371b5cae1122e544d960c98784ce990980d003",
+      "file_count": 19,
+      "maximum_target_path_characters": 129
+    },
+    {
+      "distribution": "tree_sitter_lua-0.5.0.dist-info",
+      "record_sha256": "928c8472e8e1c9d3cdbf888b22575f5c71001c7599854fc286752cebf0d77539",
+      "file_count": 16,
+      "maximum_target_path_characters": 102
+    },
+    {
+      "distribution": "tree_sitter_php-0.24.1.dist-info",
+      "record_sha256": "48fc8db5e10e92a57496736b25fef076599bc16124182a3c30f48fdf841fc8d8",
+      "file_count": 16,
+      "maximum_target_path_characters": 102
+    },
+    {
+      "distribution": "tree_sitter_python-0.25.0.dist-info",
+      "record_sha256": "b1f62ba1bc89223b70111c6d7f14e1a636d59cbdfd44b78d32f3930479f64bad",
+      "file_count": 14,
+      "maximum_target_path_characters": 105
+    },
+    {
+      "distribution": "tree_sitter_rust-0.24.0.dist-info",
+      "record_sha256": "4c9aca6250795b5c57537b21ea1cc7abaca0f4ced088c9a59581049b4d526aeb",
+      "file_count": 15,
+      "maximum_target_path_characters": 103
+    },
+    {
+      "distribution": "tree_sitter_typescript-0.23.2.dist-info",
+      "record_sha256": "aafbbb9bb8d4773e8da00f9cf3875c0ea0a1f1fde73d74d84cf37334cf3b45e5",
+      "file_count": 15,
+      "maximum_target_path_characters": 109
+    },
+    {
+      "distribution": "truststore-0.10.4.dist-info",
+      "record_sha256": "d9187ca62edb07fdb496c867242e2f899ce31b628b4756949646fa75e8af5c72",
+      "file_count": 18,
+      "maximum_target_path_characters": 103
+    },
+    {
+      "distribution": "twisted-26.4.0.dist-info",
+      "record_sha256": "236238c9690a54cdc147005cbc098920c36816a54596bcc3415f74b12100e49a",
+      "file_count": 1764,
+      "maximum_target_path_characters": 125
+    },
+    {
+      "distribution": "typer-0.27.3.dist-info",
+      "record_sha256": "fb62b8f4dec7a7c32aa3f1135b837b7feb4f62b0fdddf62483ca4f3777f83151",
+      "file_count": 75,
+      "maximum_target_path_characters": 107
+    },
+    {
+      "distribution": "typing_extensions-4.16.0.dist-info",
+      "record_sha256": "78f74ed46a377d6e1debed78b3e994ff9cfe02a529d393d7c8ab80989bd25079",
+      "file_count": 7,
+      "maximum_target_path_characters": 101
+    },
+    {
+      "distribution": "typing_inspection-0.4.4.dist-info",
+      "record_sha256": "fdadfc73202e3db8d9a4683df0cb4b75e828e634b84374b7e99b899bc08652ab",
+      "file_count": 13,
+      "maximum_target_path_characters": 110
+    },
+    {
+      "distribution": "tzdata-2026.5.dist-info",
+      "record_sha256": "7c4ec906db5a10831552b59b08c675e374bf16d129fd9ba626e61e3802400906",
+      "file_count": 656,
+      "maximum_target_path_characters": 123
+    },
+    {
+      "distribution": "tzlocal-5.4.4.dist-info",
+      "record_sha256": "904330241e44efd112ff9ff5396e4387474fd5d98eb25223e6afd0421040bcd9",
+      "file_count": 17,
+      "maximum_target_path_characters": 96
+    },
+    {
+      "distribution": "urllib3-2.8.0.dist-info",
+      "record_sha256": "5d88c4832d0406a7fd3c000f924b00394c2d7f694b332bc441370d1a7f5fe392",
+      "file_count": 79,
+      "maximum_target_path_characters": 115
+    },
+    {
+      "distribution": "uvicorn-0.54.0.dist-info",
+      "record_sha256": "608c819c5008a5033f2788f11bf3879e8291fc3e35546ad0c190713a6ec865c2",
+      "file_count": 98,
+      "maximum_target_path_characters": 129
+    },
+    {
+      "distribution": "volcengine-1.0.228.dist-info",
+      "record_sha256": "45c0888a4d188102a98f5b2c67d7f64544c74fe5955861de99f731c01eb0accb",
+      "file_count": 1762,
+      "maximum_target_path_characters": 167
+    },
+    {
+      "distribution": "volcengine_python_sdk-5.0.51.dist-info",
+      "record_sha256": "22db321c955a0d448315de44e268d884aac8b1752edce6ce1c3273a67df42aa8",
+      "file_count": 52927,
+      "maximum_target_path_characters": 197
+    },
+    {
+      "distribution": "w3lib-2.5.0.dist-info",
+      "record_sha256": "953a5595e4a518881d4b0b3dc6134ea16a5240fb21c3d1db30409c437f6ccc47",
+      "file_count": 26,
+      "maximum_target_path_characters": 92
+    },
+    {
+      "distribution": "websockets-15.0.1.dist-info",
+      "record_sha256": "f6a91134e67f0d04d34efd37a8be3398d439e9ddd731a9a86cf349d3fe251747",
+      "file_count": 106,
+      "maximum_target_path_characters": 118
+    },
+    {
+      "distribution": "win32_setctime-1.2.0.dist-info",
+      "record_sha256": "2e6293799c2e53781bbfa4a31637ebe8181cff862cee28232b112307d63834f8",
+      "file_count": 11,
+      "maximum_target_path_characters": 102
+    },
+    {
+      "distribution": "wrapt-2.5.0.dist-info",
+      "record_sha256": "a7ca0e801615c5d46aaf0549b6c7f4cf3b9cc8772739b8f53859632f8db989dd",
+      "file_count": 37,
+      "maximum_target_path_characters": 99
+    },
+    {
+      "distribution": "xxhash-4.0.1.dist-info",
+      "record_sha256": "2949649932b334219e53428dc7f11d24c05458d1f7f8d34c0f7046e5ed75f65e",
+      "file_count": 13,
+      "maximum_target_path_characters": 93
+    },
+    {
+      "distribution": "yarl-1.25.1.dist-info",
+      "record_sha256": "658c4718c866dc6f7e1bca23ded040a808cade1b92f84338d89d9f723e058c1b",
+      "file_count": 26,
+      "maximum_target_path_characters": 94
+    },
+    {
+      "distribution": "zipp-4.1.1.dist-info",
+      "record_sha256": "cf529beea901032b4452866ee20e6077ad702769cb0c13fd9c504d84c3e636e5",
+      "file_count": 20,
+      "maximum_target_path_characters": 98
+    },
+    {
+      "distribution": "zope_interface-8.6.dist-info",
+      "record_sha256": "f3aecb62a9d39abf0fbe25e39a95f99041659ab100fdeb41284bcb1bf192545f",
+      "file_count": 108,
+      "maximum_target_path_characters": 128
+    }
+  ],
+  "boundary": "Read-only installed distribution RECORD upper-bound census, including compiled entries; not proof of installation."
+}

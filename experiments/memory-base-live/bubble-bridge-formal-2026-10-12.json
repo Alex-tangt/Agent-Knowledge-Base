@@ -1,0 +1,34 @@
+{
+  "date": "2026-10-12T07:56:57.223Z",
+  "bubble_directory": "D:\\python_work\\work2026-10\\Agent-bubble",
+  "source_hashes": {
+    "server/memory-base.ts": "926ccfa38c19fd8fa887e8fc8476c65146faed4a7a10c93c89e5971052a642d8",
+    "server/memory-tools.ts": "339a852a374af74e471502afa083c48ca6787811bd57cdded03f08bd0b4ee686",
+    "server/agent.ts": "05a04daa658689a6ffbd5faabcd13a5d91fb2df84fa132cd50de53cb642acb93",
+    "server/tests/memory-base.test.ts": "6dc351fd6a015d8a98011e4f83b2f7c791de112a3652f2c738871999e8017256"
+  },
+  "checks": {
+    "real_four_closed_tools_schema": true,
+    "project_lexical_search": true,
+    "real_list_two_pages": true,
+    "expected_revision_matches_local_file": true,
+    "stale_revision_actionable_in_pi": true,
+    "stale_cursor_actionable_in_pi": true,
+    "no_add_invoked": true,
+    "legacy_capture_read_hash": true
+  },
+  "boundary": "Real Bubble pi SDK and formal gateway, read-only project/capture calls. Local synthetic SSE model; no paid model, new summary, capture write, source change or service restart.",
+  "project_revision": "f1da1afeacfc7edd359307ccbcd9c146caf6811fbdbc6cc57b344a6103c9660c",
+  "tool_calls": [
+    "memory_search",
+    "memory_list",
+    "memory_list",
+    "memory_get",
+    "memory_get",
+    "memory_list"
+  ],
+  "model_requests": 7,
+  "capture_uri": "viking://resources/captures/4b24c835877cfaa5666c2ba322431a663aab3fdd17c3196ac99274e94fcf591d/content.md",
+  "capture_revision": "a773d1d44eb19f2b3e061417b37aabfc728a1878bf50f0918eb994e1746b8095",
+  "overall": "PASS"
+}

@@ -1,0 +1,23 @@
+{
+  "mode": "transient",
+  "instance": "3e63df51-0bfe-474d-ab96-c9a53eea6b03",
+  "launcherPid": 37376,
+  "launcherExit": 1,
+  "childPid": 34916,
+  "childStillAlive": false,
+  "backendHealthy": false,
+  "fallbackCleanup": false,
+  "state": {
+    "pid": 37376,
+    "instance": "3e63df51-0bfe-474d-ab96-c9a53eea6b03",
+    "phase": "starting",
+    "childPid": 34916,
+    "port": 53473,
+    "startedAt": "2026-10-12T13:11:51.753Z"
+  },
+  "lock": {
+    "pid": 37376,
+    "instance": "3e63df51-0bfe-474d-ab96-c9a53eea6b03"
+  },
+  "boundary": "Actual candidate launcher/backend, explicit rename fault injection; no paid model"
+}

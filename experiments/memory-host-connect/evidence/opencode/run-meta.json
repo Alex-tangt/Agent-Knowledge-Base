@@ -1,0 +1,25 @@
+{
+    "host":  "opencode",
+    "driver":  "agent-driven: the local LLM decides which MCP tools to call",
+    "opencode_version":  "1.18.35",
+    "isolated_home":  "C:\\Users\\Tan\\.openviking-mvp-host\\hosts\\opencode-home",
+    "isolated_config":  "C:\\Users\\Tan\\.openviking-mvp-host\\hosts\\opencode-home\\.config\\opencode\\opencode.json",
+    "isolated_env":  {
+                         "USERPROFILE":  "C:\\Users\\Tan\\.openviking-mvp-host\\hosts\\opencode-home",
+                         "HOME":  "C:\\Users\\Tan\\.openviking-mvp-host\\hosts\\opencode-home",
+                         "XDG_CONFIG_HOME":  "C:\\Users\\Tan\\.openviking-mvp-host\\hosts\\opencode-home\\.config",
+                         "NO_PROXY":  "localhost,127.0.0.1,::1,volces.com,volcengine.com,::1"
+                     },
+    "model":  "ollama/qwen2.5:3b-instruct-q4_k_m",
+    "authn":  {
+                  "mode":  "unknown until the task-1 instance states it (localhost, no key assumed -- this is NOT proof of authorization)",
+                  "identity_headers":  [
+                                           "X-OpenViking-Account",
+                                           "X-OpenViking-User"
+                                       ],
+                  "credential_headers":  [
+
+                                         ]
+              },
+    "in_scope_only":  "real opencode registration and real DeepTutor config are read-only to this run; see verify_isolation.ps1"
+}

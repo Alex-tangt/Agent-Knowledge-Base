@@ -1,0 +1,51 @@
+usage: memory-base [-h] [--home HOME] [--runtime-python RUNTIME_PYTHON]
+                   [--fresh-runtime] [--wheel WHEEL] [--model MODEL]
+                   [--profile {agent-bubble,codex,dsh,opencode,reader}]
+                   [--components COMPONENTS] [--lines LINES]
+                   [--timeout TIMEOUT] [--destination DESTINATION]
+                   [--backup BACKUP] [--name NAME] [--root ROOT]
+                   [--include INCLUDE] [--exclude EXCLUDE] [--replace]
+                   [--read-scope READ_SCOPE] [--write-scope WRITE_SCOPE]
+                   [--deny-read] [--deny-write]
+                   [--mode {enable,disable,status}]
+                   {install,start,stop,restart,status,logs,host-token,backup,restore,source-add,source-list,source-remove,access-set,autostart}
+
+positional arguments:
+  {install,start,stop,restart,status,logs,host-token,backup,restore,source-add,source-list,source-remove,access-set,autostart}
+
+options:
+  -h, --help            show this help message and exit
+  --home HOME
+  --runtime-python RUNTIME_PYTHON
+                        Explicit existing runtime; versions are checked
+                        against pins
+  --fresh-runtime       Select the dedicated <home>/runtime venv instead of an
+                        adopted runtime
+  --wheel WHEEL         Local product wheel for installing memory-base into
+                        the target runtime
+  --model MODEL
+  --profile {agent-bubble,codex,dsh,opencode,reader}
+                        Host-token defaults to agent-bubble; access-set
+                        requires a profile
+  --components COMPONENTS
+  --lines LINES
+  --timeout TIMEOUT
+  --destination DESTINATION
+                        New backup directory outside deployment and source
+                        roots
+  --backup BACKUP       Verified cold backup to restore into this installed
+                        empty deployment
+  --name NAME           Registered project name
+  --root ROOT           Local read-only project root
+  --include INCLUDE     Relative Markdown glob; repeat to add patterns
+  --exclude EXCLUDE     Relative exclusion glob; repeat to add patterns
+  --replace             Explicitly replace an existing source registration
+  --read-scope READ_SCOPE
+                        Replace profile read scopes; repeat; root grants all
+  --write-scope WRITE_SCOPE
+                        Replace profile write scopes; repeat
+  --deny-read           Explicitly deny every read scope for this profile
+  --deny-write          Explicitly deny every write scope for this profile
+  --mode {enable,disable,status}
+                        Automatic logon startup registration; status is read-
+                        only

@@ -1,0 +1,13 @@
+{
+  "mode": "persistent",
+  "instance": "a337dee1-6fa9-4583-b352-907f1bf83fde",
+  "launcherPid": 39028,
+  "launcherExit": 1,
+  "childPid": 36000,
+  "childStillAlive": false,
+  "backendHealthy": false,
+  "fallbackCleanup": false,
+  "state": null,
+  "lock": null,
+  "boundary": "Actual candidate launcher/backend, explicit rename fault injection; no paid model"
+}

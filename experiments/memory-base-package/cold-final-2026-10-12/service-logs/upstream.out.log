@@ -1,0 +1,3 @@
+2026-10-12 17:24:16,107 - openviking.server.auth.plugins.ldap - WARNING - LDAP library not available. LDAP authentication will not work. Install with: uv pip install python-ldap
+OpenViking HTTP Server is running on 127.0.0.1:62925
+2026-10-12 17:24:37,352 - openviking.models.embedder.openai_embedders - WARNING - OpenAI async embedding slow call provider=openai model=bge-small-zh-v1.5-f16 wait_ms=0.00 duration_ms=13203.00

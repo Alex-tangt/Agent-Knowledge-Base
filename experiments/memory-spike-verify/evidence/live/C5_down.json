@@ -1,0 +1,37 @@
+{
+  "down": {
+    "find_error": {
+      "exception": "ConnectError",
+      "message": "All connection attempts failed",
+      "module": "httpx"
+    },
+    "find_raised": true,
+    "read_error": {
+      "exception": "ConnectError",
+      "message": "All connection attempts failed",
+      "module": "httpx"
+    },
+    "read_raised": true,
+    "stop": {
+      "expected_launcher_pid": 34252,
+      "killed_pids": [
+        15268,
+        34252
+      ],
+      "ownership": {
+        "cmdline": "\"D:\\Users\\Tan\\AppData\\Local\\Programs\\Python\\Python312\\python.exe\" \"D:\\python_work\\work2026-4\\Agent-Knowledge-Base\\venv-ov\\Scripts\\openviking-server.exe\" --config C:\\Users\\Tan\\.openviking-mvp-verify\\ov.conf --host 127.0.0.1 --port 8783",
+        "owns": true,
+        "pid": 15268
+      },
+      "port_owner_pid": 15268,
+      "recorded_listener_pid": 15268,
+      "stopped": true
+    }
+  },
+  "missing": {
+    "exception": "NotFoundError",
+    "message": "File not found: viking://user/default/verify/20261010T153910-e48bc7/definitely-missing-20261010T153910-e48bc7.md",
+    "module": "openviking_sdk.errors"
+  },
+  "online_read_ok": true
+}

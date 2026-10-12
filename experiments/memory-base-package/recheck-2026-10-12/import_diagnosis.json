@@ -1,0 +1,1545 @@
+{
+  "asset": "C:\\Users\\Tan\\.mb86\\r4\\diag-20261012T010718Z",
+  "purpose": "Import-only diagnosis after sealed fresh installation; original native FAIL unchanged",
+  "probe_limit_seconds": 25,
+  "all_children_dont_write_bytecode": true,
+  "commands": [
+    {
+      "command": [
+        "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Scripts\\python.exe",
+        "-B",
+        "C:\\Users\\Tan\\.codex\\worktrees\\memory-bootstrap-fix\\Agent-Knowledge-Base\\experiments\\memory-base-package\\recheck-2026-10-12\\diagnose_import.py",
+        "--identity"
+      ],
+      "stage": "formal-identity",
+      "log": "C:\\Users\\Tan\\.mb86\\r4\\diag-20261012T010718Z\\formal-identity.log",
+      "cwd": "C:\\Users\\Tan\\AppData\\Local\\Temp",
+      "pid": 12964,
+      "exit_code": 0,
+      "wall_seconds": 17.020896099998936
+    },
+    {
+      "command": [
+        "C:\\Users\\Tan\\.mb86\\r4\\d\\runtime\\Scripts\\python.exe",
+        "-B",
+        "C:\\Users\\Tan\\.codex\\worktrees\\memory-bootstrap-fix\\Agent-Knowledge-Base\\experiments\\memory-base-package\\recheck-2026-10-12\\diagnose_import.py",
+        "--identity"
+      ],
+      "stage": "default_after_failed_start-identity",
+      "log": "C:\\Users\\Tan\\.mb86\\r4\\diag-20261012T010718Z\\default_after_failed_start-identity.log",
+      "cwd": "C:\\Users\\Tan\\AppData\\Local\\Temp",
+      "pid": 19280,
+      "exit_code": 0,
+      "wall_seconds": 7.8350700000009965
+    },
+    {
+      "command": [
+        "C:\\Users\\Tan\\.mb86\\r4\\f\\runtime\\Scripts\\python.exe",
+        "-B",
+        "C:\\Users\\Tan\\.codex\\worktrees\\memory-bootstrap-fix\\Agent-Knowledge-Base\\experiments\\memory-base-package\\recheck-2026-10-12\\diagnose_import.py",
+        "--identity"
+      ],
+      "stage": "fresh_never_started-identity",
+      "log": "C:\\Users\\Tan\\.mb86\\r4\\diag-20261012T010718Z\\fresh_never_started-identity.log",
+      "cwd": "C:\\Users\\Tan\\AppData\\Local\\Temp",
+      "pid": 7160,
+      "exit_code": 0,
+      "wall_seconds": 7.867277000001195
+    },
+    {
+      "command": [
+        "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Scripts\\python.exe",
+        "-B",
+        "-u",
+        "-X",
+        "importtime",
+        "-c",
+        "import faulthandler,importlib,json,sys,time\nfaulthandler.dump_traceback_later(25,exit=True)\nstarted=time.perf_counter()\nmodule=importlib.import_module(sys.argv[1])\nfaulthandler.cancel_dump_traceback_later()\nprint('[DEBUG-kb86-import] '+json.dumps({'module':sys.argv[1],'seconds':time.perf_counter()-started,\n 'origin':module.__file__,'loaded_modules':len(sys.modules),\n 'lark_modules':sum(n=='lark_oapi' or n.startswith('lark_oapi.') for n in sys.modules)},sort_keys=True))\n",
+        "lark_oapi"
+      ],
+      "stage": "formal-import",
+      "log": "C:\\Users\\Tan\\.mb86\\r4\\diag-20261012T010718Z\\formal-import.log",
+      "cwd": "C:\\Users\\Tan\\AppData\\Local\\Temp",
+      "pid": 9156,
+      "exit_code": 3221225477,
+      "wall_seconds": 41.21994420000192
+    },
+    {
+      "command": [
+        "C:\\Users\\Tan\\.mb86\\r4\\d\\runtime\\Scripts\\python.exe",
+        "-B",
+        "-u",
+        "-X",
+        "importtime",
+        "-c",
+        "import faulthandler,importlib,json,sys,time\nfaulthandler.dump_traceback_later(25,exit=True)\nstarted=time.perf_counter()\nmodule=importlib.import_module(sys.argv[1])\nfaulthandler.cancel_dump_traceback_later()\nprint('[DEBUG-kb86-import] '+json.dumps({'module':sys.argv[1],'seconds':time.perf_counter()-started,\n 'origin':module.__file__,'loaded_modules':len(sys.modules),\n 'lark_modules':sum(n=='lark_oapi' or n.startswith('lark_oapi.') for n in sys.modules)},sort_keys=True))\n",
+        "lark_oapi"
+      ],
+      "stage": "default_after_failed_start-import",
+      "log": "C:\\Users\\Tan\\.mb86\\r4\\diag-20261012T010718Z\\default_after_failed_start-import.log",
+      "cwd": "C:\\Users\\Tan\\AppData\\Local\\Temp",
+      "pid": 14476,
+      "exit_code": 3221225477,
+      "wall_seconds": 37.99522960000104
+    },
+    {
+      "command": [
+        "C:\\Users\\Tan\\.mb86\\r4\\f\\runtime\\Scripts\\python.exe",
+        "-B",
+        "-u",
+        "-X",
+        "importtime",
+        "-c",
+        "import faulthandler,importlib,json,sys,time\nfaulthandler.dump_traceback_later(25,exit=True)\nstarted=time.perf_counter()\nmodule=importlib.import_module(sys.argv[1])\nfaulthandler.cancel_dump_traceback_later()\nprint('[DEBUG-kb86-import] '+json.dumps({'module':sys.argv[1],'seconds':time.perf_counter()-started,\n 'origin':module.__file__,'loaded_modules':len(sys.modules),\n 'lark_modules':sum(n=='lark_oapi' or n.startswith('lark_oapi.') for n in sys.modules)},sort_keys=True))\n",
+        "lark_oapi"
+      ],
+      "stage": "fresh_never_started-import",
+      "log": "C:\\Users\\Tan\\.mb86\\r4\\diag-20261012T010718Z\\fresh_never_started-import.log",
+      "cwd": "C:\\Users\\Tan\\AppData\\Local\\Temp",
+      "pid": 28612,
+      "exit_code": 1,
+      "wall_seconds": 25.370229399999516
+    },
+    {
+      "command": [
+        "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Scripts\\python.exe",
+        "-B",
+        "-u",
+        "-X",
+        "importtime",
+        "-X",
+        "pycache_prefix=C:\\Users\\Tan\\.mb86\\r4\\diag-20261012T010718Z\\nonexistent-pycache",
+        "-c",
+        "import faulthandler,importlib,json,sys,time\nfaulthandler.dump_traceback_later(25,exit=True)\nstarted=time.perf_counter()\nmodule=importlib.import_module(sys.argv[1])\nfaulthandler.cancel_dump_traceback_later()\nprint('[DEBUG-kb86-import] '+json.dumps({'module':sys.argv[1],'seconds':time.perf_counter()-started,\n 'origin':module.__file__,'loaded_modules':len(sys.modules),\n 'lark_modules':sum(n=='lark_oapi' or n.startswith('lark_oapi.') for n in sys.modules)},sort_keys=True))\n",
+        "lark_oapi"
+      ],
+      "stage": "formal_force_source-import",
+      "log": "C:\\Users\\Tan\\.mb86\\r4\\diag-20261012T010718Z\\formal_force_source-import.log",
+      "cwd": "C:\\Users\\Tan\\AppData\\Local\\Temp",
+      "pid": 30668,
+      "exit_code": 1,
+      "wall_seconds": 26.259624900001654
+    },
+    {
+      "command": [
+        "C:\\Users\\Tan\\.mb86\\r4\\d\\runtime\\Scripts\\python.exe",
+        "-B",
+        "-u",
+        "-X",
+        "importtime",
+        "-c",
+        "import faulthandler,importlib,json,sys,time\nfaulthandler.dump_traceback_later(25,exit=True)\nstarted=time.perf_counter()\nmodule=importlib.import_module(sys.argv[1])\nfaulthandler.cancel_dump_traceback_later()\nprint('[DEBUG-kb86-import] '+json.dumps({'module':sys.argv[1],'seconds':time.perf_counter()-started,\n 'origin':module.__file__,'loaded_modules':len(sys.modules),\n 'lark_modules':sum(n=='lark_oapi' or n.startswith('lark_oapi.') for n in sys.modules)},sort_keys=True))\n",
+        "openviking.parse.accessors.feishu_accessor"
+      ],
+      "stage": "default_feishu_pure_import-import",
+      "log": "C:\\Users\\Tan\\.mb86\\r4\\diag-20261012T010718Z\\default_feishu_pure_import-import.log",
+      "cwd": "C:\\Users\\Tan\\AppData\\Local\\Temp",
+      "pid": 32872,
+      "exit_code": 1,
+      "wall_seconds": 25.420416700002534
+    }
+  ],
+  "identities": {
+    "formal": {
+      "executable": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Scripts\\python.exe",
+      "python": "3.12.14 (main, Aug 25 2026, 14:01:42) [MSC v.1944 64 bit (AMD64)]",
+      "packages": {
+        "lark-oapi": {
+          "version": "1.7.3",
+          "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\lark_oapi",
+          "actual_file_counts": {
+            "py": 10727,
+            "pyc": 10727,
+            "py_bytes": 20044209,
+            "pyc_bytes": 30966567
+          },
+          "record_python_files": 10727,
+          "source_record_sha256": "e7ae56513b5a273056c8ef6cd8db0c16d56dd9ff0d3ed00370606a5fea33eb0a"
+        },
+        "volcengine-python-sdk": {
+          "version": "5.0.51",
+          "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\volcenginesdk",
+          "actual_file_counts": {
+            "py": 0,
+            "pyc": 0,
+            "py_bytes": 0,
+            "pyc_bytes": 0
+          },
+          "record_python_files": 0,
+          "source_record_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "openviking": {
+          "version": "0.4.23",
+          "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\openviking",
+          "actual_file_counts": {
+            "py": 705,
+            "pyc": 602,
+            "py_bytes": 8251560,
+            "pyc_bytes": 8883572
+          },
+          "record_python_files": 705,
+          "source_record_sha256": "48135c19fd7b2a6e47f4700f5c0751c19f04e685d3583a7a9db7abe5d91bb2e6"
+        },
+        "fastapi": {
+          "version": "0.143.0",
+          "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\fastapi",
+          "actual_file_counts": {
+            "py": 52,
+            "pyc": 52,
+            "py_bytes": 809799,
+            "pyc_bytes": 631917
+          },
+          "record_python_files": 52,
+          "source_record_sha256": "ca5601ccae24797791121b8fee0da1ced3d4cc8eb2672733be60b906ab91118c"
+        },
+        "pydantic": {
+          "version": "2.14.0",
+          "root": "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Lib\\site-packages\\pydantic",
+          "actual_file_counts": {
+            "py": 105,
+            "pyc": 105,
+            "py_bytes": 1817992,
+            "pyc_bytes": 1926287
+          },
+          "record_python_files": 105,
+          "source_record_sha256": "d77afb7836ca964d1b3e593cb428a23ce12464f8cc31cdbb321dd91aad1f371c"
+        }
+      },
+      "versions": {
+        "agent-memory-base": "0.1.0",
+        "aiohappyeyeballs": "2.7.1",
+        "aiohttp": "3.14.4",
+        "aiosignal": "1.4.0",
+        "annotated-doc": "0.0.5",
+        "annotated-types": "0.8.0",
+        "anyio": "4.15.1",
+        "apscheduler": "3.11.3",
+        "argon2-cffi": "25.1.0",
+        "argon2-cffi-bindings": "26.1.0",
+        "attrs": "26.1.0",
+        "automat": "25.4.16",
+        "babel": "2.18.0",
+        "backports-zstd": "1.7.0",
+        "beautifulsoup4": "4.15.0",
+        "brotli": "1.2.0",
+        "certifi": "2026.7.22",
+        "cffi": "2.1.1",
+        "charset-normalizer": "3.5.2",
+        "click": "8.5.0",
+        "colorama": "0.4.6",
+        "constantly": "23.10.4",
+        "courlan": "1.4.0",
+        "cryptography": "50.0.2",
+        "cssselect": "1.5.0",
+        "dateparser": "1.4.3",
+        "decorator": "5.3.1",
+        "defusedxml": "0.7.1",
+        "diskcache": "5.6.3",
+        "distro": "1.9.0",
+        "fastapi": "0.143.0",
+        "fastuuid": "0.14.0",
+        "feedparser": "6.0.14",
+        "feedparser-sgmllib": "2.1.0",
+        "filelock": "4.0.12",
+        "firecrawl-anydoc": "0.2.4",
+        "frozenlist": "1.8.0",
+        "fsspec": "2026.9.0",
+        "google": "3.0.0",
+        "googleapis-common-protos": "1.75.5",
+        "grep-ast": "0.9.0",
+        "grpcio": "1.84.0",
+        "h11": "0.16.0",
+        "hf-xet": "1.7.0",
+        "htmldate": "1.11.0",
+        "httpcore": "1.0.9",
+        "httpcore2": "2.13.1",
+        "httpx": "0.28.1",
+        "httpx2": "2.13.1",
+        "httpx-sse": "0.4.3",
+        "huggingface-hub": "2.2.0",
+        "hyperlink": "21.0.0",
+        "idna": "3.20",
+        "importlib-metadata": "8.9.0",
+        "incremental": "24.11.0",
+        "itemadapter": "0.13.1",
+        "itemloaders": "1.5.0",
+        "jinja2": "3.1.6",
+        "jiter": "0.17.0",
+        "jmespath": "1.1.0",
+        "jsonschema": "4.26.0",
+        "jsonschema-specifications": "2025.9.1",
+        "json-repair": "0.64.0",
+        "justext": "3.0.2",
+        "lark-oapi": "1.7.3",
+        "litellm": "1.91.1",
+        "llama-cpp-python": "0.3.36",
+        "loguru": "0.7.3",
+        "lxml": "6.1.3",
+        "lxml-html-clean": "0.4.5",
+        "markdown-it-py": "4.2.0",
+        "markupsafe": "3.0.4",
+        "mcp": "1.30.0",
+        "mdurl": "0.1.2",
+        "multidict": "6.9.1",
+        "numpy": "2.5.3",
+        "openai": "2.54.0",
+        "opentelemetry-api": "1.45.1",
+        "opentelemetry-exporter-http-transport": "0.66b1",
+        "opentelemetry-exporter-otlp-common": "0.66b1",
+        "opentelemetry-exporter-otlp-proto-common": "1.45.1",
+        "opentelemetry-exporter-otlp-proto-grpc": "1.45.1",
+        "opentelemetry-exporter-otlp-proto-http": "1.45.1",
+        "opentelemetry-instrumentation": "0.66b1",
+        "opentelemetry-instrumentation-asyncio": "0.66b1",
+        "opentelemetry-proto": "1.45.1",
+        "opentelemetry-sdk": "1.45.1",
+        "opentelemetry-semantic-conventions": "0.66b1",
+        "openviking": "0.4.23",
+        "openviking-sdk": "0.1.13",
+        "packaging": "26.3",
+        "parsel": "1.12.1",
+        "pathspec": "1.1.1",
+        "pdfminer-six": "20260107",
+        "pdfplumber": "0.11.10",
+        "pillow": "12.3.0",
+        "pip": "25.0.1",
+        "platformdirs": "4.12.4",
+        "propcache": "0.5.4",
+        "protego": "0.7.0",
+        "protobuf": "7.36.2",
+        "py": "1.11.0",
+        "pycparser": "3.11",
+        "pycryptodome": "3.24.0",
+        "pydantic": "2.14.0",
+        "pydantic-core": "2.50.0",
+        "pydantic-settings": "2.15.0",
+        "pydispatcher": "2.0.7",
+        "pygments": "2.21.0",
+        "pyjwt": "2.15.1",
+        "pyopenssl": "26.4.0",
+        "pypdfium2": "5.14.0",
+        "python-dateutil": "2.9.0.post0",
+        "python-dotenv": "1.2.4",
+        "python-multipart": "0.0.32",
+        "pytz": "2026.5",
+        "pywin32": "312",
+        "pyyaml": "6.0.3",
+        "queuelib": "1.10.0",
+        "rapidfuzz": "3.14.6",
+        "referencing": "0.37.0",
+        "regex": "2026.9.29",
+        "requests": "2.34.2",
+        "requests-file": "3.0.1",
+        "requests-toolbelt": "1.0.0",
+        "retry": "0.9.2",
+        "rich": "15.0.0",
+        "rpds-py": "2026.9.1",
+        "scrapy": "2.19.0",
+        "service-identity": "26.1.0",
+        "shellingham": "1.5.4",
+        "six": "1.17.0",
+        "sniffio": "1.3.1",
+        "soupsieve": "2.10",
+        "sse-starlette": "3.5.0",
+        "starlette": "1.7.0",
+        "tabulate": "0.10.0",
+        "tenacity": "9.2.1",
+        "tiktoken": "0.14.0",
+        "tld": "0.13.2",
+        "tldextract": "5.4.0",
+        "tokenizers": "0.23.3",
+        "tqdm": "4.70.1",
+        "trafilatura": "2.3.1",
+        "tree-sitter": "0.25.2",
+        "tree-sitter-cpp": "0.23.4",
+        "tree-sitter-c-sharp": "0.23.1",
+        "tree-sitter-go": "0.25.0",
+        "tree-sitter-java": "0.23.5",
+        "tree-sitter-javascript": "0.25.0",
+        "tree-sitter-language-pack": "1.13.3",
+        "tree-sitter-lua": "0.5.0",
+        "tree-sitter-php": "0.24.1",
+        "tree-sitter-python": "0.25.0",
+        "tree-sitter-rust": "0.24.0",
+        "tree-sitter-typescript": "0.23.2",
+        "truststore": "0.10.4",
+        "twisted": "26.4.0",
+        "typer": "0.27.3",
+        "typing-extensions": "4.16.0",
+        "typing-inspection": "0.4.4",
+        "tzdata": "2026.5",
+        "tzlocal": "5.4.4",
+        "urllib3": "2.8.0",
+        "uvicorn": "0.54.0",
+        "volcengine": "1.0.228",
+        "volcengine-python-sdk": "5.0.51",
+        "w3lib": "2.5.0",
+        "websockets": "15.0.1",
+        "win32-setctime": "1.2.0",
+        "wrapt": "2.5.0",
+        "xxhash": "4.0.1",
+        "yarl": "1.25.1",
+        "zipp": "4.1.1",
+        "zope-interface": "8.6"
+      }
+    },
+    "default_after_failed_start": {
+      "executable": "C:\\Users\\Tan\\.mb86\\r4\\d\\runtime\\Scripts\\python.exe",
+      "python": "3.12.14 (main, Aug 25 2026, 14:01:42) [MSC v.1944 64 bit (AMD64)]",
+      "packages": {
+        "lark-oapi": {
+          "version": "1.7.3",
+          "root": "C:\\Users\\Tan\\.mb86\\r4\\d\\runtime\\Lib\\site-packages\\lark_oapi",
+          "actual_file_counts": {
+            "py": 10727,
+            "pyc": 463,
+            "py_bytes": 20044209,
+            "pyc_bytes": 1232374
+          },
+          "record_python_files": 10727,
+          "source_record_sha256": "e7ae56513b5a273056c8ef6cd8db0c16d56dd9ff0d3ed00370606a5fea33eb0a"
+        },
+        "volcengine-python-sdk": {
+          "version": "5.0.51",
+          "root": "C:\\Users\\Tan\\.mb86\\r4\\d\\runtime\\Lib\\site-packages\\volcenginesdk",
+          "actual_file_counts": {
+            "py": 0,
+            "pyc": 0,
+            "py_bytes": 0,
+            "pyc_bytes": 0
+          },
+          "record_python_files": 0,
+          "source_record_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "openviking": {
+          "version": "0.4.23",
+          "root": "C:\\Users\\Tan\\.mb86\\r4\\d\\runtime\\Lib\\site-packages\\openviking",
+          "actual_file_counts": {
+            "py": 705,
+            "pyc": 90,
+            "py_bytes": 8251560,
+            "pyc_bytes": 1287489
+          },
+          "record_python_files": 705,
+          "source_record_sha256": "48135c19fd7b2a6e47f4700f5c0751c19f04e685d3583a7a9db7abe5d91bb2e6"
+        },
+        "fastapi": {
+          "version": "0.143.0",
+          "root": "C:\\Users\\Tan\\.mb86\\r4\\d\\runtime\\Lib\\site-packages\\fastapi",
+          "actual_file_counts": {
+            "py": 52,
+            "pyc": 42,
+            "py_bytes": 809799,
+            "pyc_bytes": 617470
+          },
+          "record_python_files": 52,
+          "source_record_sha256": "ca5601ccae24797791121b8fee0da1ced3d4cc8eb2672733be60b906ab91118c"
+        },
+        "pydantic": {
+          "version": "2.14.0",
+          "root": "C:\\Users\\Tan\\.mb86\\r4\\d\\runtime\\Lib\\site-packages\\pydantic",
+          "actual_file_counts": {
+            "py": 105,
+            "pyc": 45,
+            "py_bytes": 1817992,
+            "pyc_bytes": 1125034
+          },
+          "record_python_files": 105,
+          "source_record_sha256": "d77afb7836ca964d1b3e593cb428a23ce12464f8cc31cdbb321dd91aad1f371c"
+        }
+      },
+      "versions": {
+        "agent-memory-base": "0.1.0",
+        "aiohappyeyeballs": "2.7.1",
+        "aiohttp": "3.14.4",
+        "aiosignal": "1.4.0",
+        "annotated-doc": "0.0.5",
+        "annotated-types": "0.8.0",
+        "anyio": "4.15.1",
+        "apscheduler": "3.11.3",
+        "argon2-cffi": "25.1.0",
+        "argon2-cffi-bindings": "26.1.0",
+        "attrs": "26.1.0",
+        "automat": "25.4.16",
+        "babel": "2.18.0",
+        "backports-zstd": "1.7.0",
+        "beautifulsoup4": "4.15.0",
+        "brotli": "1.2.0",
+        "certifi": "2026.7.22",
+        "cffi": "2.1.1",
+        "charset-normalizer": "3.5.2",
+        "click": "8.5.0",
+        "colorama": "0.4.6",
+        "constantly": "23.10.4",
+        "courlan": "1.4.0",
+        "cryptography": "50.0.2",
+        "cssselect": "1.5.0",
+        "dateparser": "1.4.3",
+        "decorator": "5.3.1",
+        "defusedxml": "0.7.1",
+        "diskcache": "5.6.3",
+        "distro": "1.9.0",
+        "fastapi": "0.143.0",
+        "fastuuid": "0.14.0",
+        "feedparser": "6.0.14",
+        "feedparser-sgmllib": "2.1.0",
+        "filelock": "4.0.12",
+        "firecrawl-anydoc": "0.2.4",
+        "frozenlist": "1.8.0",
+        "fsspec": "2026.9.0",
+        "google": "3.0.0",
+        "googleapis-common-protos": "1.75.5",
+        "grep-ast": "0.9.0",
+        "grpcio": "1.84.0",
+        "h11": "0.16.0",
+        "hf-xet": "1.7.0",
+        "htmldate": "1.11.0",
+        "httpcore": "1.0.9",
+        "httpcore2": "2.13.1",
+        "httpx": "0.28.1",
+        "httpx2": "2.13.1",
+        "httpx-sse": "0.4.3",
+        "huggingface-hub": "2.2.0",
+        "hyperlink": "21.0.0",
+        "idna": "3.20",
+        "importlib-metadata": "8.9.0",
+        "incremental": "24.11.0",
+        "itemadapter": "0.13.1",
+        "itemloaders": "1.5.0",
+        "jinja2": "3.1.6",
+        "jiter": "0.17.0",
+        "jmespath": "1.1.0",
+        "jsonschema": "4.26.0",
+        "jsonschema-specifications": "2025.9.1",
+        "json-repair": "0.64.0",
+        "justext": "3.0.2",
+        "lark-oapi": "1.7.3",
+        "litellm": "1.91.1",
+        "llama-cpp-python": "0.3.36",
+        "loguru": "0.7.3",
+        "lxml": "6.1.3",
+        "lxml-html-clean": "0.4.5",
+        "markdown-it-py": "4.2.0",
+        "markupsafe": "3.0.4",
+        "mcp": "1.30.0",
+        "mdurl": "0.1.2",
+        "multidict": "6.9.1",
+        "numpy": "2.5.3",
+        "openai": "2.54.0",
+        "opentelemetry-api": "1.45.1",
+        "opentelemetry-exporter-http-transport": "0.66b1",
+        "opentelemetry-exporter-otlp-common": "0.66b1",
+        "opentelemetry-exporter-otlp-proto-common": "1.45.1",
+        "opentelemetry-exporter-otlp-proto-grpc": "1.45.1",
+        "opentelemetry-exporter-otlp-proto-http": "1.45.1",
+        "opentelemetry-instrumentation": "0.66b1",
+        "opentelemetry-instrumentation-asyncio": "0.66b1",
+        "opentelemetry-proto": "1.45.1",
+        "opentelemetry-sdk": "1.45.1",
+        "opentelemetry-semantic-conventions": "0.66b1",
+        "openviking": "0.4.23",
+        "openviking-sdk": "0.1.13",
+        "packaging": "26.3",
+        "parsel": "1.12.1",
+        "pathspec": "1.1.1",
+        "pdfminer-six": "20260107",
+        "pdfplumber": "0.11.10",
+        "pillow": "12.3.0",
+        "pip": "25.0.1",
+        "platformdirs": "4.12.4",
+        "propcache": "0.5.4",
+        "protego": "0.7.0",
+        "protobuf": "7.36.2",
+        "py": "1.11.0",
+        "pycparser": "3.11",
+        "pycryptodome": "3.24.0",
+        "pydantic": "2.14.0",
+        "pydantic-core": "2.50.0",
+        "pydantic-settings": "2.15.0",
+        "pydispatcher": "2.0.7",
+        "pygments": "2.21.0",
+        "pyjwt": "2.15.1",
+        "pyopenssl": "26.4.0",
+        "pypdfium2": "5.14.0",
+        "python-dateutil": "2.9.0.post0",
+        "python-dotenv": "1.2.4",
+        "python-multipart": "0.0.32",
+        "pytz": "2026.5",
+        "pywin32": "312",
+        "pyyaml": "6.0.3",
+        "queuelib": "1.10.0",
+        "rapidfuzz": "3.14.6",
+        "referencing": "0.37.0",
+        "regex": "2026.9.29",
+        "requests": "2.34.2",
+        "requests-file": "3.0.1",
+        "requests-toolbelt": "1.0.0",
+        "retry": "0.9.2",
+        "rich": "15.0.0",
+        "rpds-py": "2026.9.1",
+        "scrapy": "2.19.0",
+        "service-identity": "26.1.0",
+        "shellingham": "1.5.4",
+        "six": "1.17.0",
+        "sniffio": "1.3.1",
+        "soupsieve": "2.10",
+        "sse-starlette": "3.5.0",
+        "starlette": "1.7.0",
+        "tabulate": "0.10.0",
+        "tenacity": "9.2.1",
+        "tiktoken": "0.14.0",
+        "tld": "0.13.2",
+        "tldextract": "5.4.0",
+        "tokenizers": "0.23.3",
+        "tqdm": "4.70.1",
+        "trafilatura": "2.3.1",
+        "tree-sitter": "0.25.2",
+        "tree-sitter-cpp": "0.23.4",
+        "tree-sitter-c-sharp": "0.23.1",
+        "tree-sitter-go": "0.25.0",
+        "tree-sitter-java": "0.23.5",
+        "tree-sitter-javascript": "0.25.0",
+        "tree-sitter-language-pack": "1.13.3",
+        "tree-sitter-lua": "0.5.0",
+        "tree-sitter-php": "0.24.1",
+        "tree-sitter-python": "0.25.0",
+        "tree-sitter-rust": "0.24.0",
+        "tree-sitter-typescript": "0.23.2",
+        "truststore": "0.10.4",
+        "twisted": "26.4.0",
+        "typer": "0.27.3",
+        "typing-extensions": "4.16.0",
+        "typing-inspection": "0.4.4",
+        "tzdata": "2026.5",
+        "tzlocal": "5.4.4",
+        "urllib3": "2.8.0",
+        "uvicorn": "0.54.0",
+        "volcengine": "1.0.228",
+        "volcengine-python-sdk": "5.0.51",
+        "w3lib": "2.5.0",
+        "websockets": "15.0.1",
+        "win32-setctime": "1.2.0",
+        "wrapt": "2.5.0",
+        "xxhash": "4.0.1",
+        "yarl": "1.25.1",
+        "zipp": "4.1.1",
+        "zope-interface": "8.6"
+      }
+    },
+    "fresh_never_started": {
+      "executable": "C:\\Users\\Tan\\.mb86\\r4\\f\\runtime\\Scripts\\python.exe",
+      "python": "3.12.14 (main, Aug 25 2026, 14:01:42) [MSC v.1944 64 bit (AMD64)]",
+      "packages": {
+        "lark-oapi": {
+          "version": "1.7.3",
+          "root": "C:\\Users\\Tan\\.mb86\\r4\\f\\runtime\\Lib\\site-packages\\lark_oapi",
+          "actual_file_counts": {
+            "py": 10727,
+            "pyc": 0,
+            "py_bytes": 20044209,
+            "pyc_bytes": 0
+          },
+          "record_python_files": 10727,
+          "source_record_sha256": "e7ae56513b5a273056c8ef6cd8db0c16d56dd9ff0d3ed00370606a5fea33eb0a"
+        },
+        "volcengine-python-sdk": {
+          "version": "5.0.51",
+          "root": "C:\\Users\\Tan\\.mb86\\r4\\f\\runtime\\Lib\\site-packages\\volcenginesdk",
+          "actual_file_counts": {
+            "py": 0,
+            "pyc": 0,
+            "py_bytes": 0,
+            "pyc_bytes": 0
+          },
+          "record_python_files": 0,
+          "source_record_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "openviking": {
+          "version": "0.4.23",
+          "root": "C:\\Users\\Tan\\.mb86\\r4\\f\\runtime\\Lib\\site-packages\\openviking",
+          "actual_file_counts": {
+            "py": 705,
+            "pyc": 0,
+            "py_bytes": 8251560,
+            "pyc_bytes": 0
+          },
+          "record_python_files": 705,
+          "source_record_sha256": "48135c19fd7b2a6e47f4700f5c0751c19f04e685d3583a7a9db7abe5d91bb2e6"
+        },
+        "fastapi": {
+          "version": "0.143.0",
+          "root": "C:\\Users\\Tan\\.mb86\\r4\\f\\runtime\\Lib\\site-packages\\fastapi",
+          "actual_file_counts": {
+            "py": 52,
+            "pyc": 0,
+            "py_bytes": 809799,
+            "pyc_bytes": 0
+          },
+          "record_python_files": 52,
+          "source_record_sha256": "ca5601ccae24797791121b8fee0da1ced3d4cc8eb2672733be60b906ab91118c"
+        },
+        "pydantic": {
+          "version": "2.14.0",
+          "root": "C:\\Users\\Tan\\.mb86\\r4\\f\\runtime\\Lib\\site-packages\\pydantic",
+          "actual_file_counts": {
+            "py": 105,
+            "pyc": 0,
+            "py_bytes": 1817992,
+            "pyc_bytes": 0
+          },
+          "record_python_files": 105,
+          "source_record_sha256": "d77afb7836ca964d1b3e593cb428a23ce12464f8cc31cdbb321dd91aad1f371c"
+        }
+      },
+      "versions": {
+        "agent-memory-base": "0.1.0",
+        "aiohappyeyeballs": "2.7.1",
+        "aiohttp": "3.14.4",
+        "aiosignal": "1.4.0",
+        "annotated-doc": "0.0.5",
+        "annotated-types": "0.8.0",
+        "anyio": "4.15.1",
+        "apscheduler": "3.11.3",
+        "argon2-cffi": "25.1.0",
+        "argon2-cffi-bindings": "26.1.0",
+        "attrs": "26.1.0",
+        "automat": "25.4.16",
+        "babel": "2.18.0",
+        "backports-zstd": "1.7.0",
+        "beautifulsoup4": "4.15.0",
+        "brotli": "1.2.0",
+        "certifi": "2026.7.22",
+        "cffi": "2.1.1",
+        "charset-normalizer": "3.5.2",
+        "click": "8.5.0",
+        "colorama": "0.4.6",
+        "constantly": "23.10.4",
+        "courlan": "1.4.0",
+        "cryptography": "50.0.2",
+        "cssselect": "1.5.0",
+        "dateparser": "1.4.3",
+        "decorator": "5.3.1",
+        "defusedxml": "0.7.1",
+        "diskcache": "5.6.3",
+        "distro": "1.9.0",
+        "fastapi": "0.143.0",
+        "fastuuid": "0.14.0",
+        "feedparser": "6.0.14",
+        "feedparser-sgmllib": "2.1.0",
+        "filelock": "4.0.12",
+        "firecrawl-anydoc": "0.2.4",
+        "frozenlist": "1.8.0",
+        "fsspec": "2026.9.0",
+        "google": "3.0.0",
+        "googleapis-common-protos": "1.75.5",
+        "grep-ast": "0.9.0",
+        "grpcio": "1.84.0",
+        "h11": "0.16.0",
+        "hf-xet": "1.7.0",
+        "htmldate": "1.11.0",
+        "httpcore": "1.0.9",
+        "httpcore2": "2.13.1",
+        "httpx": "0.28.1",
+        "httpx2": "2.13.1",
+        "httpx-sse": "0.4.3",
+        "huggingface-hub": "2.2.0",
+        "hyperlink": "21.0.0",
+        "idna": "3.20",
+        "importlib-metadata": "8.9.0",
+        "incremental": "24.11.0",
+        "itemadapter": "0.13.1",
+        "itemloaders": "1.5.0",
+        "jinja2": "3.1.6",
+        "jiter": "0.17.0",
+        "jmespath": "1.1.0",
+        "jsonschema": "4.26.0",
+        "jsonschema-specifications": "2025.9.1",
+        "json-repair": "0.64.0",
+        "justext": "3.0.2",
+        "lark-oapi": "1.7.3",
+        "litellm": "1.91.1",
+        "llama-cpp-python": "0.3.36",
+        "loguru": "0.7.3",
+        "lxml": "6.1.3",
+        "lxml-html-clean": "0.4.5",
+        "markdown-it-py": "4.2.0",
+        "markupsafe": "3.0.4",
+        "mcp": "1.30.0",
+        "mdurl": "0.1.2",
+        "multidict": "6.9.1",
+        "numpy": "2.5.3",
+        "openai": "2.54.0",
+        "opentelemetry-api": "1.45.1",
+        "opentelemetry-exporter-http-transport": "0.66b1",
+        "opentelemetry-exporter-otlp-common": "0.66b1",
+        "opentelemetry-exporter-otlp-proto-common": "1.45.1",
+        "opentelemetry-exporter-otlp-proto-grpc": "1.45.1",
+        "opentelemetry-exporter-otlp-proto-http": "1.45.1",
+        "opentelemetry-instrumentation": "0.66b1",
+        "opentelemetry-instrumentation-asyncio": "0.66b1",
+        "opentelemetry-proto": "1.45.1",
+        "opentelemetry-sdk": "1.45.1",
+        "opentelemetry-semantic-conventions": "0.66b1",
+        "openviking": "0.4.23",
+        "openviking-sdk": "0.1.13",
+        "packaging": "26.3",
+        "parsel": "1.12.1",
+        "pathspec": "1.1.1",
+        "pdfminer-six": "20260107",
+        "pdfplumber": "0.11.10",
+        "pillow": "12.3.0",
+        "pip": "25.0.1",
+        "platformdirs": "4.12.4",
+        "propcache": "0.5.4",
+        "protego": "0.7.0",
+        "protobuf": "7.36.2",
+        "py": "1.11.0",
+        "pycparser": "3.11",
+        "pycryptodome": "3.24.0",
+        "pydantic": "2.14.0",
+        "pydantic-core": "2.50.0",
+        "pydantic-settings": "2.15.0",
+        "pydispatcher": "2.0.7",
+        "pygments": "2.21.0",
+        "pyjwt": "2.15.1",
+        "pyopenssl": "26.4.0",
+        "pypdfium2": "5.14.0",
+        "python-dateutil": "2.9.0.post0",
+        "python-dotenv": "1.2.4",
+        "python-multipart": "0.0.32",
+        "pytz": "2026.5",
+        "pywin32": "312",
+        "pyyaml": "6.0.3",
+        "queuelib": "1.10.0",
+        "rapidfuzz": "3.14.6",
+        "referencing": "0.37.0",
+        "regex": "2026.9.29",
+        "requests": "2.34.2",
+        "requests-file": "3.0.1",
+        "requests-toolbelt": "1.0.0",
+        "retry": "0.9.2",
+        "rich": "15.0.0",
+        "rpds-py": "2026.9.1",
+        "scrapy": "2.19.0",
+        "service-identity": "26.1.0",
+        "shellingham": "1.5.4",
+        "six": "1.17.0",
+        "sniffio": "1.3.1",
+        "soupsieve": "2.10",
+        "sse-starlette": "3.5.0",
+        "starlette": "1.7.0",
+        "tabulate": "0.10.0",
+        "tenacity": "9.2.1",
+        "tiktoken": "0.14.0",
+        "tld": "0.13.2",
+        "tldextract": "5.4.0",
+        "tokenizers": "0.23.3",
+        "tqdm": "4.70.1",
+        "trafilatura": "2.3.1",
+        "tree-sitter": "0.25.2",
+        "tree-sitter-cpp": "0.23.4",
+        "tree-sitter-c-sharp": "0.23.1",
+        "tree-sitter-go": "0.25.0",
+        "tree-sitter-java": "0.23.5",
+        "tree-sitter-javascript": "0.25.0",
+        "tree-sitter-language-pack": "1.13.3",
+        "tree-sitter-lua": "0.5.0",
+        "tree-sitter-php": "0.24.1",
+        "tree-sitter-python": "0.25.0",
+        "tree-sitter-rust": "0.24.0",
+        "tree-sitter-typescript": "0.23.2",
+        "truststore": "0.10.4",
+        "twisted": "26.4.0",
+        "typer": "0.27.3",
+        "typing-extensions": "4.16.0",
+        "typing-inspection": "0.4.4",
+        "tzdata": "2026.5",
+        "tzlocal": "5.4.4",
+        "urllib3": "2.8.0",
+        "uvicorn": "0.54.0",
+        "volcengine": "1.0.228",
+        "volcengine-python-sdk": "5.0.51",
+        "w3lib": "2.5.0",
+        "websockets": "15.0.1",
+        "win32-setctime": "1.2.0",
+        "wrapt": "2.5.0",
+        "xxhash": "4.0.1",
+        "yarl": "1.25.1",
+        "zipp": "4.1.1",
+        "zope-interface": "8.6"
+      }
+    }
+  },
+  "imports": [
+    {
+      "label": "formal",
+      "module": "lark_oapi",
+      "exit_code": 3221225477,
+      "wall_seconds": 41.21994420000192,
+      "completed": null,
+      "importtime_completed_lines": 3379,
+      "largest_self": [
+        {
+          "self_us": 3305292,
+          "cumulative_us": 8822222,
+          "module": "lark_oapi.api.hire.v1.model"
+        },
+        {
+          "self_us": 1693704,
+          "cumulative_us": 3822836,
+          "module": "lark_oapi.api.corehr.v1.model"
+        },
+        {
+          "self_us": 975235,
+          "cumulative_us": 2095477,
+          "module": "lark_oapi.api.contact.v3.model"
+        },
+        {
+          "self_us": 502333,
+          "cumulative_us": 1213783,
+          "module": "lark_oapi.api.document_ai.v1.model"
+        },
+        {
+          "self_us": 122465,
+          "cumulative_us": 248267,
+          "module": "lark_oapi.api.personal_settings.v1.model"
+        },
+        {
+          "self_us": 92014,
+          "cumulative_us": 235494,
+          "module": "lark_oapi.api.mdm.v1.model"
+        },
+        {
+          "self_us": 79293,
+          "cumulative_us": 183029,
+          "module": "lark_oapi.api.hire.v2.model.composite_talent"
+        },
+        {
+          "self_us": 78241,
+          "cumulative_us": 157047,
+          "module": "lark_oapi.api.authen.v1.model"
+        },
+        {
+          "self_us": 71691,
+          "cumulative_us": 356972,
+          "module": "lark_oapi.api.hire.v2.model"
+        },
+        {
+          "self_us": 65197,
+          "cumulative_us": 164703,
+          "module": "lark_oapi.api.mdm.v3.model"
+        },
+        {
+          "self_us": 60605,
+          "cumulative_us": 60605,
+          "module": "lark_oapi.api.corehr.v2.model.query_multi_timeline_job_family_request_body"
+        },
+        {
+          "self_us": 53270,
+          "cumulative_us": 124276,
+          "module": "lark_oapi.api.hire.v1.model.website_delivery_resume"
+        }
+      ],
+      "largest_cumulative": [
+        {
+          "self_us": 9112,
+          "cumulative_us": 9206997,
+          "module": "lark_oapi.api.hire"
+        },
+        {
+          "self_us": 10227,
+          "cumulative_us": 8832449,
+          "module": "lark_oapi.api.hire.v1"
+        },
+        {
+          "self_us": 3305292,
+          "cumulative_us": 8822222,
+          "module": "lark_oapi.api.hire.v1.model"
+        },
+        {
+          "self_us": 9799,
+          "cumulative_us": 3832635,
+          "module": "lark_oapi.api.corehr.v1"
+        },
+        {
+          "self_us": 1693704,
+          "cumulative_us": 3822836,
+          "module": "lark_oapi.api.corehr.v1.model"
+        },
+        {
+          "self_us": 6978,
+          "cumulative_us": 2110405,
+          "module": "lark_oapi.api.contact"
+        },
+        {
+          "self_us": 7951,
+          "cumulative_us": 2103427,
+          "module": "lark_oapi.api.contact.v3"
+        },
+        {
+          "self_us": 975235,
+          "cumulative_us": 2095477,
+          "module": "lark_oapi.api.contact.v3.model"
+        },
+        {
+          "self_us": 7189,
+          "cumulative_us": 1230950,
+          "module": "lark_oapi.api.document_ai"
+        },
+        {
+          "self_us": 9979,
+          "cumulative_us": 1223761,
+          "module": "lark_oapi.api.document_ai.v1"
+        },
+        {
+          "self_us": 502333,
+          "cumulative_us": 1213783,
+          "module": "lark_oapi.api.document_ai.v1.model"
+        },
+        {
+          "self_us": 15778,
+          "cumulative_us": 799584,
+          "module": "requests"
+        }
+      ],
+      "faulthandler_timeout": true
+    },
+    {
+      "label": "default_after_failed_start",
+      "module": "lark_oapi",
+      "exit_code": 3221225477,
+      "wall_seconds": 37.99522960000104,
+      "completed": null,
+      "importtime_completed_lines": 3217,
+      "largest_self": [
+        {
+          "self_us": 3348537,
+          "cumulative_us": 9376369,
+          "module": "lark_oapi.api.hire.v1.model"
+        },
+        {
+          "self_us": 1804205,
+          "cumulative_us": 4262911,
+          "module": "lark_oapi.api.corehr.v1.model"
+        },
+        {
+          "self_us": 977585,
+          "cumulative_us": 1972043,
+          "module": "lark_oapi.api.contact.v3.model"
+        },
+        {
+          "self_us": 498384,
+          "cumulative_us": 1113978,
+          "module": "lark_oapi.api.document_ai.v1.model"
+        },
+        {
+          "self_us": 122207,
+          "cumulative_us": 264084,
+          "module": "lark_oapi.api.personal_settings.v1.model"
+        },
+        {
+          "self_us": 90354,
+          "cumulative_us": 178117,
+          "module": "lark_oapi.api.hire.v1.model.website_delivery_resume"
+        },
+        {
+          "self_us": 85489,
+          "cumulative_us": 241531,
+          "module": "lark_oapi.api.mdm.v1.model"
+        },
+        {
+          "self_us": 82813,
+          "cumulative_us": 217714,
+          "module": "lark_oapi.api.hire.v2.model.composite_talent"
+        },
+        {
+          "self_us": 82045,
+          "cumulative_us": 155604,
+          "module": "lark_oapi.api.authen.v1.model"
+        },
+        {
+          "self_us": 76161,
+          "cumulative_us": 421226,
+          "module": "lark_oapi.api.hire.v2.model"
+        },
+        {
+          "self_us": 63399,
+          "cumulative_us": 163798,
+          "module": "lark_oapi.api.corehr.v1.model.form_variable_value_info"
+        },
+        {
+          "self_us": 62959,
+          "cumulative_us": 163234,
+          "module": "lark_oapi.api.mdm.v3.model"
+        }
+      ],
+      "largest_cumulative": [
+        {
+          "self_us": 11114,
+          "cumulative_us": 9826186,
+          "module": "lark_oapi.api.hire"
+        },
+        {
+          "self_us": 10972,
+          "cumulative_us": 9387341,
+          "module": "lark_oapi.api.hire.v1"
+        },
+        {
+          "self_us": 3348537,
+          "cumulative_us": 9376369,
+          "module": "lark_oapi.api.hire.v1.model"
+        },
+        {
+          "self_us": 10877,
+          "cumulative_us": 4273787,
+          "module": "lark_oapi.api.corehr.v1"
+        },
+        {
+          "self_us": 1804205,
+          "cumulative_us": 4262911,
+          "module": "lark_oapi.api.corehr.v1.model"
+        },
+        {
+          "self_us": 7262,
+          "cumulative_us": 1988837,
+          "module": "lark_oapi.api.contact"
+        },
+        {
+          "self_us": 9532,
+          "cumulative_us": 1981575,
+          "module": "lark_oapi.api.contact.v3"
+        },
+        {
+          "self_us": 977585,
+          "cumulative_us": 1972043,
+          "module": "lark_oapi.api.contact.v3.model"
+        },
+        {
+          "self_us": 7877,
+          "cumulative_us": 1131173,
+          "module": "lark_oapi.api.document_ai"
+        },
+        {
+          "self_us": 9318,
+          "cumulative_us": 1123296,
+          "module": "lark_oapi.api.document_ai.v1"
+        },
+        {
+          "self_us": 498384,
+          "cumulative_us": 1113978,
+          "module": "lark_oapi.api.document_ai.v1.model"
+        },
+        {
+          "self_us": 17139,
+          "cumulative_us": 768695,
+          "module": "requests"
+        }
+      ],
+      "faulthandler_timeout": true
+    },
+    {
+      "label": "fresh_never_started",
+      "module": "lark_oapi",
+      "exit_code": 1,
+      "wall_seconds": 25.370229399999516,
+      "completed": null,
+      "importtime_completed_lines": 1160,
+      "largest_self": [
+        {
+          "self_us": 1103194,
+          "cumulative_us": 7219929,
+          "module": "lark_oapi.api.contact.v3.model"
+        },
+        {
+          "self_us": 513963,
+          "cumulative_us": 3488248,
+          "module": "lark_oapi.api.document_ai.v1.model"
+        },
+        {
+          "self_us": 121434,
+          "cumulative_us": 675685,
+          "module": "lark_oapi.api.authen.v1.model"
+        },
+        {
+          "self_us": 118688,
+          "cumulative_us": 826089,
+          "module": "Crypto.Cipher.AES"
+        },
+        {
+          "self_us": 77218,
+          "cumulative_us": 203240,
+          "module": "pycparser.c_parser"
+        },
+        {
+          "self_us": 66786,
+          "cumulative_us": 66786,
+          "module": "Crypto.Util._cpu_features"
+        },
+        {
+          "self_us": 60951,
+          "cumulative_us": 325617,
+          "module": "lark_oapi.api.hire.v1.model.job"
+        },
+        {
+          "self_us": 59846,
+          "cumulative_us": 119904,
+          "module": "requests.models"
+        },
+        {
+          "self_us": 59080,
+          "cumulative_us": 389576,
+          "module": "requests.compat"
+        },
+        {
+          "self_us": 58414,
+          "cumulative_us": 58414,
+          "module": "pycparser.c_lexer"
+        },
+        {
+          "self_us": 58239,
+          "cumulative_us": 58239,
+          "module": "backports.zstd._zstd"
+        },
+        {
+          "self_us": 54198,
+          "cumulative_us": 54198,
+          "module": "_cffi_backend"
+        }
+      ],
+      "largest_cumulative": [
+        {
+          "self_us": 19417,
+          "cumulative_us": 7249638,
+          "module": "lark_oapi.api.contact"
+        },
+        {
+          "self_us": 10293,
+          "cumulative_us": 7230221,
+          "module": "lark_oapi.api.contact.v3"
+        },
+        {
+          "self_us": 1103194,
+          "cumulative_us": 7219929,
+          "module": "lark_oapi.api.contact.v3.model"
+        },
+        {
+          "self_us": 22836,
+          "cumulative_us": 3524318,
+          "module": "lark_oapi.api.document_ai"
+        },
+        {
+          "self_us": 13235,
+          "cumulative_us": 3501483,
+          "module": "lark_oapi.api.document_ai.v1"
+        },
+        {
+          "self_us": 513963,
+          "cumulative_us": 3488248,
+          "module": "lark_oapi.api.document_ai.v1.model"
+        },
+        {
+          "self_us": 41992,
+          "cumulative_us": 2542762,
+          "module": "requests"
+        },
+        {
+          "self_us": 2432,
+          "cumulative_us": 1557346,
+          "module": "lark_oapi.core.cache"
+        },
+        {
+          "self_us": 40641,
+          "cumulative_us": 1554914,
+          "module": "lark_oapi.core"
+        },
+        {
+          "self_us": 42665,
+          "cumulative_us": 1358151,
+          "module": "urllib3"
+        },
+        {
+          "self_us": 31955,
+          "cumulative_us": 1008403,
+          "module": "lark_oapi.core.utils"
+        },
+        {
+          "self_us": 33378,
+          "cumulative_us": 912278,
+          "module": "lark_oapi.core.utils.decryptor"
+        }
+      ],
+      "faulthandler_timeout": true
+    },
+    {
+      "label": "formal_force_source",
+      "module": "lark_oapi",
+      "exit_code": 1,
+      "wall_seconds": 26.259624900001654,
+      "completed": null,
+      "importtime_completed_lines": 1332,
+      "largest_self": [
+        {
+          "self_us": 1221057,
+          "cumulative_us": 5016808,
+          "module": "lark_oapi.api.contact.v3.model"
+        },
+        {
+          "self_us": 539146,
+          "cumulative_us": 2217460,
+          "module": "lark_oapi.api.document_ai.v1.model"
+        },
+        {
+          "self_us": 119204,
+          "cumulative_us": 442709,
+          "module": "lark_oapi.api.authen.v1.model"
+        },
+        {
+          "self_us": 105718,
+          "cumulative_us": 105832,
+          "module": "typing"
+        },
+        {
+          "self_us": 100383,
+          "cumulative_us": 180702,
+          "module": "urllib.request"
+        },
+        {
+          "self_us": 98755,
+          "cumulative_us": 245295,
+          "module": "pycparser.c_parser"
+        },
+        {
+          "self_us": 87092,
+          "cumulative_us": 218319,
+          "module": "inspect"
+        },
+        {
+          "self_us": 79267,
+          "cumulative_us": 79267,
+          "module": "pycparser.c_lexer"
+        },
+        {
+          "self_us": 78550,
+          "cumulative_us": 298623,
+          "module": "http.cookiejar"
+        },
+        {
+          "self_us": 76178,
+          "cumulative_us": 76178,
+          "module": "dataclasses"
+        },
+        {
+          "self_us": 70177,
+          "cumulative_us": 302628,
+          "module": "lark_oapi.api.hire.v1.model.site_application_resume"
+        },
+        {
+          "self_us": 69956,
+          "cumulative_us": 140427,
+          "module": "zipfile"
+        }
+      ],
+      "largest_cumulative": [
+        {
+          "self_us": 11568,
+          "cumulative_us": 5042321,
+          "module": "lark_oapi.api.contact"
+        },
+        {
+          "self_us": 13946,
+          "cumulative_us": 5030754,
+          "module": "lark_oapi.api.contact.v3"
+        },
+        {
+          "self_us": 1221057,
+          "cumulative_us": 5016808,
+          "module": "lark_oapi.api.contact.v3.model"
+        },
+        {
+          "self_us": 45588,
+          "cumulative_us": 3901522,
+          "module": "requests"
+        },
+        {
+          "self_us": 24503,
+          "cumulative_us": 2462699,
+          "module": "urllib3"
+        },
+        {
+          "self_us": 33407,
+          "cumulative_us": 2311461,
+          "module": "asyncio"
+        },
+        {
+          "self_us": 20980,
+          "cumulative_us": 2253389,
+          "module": "lark_oapi.api.document_ai"
+        },
+        {
+          "self_us": 14950,
+          "cumulative_us": 2232409,
+          "module": "lark_oapi.api.document_ai.v1"
+        },
+        {
+          "self_us": 539146,
+          "cumulative_us": 2217460,
+          "module": "lark_oapi.api.document_ai.v1.model"
+        },
+        {
+          "self_us": 61637,
+          "cumulative_us": 1669797,
+          "module": "asyncio.base_events"
+        },
+        {
+          "self_us": 2636,
+          "cumulative_us": 1066469,
+          "module": "lark_oapi.core.cache"
+        },
+        {
+          "self_us": 26260,
+          "cumulative_us": 1063833,
+          "module": "lark_oapi.core"
+        }
+      ],
+      "faulthandler_timeout": true
+    },
+    {
+      "label": "default_feishu_pure_import",
+      "module": "openviking.parse.accessors.feishu_accessor",
+      "exit_code": 1,
+      "wall_seconds": 25.420416700002534,
+      "completed": null,
+      "importtime_completed_lines": 2072,
+      "largest_self": [
+        {
+          "self_us": 443260,
+          "cumulative_us": 516708,
+          "module": "aiohttp.connector"
+        },
+        {
+          "self_us": 297836,
+          "cumulative_us": 590827,
+          "module": "litellm.types.llms.openai"
+        },
+        {
+          "self_us": 267308,
+          "cumulative_us": 332793,
+          "module": "aiohttp.helpers"
+        },
+        {
+          "self_us": 262552,
+          "cumulative_us": 4266565,
+          "module": "openai.types"
+        },
+        {
+          "self_us": 245541,
+          "cumulative_us": 502413,
+          "module": "openai.types.responses.response_stream_event"
+        },
+        {
+          "self_us": 244425,
+          "cumulative_us": 658274,
+          "module": "openai.types.beta.beta_response_stream_event"
+        },
+        {
+          "self_us": 229537,
+          "cumulative_us": 287865,
+          "module": "litellm.types.router"
+        },
+        {
+          "self_us": 216468,
+          "cumulative_us": 473610,
+          "module": "openai.types.beta.beta_response_input_item"
+        },
+        {
+          "self_us": 210244,
+          "cumulative_us": 484467,
+          "module": "litellm.types.guardrails"
+        },
+        {
+          "self_us": 191534,
+          "cumulative_us": 264332,
+          "module": "openviking_cli.utils.config.embedding_config"
+        },
+        {
+          "self_us": 185313,
+          "cumulative_us": 1531231,
+          "module": "litellm.types.utils"
+        },
+        {
+          "self_us": 176918,
+          "cumulative_us": 510222,
+          "module": "h11._connection"
+        }
+      ],
+      "largest_cumulative": [
+        {
+          "self_us": 31706,
+          "cumulative_us": 8819456,
+          "module": "openviking.models.embedder.dashscope_embedders"
+        },
+        {
+          "self_us": 41745,
+          "cumulative_us": 8787751,
+          "module": "openai"
+        },
+        {
+          "self_us": 262552,
+          "cumulative_us": 4266565,
+          "module": "openai.types"
+        },
+        {
+          "self_us": 10482,
+          "cumulative_us": 4015830,
+          "module": "openai.lib.streaming"
+        },
+        {
+          "self_us": 28256,
+          "cumulative_us": 4005348,
+          "module": "openai.lib.streaming._assistants"
+        },
+        {
+          "self_us": 135010,
+          "cumulative_us": 3977093,
+          "module": "openai.types.beta"
+        },
+        {
+          "self_us": 9655,
+          "cumulative_us": 3487151,
+          "module": "openviking.parse.parsers.anydoc"
+        },
+        {
+          "self_us": 2205,
+          "cumulative_us": 3129782,
+          "module": "openviking_cli.utils.config.parser_config"
+        },
+        {
+          "self_us": 11127,
+          "cumulative_us": 3127578,
+          "module": "openviking_cli.utils.config"
+        },
+        {
+          "self_us": 15063,
+          "cumulative_us": 3051873,
+          "module": "openai.types.eval_create_params"
+        },
+        {
+          "self_us": 3721,
+          "cumulative_us": 2926605,
+          "module": "openai.types.graders.grader_inputs_param"
+        },
+        {
+          "self_us": 10968,
+          "cumulative_us": 2922885,
+          "module": "openai.types.graders"
+        }
+      ],
+      "faulthandler_timeout": true
+    }
+  ],
+  "dependency_differences": {
+    "default_after_failed_start": {},
+    "fresh_never_started": {}
+  },
+  "acceptance_report_untouched": true
+}

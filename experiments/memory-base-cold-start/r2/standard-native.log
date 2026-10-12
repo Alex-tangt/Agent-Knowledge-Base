@@ -1,0 +1,42 @@
+{
+  "home": "C:\\Users\\Tan\\.mb86\\r4\\d",
+  "ports": {
+    "upstream": 63095,
+    "gateway": 63096,
+    "embed": 63097
+  },
+  "checks": {
+    "three_owned_native_services_ready": true,
+    "anonymous_401": true,
+    "reader_403": true,
+    "synthetic_unicode_crlf_append": true,
+    "reader_exact_hash_revision": true,
+    "native_list": true,
+    "native_search": true,
+    "native_stdio_four_tools_get_list": true,
+    "owned_process_cleanup_no_residual": true
+  },
+  "boundary": "New isolated native OpenViking; only synthetic fixture and local GGUF embedding. No LLM generation.",
+  "start_exit_code": 0,
+  "start_seconds": 191.07261619999917,
+  "uri": "viking://resources/captures/d02df20e49e816f4a8577480e7b919700a553a3b9bc88d0212afb3bccb7e244a/content.md",
+  "content_hash": "0c5aae91f3e9e347c564fac699d63e93e8cd3bf4332bde8edcf8b96cfaa17b50",
+  "index": {
+    "status": "ready"
+  },
+  "mcp": {
+    "tools": [
+      "memory_add",
+      "memory_get",
+      "memory_list",
+      "memory_search"
+    ],
+    "initialized": true,
+    "schema_closed": true,
+    "get_hash_matches": true,
+    "list_contains_original": true
+  },
+  "overall": "PASS",
+  "stop_exit_code": 0,
+  "stop_seconds": 18.523129599998356
+}

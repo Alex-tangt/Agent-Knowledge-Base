@@ -1,0 +1,12 @@
+{
+  "frozen_implementation": "d8a670905f93c86b36c6957b601fd8c2f02d0f45",
+  "snapshot_hash_verified": true,
+  "file_count": 85,
+  "directory_count": 50,
+  "independent_manifest_recomputed": true,
+  "restored_target_started": true,
+  "original_revision_and_bytes_verified": true,
+  "reader_list_scope_verified": true,
+  "native_acl_denied_status": 403,
+  "target_stopped_after_probe": true
+}

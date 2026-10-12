@@ -1,0 +1,43 @@
+{
+  "actual": "D:\\python_work\\work2026-10\\Agent-bubble",
+  "candidate": "D:\\python_work\\work2026-4\\memory-base-bubble-bridge-assets\\20261012\\candidate92",
+  "candidate_commit": "0a86cb1013a481aa91b4b97b826d62a4a8456fb8",
+  "files": [
+    {
+      "path": "server/memory-tools.ts",
+      "actual": {
+        "sha256": "339a852a374af74e471502afa083c48ca6787811bd57cdded03f08bd0b4ee686",
+        "lf_normalized_sha256": "339a852a374af74e471502afa083c48ca6787811bd57cdded03f08bd0b4ee686",
+        "bytes": 4529,
+        "crlf": 0,
+        "raw_backup": "C:\\Users\\Tan\\.codex\\worktrees\\memory-bootstrap-fix\\Agent-Knowledge-Base\\experiments\\memory-base-note-intent\\store\\baseline\\actual\\server\\memory-tools.ts"
+      },
+      "candidate": {
+        "sha256": "ba64dc4d9cfd92f3e324a8d420d2f086d848cc70610a5409a10e72b49e3da4af",
+        "lf_normalized_sha256": "339a852a374af74e471502afa083c48ca6787811bd57cdded03f08bd0b4ee686",
+        "bytes": 4563,
+        "crlf": 34,
+        "raw_backup": "C:\\Users\\Tan\\.codex\\worktrees\\memory-bootstrap-fix\\Agent-Knowledge-Base\\experiments\\memory-base-note-intent\\store\\baseline\\candidate\\server\\memory-tools.ts"
+      },
+      "normalized_equal": true
+    },
+    {
+      "path": "server/tests/memory-base.test.ts",
+      "actual": {
+        "sha256": "6dc351fd6a015d8a98011e4f83b2f7c791de112a3652f2c738871999e8017256",
+        "lf_normalized_sha256": "6dc351fd6a015d8a98011e4f83b2f7c791de112a3652f2c738871999e8017256",
+        "bytes": 29641,
+        "crlf": 0,
+        "raw_backup": "C:\\Users\\Tan\\.codex\\worktrees\\memory-bootstrap-fix\\Agent-Knowledge-Base\\experiments\\memory-base-note-intent\\store\\baseline\\actual\\server\\tests\\memory-base.test.ts"
+      },
+      "candidate": {
+        "sha256": "137b4b586a9018f36c8101fd9da00c4907a539853e046143cfb2630678020bae",
+        "lf_normalized_sha256": "6dc351fd6a015d8a98011e4f83b2f7c791de112a3652f2c738871999e8017256",
+        "bytes": 29965,
+        "crlf": 324,
+        "raw_backup": "C:\\Users\\Tan\\.codex\\worktrees\\memory-bootstrap-fix\\Agent-Knowledge-Base\\experiments\\memory-base-note-intent\\store\\baseline\\candidate\\server\\tests\\memory-base.test.ts"
+      },
+      "normalized_equal": true
+    }
+  ]
+}

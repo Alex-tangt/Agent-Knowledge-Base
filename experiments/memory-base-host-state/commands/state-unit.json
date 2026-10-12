@@ -1,0 +1,14 @@
+{
+  "command": [
+    "node",
+    "--test",
+    "--test-name-pattern",
+    "atomic state|persistent rename retry",
+    "scripts/tests/local-backend.test.mjs"
+  ],
+  "cwd": "D:\\python_work\\work2026-4\\memory-base-bubble-bridge-assets\\20261012\\candidate93",
+  "pid": 44484,
+  "exit_code": 0,
+  "wall_seconds": 0.557253099992522,
+  "raw_output_sha256": "6416a09c43b82144d8654283525b6afb9d4307ea522a89d02be00fa6f4f38ca3"
+}

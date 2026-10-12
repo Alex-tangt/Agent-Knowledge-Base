@@ -5,15 +5,15 @@
 ## 产品形状（Project Shape）
 
 **Agent 知识库（Agent Knowledge Base）**：
-项目定位。把 Markdown 知识库变成 agent 可安全读写、可检索的长期知识底座；当前聚焦"记忆能力包"这一个能力；北向是企业级 agent 知识库管理（多租户访问权限、缓存、降级、内容生命周期）。
-_Avoid_: 通用 RAG 框架、个人 RAG 工具（起点形态，已被本定位取代）
+项目定位。把个人内容与项目 Markdown 变成多个 agent 共享、可追溯、可恢复的长期知识底座。当前正式形状是家用 PC 上的个人记忆基座；企业多租户属于先前探索，不是当前交付范围。
+_Avoid_: 通用 RAG 框架、以企业多租户扩充首期个人产品
 
 **记忆能力包（Memory Capability Package）**：
 本阶段交付物。以工具协议（MCP）+ 技能（skill）对外暴露，让 coding agent 读写长期记忆。
 _Avoid_: 独立 app、纯库
 
 **适配层（Adapter）**：
-对外暴露通道，与核心服务解耦。**当前唯一：`memory_agent`（记忆能力包）**。`legal_web`（政策法规问答 web）是**上一版本遗留的无关产品，明确排除**——仅保留代码，不优化 / 不依赖 / 不作对象（2026-09-16 owner 决定）。
+对外暴露通道，与核心服务解耦。**当前个人基座接入：`memory_base`**（统一 HTTP / MCP）；`memory_agent` 为已冻结的旧自研记忆能力包，保留代码和评测。`legal_web`（政策法规问答 web）是**上一版本遗留的无关产品，明确排除**——仅保留代码，不优化 / 不依赖 / 不作对象（2026-09-16 owner 决定）。
 _Avoid_: 把适配层逻辑混进核心服务、把 `legal_web` 当优化对象或回归锚点
 
 **决策路径（Decision Trail）**：
@@ -38,12 +38,29 @@ _Avoid_: 会话上下文、短期上下文
 _Avoid_: 长期记忆、知识库
 
 **真相源（Source of Truth）**：
-记忆真正落盘之处——Markdown 条目及其 frontmatter 元数据；可版本化、可回退。
-_Avoid_: 索引、数据库
+某类内容或规则的权威记录。旧自研实现为 Markdown 条目及其 frontmatter；正式个人基座保存应用提交原文与回执，项目原文则属于各自项目。权限、来源登记与人的确认也是必须保留的权威状态。
+_Avoid_: 把搜索片段、LLM 推断或另一份项目摘要当作原文权威
 
 **派生索引（Derived Index）**：
-从真相源重建、可随时丢弃的检索加速结构，不承载记忆本体。
-_Avoid_: 真相源、存储
+从指定原文版本生成的检索加速结构，不承载原文权威。向量可重建；包含权限或确认状态的持久数据库不能整体视为可丢弃索引。
+_Avoid_: 把持久数据库中的全部状态都当作缓存
+
+**个人记忆基座（Personal Memory Base）**：
+一个人的多 agent 共同使用的内容持久层：应用提交原文、项目文件的只读地址，以及另存且引用输入的派生记忆。正式接入采用固定 OpenViking 保存 capture，登记项目 Markdown 每次从源文件读取；旧候选导入快照的陈旧问题由实时读取接缝处理。路径范围、备份恢复与实际验收按 ADR-0032 D13–D16 推进。
+_See_: `docs/adr/0032-personal-memory-base-adopt-then-productize.md`、`docs/memory-base-delivery-plan-2026-10-11.md`
+_Avoid_: 记忆能力包（`memory_agent` = 已冻结的旧自研实现）
+
+**接触日（Observed Day）**：
+本人接触文章、视频或笔记内容的日历日，以 Asia/Shanghai 解释；未知时保留未知。它不同于服务接收请求的时刻。
+_Avoid_: 用接收日推断接触日
+
+**内容版本（Content Revision）**：
+一次具体原文字节的身份。读取结果带内容版本，后续读取可以要求仍是同一版本；项目未提交的变化也属于变化。
+_Avoid_: 仅用项目 Git commit 表示实际读取的内容
+
+**正式接入层（`memory_base`）**：
+固定 OpenViking 的部署与宿主接缝。HTTP 与 MCP 共用追加、搜索、读取、列举语义；凭据绑定调用身份，范围只可收窄，虚拟条目正文与追溯元数据分开保存，同一次请求重试不生成第二条。Agent-bubble 的 pi 首次总结由程序原样提交，知识库保存失败不丢弃本机总结。`sources.json` 登记真实项目，`access.json` 保存非秘密范围规则；两者和全部原生 data 一起备份。
+_See_: `docs/memory-base-deployment.md`、ADR-0032 D9–D16
 
 **视图（View）**：
 一份**具名谓词**，规定哪些**域**的哪些**条目**可见——"看什么"的范围定义；**只读**

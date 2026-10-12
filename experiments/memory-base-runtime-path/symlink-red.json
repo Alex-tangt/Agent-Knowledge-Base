@@ -1,0 +1,40 @@
+{
+  "verdict": "red",
+  "python_version": "3.10.12 (main, Aug 31 2026, 10:18:17) [GCC 11.4.0]",
+  "fixture_root": "/tmp/agent-kb-97-awec6dif",
+  "rows": [
+    {
+      "entry": "/tmp/agent-kb-97-awec6dif/a/bin/python",
+      "resolved_base": "/usr/bin/python3.10",
+      "selected": "/usr/bin/python3.10",
+      "expected": {
+        "entry": "/tmp/agent-kb-97-awec6dif/a/bin/python",
+        "prefix": "/tmp/agent-kb-97-awec6dif/a",
+        "purelib": "/tmp/agent-kb-97-awec6dif/a/lib/python3.10/site-packages"
+      },
+      "observed": {
+        "entry": "/usr/bin/python3.10",
+        "prefix": "/usr",
+        "purelib": "/usr/local/lib/python3.10/dist-packages"
+      },
+      "preserves_environment": false
+    },
+    {
+      "entry": "/tmp/agent-kb-97-awec6dif/b/bin/python",
+      "resolved_base": "/usr/bin/python3.10",
+      "selected": "/usr/bin/python3.10",
+      "expected": {
+        "entry": "/tmp/agent-kb-97-awec6dif/b/bin/python",
+        "prefix": "/tmp/agent-kb-97-awec6dif/b",
+        "purelib": "/tmp/agent-kb-97-awec6dif/b/lib/python3.10/site-packages"
+      },
+      "observed": {
+        "entry": "/usr/bin/python3.10",
+        "prefix": "/usr",
+        "purelib": "/usr/local/lib/python3.10/dist-packages"
+      },
+      "preserves_environment": false
+    }
+  ],
+  "boundary": "Only real POSIX symlink/prefix/purelib selection; no Python3.12 wheel or dependency-stack acceptance claim."
+}

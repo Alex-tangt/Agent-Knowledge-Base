@@ -1,0 +1,65 @@
+{
+  "candidate": "D:\\python_work\\work2026-4\\memory-base-bubble-bridge-assets\\20261012\\candidate92",
+  "frozen_commit": "8b7327f86ad632bf4fd1b367af969a94bf78db84",
+  "commands": [
+    {
+      "gate": "build",
+      "command": [
+        "D:\\node\\npm.cmd",
+        "run",
+        "build"
+      ],
+      "cwd": "D:\\python_work\\work2026-4\\memory-base-bubble-bridge-assets\\20261012\\candidate92",
+      "log": "C:\\Users\\Tan\\.codex\\worktrees\\memory-bootstrap-fix\\Agent-Knowledge-Base\\experiments\\memory-base-note-intent\\store\\frozen-8b7327f\\build.log",
+      "pid": 42436,
+      "exit_code": 0,
+      "wall_seconds": 20.561459199998353,
+      "log_sha256": "2e2b7151b67960d2dbbdf8f770f4bf6e3f4216452fbc36f01643ab7b0b8f939d",
+      "counts": {}
+    },
+    {
+      "gate": "test",
+      "command": [
+        "D:\\node\\npm.cmd",
+        "test"
+      ],
+      "cwd": "D:\\python_work\\work2026-4\\memory-base-bubble-bridge-assets\\20261012\\candidate92",
+      "log": "C:\\Users\\Tan\\.codex\\worktrees\\memory-bootstrap-fix\\Agent-Knowledge-Base\\experiments\\memory-base-note-intent\\store\\frozen-8b7327f\\test.log",
+      "pid": 21208,
+      "exit_code": 0,
+      "wall_seconds": 29.450913699998637,
+      "log_sha256": "a2cf1b28cae4a96ba45db93b16737cfeaa8ce04bc18c8138593584e85ea2149d",
+      "counts": {
+        "tests": 73,
+        "pass": 73,
+        "fail": 0,
+        "skipped": 0,
+        "cancelled": 0
+      }
+    },
+    {
+      "gate": "host",
+      "command": [
+        "D:\\node\\npm.cmd",
+        "run",
+        "test:host"
+      ],
+      "cwd": "D:\\python_work\\work2026-4\\memory-base-bubble-bridge-assets\\20261012\\candidate92",
+      "log": "C:\\Users\\Tan\\.codex\\worktrees\\memory-bootstrap-fix\\Agent-Knowledge-Base\\experiments\\memory-base-note-intent\\store\\frozen-8b7327f\\host.log",
+      "pid": 29100,
+      "exit_code": 1,
+      "wall_seconds": 123.44060159999935,
+      "log_sha256": "5b6c965baf36a41807268f2940618afa81559aa29335dbb72797054c5540e54a",
+      "counts": {
+        "tests": 5,
+        "pass": 4,
+        "fail": 0,
+        "skipped": 0,
+        "cancelled": 1
+      }
+    }
+  ],
+  "environment": "Inherited model/Bubble/Memory/ASR/browser settings removed; synthetic local tests only.",
+  "script_sha256": "a91296ba3f923da7500df9bd06d82171958131e1694a3ee466e22bb7248eb02a",
+  "overall": "FAIL"
+}

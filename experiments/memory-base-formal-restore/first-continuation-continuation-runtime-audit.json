@@ -1,0 +1,20 @@
+{
+  "overall": "PASS",
+  "own_site": true,
+  "pins": {
+    "openviking": "0.4.23",
+    "openviking-sdk": "0.1.13",
+    "mcp": "1.30.0",
+    "llama-cpp-python": "0.3.36",
+    "volcengine-python-sdk": "5.0.51",
+    "openai": "2.54.0"
+  },
+  "product_payload_files": 15,
+  "product_payload_equals_frozen_wheel": true,
+  "installed_record_rows_checked": 36,
+  "installed_record_sha256": "dc22ac1a556a226d5ea7ea5873e0af41845424e42e434b98202238fe46a8f314",
+  "console_launcher_sha256": "3f9429d600b91b0cee1f34996f313d7bedc9e78f5ae911f00982a5518e5d3e89",
+  "direct_url_sha256": "184938703c23adcecdba677e8a42e164745b535689fd667b854f6c5dd3b4e66f",
+  "local_wheel_provenance": true,
+  "wheel_sha256": "baa5877bc55a834f7abf16c833d9e869c0768624efdd63de9ad1ef8b2768bfde"
+}

@@ -1,0 +1,128 @@
+{
+  "observed_at": "2026-10-12T22:28:25.279109+08:00",
+  "base_publication_audit": "4dadc407d39b26855a96079ce8561e8983dc4401",
+  "reviewed_head": "f44564aedc941ae5121629545b25d8df9bd0cd53",
+  "post_base_paths": [
+    ".github/workflows/ci.yml",
+    "README.md",
+    "docs/memory-base-delivery-plan-2026-10-11.md",
+    "docs/memory-base-deployment.md",
+    "experiments/memory-base-live/README.md"
+  ],
+  "review_scope": "Lead-authored docs/status clarification and existing CI Python matrix; actual credential/history scan remains separate #95",
+  "frozen_product": "45296a58fe2559e0b92f4af851c018b56148865a",
+  "package_file_count": 16,
+  "package": [
+    {
+      "path": "memory_base/__init__.py",
+      "unchanged_from_gate": true,
+      "normalized_sha256": "b295fb1e4a56fa053363de5ffec7c885855873c5c757eeb1a0b2f28e7cd3d80d"
+    },
+    {
+      "path": "memory_base/__main__.py",
+      "unchanged_from_gate": true,
+      "normalized_sha256": "178cb0b8f33df8b2e80b5c1b8d4d248609cfff12d9269d77f4e2dcac88f55880"
+    },
+    {
+      "path": "memory_base/autostart.py",
+      "unchanged_from_gate": true,
+      "normalized_sha256": "fcfd8afecb5d64b67d7be3bd462db6d90281610436f8a45e0a338a55f4f1730e"
+    },
+    {
+      "path": "memory_base/backup.py",
+      "unchanged_from_gate": true,
+      "normalized_sha256": "8ed876c34ea495a4e4efebe657e80d4b9f194b30352cf4d58accef41a96c546d"
+    },
+    {
+      "path": "memory_base/constraints.txt",
+      "unchanged_from_gate": true,
+      "normalized_sha256": "f5500024bb4950a64092aad91161c3f97591acc698f3ac4ba3258996e63a8500"
+    },
+    {
+      "path": "memory_base/credentials.py",
+      "unchanged_from_gate": true,
+      "normalized_sha256": "445f2378eb4192c5ee80e03eaf1f7952f8caf8c3ac256ce16d3f07f1012863c7"
+    },
+    {
+      "path": "memory_base/deploy.py",
+      "unchanged_from_gate": true,
+      "normalized_sha256": "9ba1bdde4f8fe3c83123c73f034795f00a47ef4d89b94fb1dda2e124b66a0ca7"
+    },
+    {
+      "path": "memory_base/embed.py",
+      "unchanged_from_gate": true,
+      "normalized_sha256": "1ff4eb9264ff100de672f212f276c85fe7bdfe577e86fad92cd729905a0781ba"
+    },
+    {
+      "path": "memory_base/gateway.py",
+      "unchanged_from_gate": true,
+      "normalized_sha256": "aeaeb47d6e4edd438e54e464de08d012d250b2094817bc3308b87c17a1b79fe6"
+    },
+    {
+      "path": "memory_base/mcp_stdio.py",
+      "unchanged_from_gate": true,
+      "normalized_sha256": "9356ba6782f3dbf0c8808ef6aa7799790f787ee8e6264e94e7a1a53ec56a9df3"
+    },
+    {
+      "path": "memory_base/paths.py",
+      "unchanged_from_gate": true,
+      "normalized_sha256": "c15f1f90b931d848a5a280752f956174729a836b267f5739f415459c9f3ef1a0"
+    },
+    {
+      "path": "memory_base/pyproject.toml",
+      "unchanged_from_gate": true,
+      "normalized_sha256": "e9099c627e2de02dc8231ac69d6bc5d7485b89cce92053d71b6749d3193f5826"
+    },
+    {
+      "path": "memory_base/requirements.txt",
+      "unchanged_from_gate": true,
+      "normalized_sha256": "19e369d6281ca2584b20baa30926b82489bcd01c731e4eeb37797e14611257e9"
+    },
+    {
+      "path": "memory_base/skill/SKILL.md",
+      "unchanged_from_gate": true,
+      "normalized_sha256": "72527b6cc7e74c5c8266f01f85d3dcbe398415ed24404facfe722d1468c5d964"
+    },
+    {
+      "path": "memory_base/sources.py",
+      "unchanged_from_gate": true,
+      "normalized_sha256": "76f5614d798d2ef65b62664a0df7d1658d35e49e3928f9c397408b0c750f8312"
+    },
+    {
+      "path": "memory_base/upstream.py",
+      "unchanged_from_gate": true,
+      "normalized_sha256": "b0c6f83243e957d849b49a4424f8e205315bbdfafb354a8aa1402f93228b1ed0"
+    }
+  ],
+  "local_links_count": 60,
+  "missing_links": [],
+  "ci": {
+    "yaml_valid": true,
+    "existing_steps_unchanged": true,
+    "python": [
+      "3.12"
+    ],
+    "os": [
+      "ubuntu-latest",
+      "windows-latest"
+    ],
+    "permissions": {
+      "contents": "read"
+    },
+    "remote_run": "NOT_YET_PUBLISHED"
+  },
+  "current_health_observation": {
+    "embed": 200,
+    "upstream": 200,
+    "gateway": 200,
+    "bubble_backendHealthy": true,
+    "bubble_phase": "running"
+  },
+  "adb_observation": {
+    "attached": 0,
+    "authorized": 0,
+    "serials_not_retained": true
+  },
+  "publication": "PENDING_FIXED_SCOPE_AUDIT",
+  "boundary": "No install, runtime restart, model generation, Git push or repeated full tests. Health responses prove current readiness only. Existing core gates are supported by unchanged frozen package bytes; remote CI pending publication."
+}
