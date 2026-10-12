@@ -8,6 +8,7 @@ import json
 import os
 from contextlib import contextmanager
 import shutil
+import socket
 import subprocess
 import sys
 import sysconfig
@@ -81,8 +82,132 @@ def _stub_install_runtime(tmp_path, monkeypatch):
     monkeypatch.setattr(deploy.subprocess, "run", lambda command, **kwargs: calls.append(command))
     monkeypatch.setattr(deploy, "_versions", lambda _: deploy.PINS)
     monkeypatch.setattr(deploy, "_installed_source", lambda python, source: site)
+    # The fake executable cannot compile SDKs; tests below separately exercise
+    # actual target bytecode preparation with a tiny installed Lark fixture.
+    monkeypatch.setattr(deploy, "_prepare_runtime", lambda _: {"fixture": True})
     monkeypatch.setattr(deploy, "_ensure_secret", lambda *_: "synthetic")
     return target, site, model, calls
+
+
+@pytest.mark.parametrize("mode", ["source-fresh", "wheel-adopt", "same-runtime"])
+def test_install_prepares_selected_runtime_before_credentials(tmp_path, monkeypatch, mode):
+    target, site, model, _ = _stub_install_runtime(tmp_path, monkeypatch)
+    home = tmp_path / "home"
+    events = []
+    monkeypatch.setattr(deploy, "_installed_source", lambda *_: events.append("verified") or site)
+    monkeypatch.setattr(deploy, "_prepare_runtime", lambda python: events.append(("prepared", python)), raising=False)
+    monkeypatch.setattr(deploy, "_ensure_secret", lambda *_: events.append("credential") or "synthetic")
+    if mode == "source-fresh":
+        expected = (home / "runtime" / ("Scripts/python.exe" if os.name == "nt" else "bin/python")).resolve()
+        deploy.install(home, model=str(model), fresh_runtime=True)
+    elif mode == "wheel-adopt":
+        expected = target.resolve()
+        deploy.install(home, str(target), str(model), wheel=str(_wheel_fixture(tmp_path)))
+    else:
+        _wheel_launcher(tmp_path, monkeypatch)
+        expected = Path(sys.executable).resolve()
+        deploy.install(home, sys.executable, str(model))
+    assert events[:3] == ["verified", ("prepared", expected), "credential"]
+
+
+def test_preparation_failure_preserves_deployment_and_data_without_provisioning_credentials(tmp_path, monkeypatch):
+    target, _, model, _ = _stub_install_runtime(tmp_path, monkeypatch)
+    home = tmp_path / "home"
+    home.mkdir()
+    previous = json.dumps({"python": str(target), "model": str(model), "unchanged": True}).encode()
+    (home / "deployment.json").write_bytes(previous)
+    (home / "openviking.conf").write_bytes(b"existing-config")
+    (home / "data").mkdir()
+    (home / "data" / "original.md").write_bytes(b"existing-data")
+    monkeypatch.setattr(deploy, "_prepare_runtime", lambda _: (_ for _ in ()).throw(RuntimeError("preparation-failed")), raising=False)
+    monkeypatch.setattr(deploy, "_ensure_secret", lambda *_: pytest.fail("must prepare before credentials"))
+    with pytest.raises(RuntimeError, match="preparation-failed"):
+        deploy.install(home)
+    assert (home / "deployment.json").read_bytes() == previous
+    assert (home / "openviking.conf").read_bytes() == b"existing-config"
+    assert (home / "data" / "original.md").read_bytes() == b"existing-data"
+
+
+def _lark_fixture(site, *, invalid=False):
+    root = site / "lark_oapi"
+    root.mkdir(parents=True)
+    # Compilation must not import/execute the SDK or use a warmed provider.
+    (root / "__init__.py").write_text("raise RuntimeError('must-not-import-sdk')\n")
+    (root / "generated.py").write_text("def invalid(: compiler-source-secret\n" if invalid else "VALUE = 'tiny-generated-fixture'\n")
+    info = site / "lark_oapi-1.7.3.dist-info"
+    info.mkdir()
+    (info / "METADATA").write_text("Metadata-Version: 2.1\nName: lark-oapi\nVersion: 1.7.3\n")
+    (info / "RECORD").write_text("lark_oapi/__init__.py,,\nlark_oapi/generated.py,,\n")
+    return root
+
+
+def _preparation_venv(tmp_path):
+    root = tmp_path / "runtime"
+    subprocess.run([sys.executable, "-m", "venv", "--without-pip", str(root)], check=True, timeout=60)
+    python = root / ("Scripts/python.exe" if os.name == "nt" else "bin/python")
+    output = subprocess.run([str(python), "-B", "-c", "import sysconfig;print(sysconfig.get_path('purelib'))"],
+                            check=True, capture_output=True, text=True, timeout=30)
+    return python.resolve(), Path(output.stdout.strip())
+
+
+def test_actual_target_preparation_compiles_only_own_lark_and_keeps_valid_caches(tmp_path, monkeypatch):
+    python, site = _preparation_venv(tmp_path)
+    root = _lark_fixture(site)
+    other = site / "unused_cloud_provider"
+    other.mkdir()
+    (other / "__init__.py").write_text("VALUE = 1\n")
+    sources = {path: path.read_bytes() for path in root.glob("*.py")}
+    monkeypatch.setenv("PYTHONPATH", str(tmp_path / "untrusted-provider"))
+    monkeypatch.setenv("PYTHONPYCACHEPREFIX", str(tmp_path / "outside-cache"))
+    monkeypatch.setenv("PYTHONDONTWRITEBYTECODE", "1")
+    monkeypatch.setenv("PYTHONOPTIMIZE", "2")
+    first = deploy._prepare_runtime(python)
+    assert first["origin"] == str(root.resolve()) and first["force"] is False
+    assert first["pycache_prefix"] is None and first["interpreter_optimize"] == 0
+    assert first["cache_tag"] == sys.implementation.cache_tag
+    assert os.environ["PYTHONPYCACHEPREFIX"] == str(tmp_path / "outside-cache")
+    assert os.environ["PYTHONOPTIMIZE"] == "2"
+    caches = {path: path.stat().st_mtime_ns for path in root.rglob("*.pyc")}
+    assert len(caches) == 2
+    assert deploy._prepare_runtime(python)["origin"] == first["origin"]
+    assert {path: path.stat().st_mtime_ns for path in root.rglob("*.pyc")} == caches
+    assert all(path.read_bytes() == content for path, content in sources.items())
+    assert not (other / "__pycache__").exists() and not (tmp_path / "outside-cache").exists()
+
+
+def test_preparation_rejects_inherited_provider_even_with_python_optimization(tmp_path, monkeypatch):
+    python, site = _preparation_venv(tmp_path)
+    provider = tmp_path / "readonly-provider"
+    root = _lark_fixture(provider)
+    (site / "test-provider.pth").write_text(str(provider) + "\n")
+    monkeypatch.setenv("PYTHONOPTIMIZE", "2")
+    with pytest.raises(RuntimeError, match="inherited SDK providers"):
+        deploy._prepare_runtime(python)
+    assert not (root / "__pycache__").exists()
+
+
+def test_actual_preparation_failure_is_explicit_without_exposing_compiler_source(tmp_path):
+    python, site = _preparation_venv(tmp_path)
+    _lark_fixture(site, invalid=True)
+    with pytest.raises(RuntimeError, match="Cold-start preparation") as error:
+        deploy._prepare_runtime(python)
+    assert "compiler-source-secret" not in str(error.value)
+
+
+def test_preparation_uses_selected_python_and_separate_budget_without_echoing_failed_output(tmp_path, monkeypatch):
+    python = Path(sys.executable).resolve()
+    monkeypatch.setenv("PYTHONPYCACHEPREFIX", "do-not-use-cache")
+
+    def failed(command, **kwargs):
+        assert command[:3] == [str(python), "-B", "-c"] and command[-1] == str(python)
+        assert kwargs["cwd"] == str(python.parent) and kwargs["timeout"] == 600
+        assert "PYTHONPYCACHEPREFIX" not in kwargs["env"] and "PYTHONPATH" not in kwargs["env"]
+        raise subprocess.TimeoutExpired(command, 600, output="private-source", stderr="private-secret")
+
+    monkeypatch.setattr(deploy.subprocess, "run", failed)
+    with pytest.raises(RuntimeError, match="Cold-start preparation") as error:
+        deploy._prepare_runtime(python)
+    assert "private-source" not in str(error.value) and "private-secret" not in str(error.value)
 
 
 def test_upstream_config_uses_external_embedder_and_no_secret(tmp_path):
@@ -111,11 +236,14 @@ def test_fresh_runtime_switch_preserves_deployment_home_and_existing_model(tmp_p
     monkeypatch.setattr(deploy.subprocess, "run", lambda command, **kwargs: calls.append(command))
     monkeypatch.setattr(deploy, "_ensure_secret", lambda *_: "existing")
     monkeypatch.setattr(deploy, "_installed_source", lambda python, source: source.parent)
+    prepared = []
+    monkeypatch.setattr(deploy, "_prepare_runtime", lambda python: prepared.append(python))
     config = deploy.install(tmp_path, fresh_runtime=True)
     assert config["python"] == str(runtime.resolve())
     assert config["model"] == str(model.resolve())
     assert calls[-1] == [str(runtime.resolve()), "-m", "pip", "install", "--no-deps", "-e", str(PACKAGE_SOURCE)]
     assert config["source"] == str(PACKAGE_SOURCE.parent)
+    assert prepared == [runtime.resolve()]
     assert json.loads((tmp_path / "openviking.conf").read_text())["storage"]["workspace"] == str(tmp_path / "data")
 
 
@@ -294,6 +422,7 @@ def test_real_wheel_bootstraps_independent_target_runtime(tmp_path, mode):
             return original(command, **kwargs)
         deploy.subprocess.run = staged_run
         deploy._versions = lambda python: dict(deploy.PINS)
+        deploy._prepare_runtime = lambda python: {'fixture': 'Upstream SDK preparation is not measured here'}
         deploy._ensure_secret = lambda *args: 'synthetic-not-persisted'
         home, model, mode, wheel = sys.argv[1:]
         argv = ['install', '--home', home, '--model', model]
@@ -316,7 +445,7 @@ def test_real_wheel_bootstraps_independent_target_runtime(tmp_path, mode):
     proof.update({"mode": mode, "target_origin": origin, "wheel": str(wheel),
                   "wheel_sha256": hashlib.sha256(wheel.read_bytes()).hexdigest(), "commands": commands,
                   "dependency_provider": dependency_site,
-                  "boundary": "Real wheel build/package pip installs. Upstream dependency install/version checks and vault writes are stubbed; no clean dependency-stack installation is claimed."})
+                  "boundary": "Real wheel build/package pip installs. Upstream dependency install/version checks, SDK cold-start preparation and vault writes are fixtures; no clean dependency-stack installation or cold startup is claimed."})
     (tmp_path / "real-wheel-proof.json").write_text(json.dumps(proof, indent=2) + "\n", encoding="utf-8")
     print(json.dumps({"mode": mode, "proof": str(tmp_path / "real-wheel-proof.json"), "target_origin": origin,
                       "wheel_sha256": proof["wheel_sha256"]}))
@@ -421,6 +550,45 @@ def test_component_wrapper_sets_home_and_preserves_module_arguments(tmp_path):
     home, arguments = json.loads(result.stdout)
     assert home == str(tmp_path)
     assert arguments[1:] == ["--port", "17996", "--model", "/test/model.gguf"]
+
+
+def test_actual_spawn_uses_prepared_cache_policy_without_changing_user_environment(tmp_path, monkeypatch):
+    package = tmp_path / "memory_base"
+    package.mkdir()
+    (package / "__init__.py").write_text("")
+    (package / "embed.py").write_text(textwrap.dedent("""
+        import json, os, sys
+        from http.server import BaseHTTPRequestHandler, HTTPServer
+        state = {'service':'memory-base-embedding', 'pid':os.getpid(),
+                 'pycache_prefix':sys.pycache_prefix, 'optimize':sys.flags.optimize,
+                 'cache_tag':sys.implementation.cache_tag,
+                 'flags_present':any(name in os.environ for name in ('PYTHONPYCACHEPREFIX','PYTHONOPTIMIZE'))}
+        class Handler(BaseHTTPRequestHandler):
+            def do_GET(self):
+                self.send_response(200); self.send_header('Content-Type','application/json'); self.end_headers()
+                self.wfile.write(json.dumps(state).encode())
+            def log_message(self, *args): pass
+        HTTPServer(('127.0.0.1',int(sys.argv[sys.argv.index('--port')+1])), Handler).serve_forever()
+    """))
+    with socket.socket() as listener:
+        listener.bind(("127.0.0.1", 0))
+        port = listener.getsockname()[1]
+    config = {"python": sys.executable, "source": str(tmp_path), "ports": {"embed": port}, "model": "unused-fixture.gguf"}
+    deploy._write_json(tmp_path / "deployment.json", config)
+    monkeypatch.setenv("PYTHONPYCACHEPREFIX", str(tmp_path / "user-cache"))
+    monkeypatch.setenv("PYTHONOPTIMIZE", "2")
+    records = {}
+    try:
+        deploy._spawn("embed", tmp_path, config, records, 30)
+        state = deploy._health("embed", config)
+        assert state and state["pycache_prefix"] is None and state["optimize"] == 0
+        assert state["cache_tag"] == sys.implementation.cache_tag and not state["flags_present"]
+        assert os.environ["PYTHONPYCACHEPREFIX"] == str(tmp_path / "user-cache")
+        assert os.environ["PYTHONOPTIMIZE"] == "2"
+        assert not (tmp_path / "user-cache").exists()
+    finally:
+        deploy.stop(tmp_path, components=("embed",))
+        assert not deploy._records(tmp_path) and not deploy._port_busy(port)
 
 
 def _gateway_body_probe(tmp_path, python, *, legacy=False):

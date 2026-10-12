@@ -271,6 +271,51 @@ def _installed_source(python: Path, source: Path | None) -> Path:
         raise RuntimeError("Target runtime did not import its installed memory-base package") from None
 
 
+def _prepare_runtime(python: Path) -> dict:
+    """Prepare the measured cold import without touching inherited SDK providers."""
+    script = """import compileall,importlib.metadata as m,importlib.util,json,sys,sysconfig,time
+from pathlib import Path
+if Path(sys.executable).resolve()!=Path(sys.argv[1]).resolve():
+ raise RuntimeError('Unexpected target interpreter')
+site=Path(sysconfig.get_path('purelib')).resolve()
+dist=m.distribution('lark-oapi')
+root=Path(dist.locate_file('lark_oapi')).resolve()
+spec=importlib.util.find_spec('lark_oapi')
+if root!=site/'lark_oapi' or not spec or Path(spec.origin).resolve()!=root/'__init__.py':
+ raise RuntimeError('Lark must be installed inside the selected runtime')
+if sys.pycache_prefix is not None:
+ raise RuntimeError('Unexpected bytecode cache location')
+started=time.perf_counter()
+# Keep valid caches. Do not import the generated SDK, compile other providers,
+# or force recompilation on an already prepared/adopted runtime.
+success=compileall.compile_dir(str(root),quiet=2,force=False,optimize=0,workers=1)
+if not success:
+ raise RuntimeError('Lark bytecode preparation failed')
+print(json.dumps({'package':'lark-oapi','version':dist.version,'origin':str(root),
+ 'seconds':time.perf_counter()-started,'force':False,'optimize':0,
+ 'cache_tag':sys.implementation.cache_tag,'pycache_prefix':sys.pycache_prefix,
+ 'interpreter_optimize':sys.flags.optimize}))
+"""
+    env = clean_env()
+    for name in ("PYTHONPATH", "PYTHONHOME", "PYTHONPYCACHEPREFIX", "PYTHONOPTIMIZE", "PYTHONDONTWRITEBYTECODE"):
+        env.pop(name, None)
+    try:
+        # -B prevents implicit writes while locating the SDK. Explicit compileall
+        # writes only the verified target's Lark caches. 600s is a preparation
+        # budget based on the 341.750s isolated measurement, not a service timeout.
+        result = subprocess.run([str(python), "-B", "-c", script, str(python)], cwd=str(python.parent),
+                                env=env, capture_output=True, text=True, check=True, timeout=600)
+        prepared = json.loads(result.stdout)
+        if (prepared["package"] != "lark-oapi" or prepared["force"] is not False or prepared["optimize"] != 0
+                or prepared["pycache_prefix"] is not None or prepared["interpreter_optimize"] != 0):
+            raise ValueError("Invalid preparation result")
+        return prepared
+    except (OSError, subprocess.SubprocessError, ValueError, TypeError, KeyError):
+        # Compiler/import errors may quote source contents. Never forward them.
+        raise RuntimeError("Cold-start preparation failed; install pinned lark-oapi inside the selected runtime "
+                           "and ensure its bytecode cache is writable (inherited SDK providers are not prepared)") from None
+
+
 def install(home: Path, runtime_python: str | None = None, model: str | None = None,
             ports: dict | None = None, fresh_runtime: bool = False, wheel: str | None = None) -> dict:
     """Create a dedicated venv or adopt an explicitly selected pinned runtime."""
@@ -282,8 +327,8 @@ def install(home: Path, runtime_python: str | None = None, model: str | None = N
     # Always let pip apply the verified constraints: matching direct versions
     # alone cannot detect a changed transitive dependency. Already satisfied
     # installations retain their packages.
-    # The upstream cloud SDK ships many generated modules. Compile only modules
-    # actually imported by our runtime rather than all unused providers at install.
+    # Avoid pip's blanket compilation of unused cloud providers. The measured
+    # Lark cold import is prepared explicitly in the selected runtime below.
     subprocess.run([str(python), "-m", "pip", "install", "--no-compile", "-r",
                     str(Path(__file__).with_name("requirements.txt"))], check=True)
     versions = _versions(python)
@@ -295,6 +340,7 @@ def install(home: Path, runtime_python: str | None = None, model: str | None = N
         # Do not uninstall an inherited distribution from another environment.
         subprocess.run([str(python), "-m", "pip", "install", "--no-deps", "--ignore-installed", str(artifact)], check=True)
     target_source = _installed_source(python, source_dir)
+    _prepare_runtime(python)
     model_path = Path(model or previous.get("model") or DEFAULT_MODEL).expanduser().resolve()
     if not model_path.exists():
         # Upstream's pinned model specification supplies its public download URL.
@@ -470,6 +516,10 @@ def _spawn(component: str, home: Path, config: dict, records: dict, timeout: flo
         env[ROOT_KEY_ENV] = _ensure_secret("root-key", home)
     elif component == "gateway":
         env.update(gateway_env(home, config))
+    # Managed services must use the opt0/default-location caches prepared by
+    # install. Change only this child environment, never the user's globals.
+    for name in ("PYTHONPYCACHEPREFIX", "PYTHONOPTIMIZE"):
+        env.pop(name, None)
     logs = home / "logs"
     logs.mkdir(parents=True, exist_ok=True)
     with (logs / (component + ".out.log")).open("ab") as out, (logs / (component + ".err.log")).open("ab") as err:
