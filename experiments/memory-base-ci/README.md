@@ -15,3 +15,11 @@ CI 只安装旧 `memory_agent/deploy-requirements.txt`，其中明确排除 Fast
 只在原有 CI 依赖步骤增加 `fastapi==0.143.0`，与 `memory_base/constraints.txt` 的正式版本一致。保留两平台、既有测试/harness/冒烟与只读 GitHub 权限；不安装已排除的 legal_web，不装 OpenViking/native 模型栈，不跳过网关测试，不修改应用源码或正式环境。
 
 修复后实际远端两腿结果仍待取得。原失败保留；不能用本机已有 FastAPI 的导入成功代替干净 runner 复验。复验入口仍为现有 CI 的三个命令。
+
+## 第二轮实际结果与入口缺陷
+
+固定 head `09b8ed8213c7c02166fcde7ec0cb8a38458354c8`，[run 38267977956](https://github.com/Alex-tangt/Agent-Knowledge-Base/actions/runs/38267977956) 已结束。Windows 为 **835 passed /3 skipped /1 warning，74.32秒**，harness 两场景3+7全部预期匹配，实际opencode脚本因无4096服务器 **SKIP**。这是干净 Windows 源码回归，不是新的独立native运行证明。完整三个闸门的步骤输出见 [Windows 日志](second-windows-gate.log)。
+
+Ubuntu 为 **3 failed /831 passed /4 skipped /1 warning，26.33秒**，不再缺 FastAPI。三项失败来自 `test_memory_base_deploy.py` 的真实缓存准备与两种真实wheel环境隔离：`.resolve()` 把 POSIX venv 的 `bin/python` 转成同一系统解释器，导致实际prefix/purelib丢失；测试helper也曾返回解引用后的系统入口。原失败全文在 [Ubuntu 日志](second-ubuntu-gate.log)，步骤状态和本机原件哈希在 [second-run.json](second-run.json)。harness/冒烟在该腿未执行，不计为通过或脚本SKIP。
+
+新 [#97](https://github.com/Alex-tangt/Agent-Knowledge-Base/issues/97) 保留解释器入口的venv身份，仍严格验证目标own-site、继承provider拒绝和生命周期归属；不通过跳过POSIX测试消除失败。小机制探针可用现有WSL Python3.10，但不能据此声称正式3.12 wheel或完整POSIX部署。源码修复后另冻结完整闸门，旧45296a5独立native证据的版本范围保持。
