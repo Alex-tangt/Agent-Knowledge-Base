@@ -13,3 +13,5 @@
 地图只核固定tree README/AGENTS/CONTEXT路径与memory_base实际文件、15 payload归一化文本==45296a58fe2559e0b92f4af851c018b56148865a；扫描本轮新增Markdown本地链接（GitHub/issues/source外链不当本地）。对R5/native/恢复/Bubble既有证据和未验ADB/登录/DSH-opencode状态做一致性定位，历史文字不替Lead修改。
 
 不重复833单测、harness/SKIP、R5安装/native、恢复、73/13 Bubble或模型。扫描返回live handle、等自然完成，不以观察timeout作为terminal。报告须列漏项和判据，不宣布整体产品goal完成；PR地图与正式发布由Lead负责，本目录只交安全报告/脚本。
+
+首轮 `scan-4dadc40.json` 原样保留。Lead源码复核指出首通用assignment漏裸credential名/quoted JSON key，generic URL形态尚未实现；因此该轮只支持已知来源literal匹配与已实现的token形态结果。追加通用key捕获后过滤credential字段、URL-userinfo/secret-query候选，并以8个合成正例及placeholder/code-expression反例校验。随后 `--generic-only` 单独生成补充报告，不再读vault/env/进程环境或HTTP正文；固定tree/range不变。候选仅category/行号/对象/path，人工安全分类不复制值。地图解析追加install双后缀简写，fence保留换行确保定位准确。

@@ -28,7 +28,8 @@ SECRET_NAMES = ["root-key", "upstream-key", *["host-" + p for p in
                 ("agent-bubble", "codex", "dsh", "opencode", "reader")]]
 CREDENTIAL_NAME = re.compile(r"(?:api[_-]?key|token|password|secret|root[_-]?key|ov[_-]?key)", re.I)
 TOKEN_SHAPES = re.compile(r"(?:gh[pousr]_[A-Za-z0-9]{30,}|github_pat_[A-Za-z0-9_]{40,}|sk-(?:proj-|ant-)?[A-Za-z0-9_-]{24,})")
-ASSIGNMENTS = re.compile(r"\b([A-Za-z_][A-Za-z0-9_-]*(?:API_KEY|TOKEN|PASSWORD|SECRET|api_key|token|password|secret|root_key))\s*[=:]\s*[\"']?([^\s\"',;<>]{8,})")
+ASSIGNMENTS = re.compile(r'''(?<![A-Za-z0-9_])(["']?)([A-Za-z_][A-Za-z0-9_-]*)\1\s*[=:]\s*(?:"([^"\r\n]*)"|'([^'\r\n]*)'|([^\s"',;<>]+))''')
+URLS = re.compile(r'''https?://[^\s"'<>`]+''')
 LINKS = re.compile(r"(?<!!)\[[^\]\n]*\]\(\s*(<[^>]+>|[^\s)]+)(?:\s+[^)]*)?\)")
 
 
@@ -242,8 +243,64 @@ def variants(value: str):
 def fixture(value: str) -> bool:
     lowered = value.casefold()
     return bool(re.search(r"(?:example|dummy|placeholder|replace|changeme|your[_-]|test[_-]|synthetic|fake[_-]|\$\{|os\.environ|process\.env|localhost|127\.0\.0\.1)", lowered)
-                or lowered in {"local-embedding", "none", "null", "true", "false"}
-                or re.fullmatch(r"[a-z_-]+", lowered))
+                or lowered in {"local-embedding", "none", "null", "true", "false"})
+
+
+def generic_review(decoded: str):
+    """Return locations/classification only, never the candidate literals."""
+    candidates = []
+    excluded = Counter()
+    def locate(category, match, value, expression=False):
+        if fixture(value):
+            excluded[category + ":placeholder"] += 1
+        elif expression:
+            excluded[category + ":code_expression"] += 1
+        else:
+            candidates.append({"category": category, "line": decoded.count("\n", 0, match.start()) + 1})
+    for match in TOKEN_SHAPES.finditer(decoded):
+        locate("unknown_token_shape", match, match[0])
+    for match in ASSIGNMENTS.finditer(decoded):
+        if not CREDENTIAL_NAME.search(match[2]):
+            continue
+        value = next((group for group in match.groups()[2:] if group is not None), "")
+        if not value:
+            continue
+        bare = match[5] is not None
+        expression = bare and bool(re.search(r"[.(\[{}]|^\$|^await$", value))
+        locate("credential_assignment_review", match, value, expression)
+    for match in URLS.finditer(decoded):
+        value = match[0].rstrip(".,;)")
+        try:
+            parsed = urllib.parse.urlsplit(value)
+            if parsed.username is not None or parsed.password is not None:
+                locate("url_userinfo_review", match, value)
+            query = urllib.parse.parse_qs(parsed.query, keep_blank_values=True)
+            if any(CREDENTIAL_NAME.search(key) or key.casefold() in
+                   {"key", "auth", "authorization", "signature", "sig", "credential", "accesskey", "access_key"}
+                   for key in query):
+                locate("url_secret_query_review", match, value)
+        except ValueError:
+            excluded["url_parse_error"] += 1
+    return candidates, excluded
+
+
+def self_check():
+    cases = [("API_KEY=" + "sk-" + "A" * 32, "credential_assignment_review"),
+             ('token="opaqueSyntheticSmokeValue"', "credential_assignment_review"),
+             ('api_key="opaqueSyntheticSmokeValue"', "credential_assignment_review"),
+             ('{"token": "opaqueSyntheticSmokeValue"}', "credential_assignment_review"),
+             ('{"API_KEY": "opaqueSyntheticSmokeValue"}', "credential_assignment_review"),
+             ("https://someone:opaqueSyntheticSmokeValue@remote.invalid/path", "url_userinfo_review"),
+             ("https://remote.invalid/path?api_key=opaqueSyntheticSmokeValue", "url_secret_query_review"),
+             ("https://remote.invalid/path?token=opaqueSyntheticSmokeValue", "url_secret_query_review")]
+    # Values deliberately avoid placeholder marker words so detection must fire.
+    cases = [(body.replace("SyntheticSmoke", "Unclassified"), category) for body, category in cases]
+    for body, category in cases:
+        candidates, _ = generic_review(body)
+        assert any(item["category"] == category for item in candidates)
+    candidates, excluded = generic_review('token="replace-me-example"\napi_key=os.getenv("API_KEY")')
+    assert not candidates and sum(excluded.values()) == 2
+    safe_event("synthetic-smoke-pass", positive_cases=len(cases), placeholder_and_expression_cases=2)
 
 
 def links_and_maps(repo: Path, files: dict[str, str], text_cache: dict[str, str]):
@@ -255,7 +312,8 @@ def links_and_maps(repo: Path, files: dict[str, str], text_cache: dict[str, str]
             continue
         content = text_cache.get(path) or blob(repo, files[path]).decode("utf-8", "replace")
         # Skip fenced code examples when checking actionable document links.
-        content = re.sub(r"(?ms)^\s*(```|~~~).*?^\s*\1[^\n]*$", "", content)
+        content = re.sub(r"(?ms)^\s*(```|~~~).*?^\s*\1[^\n]*$",
+                         lambda match: "".join("\n" if char == "\n" else " " for char in match[0]), content)
         for match in LINKS.finditer(content):
             target = match[1].strip("<>")
             parsed = urllib.parse.urlsplit(target)
@@ -290,8 +348,13 @@ def links_and_maps(repo: Path, files: dict[str, str], text_cache: dict[str, str]
         refs = sorted(set(re.findall(r"`((?:memory_base/|install-memory-base\.)[^`\s]*(?:\.py|\.txt|\.toml|\.md|\.ps1|\.sh)?)`", content)))
         for reference in refs:
             reference = reference.rstrip("/.,;：")
-            exists = reference in files or any(name.startswith(reference.rstrip("/") + "/") for name in files)
-            map_paths.append({"map": path, "path": reference, "exists": exists})
+            # The map intentionally abbreviates a pair of install entrypoints.
+            references = [reference]
+            if reference == "install-memory-base.ps1/.sh":
+                references = ["install-memory-base.ps1", "install-memory-base.sh"]
+            for reference in references:
+                exists = reference in files or any(name.startswith(reference.rstrip("/") + "/") for name in files)
+                map_paths.append({"map": path, "path": reference, "exists": exists})
     return {"changed_markdown": len(changed), "local_links_checked": checked,
             "external_links_excluded": external, "anchor_only_excluded": anchors,
             "findings": findings, "payload": payload, "map_paths": map_paths}
@@ -299,9 +362,16 @@ def links_and_maps(repo: Path, files: dict[str, str], text_cache: dict[str, str]
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--repo", type=Path, required=True)
-    parser.add_argument("--report", type=Path, required=True)
+    parser.add_argument("--repo", type=Path)
+    parser.add_argument("--report", type=Path)
+    parser.add_argument("--generic-only", action="store_true", help="No vault/env/HTTP reads; separate supplemental report")
+    parser.add_argument("--self-check", action="store_true")
     args = parser.parse_args()
+    if args.self_check:
+        self_check()
+        return
+    if args.repo is None or args.report is None:
+        raise RuntimeError("repo and report required")
     repo = args.repo.resolve()
     allowed = repo / "experiments/memory-base-publication"
     report = args.report.resolve()
@@ -323,7 +393,10 @@ def main():
         if path:
             paths[sha].add(path)
     safe_event("started", pid=os.getpid(), tree_blobs=len(set(current.values())), history_blobs=len(history))
-    inputs, coverage, gaps = sensitive_sources(repo, current)
+    if args.generic_only:
+        inputs, coverage, gaps = [], [], []
+    else:
+        inputs, coverage, gaps = sensitive_sources(repo, current)
     patterns = defaultdict(set)
     for category, value in inputs:
         patterns[category].update(variants(value))
@@ -355,14 +428,15 @@ def main():
                     categories.append(category)
             decoded = raw.decode("utf-8", "replace")
             if "\x00" not in decoded:
-                for category, regex in (("unknown_token_shape", TOKEN_SHAPES), ("credential_assignment_review", ASSIGNMENTS)):
-                    matches = list(regex.finditer(decoded))
-                    review = [match for match in matches if not fixture(match[0] if category == "unknown_token_shape" else match[2])]
-                    fixture_counts[category] += len(matches) - len(review)
-                    if review:
-                        categories.append(category)
+                reviews, excluded = generic_review(decoded)
+                fixture_counts.update(excluded)
+                categories.extend(item["category"] for item in reviews)
+            else:
+                reviews = []
             if categories:
                 finding = {"blob": sha, "paths": sorted(paths[sha]), "sets": scopes, "categories": sorted(set(categories))}
+                if reviews:
+                    finding["generic_locations"] = reviews
                 results.append(finding)
                 if any(c in categories for c in ("known_credential", "actual_full_body", "actual_body_fragment", "actual_private_source_url")):
                     safe_event("sensitive-location", **finding)
@@ -377,6 +451,7 @@ def main():
         process.wait(timeout=10)
     maps = links_and_maps(repo, current, text_cache)
     output = {"base": BASE, "upstream": UPSTREAM, "wheel_reference": WHEEL,
+              "mode": "generic-only" if args.generic_only else "known-and-generic",
               "commit_count": int(git(repo, "rev-list", "--count", f"{UPSTREAM}..{BASE}")),
               "coverage": {"tree_files": len(current), "tree_unique_blobs": len(set(current.values())),
                            "history_unique_blobs": len(history), "union_unique_blobs": len(paths), **dict(totals)},
