@@ -42,12 +42,15 @@ Lead 负责本文件、ADR、地图同步和集成验收；执行者各自工作
 | [#87 标准启动请求解析修复](https://github.com/Alex-tangt/Agent-Knowledge-Base/issues/87) | 已合入 `d8a6709` 并关闭 | `memory_base/deploy.py`, 对应单测 | 无 | 正式 runtime 请求 200/422；gateway 重启后 MCP 原文及 revision 一致 |
 | [#88 正式 MCP 四工具回归](https://github.com/Alex-tangt/Agent-Knowledge-Base/issues/88) | 已合入 `1e78f0d`，Lead 正式文章/视频复跑通过 | `experiments/memory-base-live/mcp_probe.py` | 无 | 旧 Bubble URI/hash，实际 stdio 四工具、列举、版本读回、只读写拒绝；无新 LLM/总结生成 |
 | [#89 wheel 专用 runtime 安装修复](https://github.com/Alex-tangt/Agent-Knowledge-Base/issues/89) | 已合入 `9252d52`；全量闸门与 #86 独立完整安装复验中 | `memory_base/deploy.py`, 对应单测 | 无 | 明确本地 artifact、拒绝发生在副作用前、目标实际包来源、源码入口兼容；实现者两例真实包安装通过，但依赖/凭据为 fixture |
+| [#90 Bubble 四工具与版本接入](https://github.com/Alex-tangt/Agent-Knowledge-Base/issues/90) | 独立候选执行中；实际 Bubble 目录无 Git，先冻结公开源码快照并建立候选工作树 | Bubble 候选 `server/memory-base.ts`, `server/memory-tools.ts`, `server/agent.ts`, `server/tests/memory-base.test.ts`；本仓 `experiments/memory-base-bubble-bridge/` | 无 | 真实 pi SDK 的四工具、项目 scope/list 分页/revision 往返、错误可区分；保留笔记授权与自动原文总结；Lead 核对实际文件基线后应用 |
 | 产品化计划、实际项目接入与复跑 | 执行中 | Lead 文档、地图与正式接入记录 | 上述实现和验收单元 | 冻结版本全量单测、已有 harness/冒烟、正式实例与旧消费者兼容 |
 
 ## 完成审计
 
-收尾按整个需求表逐项列出已通过、限制和仍待做事项。不能用单测通过代替真实宿主接入，不能用同机重启代替空数据根恢复，不能用词法扫描冒称向量或完整语义理解。AOCI 于 2026-10-12 按 owner 决定完全停用；开发继续直接使用源码、测试与文档，旧认知索引保留为存档。
+收尾按整个需求表逐项列出已通过、限制和仍待做事项。不能用单测通过代替真实宿主接入，不能用同机重启代替空数据根恢复，不能用词法扫描冒称向量或完整语义理解。AOCI 于 2026-10-12 按 owner 决定卸载，接入、索引和日志已移除；开发直接使用源码、测试与文档。
 
 **Lead 冻结验收（2026-10-12，`d8a6709`）**：802 passed、5 skipped；确定性 harness 10/10 预期匹配；opencode server 缺席，接入冒烟为 SKIP。正式 Python 3.12 的新 wrapper 与旧 `-m` 请求分别通过 200/422 校验，原文空格及 CRLF 保持一致；正式 gateway 重启后记忆 MCP 读回一致。原有用户未提交文件保留，执行写域无遗留改动。#85、#86 和正式来源/启动交付尚未据此标成完成。
 
 **后续真实交付（2026-10-12）**：#85 原生隔离与恢复 11/11 通过，Lead 独立重算 85 文件/50 目录清单，再启动恢复目标核对原文、范围及 native ACL 拒绝后停下。#88 的正式 SDK1.30 四工具、分页/版本及只读拒写复跑通过，旧 Bubble 文章/视频 URI 和哈希不变。正式 `agent-kb` 来源、实时 revision 变化和当前用户登录启动已核验；正式冷备份 67 文件全部核验且不含已知凭据明文，随后服务就绪。实际登录触发、DSH/opencode 对话及 POSIX 仍未据此标成通过。结果在[真实接入记录](../experiments/memory-base-live/README.md)。
+
+**独立安装复验（2026-10-12）**：`9252d52` 全量单测 824 passed / 5 skipped，harness 10/10，opencode server 缺席仍为 SKIP。#86 的前三次新环境安装失败记录保留（下载代理处理、Windows 深路径）；短目录 R4 的默认安装、依赖固定版本、目标自身来源与 pip check 已通过，但原生上游启动 300 秒未就绪，整体仍 FAIL，fresh 安装判据单独继续。正式依赖与 R4 的 Lark SDK 同为 1.7.3，正式 RECORD 有 10,727 个 pyc，R4 安装未预编译；直接上游启动的 15 秒栈停在该 SDK 导入。该证据仅定位排查方向，尚未证明根因或修复。
