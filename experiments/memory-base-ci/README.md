@@ -23,3 +23,5 @@ CI 只安装旧 `memory_agent/deploy-requirements.txt`，其中明确排除 Fast
 Ubuntu 为 **3 failed /831 passed /4 skipped /1 warning，26.33秒**，不再缺 FastAPI。三项失败来自 `test_memory_base_deploy.py` 的真实缓存准备与两种真实wheel环境隔离：`.resolve()` 把 POSIX venv 的 `bin/python` 转成同一系统解释器，导致实际prefix/purelib丢失；测试helper也曾返回解引用后的系统入口。原失败全文在 [Ubuntu 日志](second-ubuntu-gate.log)，步骤状态和本机原件哈希在 [second-run.json](second-run.json)。harness/冒烟在该腿未执行，不计为通过或脚本SKIP。
 
 新 [#97](https://github.com/Alex-tangt/Agent-Knowledge-Base/issues/97) 保留解释器入口的venv身份，仍严格验证目标own-site、继承provider拒绝和生命周期归属；不通过跳过POSIX测试消除失败。小机制探针可用现有WSL Python3.10，但不能据此声称正式3.12 wheel或完整POSIX部署。源码修复后另冻结完整闸门，旧45296a5独立native证据的版本范围保持。
+
+该修复已合入`4498aea`。Lead在最终`4fc5aa9`复跑所有既有单测，837 passed /5 skipped /1既有warning，harness10/10，opencode脚本无服务器而SKIP；包括两个真实wheel fixture模式。源码摘要与执行者最终冻结一致，[最终本机闸门](../memory-base-live/gates-runtime-path-2026-10-12.json)已保存。最终远端Ubuntu3.12/Windows结果另行取得，不以WSL3.10或本机通过替代。
