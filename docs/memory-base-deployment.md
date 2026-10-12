@@ -87,7 +87,7 @@ Codex CLI 验证使用已登记入口及临时 CLI 默认设置，因桌面模�
 
 **2026-10-12 补充**：正式实例已登记 `agent-kb` 的 README/docs，当前 Codex 桌面 MCP 可读到实时文件；文档变更后旧 revision 被拒，新原文立即可读。当前用户登录启动已登记，核验命令并手动执行后服务就绪；实际注销/重新登录触发未测试。
 
-正式冷备份保存在 `D:\python_work\work2026-4\memory-base-backups\formal-20261012T014904`，67 个文件的 size/SHA256 与目录清单独立核验通过，7 个已知凭据的 UTF-8/UTF-16 明文检查无命中；服务恢复后两份旧总结和教训原样读回。该正式快照尚未自行恢复；独立原生验收 #85 已在空数据根验证完整冷恢复、权限拒绝与原文，11 项通过，Lead 另行启动恢复目标复核后停下。复跑与限界见[真实接入记录](../experiments/memory-base-live/README.md)及[原生验收](../experiments/memory-base-recovery/README.md)。
+正式冷备份保存在 `D:\python_work\work2026-4\memory-base-backups\formal-20261012T014904`，67 个文件的 size/SHA256 与目录清单独立核验通过，7 个已知凭据的 UTF-8/UTF-16 明文检查无命中；服务恢复后两份旧总结和教训原样读回。创建时该快照尚未做自身恢复；随后 #94 已实际恢复并由Lead复核，见本文末节。此前独立原生验收 #85 已在空数据根验证完整冷恢复、权限拒绝与原文，11项通过。复跑与限界见[真实接入记录](../experiments/memory-base-live/README.md)及[原生验收](../experiments/memory-base-recovery/README.md)。
 
 冻结版本 `d8a6709` 的既有全量闸门为 802 passed、5 skipped；#89 修复后的 `9252d52` 为 824 passed、5 skipped，harness 10/10 预期匹配；opencode server 缺席，冒烟 SKIP。#86 曾发现 wheel 默认新 runtime 安装失败，原 FAIL 保留。短目录 R4 的默认完整安装及包来源检查通过，但原生启动超时；该次试验额外禁用了 Python 缓存写入，不能无条件归因于普通部署，标准环境运行证据仍在核验。不能用 CLI help 或安装成功代替服务运行通过。
 

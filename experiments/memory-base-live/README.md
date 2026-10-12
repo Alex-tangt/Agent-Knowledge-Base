@@ -78,6 +78,6 @@ Bubble 的 `scripts/smoke-memory-live.ts` 会创建新总结任务并实际调�
 | 当前闲置工作集 | 核对 PID、创建时间和完整命令后采集三个进程树，共 273.97 MiB；包含控制台子进程，可能重复计算共享页，非峰值/私有内存；不与旧测点作优化幅度比较 | [resources-2026-10-12.json](resources-2026-10-12.json) |
 | 宿主规约同步 | Codex、DSH、opencode 的 personal-memory SKILL 均与仓库规约一致，SHA256 `72527b6cc7e74c5c8266f01f85d3dcbe398415ed24404facfe722d1468c5d964`；旧副本保留本机备份 | 只证明规约落位，DSH/opencode 实际会话仍未验 |
 
-这条项目词法查询验证实际接缝，不是检索质量 benchmark。项目原文没有复制进 native capture，源文件当前状态仍为权威。正式备份位于 `D:\python_work\work2026-4\memory-base-backups\formal-20261012T014904`，manifest SHA256 为 `27dc14f772e61a351be62bf3c5dfb24397c27cec8894612065139a8677541c65`；它尚未自行恢复，空目标恢复行为另由 #85 验证。
+这条项目词法查询验证实际接缝，不是检索质量benchmark。项目原文没有复制进native capture，源文件当前状态仍为权威。正式备份位于 `D:\python_work\work2026-4\memory-base-backups\formal-20261012T014904`，manifest SHA256 为 `27dc14f772e61a351be62bf3c5dfb24397c27cec8894612065139a8677541c65`；创建时尚未做自身恢复，后续#94实际恢复与Lead复核已通过，见上表。此前#85证明的是独立合成实例的空目标恢复。
 
-#85 的完整原生隔离恢复与 #86 的独立包结论分别记录在独立实验中。wheel 默认新 runtime 安装缺陷的 #89 修复已合入 `9252d52`，新版全量闸门通过；#86 独立完整安装复验仍须区分安装与运行、额外试验环境与普通部署。Bubble 四工具/版本接入由 #90 单独验证，不能据本节宣布产品全部完成。AOCI 按 owner 决定移除。
+#85完整原生隔离恢复、#86独立包及#94实际正式快照恢复分别记录。#89/#91后的#86 R5已取得真实新栈/默认首次运行证据；保留此前FAIL及环境边界。Bubble#90/#92/#93代码已实际应用，组合Lead闸门73应用/13host通过。跨设备、真实登录及DSH/opencode实际对话仍未验证，不能宣布整个产品目标完成。AOCI按owner决定移除。
