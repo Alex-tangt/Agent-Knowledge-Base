@@ -1,0 +1,19 @@
+{
+  "checked_at_utc": "2026-10-12T08:27:14Z",
+  "compile_launcher_pid": 43432,
+  "home_process_ids": [],
+  "counts": {
+    "py": 10727,
+    "pyc": 10432
+  },
+  "longest_current_package_path_characters": 193,
+  "owned_records": {},
+  "ports_busy": {
+    "upstream": false,
+    "gateway": false,
+    "embed": false
+  },
+  "workspace_entries": [],
+  "native_not_started": true,
+  "product_implementation_unchanged": true
+}

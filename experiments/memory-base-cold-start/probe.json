@@ -1,0 +1,86 @@
+{
+  "precondition": {
+    "home": "C:\\Users\\Tan\\.mb86\\r4\\d",
+    "owned_records_empty": true,
+    "data_entries": [],
+    "ports_busy": {
+      "upstream": false,
+      "gateway": false,
+      "embed": false
+    },
+    "home_process_ids": []
+  },
+  "script_sha256": "ed088bd87a2a7f31353aa5a5a853719760b62ea58c8e9d15ff08cf3163a37028",
+  "commands": [
+    {
+      "stage": "identity-before",
+      "command": [
+        "C:\\Users\\Tan\\.mb86\\r4\\d\\runtime\\Scripts\\python.exe",
+        "-B",
+        "-c",
+        "import hashlib,importlib.metadata as m,json,os,sys,sysconfig\nfrom pathlib import Path\nimport memory_base\nsite=Path(sysconfig.get_path('purelib')).resolve()\nd=m.distribution('lark-oapi');root=Path(d.locate_file('lark_oapi')).resolve()\ncounts={'py':0,'pyc':0}\nfor _,_,names in os.walk(root):\n for suffix in counts: counts[suffix]+=sum(n.endswith('.'+suffix) for n in names)\nprint(json.dumps({'python':sys.executable,'site':str(site),'memory_origin':memory_base.__file__,\n 'lark_origin':str(root),'lark_version':d.version,'lark_record_sha256':hashlib.sha256(d.read_text('RECORD').encode()).hexdigest(),\n 'counts':counts,'versions':{name:m.version(name) for name in ['openviking', 'openviking-sdk', 'mcp', 'llama-cpp-python', 'volcengine-python-sdk', 'openai']}}))\n"
+      ],
+      "cwd": "C:\\Users\\Tan\\AppData\\Local\\Temp",
+      "timeout_seconds": 90,
+      "log": "C:\\Users\\Tan\\.mb86\\r4\\cold-start-91\\identity-before.log",
+      "pid": 12604,
+      "exit_code": 0,
+      "wall_seconds": 1.4934254999971017
+    },
+    {
+      "stage": "lark-only-compile",
+      "command": [
+        "C:\\Users\\Tan\\.mb86\\r4\\d\\runtime\\Scripts\\python.exe",
+        "-c",
+        "import compileall,faulthandler,json,os,sys,sysconfig,time\nfrom pathlib import Path\nroot=Path(sys.argv[1]).resolve();site=Path(sysconfig.get_path('purelib')).resolve()\nassert root==site/'lark_oapi' and root.is_dir()\nassert sys.pycache_prefix is None\nfaulthandler.dump_traceback_later(280)\nstarted=time.perf_counter()\nsuccess=compileall.compile_dir(str(root),quiet=2,force=False,optimize=0,workers=1)\nfaulthandler.cancel_dump_traceback_later()\nprint(json.dumps({'compiled_only':str(root),'force':False,'optimize':0,'workers':1,'success':success,'seconds':time.perf_counter()-started}))\nraise SystemExit(0 if success else 1)\n",
+        "C:\\Users\\Tan\\.mb86\\r4\\d\\runtime\\Lib\\site-packages\\lark_oapi"
+      ],
+      "cwd": "C:\\Users\\Tan\\AppData\\Local\\Temp",
+      "timeout_seconds": 300,
+      "log": "C:\\Users\\Tan\\.mb86\\r4\\cold-start-91\\lark-only-compile.log",
+      "pid": 43432,
+      "exit_code": 1,
+      "timeout": true,
+      "wall_seconds": 300.05620759999874
+    }
+  ],
+  "overall": "FAIL",
+  "protected_report_hashes_before": {
+    "C:\\Users\\Tan\\.mb86\\r4\\results.json": "5858d3edc0e31c1cff751553a772325c4f650aa14efa9bcc75f09b6ebf7a27a9",
+    "C:\\Users\\Tan\\.mb86\\r4\\native.json": "f35e81b9e58afaa512b9d05d4a771096a24bdba46502df8b01bd7767fb785b44",
+    "C:\\Users\\Tan\\.mb86\\r4\\normal-native\\native.json": "429c35b2fe4d159486e334dda1d63ed13e6ef07a14cea5990b954a06fe65c8b5",
+    "C:\\Users\\Tan\\.mb86\\r4\\normal-native\\result.json": "9c1dcc949d97ca385c30acd785398fe718df47370a3588a61924f59f1c6c84c7"
+  },
+  "wheel_sha256": "e7e2dfba47ccc65e47e064f9fadde7b8e9e2d0a6496424122c83f96029b23d03",
+  "identity_before": {
+    "python": "C:\\Users\\Tan\\.mb86\\r4\\d\\runtime\\Scripts\\python.exe",
+    "site": "C:\\Users\\Tan\\.mb86\\r4\\d\\runtime\\Lib\\site-packages",
+    "memory_origin": "C:\\Users\\Tan\\.mb86\\r4\\d\\runtime\\Lib\\site-packages\\memory_base\\__init__.py",
+    "lark_origin": "C:\\Users\\Tan\\.mb86\\r4\\d\\runtime\\Lib\\site-packages\\lark_oapi",
+    "lark_version": "1.7.3",
+    "lark_record_sha256": "584e47732205a1072a3a7961e7e4f27634ab8951d1b1ad3b4b66b6ca0fed8de8",
+    "counts": {
+      "py": 10727,
+      "pyc": 463
+    },
+    "versions": {
+      "openviking": "0.4.23",
+      "openviking-sdk": "0.1.13",
+      "mcp": "1.30.0",
+      "llama-cpp-python": "0.3.36",
+      "volcengine-python-sdk": "5.0.51",
+      "openai": "2.54.0"
+    }
+  },
+  "failure": {
+    "type": "AssertionError",
+    "message": "Bounded Lark-only compile failed; do not extend this probe"
+  },
+  "protected_report_hashes_after": {
+    "C:\\Users\\Tan\\.mb86\\r4\\results.json": "5858d3edc0e31c1cff751553a772325c4f650aa14efa9bcc75f09b6ebf7a27a9",
+    "C:\\Users\\Tan\\.mb86\\r4\\native.json": "f35e81b9e58afaa512b9d05d4a771096a24bdba46502df8b01bd7767fb785b44",
+    "C:\\Users\\Tan\\.mb86\\r4\\normal-native\\native.json": "429c35b2fe4d159486e334dda1d63ed13e6ef07a14cea5990b954a06fe65c8b5",
+    "C:\\Users\\Tan\\.mb86\\r4\\normal-native\\result.json": "9c1dcc949d97ca385c30acd785398fe718df47370a3588a61924f59f1c6c84c7"
+  },
+  "protected_reports_unchanged": true
+}

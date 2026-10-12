@@ -10,4 +10,24 @@
 
 native 流程复用原 #86 native_probe.py，仅改授权 home/store guard、另存输出和耗时；使用 d 自身原始 wheel、真实 OpenViking、原外部串行嵌入、已有 GGUF、合成 Unicode/CRLF 笔记，无 LLM 生成。每个服务由原 manager 启动，在 finally 按 owned records 清理。
 
-结果、成本及边界在执行后补充。只有预编译后标准 native 通过才修改 install；否则报告 Lead，不扩大编译范围、不 fork 上游。
+## R1 测量结果
+
+预登记提交 `6811ae7`。命令（主树 venv 已激活，在独立工作树）：
+
+```powershell
+& 'D:\python_work\work2026-4\Agent-Knowledge-Base\venv\Scripts\python.exe' -c "import runpy;runpy.run_path('experiments/memory-base-cold-start/run_lark_probe.py',run_name='__main__')"
+```
+
+live exec handle `65939` 已结束，退出 1。启动前 workspace 空、owned process records 空、专属 63095/63096/63097 端口空闲且无 d Python/CLI 进程。d 解释器实际来源为自身 site-packages，全部 memory_base 包文件与原 wheel 逐字节相同，wheel SHA256 `e7e2dfba47ccc65e47e064f9fadde7b8e9e2d0a6496424122c83f96029b23d03`；Lark 版本 1.7.3，自身来源已确认。
+
+Lark-only 非 force 编译触及本票自行选择的 **300 秒编译测量上限**（300.056 秒）。280 秒采样栈在 compileall → py_compile → importlib get_data，即仍在读 SDK 源文件；没有增添 SDK 或修改其 Python 源码。编译启动前 463 pyc，结束后 10,432 pyc（10,727 py，新增 9,969，剩余 295）。当前最长 Lark 包文件路径 193 字符，未观察到路径长度报错。
+
+**本轮整体 FAIL 停在编译阶段，native 尚未启动。** 不能把此结果当作「预编译后 native 仍失败」，也不能认定 Lark 假设已被否定。安装器与单元测试没有修改。已向 Lead 提出仅继续同一 Lark 的非 force 剩余准备、另存下一有限探针，再使用原 300 秒 native 的候选方向；未擅自继续、扩展 SDK 或延长服务 timeout。
+
+收尾只读核对：编译进程树及 d Python/CLI 无残留；owned records `{}`，三个端口空闲，workspace 仍空。四份受保护原报告 raw SHA256 在前后完全一致（明细在 probe.json），原 d/f FAIL 记录均未覆盖。
+
+## 证据与边界
+
+本目录封存 `probe.json`、`identity-before.log`、`lark-only-compile.log`、`post-compile-state.json`。相同原始字节资产仍留在 `C:\Users\Tan\.mb86\r4\cold-start-91`；d 的部分 Lark bytecode 保留，不删除，不虚称全新无缓存 runtime。不得用下一轮续编耗时替代本轮 300 秒成本。
+
+只有预编译后标准 native 实际通过才修改 install；否则报告 Lead，不扩大编译范围、不 fork 上游。正式 runtime、formal 缓存、f home、原 R4 报告与既有 store 未写入，服务未启动，AOCI 未调用。
