@@ -37,3 +37,5 @@ R4 default 自动 PEP610 artifact 的真实完整依赖+自身包安装成功；
 finally 已通过本 home manager `stop`，退出 0、remaining=[]、processes.json={}，三 fixture 端口无残留。失败发生在 start 返回前，因此当次缺少启动 records 副本；补充脚本今后在 stop 前也保存 partial records，但不据这个后加保存逻辑声称 R4 当次已保留该副本。实际 native 行为和三服务健康均不能算 PASS。
 
 Lead 已确认可继续独立的 adopt→fresh 安装判据，不重启任何服务、不扩范围。`continue_fresh.py` 先封存外部 results-before-fresh.json，再在已有授权 r4 的不存在 f home 真实 adopt/explicit wheel fresh、保留 marker/ports/model、核全新目标 origins/active pins/pip check；formal pip check 只读。脚本先提交再执行；最终 overall 始终保留 native FAIL，installer 独立结果另列，剩余 native 未验证项显式列出。
+
+独立 continuation 已自然结束退出 0，adopt→fresh gate PASS。第二目标 f/runtime 从不存在创建，真实完整依赖/产品 pip 成功，全部 active constraints/origins/PEP610 SHA/source 校验成功，home/model/ports/合成 marker 保留，fresh 和 formal pip check 均为 `No broken requirements found.`。结果封存在 [results.json](results.json)，原 R4 副本与 results-before-fresh.json 不改；native 仍 FAIL。后续只读诊断另存报告。
