@@ -47,7 +47,7 @@ Lead 负责本文件、ADR、地图同步和集成验收；执行者各自工作
 | [#92 Bubble 笔记写入意图](https://github.com/Alex-tangt/Agent-Knowledge-Base/issues/92) | 冻结 `36f9bf2` 两文件已备份应用；Lead build、73/73 应用及 5/5 host 闸门、正式工具入口与只读 pi/网关通过；正式 manager 重启健康 | Bubble 候选 `server/memory-tools.ts`, `server/tests/memory-base.test.ts`；本仓 `experiments/memory-base-note-intent/` 和 Lead live 记录 | 无 | 否定/询问/引用和撤回不调用add；明确中文/英文保存、原文和旧key兼容；有限规则拒绝未匹配表达并提供明确示例，不冒称通用语言理解 |
 | [#93 Bubble Windows 状态发布](https://github.com/Alex-tangt/Agent-Knowledge-Base/issues/93) | 冻结`ba8b5b5`；Lead组合#92为`8e13fae`，build/73应用/13host全通过；实际三scripts已备份应用，自有manager重启健康 | Bubble `scripts/local-backend.mjs`, `host-state.mjs`, 对应scripts测试；本仓`experiments/memory-base-host-state/` | 无 | rename短错误至多暂停200ms，保持原子JSON/同步顺序；持续失败关闭自有child并清理本instance；原120s就绪上限不变，原FAIL保留 |
 | [#94 正式快照隔离恢复](https://github.com/Alex-tangt/Agent-Knowledge-Base/issues/94) | 固定67文件/39目录实际快照→空data恢复、三原文/来源/权限/凭据重发/MCP通过；Lead独立31原件/清单及实际读回/权限/清理通过 | `experiments/memory-base-formal-restore/`，隔离`.mb94/a`；借R5 f runtime，重装launcher/RECORD及缓存副作用声明 | #86（原生边，已通过） | 原快照不变，target已停；所有方法FAIL保留；不冒称第三新栈、任意ACL对象或真实登录/设备验证 |
-| [#95 交付分支复核](https://github.com/Alex-tangt/Agent-Knowledge-Base/issues/95) | 固定`4dadc40`范围只读核未发布文件/历史的凭据与实际内容，准备草稿交付 | `experiments/memory-base-publication/`，Lead负责PR与地图 | 无 | 不输出秘密、不改历史/用户文件/正式实例；当前树与历史分开、判据/漏项明确；发布前复核根venv闸门/产品freeze/实际证据链接 |
+| [#95 交付分支复核](https://github.com/Alex-tangt/Agent-Knowledge-Base/issues/95) | 已合入`0113d3c`：1131 blobs/47当前凭据/3原文/1私有URL无实际匹配；131候选411位置保留分类、6项Lead复核通过；后续25新blob单独核对，准备草稿交付 | `experiments/memory-base-publication/`，Lead负责PR与地图 | 无 | 不输出秘密、不改历史/用户文件/正式实例；当前树与历史分开、判据/漏项明确；发布前复核根venv闸门/产品freeze/实际证据链接 |
 | 产品化计划、实际项目接入与复跑 | 执行中 | Lead 文档、地图与正式接入记录 | 上述实现和验收单元 | 冻结版本全量单测、已有 harness/冒烟、正式实例与旧消费者兼容 |
 
 ## 完成审计

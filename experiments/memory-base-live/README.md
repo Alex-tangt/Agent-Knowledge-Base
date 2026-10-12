@@ -71,6 +71,7 @@ Bubble 的 `scripts/smoke-memory-live.ts` 会创建新总结任务并实际调�
 | 新实现完整闸门 | 冻结 `9252d52`：824 passed / 5 skipped；harness 10/10；opencode 冒烟因无 server 为 SKIP | [gates-2026-10-12.json](gates-2026-10-12.json) |
 | 冷启动修复完整闸门 | 冻结 `45296a5`：833 passed / 5 skipped；harness 10/10；opencode server 缺席仍为 SKIP；独立新环境首次运行另列 #86 | [gates-cold-start-2026-10-12.json](gates-cold-start-2026-10-12.json) |
 | 发布前 Lead 增量复核 | #95 固定范围之后仅地图/历史状态与 CI 版本变更；16 个产品文件仍与冻结闸门一致、60 本地链接有效；CI 原 steps 保持，Python 对齐3.12，远端运行未开始；三服务及 Bubble 当前健康，ADB 无设备 | [lead-publication-delta-2026-10-12.json](lead-publication-delta-2026-10-12.json) |
+| 发布隐私复核与最终增量 | #95 固定tree/history实扫1131 blobs，实际47当前凭据/3原文/1私有URL无匹配；6个保留项由Lead独立解析为语法/fixture/环境引用。后续25新blob的4项定位均为语法/计数/明确smoke，保留原始定位与独立补验 | [审计报告](../memory-base-publication/README.md)、[6项独立复核](lead-publication-review-2026-10-12.json)、[最终增量](lead-publication-final-delta-2026-10-12.json) |
 | 冷启动后独立安装运行 | R5默认/fresh各175个自身distribution/173约束；默认第一次native start原180秒配置，168.13秒成功、12条checks；Lead53原件/产物字节与当前归属/端口清理核验；原FAIL保留 | [R5](../memory-base-package/cold-final-2026-10-12/README.md)、[Lead](lead-package-cold-2026-10-12.json) |
 | Bubble 四工具正式接入 | 候选 `0a86cb1` 四文件先核基线、备份再应用；Lead build、68/68 应用测试和 5/5 host 测试通过；零活跃任务时自有管理器重启后健康 | [应用与闸门](bubble-bridge-applied-2026-10-12.json)、[候选证据](../memory-base-bubble-bridge/README.md) |
 | Bubble 真实 SDK / 正式网关 | 本机 synthetic SSE 驱动实际 pi：四工具 schema、项目检索、两页 list、原文 revision、版本/目录冲突反馈、旧 capture 哈希通过；只读，不生成新总结 | [候选](bubble-bridge-candidate-2026-10-12.json)、[正式代码](bubble-bridge-formal-2026-10-12.json)、[复跑脚本](bubble_bridge_probe.mjs) |
