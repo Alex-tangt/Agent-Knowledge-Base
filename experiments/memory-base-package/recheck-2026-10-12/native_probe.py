@@ -132,6 +132,8 @@ def main():
     finally:
         # Stop only this manager's exact owned process records, never by name.
         try:
+            records = deploy._records(home)
+            (store / "processes-before-stop.json").write_text(json.dumps(records, indent=2) + "\n", encoding="utf-8")
             manager("stop")
             assert all(not deploy.owned_process(record) for record in records.values())
             assert all(not deploy._port_busy(port) for port in config["ports"].values())

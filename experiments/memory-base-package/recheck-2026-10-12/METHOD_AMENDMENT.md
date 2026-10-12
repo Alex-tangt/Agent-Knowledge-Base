@@ -29,3 +29,11 @@ Lead 已明确扩充**fixture 资产**授权，仅 `C:\Users\Tan\.mb86\r4` 及�
 脚本只接受这个专属外部根，检查解析后的父归属和 census，要求根不存在，禁止覆盖/删除旧目录。wheel、export、launcher、两全新目标 runtime、原始日志/报告、数据和 process records 都在 r4 保留；安全 JSON/脚本/结论仍在 repo 白名单。native home 继续必须在本 store 下，保持真实全新依赖 pip 和全部原判据。若短 home 成功，也不推翻前三次失败，不宣称关闭 Windows 长路径支持时任意深 home 可安装。
 
 开跑前完成全部 **175 份 RECORD / 101336 条目** 核验，拟 target site 前缀长 49，最长预测文件路径 **197**，`>=250` 的条目为 **0**。逐文件 physical-resolve 和另一个等价 lexical normpath 上界均给出相同完整结果；父根另做实际 resolve 并禁止 alias/junction。后者避免了对十万不存在文件开 handle 的重复 IO，数据为 [external_asset_path_census_lexical.json](external_asset_path_census_lexical.json)。原慢测量在身份前置保护后已自然结束、退出 0，没有执行 Stop-Process，也没有中断 pip 或重启任何测量；两个 census 均保留。
+
+## R4 native FAIL 后：仅补验独立 adopt→fresh，不重启 native
+
+R4 default 自动 PEP610 artifact 的真实完整依赖+自身包安装成功；target 模块/distribution/source 均来自自己的 site-packages，全新环境无 provider pth/无 system-site-packages，全部 active pins 和 pip check、两处 CWD 导入与 help 通过。但 native `start --timeout 300` 只有 embedding 健康，upstream 未就绪，out/err 为空；未写合成 note、未启动 gateway。实际 FAIL 副本 [native_start_failure.json](native_start_failure.json) 与外部 r4/native.json / native-start.log 保留。
+
+finally 已通过本 home manager `stop`，退出 0、remaining=[]、processes.json={}，三 fixture 端口无残留。失败发生在 start 返回前，因此当次缺少启动 records 副本；补充脚本今后在 stop 前也保存 partial records，但不据这个后加保存逻辑声称 R4 当次已保留该副本。实际 native 行为和三服务健康均不能算 PASS。
+
+Lead 已确认可继续独立的 adopt→fresh 安装判据，不重启任何服务、不扩范围。`continue_fresh.py` 先封存外部 results-before-fresh.json，再在已有授权 r4 的不存在 f home 真实 adopt/explicit wheel fresh、保留 marker/ports/model、核全新目标 origins/active pins/pip check；formal pip check 只读。脚本先提交再执行；最终 overall 始终保留 native FAIL，installer 独立结果另列，剩余 native 未验证项显式列出。
