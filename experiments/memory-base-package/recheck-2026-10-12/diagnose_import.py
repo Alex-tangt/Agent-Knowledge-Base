@@ -35,18 +35,17 @@ def identity():
                            for d in metadata.distributions()}}
     for name, module in PACKAGES.items():
         dist = metadata.distribution(name)
-        root = Path(dist.locate_file(module))  # No per-file Path.resolve traversal.
-        counts = {"py": 0, "pyc": 0, "py_bytes": 0, "pyc_bytes": 0}
-        for directory, _, filenames in os.walk(root):
-            for filename in filenames:
-                extension = Path(filename).suffix
-                if extension in (".py", ".pyc"):
-                    kind = extension[1:]
-                    counts[kind] += 1
-                    counts[kind + "_bytes"] += os.stat(os.path.join(directory, filename)).st_size
         rows = sorted(row for row in csv.reader(io.StringIO(dist.read_text("RECORD")))
-                      if row[0].startswith(module + "/") and row[0].endswith(".py"))
-        result["packages"][name] = {"version": dist.version, "root": str(root),
+                      if row[0].startswith(module) and row[0].endswith(".py"))
+        assert rows, name + " source census cannot be empty"
+        roots = sorted({row[0].split("/", 1)[0] for row in rows})
+        counts = {"py": 0, "pyc": 0}
+        for top_level in roots:
+            root = Path(dist.locate_file(top_level))  # Lexical paths; no per-file resolve/stat.
+            for _, _, filenames in os.walk(root):
+                counts["py"] += sum(filename.endswith(".py") for filename in filenames)
+                counts["pyc"] += sum(filename.endswith(".pyc") for filename in filenames)
+        result["packages"][name] = {"version": dist.version, "roots": roots,
             "actual_file_counts": counts, "record_python_files": len(rows),
             "source_record_sha256": hashlib.sha256(json.dumps(rows, separators=(",", ":")).encode()).hexdigest()}
     print(json.dumps(result, indent=2))

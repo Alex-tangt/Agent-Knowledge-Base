@@ -16,3 +16,7 @@ Lead 已只读核验 formal/target 的 lark-oapi 1.7.3、volcengine-python-sdk 5
 `diagnose_import.py` 只在 fresh 安装 gate 已封存 PASS 后运行。三环境 actual `.py/.pyc` census、distribution versions 和 source RECORD digest 在独立新日志目录保留；25s faulthandler 限定纯 import child，使用 `-X importtime` 捕获分项成本，不启动任何服务。formal force-source 使用不存在的本票 pycache_prefix 并 `-B`，不写 formal 或目标 bytecode。每项变量差异和未完成导入独立报告；目标数据与 vault 不读取。
 
 原始 startup FAIL/cleanup 及 acceptance results 保持不变。结果、支持与否定的假设待实际运行追加；诊断上限不是产品 timeout 的替代值。
+
+## Census 补充方法
+
+首版 actual census 对 volcengine-python-sdk 只扫描了不存在的单根 `volcenginesdk/`，其 0 计数不用于判断；lark 等单目录包的 actual census 有效。首版报告及 import 原始日志全部保留。补充 worker 从 distribution RECORD 中找所有 `volcenginesdk*` 的 source 顶层目录，逐目录 os.walk 统计实际 py/pyc，避免逐文件 resolve/stat，另存完整 census；不重复原 import 测量、不改变任何 bytecode。
