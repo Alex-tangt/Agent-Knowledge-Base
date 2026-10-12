@@ -43,6 +43,7 @@ Lead 负责本文件、ADR、地图同步和集成验收；执行者各自工作
 | [#88 正式 MCP 四工具回归](https://github.com/Alex-tangt/Agent-Knowledge-Base/issues/88) | 已合入 `1e78f0d`，Lead 正式文章/视频复跑通过 | `experiments/memory-base-live/mcp_probe.py` | 无 | 旧 Bubble URI/hash，实际 stdio 四工具、列举、版本读回、只读写拒绝；无新 LLM/总结生成 |
 | [#89 wheel 专用 runtime 安装修复](https://github.com/Alex-tangt/Agent-Knowledge-Base/issues/89) | 已合入 `9252d52`；全量闸门与 #86 独立完整安装复验中 | `memory_base/deploy.py`, 对应单测 | 无 | 明确本地 artifact、拒绝发生在副作用前、目标实际包来源、源码入口兼容；实现者两例真实包安装通过，但依赖/凭据为 fixture |
 | [#90 Bubble 四工具与版本接入](https://github.com/Alex-tangt/Agent-Knowledge-Base/issues/90) | 冻结候选 `0a86cb1` 已应用正式目录；Lead build、68/68 应用测试、5/5 host 测试及实际网关/SDK 复验通过，后端健康 | Bubble 候选 `server/memory-base.ts`, `server/memory-tools.ts`, `server/agent.ts`, `server/tests/memory-base.test.ts`；本仓 `experiments/memory-base-bubble-bridge/` | 无 | 真实 pi SDK 的四工具、项目 scope/list 分页/revision 往返、错误可区分；原四文件基线先核对并保留备份；读回旧总结；未使用新的付费模型 |
+| [#91 首次冷启动](https://github.com/Alex-tangt/Agent-Knowledge-Base/issues/91) | 标准环境 FAIL 已确认；隔离探针先验证有边界的依赖准备，再决定安装修复 | `memory_base/deploy.py`, 对应单测；`experiments/memory-base-cold-start/`，d runtime 的 bytecode 实验资产 | 无；#86最终运行通过依赖本票 | 不增大timeout、不改上游版本/源码、不借正式缓存；target首次就绪、完整读写/MCP和只管理自有进程；新安装独立复验 |
 | 产品化计划、实际项目接入与复跑 | 执行中 | Lead 文档、地图与正式接入记录 | 上述实现和验收单元 | 冻结版本全量单测、已有 harness/冒烟、正式实例与旧消费者兼容 |
 
 ## 完成审计
