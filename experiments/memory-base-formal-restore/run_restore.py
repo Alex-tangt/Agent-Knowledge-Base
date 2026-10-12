@@ -379,7 +379,9 @@ def main():
             _,after=snapshot_inventory()
             assert after==original
             assert r5_immutable()==immutable_before
-            report["checks"].update({"snapshot_original_byte_hash_unchanged":True,"r5_original_non_cache_bytes_unchanged":True})
+            report["checks"]["snapshot_original_byte_hash_unchanged"]=True
+            report["checks"]["r5_current_install_baseline_non_cache_bytes_unchanged" if args.continue_installed
+                             else "r5_original_non_cache_bytes_unchanged"]=True
             report["cache_after"]=cache_counts()
             formal_config=json.loads((FORMAL/"deployment.json").read_text())
             report["formal_health_readonly"]={name:request(f"http://127.0.0.1:{port}/health")[0] for name,port in formal_config["ports"].items()}
