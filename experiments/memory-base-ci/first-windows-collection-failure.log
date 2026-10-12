@@ -1,0 +1,33 @@
+L0 闸门 (windows-latest · py3.12)	单元测试（回归闸门）	﻿2026-10-12T15:01:04.1325895Z ##[group]Run python -m pytest tests/unit -q
+L0 闸门 (windows-latest · py3.12)	单元测试（回归闸门）	2026-10-12T15:01:04.1326398Z ^[[36;1mpython -m pytest tests/unit -q^[[0m
+L0 闸门 (windows-latest · py3.12)	单元测试（回归闸门）	2026-10-12T15:01:04.1395531Z shell: C:\Program Files\PowerShell\7\pwsh.EXE -command ". '{0}'"
+L0 闸门 (windows-latest · py3.12)	单元测试（回归闸门）	2026-10-12T15:01:04.1395892Z env:
+L0 闸门 (windows-latest · py3.12)	单元测试（回归闸门）	2026-10-12T15:01:04.1396160Z   pythonLocation: C:\hostedtoolcache\windows\Python\3.12.10\x64
+L0 闸门 (windows-latest · py3.12)	单元测试（回归闸门）	2026-10-12T15:01:04.1396615Z   PKG_CONFIG_PATH: C:\hostedtoolcache\windows\Python\3.12.10\x64/lib/pkgconfig
+L0 闸门 (windows-latest · py3.12)	单元测试（回归闸门）	2026-10-12T15:01:04.1397050Z   Python_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.12.10\x64
+L0 闸门 (windows-latest · py3.12)	单元测试（回归闸门）	2026-10-12T15:01:04.1397451Z   Python2_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.12.10\x64
+L0 闸门 (windows-latest · py3.12)	单元测试（回归闸门）	2026-10-12T15:01:04.1397838Z   Python3_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.12.10\x64
+L0 闸门 (windows-latest · py3.12)	单元测试（回归闸门）	2026-10-12T15:01:04.1398142Z ##[endgroup]
+L0 闸门 (windows-latest · py3.12)	单元测试（回归闸门）	2026-10-12T15:01:20.2062582Z 
+L0 闸门 (windows-latest · py3.12)	单元测试（回归闸门）	2026-10-12T15:01:20.2063277Z =================================== ERRORS ====================================
+L0 闸门 (windows-latest · py3.12)	单元测试（回归闸门）	2026-10-12T15:01:20.2063999Z ___________ ERROR collecting tests/unit/test_memory_base_gateway.py ___________
+L0 闸门 (windows-latest · py3.12)	单元测试（回归闸门）	2026-10-12T15:01:20.2065224Z ImportError while importing test module 'D:\a\Agent-Knowledge-Base\Agent-Knowledge-Base\tests\unit\test_memory_base_gateway.py'.
+L0 闸门 (windows-latest · py3.12)	单元测试（回归闸门）	2026-10-12T15:01:20.2066262Z Hint: make sure your test modules/packages have valid Python names.
+L0 闸门 (windows-latest · py3.12)	单元测试（回归闸门）	2026-10-12T15:01:20.2066885Z Traceback:
+L0 闸门 (windows-latest · py3.12)	单元测试（回归闸门）	2026-10-12T15:01:20.2067378Z C:\hostedtoolcache\windows\Python\3.12.10\x64\Lib\importlib\__init__.py:90: in import_module
+L0 闸门 (windows-latest · py3.12)	单元测试（回归闸门）	2026-10-12T15:01:20.2068100Z     return _bootstrap._gcd_import(name[level:], package, level)
+L0 闸门 (windows-latest · py3.12)	单元测试（回归闸门）	2026-10-12T15:01:20.2068586Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+L0 闸门 (windows-latest · py3.12)	单元测试（回归闸门）	2026-10-12T15:01:20.2068972Z tests\unit\test_memory_base_gateway.py:12: in <module>
+L0 闸门 (windows-latest · py3.12)	单元测试（回归闸门）	2026-10-12T15:01:20.2069386Z     from fastapi.testclient import TestClient
+L0 闸门 (windows-latest · py3.12)	单元测试（回归闸门）	2026-10-12T15:01:20.2069766Z E   ModuleNotFoundError: No module named 'fastapi'
+L0 闸门 (windows-latest · py3.12)	单元测试（回归闸门）	2026-10-12T15:01:20.2070385Z ============================== warnings summary ===============================
+L0 闸门 (windows-latest · py3.12)	单元测试（回归闸门）	2026-10-12T15:01:20.2070992Z C:\hostedtoolcache\windows\Python\3.12.10\x64\Lib\site-packages\qdrant_client\qdrant_remote.py:292
+L0 闸门 (windows-latest · py3.12)	单元测试（回归闸门）	2026-10-12T15:01:20.2072194Z   C:\hostedtoolcache\windows\Python\3.12.10\x64\Lib\site-packages\qdrant_client\qdrant_remote.py:292: UserWarning: Failed to obtain server version. Unable to check client-server compatibility. Set check_compatibility=False to skip version check.
+L0 闸门 (windows-latest · py3.12)	单元测试（回归闸门）	2026-10-12T15:01:20.2147269Z     show_warning(
+L0 闸门 (windows-latest · py3.12)	单元测试（回归闸门）	2026-10-12T15:01:20.2147521Z 
+L0 闸门 (windows-latest · py3.12)	单元测试（回归闸门）	2026-10-12T15:01:20.2147829Z -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+L0 闸门 (windows-latest · py3.12)	单元测试（回归闸门）	2026-10-12T15:01:20.2148496Z =========================== short test summary info ===========================
+L0 闸门 (windows-latest · py3.12)	单元测试（回归闸门）	2026-10-12T15:01:20.2148998Z ERROR tests/unit/test_memory_base_gateway.py
+L0 闸门 (windows-latest · py3.12)	单元测试（回归闸门）	2026-10-12T15:01:20.2149475Z !!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!
+L0 闸门 (windows-latest · py3.12)	单元测试（回归闸门）	2026-10-12T15:01:20.2149945Z 1 warning, 1 error in 13.13s
+L0 闸门 (windows-latest · py3.12)	单元测试（回归闸门）	2026-10-12T15:01:22.0299260Z ##[error]Process completed with exit code 1.
