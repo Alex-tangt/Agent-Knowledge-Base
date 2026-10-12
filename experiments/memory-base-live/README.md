@@ -67,8 +67,10 @@ Bubble 的 `scripts/smoke-memory-live.ts` 会创建新总结任务并实际调�
 | Lead 独立恢复复核 | 重算 #85 的 85 文件/50 目录清单；实际启动恢复目标，原文哈希、reader 列举范围与 native user 拒绝通过；目标已停下 | [lead-recovery-2026-10-12.json](lead-recovery-2026-10-12.json) |
 | 正式当前用户登录启动 | 登记命令归属准确，其它 HKCU Run 项不变；手动执行该 pythonw 命令退出 0，三个受管理服务就绪；实际登录触发未测 | [autostart-2026-10-12.json](autostart-2026-10-12.json) |
 | 正式冷备份 | 67 文件与完整目录清单独立核验；sources.json 原样保留；7 个已知凭据的 UTF-8/UTF-16 检查无明文命中；服务重启后原总结和教训读回一致 | [backup-2026-10-12.json](backup-2026-10-12.json) |
+| 新实现完整闸门 | 冻结 `9252d52`：824 passed / 5 skipped；harness 10/10；opencode 冒烟因无 server 为 SKIP | [gates-2026-10-12.json](gates-2026-10-12.json) |
+| 当前闲置工作集 | 核对 PID、创建时间和完整命令后采集三个进程树，共 273.97 MiB；包含控制台子进程，可能重复计算共享页，非峰值/私有内存；不与旧测点作优化幅度比较 | [resources-2026-10-12.json](resources-2026-10-12.json) |
 | 宿主规约同步 | Codex、DSH、opencode 的 personal-memory SKILL 均与仓库规约一致，SHA256 `72527b6cc7e74c5c8266f01f85d3dcbe398415ed24404facfe722d1468c5d964`；旧副本保留本机备份 | 只证明规约落位，DSH/opencode 实际会话仍未验 |
 
 这条项目词法查询验证实际接缝，不是检索质量 benchmark。项目原文没有复制进 native capture，源文件当前状态仍为权威。正式备份位于 `D:\python_work\work2026-4\memory-base-backups\formal-20261012T014904`，manifest SHA256 为 `27dc14f772e61a351be62bf3c5dfb24397c27cec8894612065139a8677541c65`；它尚未自行恢复，空目标恢复行为另由 #85 验证。
 
-#85 的完整原生隔离恢复与 #86 的独立包结论分别记录在独立实验中。wheel 默认新 runtime 安装缺陷的 #89 修复已合入 `9252d52`，新版全量闸门与 #86 独立完整安装复验进行中，不能据本节宣布产品全部完成。AOCI 按 owner 决定完全停用。
+#85 的完整原生隔离恢复与 #86 的独立包结论分别记录在独立实验中。wheel 默认新 runtime 安装缺陷的 #89 修复已合入 `9252d52`，新版全量闸门通过；#86 独立完整安装复验仍须区分安装与运行、额外试验环境与普通部署。Bubble 四工具/版本接入由 #90 单独验证，不能据本节宣布产品全部完成。AOCI 按 owner 决定移除。

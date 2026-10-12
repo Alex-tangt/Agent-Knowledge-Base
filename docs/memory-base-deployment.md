@@ -83,4 +83,6 @@ Codex CLI 验证使用已登记入口及临时 CLI 默认设置，因桌面模�
 
 正式冷备份保存在 `D:\python_work\work2026-4\memory-base-backups\formal-20261012T014904`，67 个文件的 size/SHA256 与目录清单独立核验通过，7 个已知凭据的 UTF-8/UTF-16 明文检查无命中；服务恢复后两份旧总结和教训原样读回。该正式快照尚未自行恢复；独立原生验收 #85 已在空数据根验证完整冷恢复、权限拒绝与原文，11 项通过，Lead 另行启动恢复目标复核后停下。复跑与限界见[真实接入记录](../experiments/memory-base-live/README.md)及[原生验收](../experiments/memory-base-recovery/README.md)。
 
-冻结版本 `d8a6709` 的既有全量闸门为 802 passed、5 skipped，harness 10/10 预期匹配；opencode server 缺席，冒烟 SKIP。#86 曾发现 wheel 默认新 runtime 安装失败，原 FAIL 保留；#89 修复已合入 `9252d52`，新增全量闸门与独立完整安装复验进行中。不能用旧版本测试或 CLI help 成功代替新版安装通过。
+冻结版本 `d8a6709` 的既有全量闸门为 802 passed、5 skipped；#89 修复后的 `9252d52` 为 824 passed、5 skipped，harness 10/10 预期匹配；opencode server 缺席，冒烟 SKIP。#86 曾发现 wheel 默认新 runtime 安装失败，原 FAIL 保留。短目录 R4 的默认完整安装及包来源检查通过，但原生启动超时；该次试验额外禁用了 Python 缓存写入，不能无条件归因于普通部署，标准环境运行证据仍在核验。不能用 CLI help 或安装成功代替服务运行通过。
+
+Windows 未启用长路径时，过深的 home 会使上游 SDK 的生成文件安装失败。优先采用默认 `~/.agent-memory-base` 或独立短路径，不需要为产品试用修改全局注册表。实验中的深路径失败仍保留；短路径安装通过不证明任意路径均可用。

@@ -1,0 +1,73 @@
+{
+  "measured_at_utc": "2026-10-12T01:05:34.8118195Z",
+  "home": "C:\\Users\\Tan\\.agent-memory-base",
+  "root_ownership_verified": true,
+  "processes": [
+    {
+      "component": "embed",
+      "pid": 13608,
+      "parent_pid": 5396,
+      "name": "python.exe",
+      "working_set_bytes": 4136960
+    },
+    {
+      "component": "embed",
+      "pid": 27464,
+      "parent_pid": 13608,
+      "name": "conhost.exe",
+      "working_set_bytes": 7086080
+    },
+    {
+      "component": "embed",
+      "pid": 16476,
+      "parent_pid": 13608,
+      "name": "python.exe",
+      "working_set_bytes": 24707072
+    },
+    {
+      "component": "upstream",
+      "pid": 25468,
+      "parent_pid": 5396,
+      "name": "python.exe",
+      "working_set_bytes": 4218880
+    },
+    {
+      "component": "upstream",
+      "pid": 472,
+      "parent_pid": 25468,
+      "name": "conhost.exe",
+      "working_set_bytes": 7139328
+    },
+    {
+      "component": "upstream",
+      "pid": 20168,
+      "parent_pid": 25468,
+      "name": "python.exe",
+      "working_set_bytes": 189186048
+    },
+    {
+      "component": "gateway",
+      "pid": 7172,
+      "parent_pid": 5396,
+      "name": "python.exe",
+      "working_set_bytes": 4194304
+    },
+    {
+      "component": "gateway",
+      "pid": 20456,
+      "parent_pid": 7172,
+      "name": "conhost.exe",
+      "working_set_bytes": 7090176
+    },
+    {
+      "component": "gateway",
+      "pid": 10964,
+      "parent_pid": 7172,
+      "name": "python.exe",
+      "working_set_bytes": 39518208
+    }
+  ],
+  "sum_working_set_bytes": 287277056,
+  "sum_working_set_mib": 273.97,
+  "boundary": "Single Windows idle snapshot of the three formal service process trees; includes shared pages counted per process. Not peak memory, private memory, or a throughput benchmark. No service restart or model call."
+}
