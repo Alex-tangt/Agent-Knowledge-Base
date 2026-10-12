@@ -1,0 +1,14 @@
+{
+  "command": [
+    "node",
+    "--test",
+    "--test-name-pattern",
+    "state publication",
+    "scripts/tests/local-backend.test.mjs"
+  ],
+  "cwd": "D:\\python_work\\work2026-4\\memory-base-bubble-bridge-assets\\20261012\\candidate93",
+  "pid": 8404,
+  "exit_code": 1,
+  "wall_seconds": 53.99042470000859,
+  "raw_output_sha256": "c1937997a8704c752f00224a0c1df3a7cb10275340c94f8f000728d64cc059b9"
+}

@@ -1,0 +1,106 @@
+[
+  {
+    "source": "D:\\python_work\\work2026-4\\memory-base-bubble-bridge-assets\\20261012\\candidate93\\.tools\\state-test-8z8gjh",
+    "result": {
+      "mode": "transient",
+      "instance": "3e63df51-0bfe-474d-ab96-c9a53eea6b03",
+      "launcherPid": 37376,
+      "launcherExit": 1,
+      "childPid": 34916,
+      "childStillAlive": false,
+      "backendHealthy": false,
+      "fallbackCleanup": false,
+      "state": {
+        "pid": 37376,
+        "instance": "3e63df51-0bfe-474d-ab96-c9a53eea6b03",
+        "phase": "starting",
+        "childPid": 34916,
+        "port": 53473,
+        "startedAt": "2026-10-12T13:11:51.753Z"
+      },
+      "lock": {
+        "pid": 37376,
+        "instance": "3e63df51-0bfe-474d-ab96-c9a53eea6b03"
+      },
+      "boundary": "Actual candidate launcher/backend, explicit rename fault injection; no paid model"
+    },
+    "files": {
+      "fixture-result.json": {
+        "bytes": 620,
+        "sha256": "5e2c8684572aa89a930fd8d88074c0a9f510457922da3e2338735015f7f24c5d"
+      },
+      "rename-injection.jsonl": {
+        "bytes": 67,
+        "sha256": "10a8b264ed163932a03df662c980bfe2427046f767444f4448088705cf741be5"
+      },
+      "child-identity.json": {
+        "bytes": 207,
+        "sha256": "25296282b910479428d410e6a7e5394367703b60a8c32fdf2701bb587b3a3fea"
+      },
+      "launcher-direct.log": {
+        "bytes": 1100,
+        "sha256": "651454dea85fbbb7e4eb77d5912ff9affa816135dd817e596bc1f2ef7cabcf47"
+      },
+      "host/state.json": {
+        "bytes": 176,
+        "sha256": "6d27f6efaf57a0703f5405d546cd3a8b2e4f1fe7e2538932f7a888f4ce4e0b64"
+      },
+      "host/lock.json": {
+        "bytes": 63,
+        "sha256": "feb66b658b060b3ab485701176997348a510e0a35f514024cb8ccdd8766637ba"
+      }
+    }
+  },
+  {
+    "source": "D:\\python_work\\work2026-4\\memory-base-bubble-bridge-assets\\20261012\\candidate93\\.tools\\state-test-q7ok7f",
+    "result": {
+      "mode": "persistent",
+      "instance": "71826bc3-edaa-45fc-81b1-4600de7d7d1f",
+      "launcherPid": 36268,
+      "launcherExit": 1,
+      "childPid": 44936,
+      "childStillAlive": false,
+      "backendHealthy": false,
+      "fallbackCleanup": false,
+      "state": {
+        "pid": 36268,
+        "instance": "71826bc3-edaa-45fc-81b1-4600de7d7d1f",
+        "phase": "starting",
+        "childPid": 44936,
+        "port": 63954,
+        "startedAt": "2026-10-12T13:12:26.693Z"
+      },
+      "lock": {
+        "pid": 36268,
+        "instance": "71826bc3-edaa-45fc-81b1-4600de7d7d1f"
+      },
+      "boundary": "Actual candidate launcher/backend, explicit rename fault injection; no paid model"
+    },
+    "files": {
+      "fixture-result.json": {
+        "bytes": 621,
+        "sha256": "5579e9ae4e4bd6680123f5053695dd6b60e59df816fc81df6844683dd474f931"
+      },
+      "rename-injection.jsonl": {
+        "bytes": 67,
+        "sha256": "10a8b264ed163932a03df662c980bfe2427046f767444f4448088705cf741be5"
+      },
+      "child-identity.json": {
+        "bytes": 207,
+        "sha256": "575d678b7abf2913884ba8c8a63d5e4e992eaba28947c450368b3e1054d4ce1e"
+      },
+      "launcher-direct.log": {
+        "bytes": 1100,
+        "sha256": "6102e67a3d767c8cbb09f8a4f6246c427d048ee4380513bb5bc401e54c023cbf"
+      },
+      "host/state.json": {
+        "bytes": 176,
+        "sha256": "d15e30993740e59d66d0d92d740c9d02d2e1f61bbe76be78c8b4a7e56c313c00"
+      },
+      "host/lock.json": {
+        "bytes": 63,
+        "sha256": "7642fe5bc7f0c0bfbb83e1f1a0b764ebb4a83f4b22e36cea8d5d69e7ffa030c1"
+      }
+    }
+  }
+]

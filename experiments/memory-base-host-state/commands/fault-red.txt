@@ -1,0 +1,46 @@
+✖ state publication transient EPERM recovers through the actual ready callback (35087.9494ms)
+✖ state publication persistent EPERM exits visibly and cleans its owned backend and state (18390.4292ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 0
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 53692.8803
+
+✖ failing tests:
+
+test at scripts\tests\local-backend.test.mjs:83:1
+✖ state publication transient EPERM recovers through the actual ready callback (35087.9494ms)
+  Error: Fixture did not settle within its bounded wait
+      at until (file:///D:/python_work/work2026-4/memory-base-bubble-bridge-assets/20261012/candidate93/scripts/tests/local-backend.test.mjs:30:9)
+      at async TestContext.<anonymous> (file:///D:/python_work/work2026-4/memory-base-bubble-bridge-assets/20261012/candidate93/scripts/tests/local-backend.test.mjs:86:19)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:358:3)
+
+test at scripts\tests\local-backend.test.mjs:95:1
+✖ state publication persistent EPERM exits visibly and cleans its owned backend and state (18390.4292ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + {
+  +   childPid: 44936,
+  +   instance: '71826bc3-edaa-45fc-81b1-4600de7d7d1f',
+  +   phase: 'starting',
+  +   pid: 36268,
+  +   port: 63954,
+  +   startedAt: '2026-10-12T13:12:26.693Z'
+  + }
+  - null
+  
+      at TestContext.<anonymous> (file:///D:/python_work/work2026-4/memory-base-bubble-bridge-assets/20261012/candidate93/scripts/tests/local-backend.test.mjs:100:12)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: { pid: 36268, instance: '71826bc3-edaa-45fc-81b1-4600de7d7d1f', phase: 'starting', childPid: 44936, port: 63954, startedAt: '2026-10-12T13:12:26.693Z' },
+    expected: null,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
