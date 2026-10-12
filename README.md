@@ -10,6 +10,23 @@ OpenViking / MemOS 的固定源码比较、模块取舍和基本架构建议已�
 
 Windows 新部署入口为 `install-memory-base.ps1`；POSIX 薄壳 `install-memory-base.sh` 的凭据持久化仍待补齐。原 `install.ps1` / `install.sh` 与下面的 `memory_agent` 内容保留旧自研实现的用法；旧引擎按 [ADR-0032](docs/adr/0032-personal-memory-base-adopt-then-productize.md) 冻结。`legal_web` 为已排除的历史产品。
 
+## 当前产品快速开始（Windows）
+
+准备 Python 3.12，在仓库根目录运行安装入口；将示例中的路径换成自己的 Python 3.12：
+
+```powershell
+powershell -File .\install-memory-base.ps1 -Python C:\Python312\python.exe
+& "$env:USERPROFILE\.agent-memory-base\runtime\Scripts\python.exe" -m memory_base start
+& "$env:USERPROFILE\.agent-memory-base\runtime\Scripts\python.exe" -m memory_base status
+```
+
+独立包只包含 `memory_base`，依赖固定的 OpenViking 与进程外嵌入服务。安装时准备目标环境的 SDK 缓存，首次安装会有数分钟成本；home 使用默认目录或较短路径。宿主注册、来源登记、权限与备份命令见[部署说明](docs/memory-base-deployment.md)。
+
+2026-10-12 已验证 Windows 独立安装、默认首次启动、Bubble/Codex 共享读写、实时项目读取及实际正式快照的空数据根恢复；完整已有单测为 833 passed / 5 skipped。手机/第二设备、真实登录触发与 DSH/opencode 实际对话仍待验收，POSIX 未交付。具体环境和失败记录见[交付任务板](docs/memory-base-delivery-plan-2026-10-11.md)。
+
+<details>
+<summary>旧版资产与历史评测记录（冻结实现）</summary>
+
 ## 旧版资产记录
 
 三模块单仓：
@@ -118,3 +135,5 @@ venv\Scripts\python.exe legal_web/app.py
 ```
 
 > 模型加载在后台完成（约 30-40s），前端显示加载进度；启动加载用 `local_files_only=True`，模型缓存后不依赖网络。
+
+</details>
