@@ -1,0 +1,9 @@
+usage: mcp_stdio.py [-h] [--profile PROFILE] [--home HOME] [--url URL]
+
+Forward personal memory MCP tools to the shared gateway
+
+options:
+  -h, --help         show this help message and exit
+  --profile PROFILE
+  --home HOME
+  --url URL

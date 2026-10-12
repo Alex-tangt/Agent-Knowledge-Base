@@ -1,0 +1,9 @@
+Processing c:\users\tan\.mb86\r5\source\memory_base
+  Preparing metadata (pyproject.toml): started
+  Preparing metadata (pyproject.toml): finished with status 'done'
+Building wheels for collected packages: agent-memory-base
+  Building wheel for agent-memory-base (pyproject.toml): started
+  Building wheel for agent-memory-base (pyproject.toml): finished with status 'done'
+  Created wheel for agent-memory-base: filename=agent_memory_base-0.1.0-py3-none-any.whl size=45982 sha256=baa5877bc55a834f7abf16c833d9e869c0768624efdd63de9ad1ef8b2768bfde
+  Stored in directory: C:\Users\Tan\AppData\Local\Temp\pip-ephem-wheel-cache-1vmh5hl1\wheels\2a\26\48\642d665d42112b6140792a65120f84cd77530bae53fec379ce
+Successfully built agent-memory-base

@@ -1,0 +1,89 @@
+{
+  "identity": {
+    "python": "3.12.14 (main, Aug 25 2026, 14:01:42) [MSC v.1944 64 bit (AMD64)]",
+    "executable": "C:\\Users\\Tan\\.mb86\\r5\\d\\runtime\\Scripts\\python.exe",
+    "prefix": "C:\\Users\\Tan\\.mb86\\r5\\d\\runtime",
+    "base_prefix": "C:\\Users\\Tan\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python",
+    "sitepackages": "C:\\Users\\Tan\\.mb86\\r5\\d\\runtime\\Lib\\site-packages",
+    "sys_path": [
+      "C:\\Users\\Tan\\.codex\\worktrees\\memory-package-acceptance\\Agent-Knowledge-Base\\experiments\\memory-base-package\\cold-final-2026-10-12",
+      "C:\\Users\\Tan\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python312.zip",
+      "C:\\Users\\Tan\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\DLLs",
+      "C:\\Users\\Tan\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\Lib",
+      "C:\\Users\\Tan\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python",
+      "C:\\Users\\Tan\\.mb86\\r5\\d\\runtime",
+      "C:\\Users\\Tan\\.mb86\\r5\\d\\runtime\\Lib\\site-packages",
+      "C:\\Users\\Tan\\.mb86\\r5\\d\\runtime\\Lib\\site-packages\\win32",
+      "C:\\Users\\Tan\\.mb86\\r5\\d\\runtime\\Lib\\site-packages\\win32\\lib",
+      "C:\\Users\\Tan\\.mb86\\r5\\d\\runtime\\Lib\\site-packages\\pythonwin"
+    ],
+    "cwd": "C:\\Users\\Tan\\AppData\\Local\\Temp",
+    "pythonpath": null,
+    "distribution": "C:\\Users\\Tan\\.mb86\\r5\\d\\runtime\\Lib\\site-packages\\agent_memory_base-0.1.0.dist-info"
+  },
+  "modules": {
+    "memory_base": {
+      "file": "C:\\Users\\Tan\\.mb86\\r5\\d\\runtime\\Lib\\site-packages\\memory_base\\__init__.py",
+      "mode": "imported"
+    },
+    "memory_base.__main__": {
+      "file": "C:\\Users\\Tan\\.mb86\\r5\\d\\runtime\\Lib\\site-packages\\memory_base\\__main__.py",
+      "mode": "imported_with_help_and_expected_exit_0"
+    },
+    "memory_base.autostart": {
+      "file": "C:\\Users\\Tan\\.mb86\\r5\\d\\runtime\\Lib\\site-packages\\memory_base\\autostart.py",
+      "mode": "imported"
+    },
+    "memory_base.backup": {
+      "file": "C:\\Users\\Tan\\.mb86\\r5\\d\\runtime\\Lib\\site-packages\\memory_base\\backup.py",
+      "mode": "imported"
+    },
+    "memory_base.credentials": {
+      "file": "C:\\Users\\Tan\\.mb86\\r5\\d\\runtime\\Lib\\site-packages\\memory_base\\credentials.py",
+      "mode": "imported"
+    },
+    "memory_base.deploy": {
+      "file": "C:\\Users\\Tan\\.mb86\\r5\\d\\runtime\\Lib\\site-packages\\memory_base\\deploy.py",
+      "mode": "imported"
+    },
+    "memory_base.embed": {
+      "file": "C:\\Users\\Tan\\.mb86\\r5\\d\\runtime\\Lib\\site-packages\\memory_base\\embed.py",
+      "mode": "imported"
+    },
+    "memory_base.gateway": {
+      "file": "C:\\Users\\Tan\\.mb86\\r5\\d\\runtime\\Lib\\site-packages\\memory_base\\gateway.py",
+      "mode": "imported"
+    },
+    "memory_base.mcp_stdio": {
+      "file": "C:\\Users\\Tan\\.mb86\\r5\\d\\runtime\\Lib\\site-packages\\memory_base\\mcp_stdio.py",
+      "mode": "imported"
+    },
+    "memory_base.paths": {
+      "file": "C:\\Users\\Tan\\.mb86\\r5\\d\\runtime\\Lib\\site-packages\\memory_base\\paths.py",
+      "mode": "imported"
+    },
+    "memory_base.sources": {
+      "file": "C:\\Users\\Tan\\.mb86\\r5\\d\\runtime\\Lib\\site-packages\\memory_base\\sources.py",
+      "mode": "imported"
+    },
+    "memory_base.upstream": {
+      "file": "C:\\Users\\Tan\\.mb86\\r5\\d\\runtime\\Lib\\site-packages\\memory_base\\upstream.py",
+      "mode": "imported"
+    }
+  },
+  "loaded_excluded_namespaces": [],
+  "dependency_providers": {
+    "fastapi": {
+      "version": "0.143.0",
+      "file": "C:\\Users\\Tan\\.mb86\\r5\\d\\runtime\\Lib\\site-packages\\fastapi\\__init__.py"
+    },
+    "pydantic": {
+      "version": "2.14.0",
+      "file": "C:\\Users\\Tan\\.mb86\\r5\\d\\runtime\\Lib\\site-packages\\pydantic\\__init__.py"
+    },
+    "mcp": {
+      "version": "1.30.0",
+      "file": "C:\\Users\\Tan\\.mb86\\r5\\d\\runtime\\Lib\\site-packages\\mcp\\__init__.py"
+    }
+  }
+}
