@@ -1,0 +1,66 @@
+{
+  "date": "2026-10-12T07:53:49.767419+00:00",
+  "candidate_commit": "0a86cb1013a481aa91b4b97b826d62a4a8456fb8",
+  "actual": "D:\\python_work\\work2026-10\\Agent-bubble",
+  "backup": "D:\\python_work\\work2026-4\\memory-base-bubble-bridge-assets\\20261012\\actual-backup-20261012T075349Z",
+  "only_four_source_files": true,
+  "baseline_all_verified_before_write": true,
+  "line_endings": "LF as existing actual files",
+  "files": {
+    "server/memory-base.ts": {
+      "before": "d622c7569b5e529605b47a252d7de2a3fc416894fde1891bfa63e2bbf7ed6295",
+      "candidate_raw": "fa93fe91683bbbaac9b872e37bf9e92216d51fc060b9cd1bfc32782d094950bd",
+      "after": "926ccfa38c19fd8fa887e8fc8476c65146faed4a7a10c93c89e5971052a642d8"
+    },
+    "server/memory-tools.ts": {
+      "before": "05713a0d468a81a7da0b02059d9abf01f35d6e2c233b2246d4e88ad9ad3b745b",
+      "candidate_raw": "ba64dc4d9cfd92f3e324a8d420d2f086d848cc70610a5409a10e72b49e3da4af",
+      "after": "339a852a374af74e471502afa083c48ca6787811bd57cdded03f08bd0b4ee686"
+    },
+    "server/agent.ts": {
+      "before": "e9522a953dc7b31a7e750853d7d050f6c18a5114c1ca604f647616610f5cb55c",
+      "candidate_raw": "614308eccc3ace396f83a4957a1539719c3956f4ce004ce1509bc06c4460a41e",
+      "after": "05a04daa658689a6ffbd5faabcd13a5d91fb2df84fa132cd50de53cb642acb93"
+    },
+    "server/tests/memory-base.test.ts": {
+      "before": "229ca9757677aef9b54fe28a4b7bdc072df789a309e5854e9b0af9085fdd188d",
+      "candidate_raw": "137b4b586a9018f36c8101fd9da00c4907a539853e046143cfb2630678020bae",
+      "after": "6dc351fd6a015d8a98011e4f83b2f7c791de112a3652f2c738871999e8017256"
+    }
+  },
+  "services_restarted": true,
+  "production_build_verified": true,
+  "active_tasks_before_restart": 0,
+  "conversations_inspected": 16,
+  "previous_manager": {
+    "pid": 28284,
+    "child_pid": 13448
+  },
+  "current_manager": {
+    "pid": 25740,
+    "child_pid": 16180,
+    "phase": "running",
+    "backend_healthy": true
+  },
+  "lead_frozen_candidate_gates": {
+    "build": {
+      "exit_code": 0,
+      "location": "actual Bubble"
+    },
+    "npm_test": {
+      "exit_code": 0,
+      "passed": 68,
+      "failed": 0,
+      "milliseconds": 26929.4821
+    },
+    "npm_run_test_host": {
+      "exit_code": 0,
+      "passed": 5,
+      "failed": 0,
+      "milliseconds": 52911.3497
+    }
+  },
+  "formal_pi_probe": "bubble-bridge-formal-2026-10-12.json",
+  "formal_pi_probe_passed": true,
+  "boundary": "Applied four normalized files after exact baseline hashes, preserved original files in exclusive backup. Build and exact owned host manager restart succeeded with zero active tasks. Real SDK/real gateway read-only probe uses local synthetic model; no new paid LLM or summary generated."
+}

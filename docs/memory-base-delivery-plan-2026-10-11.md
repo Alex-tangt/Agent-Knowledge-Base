@@ -42,7 +42,7 @@ Lead 负责本文件、ADR、地图同步和集成验收；执行者各自工作
 | [#87 标准启动请求解析修复](https://github.com/Alex-tangt/Agent-Knowledge-Base/issues/87) | 已合入 `d8a6709` 并关闭 | `memory_base/deploy.py`, 对应单测 | 无 | 正式 runtime 请求 200/422；gateway 重启后 MCP 原文及 revision 一致 |
 | [#88 正式 MCP 四工具回归](https://github.com/Alex-tangt/Agent-Knowledge-Base/issues/88) | 已合入 `1e78f0d`，Lead 正式文章/视频复跑通过 | `experiments/memory-base-live/mcp_probe.py` | 无 | 旧 Bubble URI/hash，实际 stdio 四工具、列举、版本读回、只读写拒绝；无新 LLM/总结生成 |
 | [#89 wheel 专用 runtime 安装修复](https://github.com/Alex-tangt/Agent-Knowledge-Base/issues/89) | 已合入 `9252d52`；全量闸门与 #86 独立完整安装复验中 | `memory_base/deploy.py`, 对应单测 | 无 | 明确本地 artifact、拒绝发生在副作用前、目标实际包来源、源码入口兼容；实现者两例真实包安装通过，但依赖/凭据为 fixture |
-| [#90 Bubble 四工具与版本接入](https://github.com/Alex-tangt/Agent-Knowledge-Base/issues/90) | 独立候选执行中；实际 Bubble 目录无 Git，先冻结公开源码快照并建立候选工作树 | Bubble 候选 `server/memory-base.ts`, `server/memory-tools.ts`, `server/agent.ts`, `server/tests/memory-base.test.ts`；本仓 `experiments/memory-base-bubble-bridge/` | 无 | 真实 pi SDK 的四工具、项目 scope/list 分页/revision 往返、错误可区分；保留笔记授权与自动原文总结；Lead 核对实际文件基线后应用 |
+| [#90 Bubble 四工具与版本接入](https://github.com/Alex-tangt/Agent-Knowledge-Base/issues/90) | 冻结候选 `0a86cb1` 已应用正式目录；Lead build、68/68 应用测试、5/5 host 测试及实际网关/SDK 复验通过，后端健康 | Bubble 候选 `server/memory-base.ts`, `server/memory-tools.ts`, `server/agent.ts`, `server/tests/memory-base.test.ts`；本仓 `experiments/memory-base-bubble-bridge/` | 无 | 真实 pi SDK 的四工具、项目 scope/list 分页/revision 往返、错误可区分；原四文件基线先核对并保留备份；读回旧总结；未使用新的付费模型 |
 | 产品化计划、实际项目接入与复跑 | 执行中 | Lead 文档、地图与正式接入记录 | 上述实现和验收单元 | 冻结版本全量单测、已有 harness/冒烟、正式实例与旧消费者兼容 |
 
 ## 完成审计
@@ -64,13 +64,15 @@ Lead 负责本文件、ADR、地图同步和集成验收；执行者各自工作
 | 要求 | 当前判断与证据 | 仍须取得的证据 |
 |---|---|---|
 | S1 / I2 / A：人的共同记忆、新 agent 无迁移读取 | 正式 Bubble 与 Codex 读取同 URI，另 reader 身份原生 stdio 读回；真实宿主轨迹及哈希已保存 | DSH/opencode 登记与规约存在，其实际对话未验证 |
-| S2 / E：capture 与实时只读项目共同寻址 | #85 验增改删、未提交变化、失联/恢复与拒绝越界；正式项目读取字节 revision；不复制项目作第二主库 | Bubble pi 的项目 scope/list/revision 接缝由 #90 补齐 |
+| S2 / E：capture 与实时只读项目共同寻址 | #85 验增改删、未提交变化、失联/恢复与拒绝越界；正式项目读取字节 revision；#90 真实 SDK/正式网关的项目 scope、分页、revision 与错误反馈通过；不复制项目作第二主库 | 新独立 runtime 的实际读写尚须最终运行验收 |
 | S3 / I1：原样保存及回执追溯 | 正式文章/视频逐字节一致、重复请求 exists，变更请求拒覆盖；#85 的 Unicode/CRLF 和恢复原文通过 | 新独立 runtime 的实际读写尚须最终运行验收 |
-| I3 / F：共同写入合同、只读源权限 | HTTP/MCP 共用 gateway；普通 writer 只追加 capture，项目始终只读；原生双身份拒绝路径通过；旧 DB 的直接文件写入已退出产品写入面 | #90 保留真实用户笔记授权，新增日期不能从抓取/接收时间推定 |
-| I4 / D：故障不是空记忆 | 正式上游停机 503、未认证 401、reader 写入 403；版本变化明确冲突 | #90 在实际工具输出中保留稳定错误并指导重新查询 |
+| I3 / F：共同写入合同、只读源权限 | HTTP/MCP 共用 gateway；普通 writer 只追加 capture，项目始终只读；原生双身份拒绝路径通过；#90 保留真实用户笔记授权，日期可省略且不从抓取/接收时间推定；旧 DB 的直接文件写入已退出产品写入面 | 新独立环境运行验收仍须成立 |
+| I4 / D：故障不是空记忆 | 正式上游停机 503、未认证 401、reader 写入 403；#90 在真实 SDK/网关往返中将版本与目录变化反馈为稳定错误并指导重新查询 | 新独立环境运行验收仍须成立 |
 | B / C：第二台设备与可见延迟 | 同机两个真实宿主共享已验；2026-10-12 ADB 枚举无连接设备，不能据同机结果宣称两台设备通过 | 实际手机/第二设备读写互查、可见延迟；只使用既有私有网络 |
 | G / D15：完整备份、空根恢复 | #85 冷备份、空根恢复、坏清单拒绝、重新签发凭据及 native ACL 通过；Lead 独立重算/启动恢复目标复核；正式 67 文件备份存在 | 正式快照本身尚未恢复；新包运行验收不可被旧恢复测试代替 |
 | D9 / D16：安装、运行与无人值守启动 | 正式三服务 ready，当前用户 Run 归属核验和同命令手动运行通过；新 wheel 默认/fresh 安装与运行分开核验 | 新环境运行结论待 #86；真实注销/登录触发未测；POSIX 不作为已交付平台 |
 | D4：独立产物、退出与维护 | `memory_base` wheel 排除旧三包；固定依赖、模块来源/许可声明、迁移/恢复和数据出口见产品计划；全量既有闸门通过 | 独立环境端到端运行、实际消费者新版使用；当前目标不是引入第二个原文库或学习管线 |
 
 本表用于决定下一步，不替代原始证据。数据出口可以通过四工具 list/get 读取原文与引用；native 冷备份是恢复介质，不能称通用跨引擎格式。当前工作集测点为三服务树 273.97 MiB，仅是闲置 Windows 工作集相加，非峰值或私有内存，详见真实接入记录。
+
+**标准环境启动（2026-10-12）**：#86 对从未启动的 fresh home 去掉额外 bytecode 禁止后，仍在原 300 秒上限未等到 upstream 健康；start 总耗时 314.52 秒包含 embedding 启动，整个验收 331.88 秒。gateway 与后续读写/MCP 没有运行，owned stop 退出 0，端口与进程无残留，旧 FAIL 原字节未变。此结果确认普通冷启动仍是实际部署阻塞，不能据两个完整安装通过关闭 #86 或宣布产品交付完成。

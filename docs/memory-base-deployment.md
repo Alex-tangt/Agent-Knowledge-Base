@@ -45,6 +45,8 @@ Codex 可通过其本机 `codex mcp add personal-memory -- <专用Python> -m mem
 
 Bubble `.env` 只增加 `MEMORY_BASE_URL`、`MEMORY_BASE_PYTHON`、`MEMORY_BASE_HOME` 三个非密钥字段。launcher 调用凭据提供器，把返回 token 放入后端进程环境。首次成功总结原样保存；普通追问不自动新增条目；用户要求保存笔记时可使用 pi 写入工具。保存失败保留本地总结并给出重试状态，重试不再调用模型。Bubble 细节见其 `docs/knowledge-base-integration.md`。
 
+2026-10-12 的 Bubble 接入已扩为四工具：可按项目 scope 检索、分页 list，并用 expected_revision 读原文；版本/目录变化提示重新查询，来源失联与权限错误不当作空结果。候选四文件备份后已应用正式目录，build 与既有测试通过，后端自有管理器重启后健康。Lead 用实际 pi SDK 和正式网关核验读路径，模型为本机 synthetic SSE，因此不将该证据声明为新增的真实模型对话。
+
 ## 数据和边界
 
 正文保存在 `viking://resources/captures/<请求地址哈希>/content.md`，同目录 `capture.json` 保存身份、时间、来源、请求及正文哈希。地址由身份和 request_id 派生；同一请求内容变更返回冲突，不能覆盖原文。并发保障以正式部署的单 gateway 进程为边界。
@@ -86,3 +88,5 @@ Codex CLI 验证使用已登记入口及临时 CLI 默认设置，因桌面模�
 冻结版本 `d8a6709` 的既有全量闸门为 802 passed、5 skipped；#89 修复后的 `9252d52` 为 824 passed、5 skipped，harness 10/10 预期匹配；opencode server 缺席，冒烟 SKIP。#86 曾发现 wheel 默认新 runtime 安装失败，原 FAIL 保留。短目录 R4 的默认完整安装及包来源检查通过，但原生启动超时；该次试验额外禁用了 Python 缓存写入，不能无条件归因于普通部署，标准环境运行证据仍在核验。不能用 CLI help 或安装成功代替服务运行通过。
 
 Windows 未启用长路径时，过深的 home 会使上游 SDK 的生成文件安装失败。优先采用默认 `~/.agent-memory-base` 或独立短路径，不需要为产品试用修改全局注册表。实验中的深路径失败仍保留；短路径安装通过不证明任意路径均可用。
+
+标准运行条件的 fresh 冷启动随后仍超过原 300 秒上限，已排除额外 bytecode 禁止因素，原生运行判据尚未通过。正式已有实例仍可用；新的独立环境不应据安装成功便视为已可部署，后续修复与验收见任务板。
