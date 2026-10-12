@@ -55,7 +55,8 @@ def inventory(root, *, exclude_manifest=False):
         elif not (exclude_manifest and name == "manifest.json"):
             raw = p.read_bytes()
             files.append({"path":name,"size":len(raw),"sha256":sha(raw)})
-    return files,dirs
+    # WindowsPath comparison case-folds. Manifest relative strings preserve case.
+    return sorted(files,key=lambda item:item["path"]),sorted(dirs)
 
 
 def snapshot_inventory():

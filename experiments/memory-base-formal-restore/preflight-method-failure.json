@@ -1,0 +1,11 @@
+{
+  "stage": "independent_snapshot_preflight",
+  "attempt_exit_code": 1,
+  "target_created": false,
+  "files": 67,
+  "manifest_files": 67,
+  "content_mapping_equal": true,
+  "directories_set_equal": true,
+  "list_order_equal": false,
+  "finding": "WindowsPath ordering uses case-insensitive comparison; manifest paths use case-sensitive strings. Normalize only inventory ordering, never payload or expected hashes."
+}
