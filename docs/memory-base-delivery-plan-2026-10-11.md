@@ -46,7 +46,7 @@ Lead 负责本文件、ADR、地图同步和集成验收；执行者各自工作
 | [#91 首次冷启动](https://github.com/Alex-tangt/Agent-Knowledge-Base/issues/91) | 实现 `dc3168d`、记录 `45296a5` 已合入；Lead833单测、harness10/10及#86新环境默认首次运行通过 | `memory_base/deploy.py`, 对应单测；`experiments/memory-base-cold-start/` | 无 | 安装限目标own-site Lark准备（独立600秒预算，探针累计341.750秒；R5实际自动准备）；服务默认180不变；上游/正式缓存未改 |
 | [#92 Bubble 笔记写入意图](https://github.com/Alex-tangt/Agent-Knowledge-Base/issues/92) | 冻结 `36f9bf2` 两文件已备份应用；Lead build、73/73 应用及 5/5 host 闸门、正式工具入口与只读 pi/网关通过；正式 manager 重启健康 | Bubble 候选 `server/memory-tools.ts`, `server/tests/memory-base.test.ts`；本仓 `experiments/memory-base-note-intent/` 和 Lead live 记录 | 无 | 否定/询问/引用和撤回不调用add；明确中文/英文保存、原文和旧key兼容；有限规则拒绝未匹配表达并提供明确示例，不冒称通用语言理解 |
 | [#93 Bubble Windows 状态发布](https://github.com/Alex-tangt/Agent-Knowledge-Base/issues/93) | 冻结`ba8b5b5`；Lead组合#92为`8e13fae`，build/73应用/13host全通过；实际三scripts已备份应用，自有manager重启健康 | Bubble `scripts/local-backend.mjs`, `host-state.mjs`, 对应scripts测试；本仓`experiments/memory-base-host-state/` | 无 | rename短错误至多暂停200ms，保持原子JSON/同步顺序；持续失败关闭自有child并清理本instance；原120s就绪上限不变，原FAIL保留 |
-| [#94 正式快照隔离恢复](https://github.com/Alex-tangt/Agent-Knowledge-Base/issues/94) | 补齐实际 67 文件正式快照的恢复证明；独立空数据目标，正式实例不操作 | `experiments/memory-base-formal-restore/`，新隔离 home `.mb94/a`；已验 runtime 借用边界声明 | #86 通过是前置证据 | 独立清单/原件hash，真实恢复、三份原文/URI/hash、来源/权限与凭据重发、MCP/search、自有清理；原快照不变 |
+| [#94 正式快照隔离恢复](https://github.com/Alex-tangt/Agent-Knowledge-Base/issues/94) | 固定67文件/39目录实际快照→空data恢复、三原文/来源/权限/凭据重发/MCP通过；Lead独立31原件/清单及实际读回/权限/清理通过 | `experiments/memory-base-formal-restore/`，隔离`.mb94/a`；借R5 f runtime，重装launcher/RECORD及缓存副作用声明 | #86（原生边，已通过） | 原快照不变，target已停；所有方法FAIL保留；不冒称第三新栈、任意ACL对象或真实登录/设备验证 |
 | 产品化计划、实际项目接入与复跑 | 执行中 | Lead 文档、地图与正式接入记录 | 上述实现和验收单元 | 冻结版本全量单测、已有 harness/冒烟、正式实例与旧消费者兼容 |
 
 ## 完成审计
@@ -68,14 +68,14 @@ Lead 负责本文件、ADR、地图同步和集成验收；执行者各自工作
 | 要求 | 当前判断与证据 | 仍须取得的证据 |
 |---|---|---|
 | S1 / I2 / A：人的共同记忆、新 agent 无迁移读取 | 正式 Bubble 与 Codex 读取同 URI，另 reader 身份原生 stdio 读回；真实宿主轨迹及哈希已保存 | DSH/opencode 登记与规约存在，其实际对话未验证 |
-| S2 / E：capture 与实时只读项目共同寻址 | #85验增改删/未提交变化/失联恢复/越界；正式项目读字节revision；#90/#92实际SDK/网关scope/分页/版本及错误通过；R5新包capture运行通过 | #94将核实际快照来源引用；不把R5 capture检索当项目语义检索 |
-| S3 / I1：原样保存及回执追溯 | 正式文章/视频逐字节一致、重复exists、变更拒覆盖；#85恢复原文及R5新包Unicode/CRLF/hash/幂等通过 | #94实际正式快照三条真实原文恢复读回待验 |
-| I3 / F：共同写入合同、只读源权限 | HTTP/MCP共用gateway，writer仅追加capture；#85项目拒写及R5新栈401/reader403/scope403通过；#92补否定/讨论不能授权笔记、日期省略不推定 | 有限命令规则不覆盖任意自然语言；实际快照恢复由#94核验 |
+| S2 / E：capture 与实时只读项目共同寻址 | #85增改删/失联恢复/越界、#90/#92实际scope/分页/版本、R5新包capture通过；#94真实快照来源原字节恢复，实际读取当前项目hash，Lead再读当前README | 首期项目词法查询不冒称语义检索；项目正文仍归真实repo |
+| S3 / I1：原样保存及回执追溯 | 正式文章/视频一致、重复exists/变更拒覆盖；R5新包Unicode/CRLF/hash/幂等；#94实际快照三原文及来源metadata读回，Lead再读三receipt一致 | 首次安装guard/不合法fixture/Lead错误API路径的FAIL均保留，不能把404/422当权限成功 |
+| I3 / F：共同写入合同、只读源权限 | HTTP/MCP共用gateway，writer仅追加capture；#85/R5拒写和范围、#92笔记意图保护通过；#94实际合法reader403无新增、native账户域403，目标7凭据重发不同 | 有限命令规则不覆盖任意自然语言；正式快照未含自定义access/受限文件ACL，不能假称恢复该不存在对象 |
 | I4 / D：故障不是空记忆 | 正式上游503、未认证401、reader403；#90/#92版本/目录变化明确反馈；R5权限/版本拒绝通过；#93补状态发布有界重试/失败关闭自有child，组合13host通过并实际部署 | 原真实EPERM、注入RED与恢复路径分别保留，不将fault injection声称原生锁复现 |
 | B / C：第二台设备与可见延迟 | 同机两个真实宿主共享已验；2026-10-12 ADB 枚举无连接设备，不能据同机结果宣称两台设备通过 | 实际手机/第二设备读写互查、可见延迟；只使用既有私有网络 |
-| G / D15：完整备份、空根恢复 | #85 冷备份、空根恢复、坏清单拒绝、重新签发凭据及 native ACL 通过；Lead 独立重算/启动恢复目标复核；正式 67 文件备份存在 | 正式快照本身尚未恢复；新包运行验收不可被旧恢复测试代替 |
+| G / D15：完整备份、空根恢复 | #85坏清单/空根/权限/重发通过；#94实际67文件/39目录快照空data恢复、真实原文/来源/权限/MCP通过；Lead独立重算及启动目标复核 | 这是该固定快照恢复点；不承诺任意时刻恢复；共享f launcher/RECORD重装副作用及旧before取证缺口明确披露 |
 | D9 / D16：安装、运行与无人值守启动 | 正式三服务ready，Run归属/同命令手动执行通过；R5新wheel默认/fresh安装、默认首次native168.13秒通过；清理无残留 | 真实注销/登录未测；POSIX非已交付平台；初次SDK准备仍有数分钟成本 |
-| D4：独立产物、退出与维护 | wheel排除旧三包；固定依赖/来源/迁移/出口见计划；833单测及R5独立native通过；新版Bubble#90/#92/#93实际部署 | 实际快照恢复#94归档中；跨设备/真实登录和DSH/opencode实际对话未验，不能宣称整个目标完成 |
+| D4：独立产物、退出与维护 | wheel排除旧三包；固定依赖/来源/迁移/出口见计划；833单测及R5独立native、#94实际快照恢复通过；Bubble#90/#92/#93已实际部署 | 跨设备/真实登录和DSH/opencode实际对话未验，不能宣称整个目标完成 |
 
 本表用于决定下一步，不替代原始证据。数据出口可以通过四工具 list/get 读取原文与引用；native 冷备份是恢复介质，不能称通用跨引擎格式。当前工作集测点为三服务树 273.97 MiB，仅是闲置 Windows 工作集相加，非峰值或私有内存，详见真实接入记录。
 

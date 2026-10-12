@@ -1,0 +1,26 @@
+{
+  "date": "2026-10-12T13:50:51.105896+00:00",
+  "home": "C:\\Users\\Tan\\.mb94\\a",
+  "snapshot_manifest_sha256": "27dc14f772e61a351be62bf3c5dfb24397c27cec8894612065139a8677541c65",
+  "snapshot_files_independently_verified": 67,
+  "snapshot_directories": 39,
+  "archived_asset_pairs_verified_before_lead_start": 31,
+  "boundary": "Lead starts the already restored isolated home for independent read and permission checks. This is not another install/restore or first-start measurement; target service logs may grow. Original snapshot and archived worker reports remain fixed. No new capture or paid model.",
+  "three_original_receipts": [
+    {
+      "uri": "viking://resources/captures/4b24c835877cfaa5666c2ba322431a663aab3fdd17c3196ac99274e94fcf591d/content.md",
+      "revision": "a773d1d44eb19f2b3e061417b37aabfc728a1878bf50f0918eb994e1746b8095"
+    },
+    {
+      "uri": "viking://resources/captures/0ada0a7776fcf4e646f0b3b54d69972334f01b04a7da6488c4044fa6f46dbd7b/content.md",
+      "revision": "5f6ba7e2e05b205484c0034111404a363151d35d95516871c61fd6d727eeadc7"
+    },
+    {
+      "uri": "viking://resources/captures/5a3c5791d6c61e7a5771ca7006d5d0498134c7076dcad2e3312177af4f47ce9c/content.md",
+      "revision": "167b784b8f81f90927b6b3d656c0d3df8cec10f92d1601fb4c1901271f0ca6e0"
+    }
+  ],
+  "current_source_revision_matches": true,
+  "owned_target_stopped_no_residual": true,
+  "snapshot_original_files_still_match": true
+}

@@ -98,3 +98,7 @@ Windows 未启用长路径时，过深的 home 会使上游 SDK 的生成文件�
 **后续冷启动修复与独立复验（2026-10-12）**：上述失败原样保留。`45296a5` 在真实安装时只准备选定 runtime 自身的 Lark SDK，不触碰继承的 provider；已有有效缓存保留，安装准备有独立600秒预算，服务默认180秒/组件未扩大。R5两个全新目标各175个自身distribution、173条有效约束，pip check与产品原件检查通过；默认第一次native start不传timeout，168.13秒成功，12项原文/幂等/权限/版本/search/list/实际MCP/自有清理通过。Lead另外独立核53份证据及两个目标的产品字节、当前端口与进程归属。原准备探针341.750秒仅是该探针测点，R5准备轮询窗口约300/291秒不等于函数精确耗时。
 
 因此已取得新独立环境的实际运行证据，结论限Windows/Python3.12短目录、既有公共pip缓存和本地GGUF；未验证全新机器的模型下载、真实登录或第二台设备，不宣称深路径/POSIX支持。完整原始记录见[R5验收](../experiments/memory-base-package/cold-final-2026-10-12/README.md)与[Lead复核](../experiments/memory-base-live/lead-package-cold-2026-10-12.json)。
+
+**实际正式快照恢复（2026-10-12）**：前述67文件冷备份已实际恢复到新的`.mb94/a`空数据目录。start前67文件/39目录逐字节匹配；三份旧原文、来源metadata、实时项目、合法reader拒写与native账户域403、7凭据重发、SDK1.30四工具均通过，Lead另重算清单/31证据并启动目标读回原文和权限，再停下。正式实例未为此停启，快照原件保持。
+
+本次借用R5 f已有runtime，非第三个全新安装；显式wheel安装曾重建其console launcher/RECORD，原before映射没有永久落盘，不能声称全部旧runtime字节保持；产品payload/provenance/旧R5数据与报告可证明保持，后续133文件基线已落盘。最初方法排序、非法reader fixture422及Lead错误管理路由404的失败均分别保留；合法fixture及实际路由的独立补验通过。范围和原始证据见[实际恢复](../experiments/memory-base-formal-restore/README.md)、[Lead复核](../experiments/memory-base-live/lead-formal-restore-2026-10-12.json)。

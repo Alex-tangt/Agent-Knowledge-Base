@@ -67,6 +67,7 @@ Bubble 的 `scripts/smoke-memory-live.ts` 会创建新总结任务并实际调�
 | Lead 独立恢复复核 | 重算 #85 的 85 文件/50 目录清单；实际启动恢复目标，原文哈希、reader 列举范围与 native user 拒绝通过；目标已停下 | [lead-recovery-2026-10-12.json](lead-recovery-2026-10-12.json) |
 | 正式当前用户登录启动 | 登记命令归属准确，其它 HKCU Run 项不变；手动执行该 pythonw 命令退出 0，三个受管理服务就绪；实际登录触发未测 | [autostart-2026-10-12.json](autostart-2026-10-12.json) |
 | 正式冷备份 | 67 文件与完整目录清单独立核验；sources.json 原样保留；7 个已知凭据的 UTF-8/UTF-16 检查无明文命中；服务重启后原总结和教训读回一致 | [backup-2026-10-12.json](backup-2026-10-12.json) |
+| 实际正式快照恢复 | #94固定67文件/39目录空data恢复、三原文/当前项目/凭据重发/权限/MCP与清理通过；Lead独立核31归档原件、清单，再起目标读三receipt和当前来源、scope/native403并停下；所有方法FAIL单列 | [完整记录](../memory-base-formal-restore/README.md)、[Lead](lead-formal-restore-2026-10-12.json)、[Lead首失败](lead-formal-restore-first-failure-2026-10-12.json) |
 | 新实现完整闸门 | 冻结 `9252d52`：824 passed / 5 skipped；harness 10/10；opencode 冒烟因无 server 为 SKIP | [gates-2026-10-12.json](gates-2026-10-12.json) |
 | 冷启动修复完整闸门 | 冻结 `45296a5`：833 passed / 5 skipped；harness 10/10；opencode server 缺席仍为 SKIP；独立新环境首次运行另列 #86 | [gates-cold-start-2026-10-12.json](gates-cold-start-2026-10-12.json) |
 | 冷启动后独立安装运行 | R5默认/fresh各175个自身distribution/173约束；默认第一次native start原180秒配置，168.13秒成功、12条checks；Lead53原件/产物字节与当前归属/端口清理核验；原FAIL保留 | [R5](../memory-base-package/cold-final-2026-10-12/README.md)、[Lead](lead-package-cold-2026-10-12.json) |
