@@ -48,6 +48,7 @@ Lead 负责本文件、ADR、地图同步和集成验收；执行者各自工作
 | [#93 Bubble Windows 状态发布](https://github.com/Alex-tangt/Agent-Knowledge-Base/issues/93) | 冻结`ba8b5b5`；Lead组合#92为`8e13fae`，build/73应用/13host全通过；实际三scripts已备份应用，自有manager重启健康 | Bubble `scripts/local-backend.mjs`, `host-state.mjs`, 对应scripts测试；本仓`experiments/memory-base-host-state/` | 无 | rename短错误至多暂停200ms，保持原子JSON/同步顺序；持续失败关闭自有child并清理本instance；原120s就绪上限不变，原FAIL保留 |
 | [#94 正式快照隔离恢复](https://github.com/Alex-tangt/Agent-Knowledge-Base/issues/94) | 固定67文件/39目录实际快照→空data恢复、三原文/来源/权限/凭据重发/MCP通过；Lead独立31原件/清单及实际读回/权限/清理通过 | `experiments/memory-base-formal-restore/`，隔离`.mb94/a`；借R5 f runtime，重装launcher/RECORD及缓存副作用声明 | #86（原生边，已通过） | 原快照不变，target已停；所有方法FAIL保留；不冒称第三新栈、任意ACL对象或真实登录/设备验证 |
 | [#95 交付分支复核](https://github.com/Alex-tangt/Agent-Knowledge-Base/issues/95) | 已合入`0113d3c`：1131 blobs/47当前凭据/3原文/1私有URL无实际匹配；131候选411位置保留分类、6项Lead复核通过；后续25新blob单独核对，准备草稿交付 | `experiments/memory-base-publication/`，Lead负责PR与地图 | 无 | 不输出秘密、不改历史/用户文件/正式实例；当前树与历史分开、判据/漏项明确；发布前复核根venv闸门/产品freeze/实际证据链接 |
+| [#97 虚拟环境入口识别](https://github.com/Alex-tangt/Agent-Knowledge-Base/issues/97) | 修复中；草稿PR #96的干净Ubuntu发现3失败：解释器符号链接被resolve成系统入口，已给独立执行者任务卡 | `memory_base/deploy.py`、对应单测、`experiments/memory-base-runtime-path/` | 无 | 实际venv符号链接红/绿；不同环境共享基础exe不能视作同一runtime；own-site与缓存/身份安全边界保持；真实wheel自动/fresh与冻结全量复验 |
 | 产品化计划、实际项目接入与复跑 | 执行中 | Lead 文档、地图与正式接入记录 | 上述实现和验收单元 | 冻结版本全量单测、已有 harness/冒烟、正式实例与旧消费者兼容 |
 
 ## 完成审计
@@ -81,5 +82,7 @@ Lead 负责本文件、ADR、地图同步和集成验收；执行者各自工作
 本表用于决定下一步，不替代原始证据。数据出口可以通过四工具 list/get 读取原文与引用；native 冷备份是恢复介质，不能称通用跨引擎格式。当前工作集测点为三服务树 273.97 MiB，仅是闲置 Windows 工作集相加，非峰值或私有内存，详见真实接入记录。
 
 尚缺的第二设备、真实登录和 DSH/opencode 对话按[剩余真实验收步骤](memory-base-remaining-acceptance.md)取得证据。步骤本身不计为通过，不强制注销用户，不用同机模拟或配置登记替代真实行为。
+
+草稿交付已建立[PR #96](https://github.com/Alex-tangt/Agent-Knowledge-Base/pull/96)。首远端两腿缺FastAPI收集失败，现有CI依赖步骤已补正式约束的版本，原失败在[干净CI记录](../experiments/memory-base-ci/README.md)。后续Ubuntu已跑完，831 passed /4 skipped /3 failed定位为虚拟环境入口解析，#97处理；远端通过前不能把本机833闸门扩大为干净两平台通过。Windows同轮状态由实际CI确定。
 
 **早期标准环境启动失败（2026-10-12，修复前）**：#86 对从未启动的 fresh home 去掉额外 bytecode 禁止后，仍在原 300 秒上限未等到 upstream 健康；start 总耗时 314.52 秒包含 embedding 启动，整个验收 331.88 秒。gateway 与后续读写/MCP 没有运行，owned stop 退出 0，端口与进程无残留，旧 FAIL 原字节未变。该结果当时证明普通冷启动仍阻塞部署，不能据安装成功关闭 #86。随后 #91 修复与 #86 R5 默认首次运行通过，当前状态以上方逐项核验和 R5 原始记录为准；此段保留失败历史，不表示当前仍阻塞。
