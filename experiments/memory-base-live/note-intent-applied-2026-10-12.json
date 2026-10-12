@@ -1,0 +1,65 @@
+{
+  "date": "20261012T091336Z",
+  "candidate_commit": "36f9bf294e4117bf36a4228d63b3a3c7ad715af1",
+  "actual": "D:\\python_work\\work2026-10\\Agent-bubble",
+  "backup": "D:\\python_work\\work2026-4\\memory-base-bubble-bridge-assets\\20261012\\actual-note-intent-backup-20261012T091336Z",
+  "baseline_all_verified_before_write": true,
+  "active_tasks_before_apply": 0,
+  "conversations": 16,
+  "only_two_source_files": true,
+  "line_endings": "LF",
+  "files": {
+    "server/memory-tools.ts": {
+      "before": "339a852a374af74e471502afa083c48ca6787811bd57cdded03f08bd0b4ee686",
+      "after": "2dfe82df62eb129564a76586bebdb40998e06a964c1e99393310ef911d1353de"
+    },
+    "server/tests/memory-base.test.ts": {
+      "before": "6dc351fd6a015d8a98011e4f83b2f7c791de112a3652f2c738871999e8017256",
+      "after": "1d1e25b86c1b5168a0ebaec3fad1a5e9a415a90440ac23ca358b6b8ca1c6a13c"
+    }
+  },
+  "production_build_verified": true,
+  "production_build_exec": 33703,
+  "services_restarted": true,
+  "restart_exec": 77826,
+  "active_tasks_before_restart": 0,
+  "previous_manager": {
+    "pid": 25740,
+    "child_pid": 16180
+  },
+  "current_manager": {
+    "pid": 44100,
+    "child_pid": 34768,
+    "phase": "running",
+    "backend_healthy": true
+  },
+  "lead_frozen_candidate_gates": {
+    "candidate_commit": "36f9bf294e4117bf36a4228d63b3a3c7ad715af1",
+    "build_exit": 0,
+    "npm_test_passed": 73,
+    "npm_test_failed": 0,
+    "host_passed": 5,
+    "host_failed": 0,
+    "commands": [
+      {
+        "gate": "build",
+        "exit": 0,
+        "seconds": 22.2422711
+      },
+      {
+        "gate": "test",
+        "exit": 0,
+        "seconds": 32.0843167
+      },
+      {
+        "gate": "test:host",
+        "exit": 0,
+        "seconds": 49.3950916
+      }
+    ]
+  },
+  "formal_tool_probe": "note-intent-formal-tool-2026-10-12.json",
+  "formal_pi_probe": "note-intent-formal-pi-2026-10-12.json",
+  "old_article_receipt_hash_matches": true,
+  "boundary": "Two source files only, backed up after exact baseline hashes. Lead frozen full gates and actual build, no active tasks, own manager restart healthy. Actual deployed execute uses in-memory client; real pi/real formal gateway read-only probe uses local synthetic SSE. No actual note write/new summary/paid model. Original independent EPERM lifecycle failure remains #93 work."
+}

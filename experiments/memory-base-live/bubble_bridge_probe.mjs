@@ -9,6 +9,7 @@ import {pathToFileURL} from 'node:url';
 
 const [bubbleDir,home,python,output]=process.argv.slice(2);
 assert(bubbleDir&&home&&python&&output,'Pass Bubble directory, home, Python and report path');
+const reportFile=resolve(output);
 const root=resolve(bubbleDir);
 process.chdir(root);
 const {MemoryBaseClient,MemoryBaseError}=await import(pathToFileURL(join(root,'dist/server/memory-base.js')).href);
@@ -96,6 +97,6 @@ try{
   process.exitCode=1;
 }finally{
   model.closeAllConnections();await new Promise(done=>model.close(done));
-  await writeFile(resolve(output),JSON.stringify(report,null,2)+'\n');
-  console.log(JSON.stringify({overall:report.overall,checks:report.checks,report:resolve(output)}));
+  await writeFile(reportFile,JSON.stringify(report,null,2)+'\n');
+  console.log(JSON.stringify({overall:report.overall,checks:report.checks,report:reportFile}));
 }

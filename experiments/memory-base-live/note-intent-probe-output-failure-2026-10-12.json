@@ -1,0 +1,10 @@
+{
+  "date": "2026-10-12",
+  "exec_session": 78683,
+  "exit_code": 1,
+  "stage": "Lead read-only pi probe report writing",
+  "error": "ENOENT",
+  "cause": "Probe changed cwd to Bubble before resolving relative output, so the report path was resolved against the wrong application root.",
+  "fix": "Resolve the report path before chdir; repeat the read-only probe to obtain an actual saved result.",
+  "boundary": "This invocation did not provide a persisted PASS report. No capture write, source change or paid model. The separate deployed direct-tool probe succeeded."
+}

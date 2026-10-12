@@ -1,0 +1,16 @@
+{
+  "date": "2026-10-12T13:07:00.993Z",
+  "actual": "D:\\python_work\\work2026-10\\Agent-bubble",
+  "source_sha256": "2dfe82df62eb129564a76586bebdb40998e06a964c1e99393310ef911d1353de",
+  "checks": {
+    "denied_direct_execute": 8,
+    "denied_add_calls": 0,
+    "denied_onTool_calls": 0,
+    "allowed_direct_execute": 5,
+    "original_content": true,
+    "unknown_date_omitted": true,
+    "legacy_request_id": true
+  },
+  "overall": "PASS",
+  "boundary": "Actual deployed dist tool with an in-memory fake client. No HTTP capture write, real model, source change, credentials or user content."
+}
