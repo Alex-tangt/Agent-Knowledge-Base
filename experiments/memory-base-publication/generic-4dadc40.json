@@ -1,0 +1,3660 @@
+{
+  "base": "4dadc407d39b26855a96079ce8561e8983dc4401",
+  "upstream": "4270f13f418c5069316ba819cec11bb5910dcefc",
+  "wheel_reference": "45296a58fe2559e0b92f4af851c018b56148865a",
+  "mode": "generic-only",
+  "commit_count": 121,
+  "coverage": {
+    "tree_files": 989,
+    "tree_unique_blobs": 927,
+    "history_unique_blobs": 630,
+    "union_unique_blobs": 1131,
+    "history_bytes": 6490039,
+    "tree_bytes": 20181200
+  },
+  "sensitive_sources": [],
+  "gaps": [],
+  "findings": [
+    {
+      "blob": "04f521d6acf16408369da51dd51af70fb43a74a8",
+      "paths": [
+        "experiments/memory-base-package/recheck-2026-10-12/native_probe.py"
+      ],
+      "sets": [
+        "tree",
+        "history"
+      ],
+      "categories": [
+        "credential_assignment_review"
+      ],
+      "generic_locations": [
+        {
+          "category": "credential_assignment_review",
+          "line": 85
+        }
+      ]
+    },
+    {
+      "blob": "08dd86bdf55b3abaea6113b0846c0785cd485987",
+      "paths": [
+        "experiments/memory-base-formal-restore/run_restore.py"
+      ],
+      "sets": [
+        "history"
+      ],
+      "categories": [
+        "credential_assignment_review"
+      ],
+      "generic_locations": [
+        {
+          "category": "credential_assignment_review",
+          "line": 169
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 177
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 181
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 184
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 186
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 190
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 192
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 201
+        }
+      ]
+    },
+    {
+      "blob": "0baef411e02304b82b647dbe9c6ee6904328b887",
+      "paths": [
+        "docs/exp2-review.md"
+      ],
+      "sets": [
+        "tree"
+      ],
+      "categories": [
+        "credential_assignment_review"
+      ],
+      "generic_locations": [
+        {
+          "category": "credential_assignment_review",
+          "line": 186
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 314
+        }
+      ]
+    },
+    {
+      "blob": "0be1a80d4cafbedd970813b3195c48213dd14df2",
+      "paths": [
+        "memory_base/deploy.py"
+      ],
+      "sets": [
+        "history"
+      ],
+      "categories": [
+        "credential_assignment_review"
+      ],
+      "generic_locations": [
+        {
+          "category": "credential_assignment_review",
+          "line": 32
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 208
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 336
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 419
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 421
+        }
+      ]
+    },
+    {
+      "blob": "0d0f4f09514a3a875eb269fd39b6c549f649aed9",
+      "paths": [
+        "experiments/agentic-rag-census/phase_b/llm.py"
+      ],
+      "sets": [
+        "tree"
+      ],
+      "categories": [
+        "credential_assignment_review"
+      ],
+      "generic_locations": [
+        {
+          "category": "credential_assignment_review",
+          "line": 88
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 89
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 110
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 115
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 139
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 156
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 163
+        }
+      ]
+    },
+    {
+      "blob": "1195b9733dac8ade2bd16be0f769a0a06596e2f3",
+      "paths": [
+        "experiments/agentic-rag-census/phase_b/run_phase_b.py"
+      ],
+      "sets": [
+        "tree"
+      ],
+      "categories": [
+        "credential_assignment_review"
+      ],
+      "generic_locations": [
+        {
+          "category": "credential_assignment_review",
+          "line": 177
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 184
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 202
+        }
+      ]
+    },
+    {
+      "blob": "11f81c1fd561cc9f36ef984ec2ce8e35a2876460",
+      "paths": [
+        "memory_agent/eval/isolation_bypass_34.py"
+      ],
+      "sets": [
+        "tree"
+      ],
+      "categories": [
+        "credential_assignment_review"
+      ],
+      "generic_locations": [
+        {
+          "category": "credential_assignment_review",
+          "line": 353
+        }
+      ]
+    },
+    {
+      "blob": "15f65333ca980f20062df33b736b51226f856633",
+      "paths": [
+        "experiments/rerank-latency-survey/bench_rerank_maxlen.py"
+      ],
+      "sets": [
+        "tree"
+      ],
+      "categories": [
+        "credential_assignment_review"
+      ],
+      "generic_locations": [
+        {
+          "category": "credential_assignment_review",
+          "line": 125
+        }
+      ]
+    },
+    {
+      "blob": "1796669076277cdd6c425bc9b348c582fb80a8be",
+      "paths": [
+        "experiments/memory-base-recovery/run_native.py"
+      ],
+      "sets": [
+        "tree",
+        "history"
+      ],
+      "categories": [
+        "credential_assignment_review"
+      ],
+      "generic_locations": [
+        {
+          "category": "credential_assignment_review",
+          "line": 202
+        }
+      ]
+    },
+    {
+      "blob": "1b730e704eee95aaefd7a3396efe746bb98dcdd8",
+      "paths": [
+        "experiments/memory-base-bubble-bridge/bubble-four-tools.patch"
+      ],
+      "sets": [
+        "tree",
+        "history"
+      ],
+      "categories": [
+        "credential_assignment_review"
+      ],
+      "generic_locations": [
+        {
+          "category": "credential_assignment_review",
+          "line": 407
+        }
+      ]
+    },
+    {
+      "blob": "1c0b9791df5d38875bd02ee9e63a4f74f55e4595",
+      "paths": [
+        "memory_base/deploy.py"
+      ],
+      "sets": [
+        "history"
+      ],
+      "categories": [
+        "credential_assignment_review"
+      ],
+      "generic_locations": [
+        {
+          "category": "credential_assignment_review",
+          "line": 32
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 208
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 336
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 419
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 421
+        }
+      ]
+    },
+    {
+      "blob": "1c1e825b69e93f39ad24eb4aa5d4e175e6632e73",
+      "paths": [
+        "memory_base/deploy.py"
+      ],
+      "sets": [
+        "history"
+      ],
+      "categories": [
+        "credential_assignment_review"
+      ],
+      "generic_locations": [
+        {
+          "category": "credential_assignment_review",
+          "line": 32
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 215
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 378
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 584
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 586
+        }
+      ]
+    },
+    {
+      "blob": "1c77197b1649777715baf4773a4bff4801e72dcd",
+      "paths": [
+        "tests/unit/test_memory_base_deploy.py"
+      ],
+      "sets": [
+        "history"
+      ],
+      "categories": [
+        "credential_assignment_review"
+      ],
+      "generic_locations": [
+        {
+          "category": "credential_assignment_review",
+          "line": 217
+        }
+      ]
+    },
+    {
+      "blob": "21f66e5131a447ac8216b7555e101023fed6e756",
+      "paths": [
+        "tests/unit/test_memory_base_deploy.py"
+      ],
+      "sets": [
+        "history"
+      ],
+      "categories": [
+        "credential_assignment_review"
+      ],
+      "generic_locations": [
+        {
+          "category": "credential_assignment_review",
+          "line": 193
+        }
+      ]
+    },
+    {
+      "blob": "222ff509f97474e855877b514bd847bbb46e0012",
+      "paths": [
+        "experiments/rerank-latency-survey/memory_census.json"
+      ],
+      "sets": [
+        "tree"
+      ],
+      "categories": [
+        "credential_assignment_review"
+      ],
+      "generic_locations": [
+        {
+          "category": "credential_assignment_review",
+          "line": 6
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 18
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 24
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 30
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 36
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 42
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 48
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 54
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 60
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 66
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 72
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 78
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 84
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 90
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 96
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 102
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 108
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 114
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 120
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 126
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 132
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 138
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 144
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 150
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 156
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 162
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 168
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 174
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 180
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 186
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 192
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 198
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 204
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 210
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 216
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 222
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 228
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 234
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 240
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 246
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 252
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 258
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 264
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 265
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 270
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 276
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 282
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 288
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 294
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 300
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 306
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 312
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 318
+        }
+      ]
+    },
+    {
+      "blob": "2255e7942c867bd6ecffa69ddce8be217a8ba86c",
+      "paths": [
+        "experiments/memory-base-live/runtime_probe.py"
+      ],
+      "sets": [
+        "tree",
+        "history"
+      ],
+      "categories": [
+        "credential_assignment_review"
+      ],
+      "generic_locations": [
+        {
+          "category": "credential_assignment_review",
+          "line": 17
+        }
+      ]
+    },
+    {
+      "blob": "22df803e60613cfe2f9bc3f961a5c7905150dc7e",
+      "paths": [
+        "tests/unit/test_connect.py"
+      ],
+      "sets": [
+        "tree"
+      ],
+      "categories": [
+        "credential_assignment_review"
+      ],
+      "generic_locations": [
+        {
+          "category": "credential_assignment_review",
+          "line": 208
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 242
+        }
+      ]
+    },
+    {
+      "blob": "24a2c7647b9148d0f0ceb8d02a3866be9e75aec0",
+      "paths": [
+        "experiments/memory-framework-spike/mvp/scripts/m5b_outofprocess_restore.py"
+      ],
+      "sets": [
+        "tree",
+        "history"
+      ],
+      "categories": [
+        "credential_assignment_review"
+      ],
+      "generic_locations": [
+        {
+          "category": "credential_assignment_review",
+          "line": 70
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 95
+        }
+      ]
+    },
+    {
+      "blob": "2b100eec44954e2fe18f68cc0194272372c48944",
+      "paths": [
+        "experiments/memory-framework-spike/mvp/scripts/spike_common.py"
+      ],
+      "sets": [
+        "history"
+      ],
+      "categories": [
+        "credential_assignment_review"
+      ],
+      "generic_locations": [
+        {
+          "category": "credential_assignment_review",
+          "line": 50
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 51
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 86
+        }
+      ]
+    },
+    {
+      "blob": "2e7edc4aa18c6bcf5d593be0ac2778d6c03eabdb",
+      "paths": [
+        "memory_agent/settings.py"
+      ],
+      "sets": [
+        "tree"
+      ],
+      "categories": [
+        "credential_assignment_review"
+      ],
+      "generic_locations": [
+        {
+          "category": "credential_assignment_review",
+          "line": 264
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 304
+        }
+      ]
+    },
+    {
+      "blob": "314ec242079c3390caebe86a5577b8cb89d81377",
+      "paths": [
+        "experiments/memory-base-live/bubble_bridge_probe.mjs"
+      ],
+      "sets": [
+        "tree",
+        "history"
+      ],
+      "categories": [
+        "credential_assignment_review"
+      ],
+      "generic_locations": [
+        {
+          "category": "credential_assignment_review",
+          "line": 74
+        }
+      ]
+    },
+    {
+      "blob": "31753483a2f250352cbac2a36147ff171440a4b0",
+      "paths": [
+        "memory_base/deploy.py"
+      ],
+      "sets": [
+        "tree",
+        "history"
+      ],
+      "categories": [
+        "credential_assignment_review"
+      ],
+      "generic_locations": [
+        {
+          "category": "credential_assignment_review",
+          "line": 40
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 385
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 552
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 761
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 763
+        }
+      ]
+    },
+    {
+      "blob": "323f189425d78e2d53d81cd807662b1febead311",
+      "paths": [
+        "memory_base/embed.py"
+      ],
+      "sets": [
+        "tree",
+        "history"
+      ],
+      "categories": [
+        "credential_assignment_review"
+      ],
+      "generic_locations": [
+        {
+          "category": "credential_assignment_review",
+          "line": 78
+        }
+      ]
+    },
+    {
+      "blob": "33f722deac8499774336829c1610129432c94762",
+      "paths": [
+        "experiments/memory-base-cold-start/wheel-final/automatic-default.json"
+      ],
+      "sets": [
+        "tree",
+        "history"
+      ],
+      "categories": [
+        "credential_assignment_review"
+      ],
+      "generic_locations": [
+        {
+          "category": "credential_assignment_review",
+          "line": 106
+        }
+      ]
+    },
+    {
+      "blob": "36b6697fb5dfd7788ad6d4fdc2edd6068df4a0b5",
+      "paths": [
+        "experiments/memory-framework-spike/mvp/scripts/spike_common.py"
+      ],
+      "sets": [
+        "tree",
+        "history"
+      ],
+      "categories": [
+        "credential_assignment_review"
+      ],
+      "generic_locations": [
+        {
+          "category": "credential_assignment_review",
+          "line": 50
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 51
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 91
+        }
+      ]
+    },
+    {
+      "blob": "37b34c38c8024a5ded4fdef0968b000753bb3cb1",
+      "paths": [
+        "experiments/memory-host-connect/host_server.py"
+      ],
+      "sets": [
+        "tree",
+        "history"
+      ],
+      "categories": [
+        "credential_assignment_review"
+      ],
+      "generic_locations": [
+        {
+          "category": "credential_assignment_review",
+          "line": 57
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 137
+        }
+      ]
+    },
+    {
+      "blob": "39d27ada1bdbc19a98f68103a6f69c980c35a309",
+      "paths": [
+        "experiments/refusal-root-cause/llm_refusal_trace.txt"
+      ],
+      "sets": [
+        "tree"
+      ],
+      "categories": [
+        "credential_assignment_review"
+      ],
+      "generic_locations": [
+        {
+          "category": "credential_assignment_review",
+          "line": 246
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 246
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 246
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 743
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 743
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 743
+        }
+      ]
+    },
+    {
+      "blob": "3dce663cb502eedc4c0b3113c11911dc21dec66a",
+      "paths": [
+        "tests/unit/test_memory_onnx_reranker.py"
+      ],
+      "sets": [
+        "tree"
+      ],
+      "categories": [
+        "credential_assignment_review"
+      ],
+      "generic_locations": [
+        {
+          "category": "credential_assignment_review",
+          "line": 17
+        }
+      ]
+    },
+    {
+      "blob": "3f402e25559d8ffe9f7b6d7538ca843be391822a",
+      "paths": [
+        "experiments/memory-framework-spike/mvp/scripts/m5_backup.py"
+      ],
+      "sets": [
+        "tree",
+        "history"
+      ],
+      "categories": [
+        "credential_assignment_review"
+      ],
+      "generic_locations": [
+        {
+          "category": "credential_assignment_review",
+          "line": 393
+        }
+      ]
+    },
+    {
+      "blob": "45fc6ae553e1a7fa94dcf76b3b0463cbcdb287c0",
+      "paths": [
+        "experiments/memory-base-formal-restore/run_restore.py"
+      ],
+      "sets": [
+        "history"
+      ],
+      "categories": [
+        "credential_assignment_review"
+      ],
+      "generic_locations": [
+        {
+          "category": "credential_assignment_review",
+          "line": 163
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 171
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 175
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 178
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 180
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 184
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 186
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 195
+        }
+      ]
+    },
+    {
+      "blob": "46d3e4a6d08425b39c981d184730138626ccc705",
+      "paths": [
+        "experiments/rerank-model-survey/bench_rerank_models.py"
+      ],
+      "sets": [
+        "tree"
+      ],
+      "categories": [
+        "credential_assignment_review"
+      ],
+      "generic_locations": [
+        {
+          "category": "credential_assignment_review",
+          "line": 445
+        }
+      ]
+    },
+    {
+      "blob": "48e43535681e855ef637c4e89ad56487d1a128bd",
+      "paths": [
+        "experiments/agentic-rag-census/phase_b/report.md"
+      ],
+      "sets": [
+        "tree"
+      ],
+      "categories": [
+        "credential_assignment_review"
+      ],
+      "generic_locations": [
+        {
+          "category": "credential_assignment_review",
+          "line": 118
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 118
+        }
+      ]
+    },
+    {
+      "blob": "4c135e9f5327f79fcf0a11bb212a1c45a24d9aec",
+      "paths": [
+        "experiments/memory-base-package/recheck-2026-10-12/evidence_audit.json"
+      ],
+      "sets": [
+        "tree",
+        "history"
+      ],
+      "categories": [
+        "credential_assignment_review"
+      ],
+      "generic_locations": [
+        {
+          "category": "credential_assignment_review",
+          "line": 3
+        }
+      ]
+    },
+    {
+      "blob": "4cc9b6251616d3e70fc52c2bde591dd06908bf33",
+      "paths": [
+        "memory_agent/memory/store.py"
+      ],
+      "sets": [
+        "tree"
+      ],
+      "categories": [
+        "credential_assignment_review"
+      ],
+      "generic_locations": [
+        {
+          "category": "credential_assignment_review",
+          "line": 229
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 241
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 252
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 335
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 357
+        }
+      ]
+    },
+    {
+      "blob": "50711aababf5e9efaf5a89f5c49b9d0d3921eb39",
+      "paths": [
+        "experiments/memory-spike-verify/verify_env.py"
+      ],
+      "sets": [
+        "tree",
+        "history"
+      ],
+      "categories": [
+        "credential_assignment_review"
+      ],
+      "generic_locations": [
+        {
+          "category": "credential_assignment_review",
+          "line": 152
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 156
+        }
+      ]
+    },
+    {
+      "blob": "51622082cfc44c8d0ed27cbb164fc6bbe77e3e98",
+      "paths": [
+        "experiments/query-rewrite-optimizer/eval_service.py"
+      ],
+      "sets": [
+        "tree"
+      ],
+      "categories": [
+        "credential_assignment_review"
+      ],
+      "generic_locations": [
+        {
+          "category": "credential_assignment_review",
+          "line": 58
+        }
+      ]
+    },
+    {
+      "blob": "52cbc9ead6431eeb809a105b2eb4fb6cf02be41e",
+      "paths": [
+        "experiments/bge-m3-sparse-colbert/cache/scores.stats.json"
+      ],
+      "sets": [
+        "tree"
+      ],
+      "categories": [
+        "credential_assignment_review"
+      ],
+      "generic_locations": [
+        {
+          "category": "credential_assignment_review",
+          "line": 7
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 8
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 9
+        }
+      ]
+    },
+    {
+      "blob": "53b4ce8091286a1714f747f9a4159a58788f1076",
+      "paths": [
+        "experiments/memory-base-note-intent/artifacts/server/tests/memory-base.test.ts"
+      ],
+      "sets": [
+        "tree",
+        "history"
+      ],
+      "categories": [
+        "credential_assignment_review"
+      ],
+      "generic_locations": [
+        {
+          "category": "credential_assignment_review",
+          "line": 437
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 438
+        }
+      ]
+    },
+    {
+      "blob": "5571e5948541015e0431e8076c1ee69a768ebf5e",
+      "paths": [
+        "experiments/memory-framework-spike/mvp/evidence/m5b_outofprocess_restore.json"
+      ],
+      "sets": [
+        "history"
+      ],
+      "categories": [
+        "credential_assignment_review"
+      ],
+      "generic_locations": [
+        {
+          "category": "credential_assignment_review",
+          "line": 16
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 96
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 258
+        }
+      ]
+    },
+    {
+      "blob": "561518549c74e267efee390c3c6ce4a3f1c4cff5",
+      "paths": [
+        "experiments/memory-base-cold-start/wheel-final/explicit-fresh.json"
+      ],
+      "sets": [
+        "tree",
+        "history"
+      ],
+      "categories": [
+        "credential_assignment_review"
+      ],
+      "generic_locations": [
+        {
+          "category": "credential_assignment_review",
+          "line": 106
+        }
+      ]
+    },
+    {
+      "blob": "5616fb332d81d18d5870f77828d2451f4f34741a",
+      "paths": [
+        "memory_base/gateway.py"
+      ],
+      "sets": [
+        "history"
+      ],
+      "categories": [
+        "credential_assignment_review"
+      ],
+      "generic_locations": [
+        {
+          "category": "credential_assignment_review",
+          "line": 265
+        }
+      ]
+    },
+    {
+      "blob": "56463e0e7a5203cf1a496f68d5375de95ccfc2eb",
+      "paths": [
+        "tests/unit/test_agent_loop.py"
+      ],
+      "sets": [
+        "tree"
+      ],
+      "categories": [
+        "credential_assignment_review"
+      ],
+      "generic_locations": [
+        {
+          "category": "credential_assignment_review",
+          "line": 369
+        }
+      ]
+    },
+    {
+      "blob": "5747d36ba5372cd6948cea4b8fbeba87d0ed50eb",
+      "paths": [
+        "experiments/refusal-root-cause/trace_result.txt"
+      ],
+      "sets": [
+        "tree"
+      ],
+      "categories": [
+        "credential_assignment_review"
+      ],
+      "generic_locations": [
+        {
+          "category": "credential_assignment_review",
+          "line": 249
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 249
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 249
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 697
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 697
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 697
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 989
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 989
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 989
+        }
+      ]
+    },
+    {
+      "blob": "584057da8ce0b131e91edb8bb9a1e4d1d6ade52d",
+      "paths": [
+        "tests/unit/test_memory_base_deploy.py"
+      ],
+      "sets": [
+        "history"
+      ],
+      "categories": [
+        "credential_assignment_review"
+      ],
+      "generic_locations": [
+        {
+          "category": "credential_assignment_review",
+          "line": 193
+        }
+      ]
+    },
+    {
+      "blob": "5b31adfd38571b796b80c6b3aed94023051e362e",
+      "paths": [
+        "experiments/memory-base-package/cold-final-2026-10-12/command-022-target-origins.log"
+      ],
+      "sets": [
+        "tree",
+        "history"
+      ],
+      "categories": [
+        "credential_assignment_review"
+      ],
+      "generic_locations": [
+        {
+          "category": "credential_assignment_review",
+          "line": 919
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 922
+        }
+      ]
+    },
+    {
+      "blob": "5bcabdf79758da09b7e0fe036eaa06f6ea32b544",
+      "paths": [
+        "memory_agent/memory/onnx_reranker.py"
+      ],
+      "sets": [
+        "tree"
+      ],
+      "categories": [
+        "credential_assignment_review"
+      ],
+      "generic_locations": [
+        {
+          "category": "credential_assignment_review",
+          "line": 22
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 54
+        }
+      ]
+    },
+    {
+      "blob": "5d988ecb4001c4983157b853a32747703c9a84b9",
+      "paths": [
+        "memory_agent/eval/perf_70.py"
+      ],
+      "sets": [
+        "tree"
+      ],
+      "categories": [
+        "credential_assignment_review"
+      ],
+      "generic_locations": [
+        {
+          "category": "credential_assignment_review",
+          "line": 569
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 920
+        }
+      ]
+    },
+    {
+      "blob": "645cab59a4af4e52680d2991bdd917c5916c1e39",
+      "paths": [
+        "docs/adr/0025-personal-mode-knowledge-database-model.md"
+      ],
+      "sets": [
+        "tree"
+      ],
+      "categories": [
+        "credential_assignment_review"
+      ],
+      "generic_locations": [
+        {
+          "category": "credential_assignment_review",
+          "line": 92
+        }
+      ]
+    },
+    {
+      "blob": "6543dd1039e2d765d536e6199308c5fe9e4fa756",
+      "paths": [
+        "memory_base/credentials.py"
+      ],
+      "sets": [
+        "tree",
+        "history"
+      ],
+      "categories": [
+        "credential_assignment_review"
+      ],
+      "generic_locations": [
+        {
+          "category": "credential_assignment_review",
+          "line": 1
+        }
+      ]
+    },
+    {
+      "blob": "65aefa3fd641ff0f426900abcbb9793d4052c733",
+      "paths": [
+        "memory_agent/gateway/context.py"
+      ],
+      "sets": [
+        "tree"
+      ],
+      "categories": [
+        "credential_assignment_review"
+      ],
+      "generic_locations": [
+        {
+          "category": "credential_assignment_review",
+          "line": 20
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 24
+        }
+      ]
+    },
+    {
+      "blob": "67a09a35a8c786911a6bacb2012f6a2ab68c5d42",
+      "paths": [
+        "memory_base/deploy.py"
+      ],
+      "sets": [
+        "history"
+      ],
+      "categories": [
+        "credential_assignment_review"
+      ],
+      "generic_locations": [
+        {
+          "category": "credential_assignment_review",
+          "line": 32
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 206
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 334
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 417
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 419
+        }
+      ]
+    },
+    {
+      "blob": "6a29f94071dde14e2166cc6fbf62ed01d596974e",
+      "paths": [
+        "memory_base/deploy.py"
+      ],
+      "sets": [
+        "history"
+      ],
+      "categories": [
+        "credential_assignment_review"
+      ],
+      "generic_locations": [
+        {
+          "category": "credential_assignment_review",
+          "line": 32
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 211
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 369
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 460
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 462
+        }
+      ]
+    },
+    {
+      "blob": "6a575eca90f1d655970f7d6193e67e90066a069f",
+      "paths": [
+        "memory_base/deploy.py"
+      ],
+      "sets": [
+        "history"
+      ],
+      "categories": [
+        "credential_assignment_review"
+      ],
+      "generic_locations": [
+        {
+          "category": "credential_assignment_review",
+          "line": 32
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 205
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 330
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 413
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 415
+        }
+      ]
+    },
+    {
+      "blob": "6a8cb832ceb61126bbb83c0a32bfe93c326f4470",
+      "paths": [
+        "memory_base/mcp_stdio.py"
+      ],
+      "sets": [
+        "history"
+      ],
+      "categories": [
+        "credential_assignment_review"
+      ],
+      "generic_locations": [
+        {
+          "category": "credential_assignment_review",
+          "line": 26
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 28
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 29
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 102
+        }
+      ]
+    },
+    {
+      "blob": "6b3336c3a78d3e458db6a743915165fe8164a142",
+      "paths": [
+        "experiments/memory-base-package/recheck-2026-10-12/import_diagnosis.json"
+      ],
+      "sets": [
+        "tree",
+        "history"
+      ],
+      "categories": [
+        "credential_assignment_review"
+      ],
+      "generic_locations": [
+        {
+          "category": "credential_assignment_review",
+          "line": 347
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 350
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 590
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 593
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 833
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 836
+        }
+      ]
+    },
+    {
+      "blob": "6bba3aaa84d8e99c25368814be9274b0bb8c0476",
+      "paths": [
+        "tests/unit/test_memory_base_sources.py"
+      ],
+      "sets": [
+        "tree",
+        "history"
+      ],
+      "categories": [
+        "credential_assignment_review"
+      ],
+      "generic_locations": [
+        {
+          "category": "credential_assignment_review",
+          "line": 207
+        }
+      ]
+    },
+    {
+      "blob": "6de0345662a46cb94825b9065b3a531c6a4ec1c1",
+      "paths": [
+        "experiments/memory-base-package/recheck-2026-10-12/native_probe.py"
+      ],
+      "sets": [
+        "history"
+      ],
+      "categories": [
+        "credential_assignment_review"
+      ],
+      "generic_locations": [
+        {
+          "category": "credential_assignment_review",
+          "line": 79
+        }
+      ]
+    },
+    {
+      "blob": "6ea1436782d2622d350bea1f29e462bc9a70abc8",
+      "paths": [
+        "ragcore/services/chat_service.py"
+      ],
+      "sets": [
+        "tree"
+      ],
+      "categories": [
+        "credential_assignment_review"
+      ],
+      "generic_locations": [
+        {
+          "category": "credential_assignment_review",
+          "line": 77
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 84
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 85
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 86
+        }
+      ]
+    },
+    {
+      "blob": "6ee5b091f29df862cc970dfc3cca9623f991b9d7",
+      "paths": [
+        "memory_base/gateway.py"
+      ],
+      "sets": [
+        "tree",
+        "history"
+      ],
+      "categories": [
+        "credential_assignment_review"
+      ],
+      "generic_locations": [
+        {
+          "category": "credential_assignment_review",
+          "line": 464
+        }
+      ]
+    },
+    {
+      "blob": "703b93c0864bb3c1725e2b69cb0ea3bc5bf90768",
+      "paths": [
+        "experiments/memory-base-package/recheck-2026-10-12/complete_import_census.json"
+      ],
+      "sets": [
+        "tree",
+        "history"
+      ],
+      "categories": [
+        "credential_assignment_review"
+      ],
+      "generic_locations": [
+        {
+          "category": "credential_assignment_review",
+          "line": 395
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 398
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 776
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 779
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 1157
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 1160
+        }
+      ]
+    },
+    {
+      "blob": "72c55398b6cba9785a17197c11849bd178d7c246",
+      "paths": [
+        "experiments/memory-framework-spike/mvp/evidence/m0_env.json"
+      ],
+      "sets": [
+        "tree",
+        "history"
+      ],
+      "categories": [
+        "credential_assignment_review"
+      ],
+      "generic_locations": [
+        {
+          "category": "credential_assignment_review",
+          "line": 111
+        }
+      ]
+    },
+    {
+      "blob": "758f808c4087e89705ca59933ad4d107a78cb0de",
+      "paths": [
+        "memory_agent/eval/nav_63_results.md"
+      ],
+      "sets": [
+        "tree"
+      ],
+      "categories": [
+        "credential_assignment_review"
+      ],
+      "generic_locations": [
+        {
+          "category": "credential_assignment_review",
+          "line": 53
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 241
+        }
+      ]
+    },
+    {
+      "blob": "79330cc32a19f9415c3f2ce759227e5613c1f0c9",
+      "paths": [
+        "memory_agent/.env.example"
+      ],
+      "sets": [
+        "tree"
+      ],
+      "categories": [
+        "credential_assignment_review"
+      ],
+      "generic_locations": [
+        {
+          "category": "credential_assignment_review",
+          "line": 17
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 56
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 59
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 74
+        }
+      ]
+    },
+    {
+      "blob": "798a2d61231bd5f166b9052087868496e9ac5097",
+      "paths": [
+        "experiments/memory-host-connect/host_identity.py"
+      ],
+      "sets": [
+        "tree",
+        "history"
+      ],
+      "categories": [
+        "credential_assignment_review"
+      ],
+      "generic_locations": [
+        {
+          "category": "credential_assignment_review",
+          "line": 39
+        }
+      ]
+    },
+    {
+      "blob": "7a3481c876df42d4d2a1a3fa71573a87489e8dc9",
+      "paths": [
+        "experiments/agentic-rag-census/phase_a2/a3_grade_answers.py"
+      ],
+      "sets": [
+        "tree"
+      ],
+      "categories": [
+        "credential_assignment_review"
+      ],
+      "generic_locations": [
+        {
+          "category": "credential_assignment_review",
+          "line": 204
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 215
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 490
+        }
+      ]
+    },
+    {
+      "blob": "7c127625f32bf09517df0001355820304506f834",
+      "paths": [
+        "experiments/memory-base-package/recheck-2026-10-12/native_start_failure.json"
+      ],
+      "sets": [
+        "tree",
+        "history"
+      ],
+      "categories": [
+        "credential_assignment_review"
+      ],
+      "generic_locations": [
+        {
+          "category": "credential_assignment_review",
+          "line": 1748
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 1751
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 3262
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 3265
+        }
+      ]
+    },
+    {
+      "blob": "7e3b3e9c9552ef3634b3e4a6a1360a7b205e4420",
+      "paths": [
+        "memory_agent/mcp_server.py"
+      ],
+      "sets": [
+        "tree"
+      ],
+      "categories": [
+        "credential_assignment_review"
+      ],
+      "generic_locations": [
+        {
+          "category": "credential_assignment_review",
+          "line": 145
+        }
+      ]
+    },
+    {
+      "blob": "87aa6507087bacddd94608eaacbc0e10e95cd167",
+      "paths": [
+        "tests/unit/test_memory_base_sources.py"
+      ],
+      "sets": [
+        "history"
+      ],
+      "categories": [
+        "credential_assignment_review"
+      ],
+      "generic_locations": [
+        {
+          "category": "credential_assignment_review",
+          "line": 205
+        }
+      ]
+    },
+    {
+      "blob": "89b551133488c76b6a7609d9a027c3ecb7abc145",
+      "paths": [
+        "ragcore/services/vector_store_service.py"
+      ],
+      "sets": [
+        "tree"
+      ],
+      "categories": [
+        "credential_assignment_review"
+      ],
+      "generic_locations": [
+        {
+          "category": "credential_assignment_review",
+          "line": 70
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 81
+        }
+      ]
+    },
+    {
+      "blob": "8c150a73a06b0bf5268605c3f4e1f209bc99ef09",
+      "paths": [
+        "ragcore/config/llm.py"
+      ],
+      "sets": [
+        "tree"
+      ],
+      "categories": [
+        "credential_assignment_review"
+      ],
+      "generic_locations": [
+        {
+          "category": "credential_assignment_review",
+          "line": 51
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 59
+        }
+      ]
+    },
+    {
+      "blob": "8ceaec2d1afc3e5dc4a5fe7d066079c5072b68da",
+      "paths": [
+        "memory_agent/gateway/identity.py"
+      ],
+      "sets": [
+        "tree"
+      ],
+      "categories": [
+        "credential_assignment_review"
+      ],
+      "generic_locations": [
+        {
+          "category": "credential_assignment_review",
+          "line": 6
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 65
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 192
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 192
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 205
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 220
+        }
+      ]
+    },
+    {
+      "blob": "8d1118a09336642dd371cc1ac095239bfcc39095",
+      "paths": [
+        "experiments/memory-base-package/cold-final-2026-10-12/probe_installed.py",
+        "experiments/memory-base-package/probe_installed.py"
+      ],
+      "sets": [
+        "tree",
+        "history"
+      ],
+      "categories": [
+        "credential_assignment_review"
+      ],
+      "generic_locations": [
+        {
+          "category": "credential_assignment_review",
+          "line": 133
+        }
+      ]
+    },
+    {
+      "blob": "8d1fe699e5a1db87a93c6781a57f4b50e9a9afcb",
+      "paths": [
+        "experiments/memory-base-live/bubble_bridge_probe.mjs"
+      ],
+      "sets": [
+        "history"
+      ],
+      "categories": [
+        "credential_assignment_review"
+      ],
+      "generic_locations": [
+        {
+          "category": "credential_assignment_review",
+          "line": 73
+        }
+      ]
+    },
+    {
+      "blob": "8fa357d8fa3cb687a7c136f03e92e87c03a0daa3",
+      "paths": [
+        "experiments/bge-m3-sparse-colbert/cache/scores_qd.stats.json"
+      ],
+      "sets": [
+        "tree"
+      ],
+      "categories": [
+        "credential_assignment_review"
+      ],
+      "generic_locations": [
+        {
+          "category": "credential_assignment_review",
+          "line": 7
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 8
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 9
+        }
+      ]
+    },
+    {
+      "blob": "98c41ad7bb8bebea7052c25e88303b6c19193c10",
+      "paths": [
+        "experiments/query-rewrite-optimizer/rewrite_optimizer.py"
+      ],
+      "sets": [
+        "tree"
+      ],
+      "categories": [
+        "credential_assignment_review"
+      ],
+      "generic_locations": [
+        {
+          "category": "credential_assignment_review",
+          "line": 177
+        }
+      ]
+    },
+    {
+      "blob": "98e9d91d7794ec850291fc7a682ef4c3eeca131a",
+      "paths": [
+        "memory_base/deploy.py"
+      ],
+      "sets": [
+        "history"
+      ],
+      "categories": [
+        "credential_assignment_review"
+      ],
+      "generic_locations": [
+        {
+          "category": "credential_assignment_review",
+          "line": 32
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 211
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 369
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 534
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 536
+        }
+      ]
+    },
+    {
+      "blob": "9988949f21acbd8acf87f9d5eb76ad540fcb8eff",
+      "paths": [
+        "memory_agent/eval/agent_loop_42.py"
+      ],
+      "sets": [
+        "tree"
+      ],
+      "categories": [
+        "credential_assignment_review"
+      ],
+      "generic_locations": [
+        {
+          "category": "credential_assignment_review",
+          "line": 213
+        }
+      ]
+    },
+    {
+      "blob": "9a1a6624b632e5358382c7f56cf920b7287d157d",
+      "paths": [
+        "experiments/memory-framework-spike/mvp/scripts/m5b_outofprocess_restore.py"
+      ],
+      "sets": [
+        "history"
+      ],
+      "categories": [
+        "credential_assignment_review"
+      ],
+      "generic_locations": [
+        {
+          "category": "credential_assignment_review",
+          "line": 70
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 95
+        }
+      ]
+    },
+    {
+      "blob": "9b3d1f2391756ac1dd569d9e405e63d8fbfccb9b",
+      "paths": [
+        "memory_base/deploy.py"
+      ],
+      "sets": [
+        "history"
+      ],
+      "categories": [
+        "credential_assignment_review"
+      ],
+      "generic_locations": [
+        {
+          "category": "credential_assignment_review",
+          "line": 40
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 339
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 502
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 711
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 713
+        }
+      ]
+    },
+    {
+      "blob": "9be877b90d995f3938984bef952ffe21b543a636",
+      "paths": [
+        "experiments/memory-base-package/cold-final-2026-10-12/command-035-target-origins.log"
+      ],
+      "sets": [
+        "tree",
+        "history"
+      ],
+      "categories": [
+        "credential_assignment_review"
+      ],
+      "generic_locations": [
+        {
+          "category": "credential_assignment_review",
+          "line": 919
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 922
+        }
+      ]
+    },
+    {
+      "blob": "9c347300ab35180d152342631e7f6ef8e5b770e5",
+      "paths": [
+        "memory_base/mcp_stdio.py"
+      ],
+      "sets": [
+        "tree",
+        "history"
+      ],
+      "categories": [
+        "credential_assignment_review"
+      ],
+      "generic_locations": [
+        {
+          "category": "credential_assignment_review",
+          "line": 52
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 54
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 55
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 142
+        }
+      ]
+    },
+    {
+      "blob": "9e31a48701fc324b86dda95cb3e85c53a2e07c17",
+      "paths": [
+        "experiments/memory-base-package/cold-final-2026-10-12/command-011-launcher-origins.log"
+      ],
+      "sets": [
+        "tree",
+        "history"
+      ],
+      "categories": [
+        "credential_assignment_review"
+      ],
+      "generic_locations": [
+        {
+          "category": "credential_assignment_review",
+          "line": 924
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 927
+        }
+      ]
+    },
+    {
+      "blob": "9e37d06e5b2f01df981c153760d810fbd2503ce1",
+      "paths": [
+        "experiments/memory-host-connect/setup_authz_supplement.ps1"
+      ],
+      "sets": [
+        "tree",
+        "history"
+      ],
+      "categories": [
+        "credential_assignment_review"
+      ],
+      "generic_locations": [
+        {
+          "category": "credential_assignment_review",
+          "line": 19
+        }
+      ]
+    },
+    {
+      "blob": "a03185fb6cca41d13231e1adbbc36a9acb88424d",
+      "paths": [
+        "experiments/cloud-vector-db-spike/smoke.py"
+      ],
+      "sets": [
+        "tree"
+      ],
+      "categories": [
+        "credential_assignment_review"
+      ],
+      "generic_locations": [
+        {
+          "category": "credential_assignment_review",
+          "line": 42
+        }
+      ]
+    },
+    {
+      "blob": "a4083b04a653101eebcb3f8a64b136fdbda882ac",
+      "paths": [
+        "experiments/memory-base-package/recheck-2026-10-12/results.json"
+      ],
+      "sets": [
+        "tree",
+        "history"
+      ],
+      "categories": [
+        "credential_assignment_review"
+      ],
+      "generic_locations": [
+        {
+          "category": "credential_assignment_review",
+          "line": 1829
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 1832
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 3352
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 3355
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 4567
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 4570
+        }
+      ]
+    },
+    {
+      "blob": "a4b839e172fcd6ee994e11d3000d09493594c955",
+      "paths": [
+        "memory_agent/eval/build_eval_set.py"
+      ],
+      "sets": [
+        "tree"
+      ],
+      "categories": [
+        "credential_assignment_review"
+      ],
+      "generic_locations": [
+        {
+          "category": "credential_assignment_review",
+          "line": 90
+        }
+      ]
+    },
+    {
+      "blob": "a5bd034bde160214a4043b0353e49bc4e733eca3",
+      "paths": [
+        "experiments/memory-source-study/memos-python.md"
+      ],
+      "sets": [
+        "tree",
+        "history"
+      ],
+      "categories": [
+        "credential_assignment_review"
+      ],
+      "generic_locations": [
+        {
+          "category": "credential_assignment_review",
+          "line": 397
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 398
+        }
+      ]
+    },
+    {
+      "blob": "aa0c0fa5f4962d29c5be07242c698eec5e818376",
+      "paths": [
+        "experiments/memory-base-cold-start/native_probe_91.py"
+      ],
+      "sets": [
+        "tree",
+        "history"
+      ],
+      "categories": [
+        "credential_assignment_review"
+      ],
+      "generic_locations": [
+        {
+          "category": "credential_assignment_review",
+          "line": 82
+        }
+      ]
+    },
+    {
+      "blob": "ab359b33e9735e784bf1939fe97c4ab1b8dbde9a",
+      "paths": [
+        "experiments/agentic-rag-census/phase_a2/a3_results.json"
+      ],
+      "sets": [
+        "tree"
+      ],
+      "categories": [
+        "credential_assignment_review"
+      ],
+      "generic_locations": [
+        {
+          "category": "credential_assignment_review",
+          "line": 6026
+        }
+      ]
+    },
+    {
+      "blob": "acc33912e3ea42e110ad96222624e5a58a28529f",
+      "paths": [
+        "ragcore/agents/router_graph.py"
+      ],
+      "sets": [
+        "tree"
+      ],
+      "categories": [
+        "credential_assignment_review"
+      ],
+      "generic_locations": [
+        {
+          "category": "credential_assignment_review",
+          "line": 51
+        }
+      ]
+    },
+    {
+      "blob": "ae838001b5af068d623fc40139290c56d5912f04",
+      "paths": [
+        "memory_agent/agent_loop/llm.py"
+      ],
+      "sets": [
+        "tree"
+      ],
+      "categories": [
+        "credential_assignment_review"
+      ],
+      "generic_locations": [
+        {
+          "category": "credential_assignment_review",
+          "line": 41
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 88
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 99
+        }
+      ]
+    },
+    {
+      "blob": "aebe3125538f4a12d24213c9aa79955e88798d3d",
+      "paths": [
+        "tests/unit/test_memory_base_deploy.py"
+      ],
+      "sets": [
+        "history"
+      ],
+      "categories": [
+        "credential_assignment_review"
+      ],
+      "generic_locations": [
+        {
+          "category": "credential_assignment_review",
+          "line": 285
+        }
+      ]
+    },
+    {
+      "blob": "b320ca6037cd348f9f468d9dff718044cf567caf",
+      "paths": [
+        "ragcore/services/rag_service.py"
+      ],
+      "sets": [
+        "tree"
+      ],
+      "categories": [
+        "credential_assignment_review"
+      ],
+      "generic_locations": [
+        {
+          "category": "credential_assignment_review",
+          "line": 231
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 234
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 246
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 343
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 344
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 345
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 412
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 418
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 419
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 420
+        }
+      ]
+    },
+    {
+      "blob": "b5b1fcaa0271064a5d29b49abfa3963bc74d0894",
+      "paths": [
+        "experiments/memory-spike-verify/verify_acl.py"
+      ],
+      "sets": [
+        "tree",
+        "history"
+      ],
+      "categories": [
+        "credential_assignment_review"
+      ],
+      "generic_locations": [
+        {
+          "category": "credential_assignment_review",
+          "line": 36
+        }
+      ]
+    },
+    {
+      "blob": "b5dff60bf84a9a90ab307f7ea7e397690d4fdd70",
+      "paths": [
+        "experiments/memory-base-live/verify.py"
+      ],
+      "sets": [
+        "tree",
+        "history"
+      ],
+      "categories": [
+        "credential_assignment_review"
+      ],
+      "generic_locations": [
+        {
+          "category": "credential_assignment_review",
+          "line": 12
+        }
+      ]
+    },
+    {
+      "blob": "b6eab804e692612cbba81981db4c865bed116e62",
+      "paths": [
+        "experiments/memory-host-connect/host_server.py"
+      ],
+      "sets": [
+        "history"
+      ],
+      "categories": [
+        "credential_assignment_review"
+      ],
+      "generic_locations": [
+        {
+          "category": "credential_assignment_review",
+          "line": 57
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 137
+        }
+      ]
+    },
+    {
+      "blob": "b7658e2ce7c479926da0037e99711264619808e0",
+      "paths": [
+        "experiments/agentic-rag-census/phase_a2/a3_results.md"
+      ],
+      "sets": [
+        "tree"
+      ],
+      "categories": [
+        "credential_assignment_review"
+      ],
+      "generic_locations": [
+        {
+          "category": "credential_assignment_review",
+          "line": 70
+        }
+      ]
+    },
+    {
+      "blob": "bf5b32c89ab6f703501da3d5ef6f38abdd101ddd",
+      "paths": [
+        "memory_base/deploy.py"
+      ],
+      "sets": [
+        "history"
+      ],
+      "categories": [
+        "credential_assignment_review"
+      ],
+      "generic_locations": [
+        {
+          "category": "credential_assignment_review",
+          "line": 32
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 211
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 371
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 577
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 579
+        }
+      ]
+    },
+    {
+      "blob": "c1480ebf4435ef6df4035b3c3e31ed17c1d4e74d",
+      "paths": [
+        "experiments/memory-base-formal-restore/run_restore.py"
+      ],
+      "sets": [
+        "tree",
+        "history"
+      ],
+      "categories": [
+        "credential_assignment_review"
+      ],
+      "generic_locations": [
+        {
+          "category": "credential_assignment_review",
+          "line": 170
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 178
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 182
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 190
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 192
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 196
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 198
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 207
+        }
+      ]
+    },
+    {
+      "blob": "c305f05b34c670080079f3bc6a79a8966e469d5d",
+      "paths": [
+        "experiments/memory-base-package/cold-final-2026-10-12/final-audit.json"
+      ],
+      "sets": [
+        "tree",
+        "history"
+      ],
+      "categories": [
+        "credential_assignment_review"
+      ],
+      "generic_locations": [
+        {
+          "category": "credential_assignment_review",
+          "line": 207
+        }
+      ]
+    },
+    {
+      "blob": "c44a83fd3baf70b42293d603e7ff8f5351597a7a",
+      "paths": [
+        "tests/unit/test_memory_base_deploy.py"
+      ],
+      "sets": [
+        "history"
+      ],
+      "categories": [
+        "credential_assignment_review"
+      ],
+      "generic_locations": [
+        {
+          "category": "credential_assignment_review",
+          "line": 216
+        }
+      ]
+    },
+    {
+      "blob": "c4ea29f61e7be1ab677bfa9747bca86754c7e229",
+      "paths": [
+        "experiments/memory-framework-spike/mvp/scripts/spike_common.py"
+      ],
+      "sets": [
+        "history"
+      ],
+      "categories": [
+        "credential_assignment_review"
+      ],
+      "generic_locations": [
+        {
+          "category": "credential_assignment_review",
+          "line": 50
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 51
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 91
+        }
+      ]
+    },
+    {
+      "blob": "c509bf40102d0f7a24efb257856751b4568a7604",
+      "paths": [
+        "tests/unit/test_gateway_authz.py"
+      ],
+      "sets": [
+        "tree"
+      ],
+      "categories": [
+        "credential_assignment_review"
+      ],
+      "generic_locations": [
+        {
+          "category": "credential_assignment_review",
+          "line": 49
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 54
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 62
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 63
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 183
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 201
+        }
+      ]
+    },
+    {
+      "blob": "c86a308329f70bccf86f3863c7171e6bfc5e6a9e",
+      "paths": [
+        "experiments/rerank-model-survey/models.json"
+      ],
+      "sets": [
+        "tree"
+      ],
+      "categories": [
+        "credential_assignment_review"
+      ],
+      "generic_locations": [
+        {
+          "category": "credential_assignment_review",
+          "line": 10
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 23
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 36
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 49
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 62
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 77
+        }
+      ]
+    },
+    {
+      "blob": "c9298e7749785871c41e31c9f11ba1143590bd52",
+      "paths": [
+        "experiments/memory-base-package/cold-final-2026-10-12/native_probe.py"
+      ],
+      "sets": [
+        "tree",
+        "history"
+      ],
+      "categories": [
+        "credential_assignment_review"
+      ],
+      "generic_locations": [
+        {
+          "category": "credential_assignment_review",
+          "line": 86
+        }
+      ]
+    },
+    {
+      "blob": "caf6d6e0ca950dc8c68b45e290bd4415de0d3c35",
+      "paths": [
+        "tests/unit/test_memory_base_deploy.py"
+      ],
+      "sets": [
+        "history"
+      ],
+      "categories": [
+        "credential_assignment_review"
+      ],
+      "generic_locations": [
+        {
+          "category": "credential_assignment_review",
+          "line": 297
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 560
+        }
+      ]
+    },
+    {
+      "blob": "cc4dc618383242471817f47b47ec6577153228f6",
+      "paths": [
+        "memory_base/deploy.py"
+      ],
+      "sets": [
+        "history"
+      ],
+      "categories": [
+        "credential_assignment_review"
+      ],
+      "generic_locations": [
+        {
+          "category": "credential_assignment_review",
+          "line": 32
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 208
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 333
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 416
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 418
+        }
+      ]
+    },
+    {
+      "blob": "d26cad43a4f64f0034b9b23e3b49f1b3c9dd71f9",
+      "paths": [
+        "experiments/agent-loop-subagent/README.md"
+      ],
+      "sets": [
+        "tree"
+      ],
+      "categories": [
+        "credential_assignment_review"
+      ],
+      "generic_locations": [
+        {
+          "category": "credential_assignment_review",
+          "line": 31
+        }
+      ]
+    },
+    {
+      "blob": "d40f17c90bd367cb27c762a3ca5a79d4144c1af9",
+      "paths": [
+        "tests/unit/test_memory_base_deploy.py"
+      ],
+      "sets": [
+        "history"
+      ],
+      "categories": [
+        "credential_assignment_review"
+      ],
+      "generic_locations": [
+        {
+          "category": "credential_assignment_review",
+          "line": 474
+        }
+      ]
+    },
+    {
+      "blob": "d5fb8272a996334c8da88c7e5318b3d4a192b090",
+      "paths": [
+        "memory_agent/README.md"
+      ],
+      "sets": [
+        "tree"
+      ],
+      "categories": [
+        "credential_assignment_review"
+      ],
+      "generic_locations": [
+        {
+          "category": "credential_assignment_review",
+          "line": 139
+        }
+      ]
+    },
+    {
+      "blob": "d6fd4b979a4ab742a63beddefab5fcb31a183ecc",
+      "paths": [
+        "memory_agent/memory/sparse.py"
+      ],
+      "sets": [
+        "tree"
+      ],
+      "categories": [
+        "credential_assignment_review"
+      ],
+      "generic_locations": [
+        {
+          "category": "credential_assignment_review",
+          "line": 61
+        }
+      ]
+    },
+    {
+      "blob": "d9c466f4dcc4cd48d0c07ef68f77aaa742826ca5",
+      "paths": [
+        "experiments/memory-base-package/recheck-2026-10-12/short_path_platform_failure.json"
+      ],
+      "sets": [
+        "tree",
+        "history"
+      ],
+      "categories": [
+        "credential_assignment_review"
+      ],
+      "generic_locations": [
+        {
+          "category": "credential_assignment_review",
+          "line": 1564
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 1567
+        }
+      ]
+    },
+    {
+      "blob": "da125bcaf3035748d2ff13a6e1de25ee6e2d0a45",
+      "paths": [
+        "experiments/memory-base-package/cold-final-2026-10-12/results.json"
+      ],
+      "sets": [
+        "tree",
+        "history"
+      ],
+      "categories": [
+        "credential_assignment_review"
+      ],
+      "generic_locations": [
+        {
+          "category": "credential_assignment_review",
+          "line": 1854
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 1857
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 3467
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 3470
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 4722
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 4725
+        }
+      ]
+    },
+    {
+      "blob": "db887b0516cec02c3b371f06afdccc9ceb1efdab",
+      "paths": [
+        "memory_base/deploy.py"
+      ],
+      "sets": [
+        "history"
+      ],
+      "categories": [
+        "credential_assignment_review"
+      ],
+      "generic_locations": [
+        {
+          "category": "credential_assignment_review",
+          "line": 32
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 211
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 371
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 574
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 576
+        }
+      ]
+    },
+    {
+      "blob": "dd97faf29499838b79adbc0e67f9e911aeda97d2",
+      "paths": [
+        "experiments/memory-base-formal-restore/run_restore.py"
+      ],
+      "sets": [
+        "history"
+      ],
+      "categories": [
+        "credential_assignment_review"
+      ],
+      "generic_locations": [
+        {
+          "category": "credential_assignment_review",
+          "line": 169
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 177
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 181
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 184
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 186
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 190
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 192
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 201
+        }
+      ]
+    },
+    {
+      "blob": "df53c1433835a8a0364e1cbdfbc99a5ff2d3d6c7",
+      "paths": [
+        "memory_agent/eval/shared_service_41.py"
+      ],
+      "sets": [
+        "tree"
+      ],
+      "categories": [
+        "credential_assignment_review"
+      ],
+      "generic_locations": [
+        {
+          "category": "credential_assignment_review",
+          "line": 20
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 80
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 81
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 239
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 245
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 314
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 330
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 352
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 353
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 584
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 590
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 604
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 611
+        }
+      ]
+    },
+    {
+      "blob": "e37e2226ecba2a053d2097abbcb98c2adad069f2",
+      "paths": [
+        "experiments/memory-base-formal-restore/run_restore.py"
+      ],
+      "sets": [
+        "history"
+      ],
+      "categories": [
+        "credential_assignment_review"
+      ],
+      "generic_locations": [
+        {
+          "category": "credential_assignment_review",
+          "line": 164
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 172
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 176
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 179
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 181
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 185
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 187
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 196
+        }
+      ]
+    },
+    {
+      "blob": "e3fc1e11414a1f08a5424a532e5e29f6dd1a91b0",
+      "paths": [
+        "experiments/memory-framework-spike/mvp/evidence/m5b_outofprocess_restore.json"
+      ],
+      "sets": [
+        "tree",
+        "history"
+      ],
+      "categories": [
+        "credential_assignment_review"
+      ],
+      "generic_locations": [
+        {
+          "category": "credential_assignment_review",
+          "line": 65
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 145
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 379
+        }
+      ]
+    },
+    {
+      "blob": "e61b713fe3f00df41529da05471ad6dbfc0d0ca8",
+      "paths": [
+        "memory_base/mcp_stdio.py"
+      ],
+      "sets": [
+        "history"
+      ],
+      "categories": [
+        "credential_assignment_review"
+      ],
+      "generic_locations": [
+        {
+          "category": "credential_assignment_review",
+          "line": 24
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 26
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 27
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 94
+        }
+      ]
+    },
+    {
+      "blob": "e98be5e2c418b66c9fd3ba4e3a8f6cd5e5fd79a7",
+      "paths": [
+        "experiments/memory-framework-spike/mvp/RECOVERY.md"
+      ],
+      "sets": [
+        "history"
+      ],
+      "categories": [
+        "credential_assignment_review"
+      ],
+      "generic_locations": [
+        {
+          "category": "credential_assignment_review",
+          "line": 43
+        }
+      ]
+    },
+    {
+      "blob": "ea717caf7c522b37a7c2ce45fb337a607a3c06bd",
+      "paths": [
+        "memory_agent/eval/bge_m3_embeddings_43.py"
+      ],
+      "sets": [
+        "tree"
+      ],
+      "categories": [
+        "credential_assignment_review"
+      ],
+      "generic_locations": [
+        {
+          "category": "credential_assignment_review",
+          "line": 166
+        }
+      ]
+    },
+    {
+      "blob": "eaa313ee3c6296c294732430588584adfd8a7ae7",
+      "paths": [
+        "experiments/memory-framework-spike/mvp/RECOVERY.md"
+      ],
+      "sets": [
+        "tree",
+        "history"
+      ],
+      "categories": [
+        "credential_assignment_review"
+      ],
+      "generic_locations": [
+        {
+          "category": "credential_assignment_review",
+          "line": 43
+        }
+      ]
+    },
+    {
+      "blob": "ed58a76f27807e577a209e0b4bee939f4caf30c4",
+      "paths": [
+        "experiments/memory-base-cold-start/native_probe_resume.py"
+      ],
+      "sets": [
+        "tree",
+        "history"
+      ],
+      "categories": [
+        "credential_assignment_review"
+      ],
+      "generic_locations": [
+        {
+          "category": "credential_assignment_review",
+          "line": 82
+        }
+      ]
+    },
+    {
+      "blob": "edd4f71bdb9189280cf7e183c3d000a4c50c1677",
+      "paths": [
+        "experiments/memory-framework-spike/mvp/evidence/m0_env.md"
+      ],
+      "sets": [
+        "tree",
+        "history"
+      ],
+      "categories": [
+        "credential_assignment_review"
+      ],
+      "generic_locations": [
+        {
+          "category": "credential_assignment_review",
+          "line": 18
+        }
+      ]
+    },
+    {
+      "blob": "ee5bec3019983111302ceb592b3ad99a6b971197",
+      "paths": [
+        "ragcore/strategies/default.py"
+      ],
+      "sets": [
+        "tree"
+      ],
+      "categories": [
+        "credential_assignment_review"
+      ],
+      "generic_locations": [
+        {
+          "category": "credential_assignment_review",
+          "line": 61
+        }
+      ]
+    },
+    {
+      "blob": "eeb05f965e6c57c6ad6a30e527db4c1a3e51769f",
+      "paths": [
+        "tests/unit/test_gateway_isolation_bypass.py"
+      ],
+      "sets": [
+        "tree"
+      ],
+      "categories": [
+        "credential_assignment_review"
+      ],
+      "generic_locations": [
+        {
+          "category": "credential_assignment_review",
+          "line": 227
+        }
+      ]
+    },
+    {
+      "blob": "f109ca365215237d859919a094f9637998f1f1d3",
+      "paths": [
+        "experiments/memory-base-package/recheck-2026-10-12/native_probe.py"
+      ],
+      "sets": [
+        "history"
+      ],
+      "categories": [
+        "credential_assignment_review"
+      ],
+      "generic_locations": [
+        {
+          "category": "credential_assignment_review",
+          "line": 79
+        }
+      ]
+    },
+    {
+      "blob": "f1ac1b0623b87f40ad5886956563b716e3b8c0e6",
+      "paths": [
+        "memory_agent/eval/gateway_authz_32.py"
+      ],
+      "sets": [
+        "tree"
+      ],
+      "categories": [
+        "credential_assignment_review"
+      ],
+      "generic_locations": [
+        {
+          "category": "credential_assignment_review",
+          "line": 109
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 114
+        }
+      ]
+    },
+    {
+      "blob": "f589dff3fc448cd9fa7f73e53c8eee6fa6410b7f",
+      "paths": [
+        "tests/unit/test_memory_base_deploy.py"
+      ],
+      "sets": [
+        "tree",
+        "history"
+      ],
+      "categories": [
+        "credential_assignment_review"
+      ],
+      "generic_locations": [
+        {
+          "category": "credential_assignment_review",
+          "line": 426
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 728
+        }
+      ]
+    },
+    {
+      "blob": "fa588f5c3dc5ce5473c7f5e867d00e821c8e2209",
+      "paths": [
+        "memory_base/deploy.py"
+      ],
+      "sets": [
+        "history"
+      ],
+      "categories": [
+        "credential_assignment_review"
+      ],
+      "generic_locations": [
+        {
+          "category": "credential_assignment_review",
+          "line": 32
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 208
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 336
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 419
+        },
+        {
+          "category": "credential_assignment_review",
+          "line": 421
+        }
+      ]
+    },
+    {
+      "blob": "fd54f68481295281cbc2218c8f8769bc1f57423d",
+      "paths": [
+        "experiments/memory-framework-spike/mvp/scripts/embed_server.py"
+      ],
+      "sets": [
+        "tree",
+        "history"
+      ],
+      "categories": [
+        "credential_assignment_review"
+      ],
+      "generic_locations": [
+        {
+          "category": "credential_assignment_review",
+          "line": 104
+        }
+      ]
+    }
+  ],
+  "generic_fixture_matches": {
+    "credential_assignment_review:code_expression": 294,
+    "url_parse_error": 90,
+    "credential_assignment_review:placeholder": 85
+  },
+  "maps": {
+    "changed_markdown": 67,
+    "local_links_checked": 205,
+    "external_links_excluded": 133,
+    "anchor_only_excluded": 0,
+    "findings": [],
+    "payload": [
+      {
+        "path": "memory_base/__init__.py",
+        "normalized_equal": true
+      },
+      {
+        "path": "memory_base/__main__.py",
+        "normalized_equal": true
+      },
+      {
+        "path": "memory_base/deploy.py",
+        "normalized_equal": true
+      },
+      {
+        "path": "memory_base/credentials.py",
+        "normalized_equal": true
+      },
+      {
+        "path": "memory_base/embed.py",
+        "normalized_equal": true
+      },
+      {
+        "path": "memory_base/gateway.py",
+        "normalized_equal": true
+      },
+      {
+        "path": "memory_base/upstream.py",
+        "normalized_equal": true
+      },
+      {
+        "path": "memory_base/mcp_stdio.py",
+        "normalized_equal": true
+      },
+      {
+        "path": "memory_base/paths.py",
+        "normalized_equal": true
+      },
+      {
+        "path": "memory_base/sources.py",
+        "normalized_equal": true
+      },
+      {
+        "path": "memory_base/backup.py",
+        "normalized_equal": true
+      },
+      {
+        "path": "memory_base/autostart.py",
+        "normalized_equal": true
+      },
+      {
+        "path": "memory_base/requirements.txt",
+        "normalized_equal": true
+      },
+      {
+        "path": "memory_base/constraints.txt",
+        "normalized_equal": true
+      },
+      {
+        "path": "memory_base/skill/SKILL.md",
+        "normalized_equal": true
+      }
+    ],
+    "map_paths": [
+      {
+        "map": "README.md",
+        "path": "install-memory-base.ps1",
+        "exists": true
+      },
+      {
+        "map": "README.md",
+        "path": "install-memory-base.sh",
+        "exists": true
+      },
+      {
+        "map": "README.md",
+        "path": "memory_base",
+        "exists": true
+      },
+      {
+        "map": "AGENTS.md",
+        "path": "install-memory-base.ps1",
+        "exists": true
+      },
+      {
+        "map": "AGENTS.md",
+        "path": "install-memory-base.sh",
+        "exists": true
+      },
+      {
+        "map": "AGENTS.md",
+        "path": "memory_base",
+        "exists": true
+      }
+    ]
+  },
+  "limits": [
+    "Only currently available authorized credentials; rotated historical values unknown.",
+    "Exact UTF-8/UTF-16LE, normalized newline and JSON-escaped literals; no OCR, archive expansion, base64 or arbitrary encoding proof.",
+    "Three explicit original receipts; no unrelated user files or all-user-corpus scan.",
+    "Title matches are owner summary review, not automatic privacy violations.",
+    "Credential assignments require review; placeholder heuristic is not proof of safety.",
+    "Local link existence only; no external fetching or anchor validity claim.",
+    "Fixed 4dadc40 excludes later documentation and CI corrections; no whole-goal acceptance claim."
+  ],
+  "elapsed_seconds": 12.64
+}

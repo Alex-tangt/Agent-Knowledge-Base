@@ -1,0 +1,3987 @@
+{
+  "base": "4dadc407d39b26855a96079ce8561e8983dc4401",
+  "upstream": "4270f13f418c5069316ba819cec11bb5910dcefc",
+  "raw_candidate_blobs": 131,
+  "criterion_counts": {
+    "number_boolean_null": 87,
+    "code_reference_annotation_or_comparison": 151,
+    "numeric_metric_or_inventory": 58,
+    "environment_variable_identifier": 20,
+    "empty_placeholder_or_syntax": 16,
+    "unresolved_literal_owner_review": 6,
+    "fixture_existing_config_preservation": 2,
+    "fixture_local_embedding_placeholder": 8,
+    "environment_expansion_placeholder": 5,
+    "fixture_no_external_llm_needed": 2,
+    "package_inventory_or_noncredential_field": 42,
+    "fixture_repr_redaction_assertion": 1,
+    "computed_code_expression": 1,
+    "prose_or_markdown_delimiter": 6,
+    "fixture_reject_embedded_credential": 2,
+    "fixture_assert_audit_redaction": 1,
+    "fixture_local_host_identity": 2,
+    "fixture_preserve_existing_profile": 1
+  },
+  "locations": [
+    {
+      "blob": "04f521d6acf16408369da51dd51af70fb43a74a8",
+      "paths": [
+        "experiments/memory-base-package/recheck-2026-10-12/native_probe.py"
+      ],
+      "sets": [
+        "tree",
+        "history"
+      ],
+      "locations": [
+        {
+          "line": 85,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "number_boolean_null"
+        }
+      ]
+    },
+    {
+      "blob": "08dd86bdf55b3abaea6113b0846c0785cd485987",
+      "paths": [
+        "experiments/memory-base-formal-restore/run_restore.py"
+      ],
+      "sets": [
+        "history"
+      ],
+      "locations": [
+        {
+          "line": 169,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        },
+        {
+          "line": 177,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        },
+        {
+          "line": 181,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        },
+        {
+          "line": 184,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        },
+        {
+          "line": 186,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        },
+        {
+          "line": 190,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        },
+        {
+          "line": 192,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        },
+        {
+          "line": 201,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        }
+      ]
+    },
+    {
+      "blob": "0baef411e02304b82b647dbe9c6ee6904328b887",
+      "paths": [
+        "docs/exp2-review.md"
+      ],
+      "sets": [
+        "tree"
+      ],
+      "locations": [
+        {
+          "line": 186,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "numeric_metric_or_inventory"
+        },
+        {
+          "line": 314,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "numeric_metric_or_inventory"
+        }
+      ]
+    },
+    {
+      "blob": "0be1a80d4cafbedd970813b3195c48213dd14df2",
+      "paths": [
+        "memory_base/deploy.py"
+      ],
+      "sets": [
+        "history"
+      ],
+      "locations": [
+        {
+          "line": 32,
+          "key_form": "bare",
+          "value_form": "quoted_literal",
+          "criterion": "environment_variable_identifier"
+        },
+        {
+          "line": 208,
+          "key_form": "quoted",
+          "value_form": "quoted_literal",
+          "criterion": "empty_placeholder_or_syntax"
+        },
+        {
+          "line": 336,
+          "key_form": "quoted",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        },
+        {
+          "line": 419,
+          "key_form": "quoted",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        },
+        {
+          "line": 421,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        }
+      ]
+    },
+    {
+      "blob": "0d0f4f09514a3a875eb269fd39b6c549f649aed9",
+      "paths": [
+        "experiments/agentic-rag-census/phase_b/llm.py"
+      ],
+      "sets": [
+        "tree"
+      ],
+      "locations": [
+        {
+          "line": 88,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "numeric_metric_or_inventory"
+        },
+        {
+          "line": 89,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "numeric_metric_or_inventory"
+        },
+        {
+          "line": 110,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "numeric_metric_or_inventory"
+        },
+        {
+          "line": 115,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "numeric_metric_or_inventory"
+        },
+        {
+          "line": 139,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "numeric_metric_or_inventory"
+        },
+        {
+          "line": 156,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "numeric_metric_or_inventory"
+        },
+        {
+          "line": 163,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "numeric_metric_or_inventory"
+        }
+      ]
+    },
+    {
+      "blob": "1195b9733dac8ade2bd16be0f769a0a06596e2f3",
+      "paths": [
+        "experiments/agentic-rag-census/phase_b/run_phase_b.py"
+      ],
+      "sets": [
+        "tree"
+      ],
+      "locations": [
+        {
+          "line": 177,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "numeric_metric_or_inventory"
+        },
+        {
+          "line": 184,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "numeric_metric_or_inventory"
+        },
+        {
+          "line": 202,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "numeric_metric_or_inventory"
+        }
+      ]
+    },
+    {
+      "blob": "11f81c1fd561cc9f36ef984ec2ce8e35a2876460",
+      "paths": [
+        "memory_agent/eval/isolation_bypass_34.py"
+      ],
+      "sets": [
+        "tree"
+      ],
+      "locations": [
+        {
+          "line": 353,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "number_boolean_null"
+        }
+      ]
+    },
+    {
+      "blob": "15f65333ca980f20062df33b736b51226f856633",
+      "paths": [
+        "experiments/rerank-latency-survey/bench_rerank_maxlen.py"
+      ],
+      "sets": [
+        "tree"
+      ],
+      "locations": [
+        {
+          "line": 125,
+          "key_form": "quoted",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        }
+      ]
+    },
+    {
+      "blob": "1796669076277cdd6c425bc9b348c582fb80a8be",
+      "paths": [
+        "experiments/memory-base-recovery/run_native.py"
+      ],
+      "sets": [
+        "tree",
+        "history"
+      ],
+      "locations": [
+        {
+          "line": 202,
+          "key_form": "quoted",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        }
+      ]
+    },
+    {
+      "blob": "1b730e704eee95aaefd7a3396efe746bb98dcdd8",
+      "paths": [
+        "experiments/memory-base-bubble-bridge/bubble-four-tools.patch"
+      ],
+      "sets": [
+        "tree",
+        "history"
+      ],
+      "locations": [
+        {
+          "line": 407,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "unresolved_literal_owner_review"
+        }
+      ]
+    },
+    {
+      "blob": "1c0b9791df5d38875bd02ee9e63a4f74f55e4595",
+      "paths": [
+        "memory_base/deploy.py"
+      ],
+      "sets": [
+        "history"
+      ],
+      "locations": [
+        {
+          "line": 32,
+          "key_form": "bare",
+          "value_form": "quoted_literal",
+          "criterion": "environment_variable_identifier"
+        },
+        {
+          "line": 208,
+          "key_form": "quoted",
+          "value_form": "quoted_literal",
+          "criterion": "empty_placeholder_or_syntax"
+        },
+        {
+          "line": 336,
+          "key_form": "quoted",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        },
+        {
+          "line": 419,
+          "key_form": "quoted",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        },
+        {
+          "line": 421,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        }
+      ]
+    },
+    {
+      "blob": "1c1e825b69e93f39ad24eb4aa5d4e175e6632e73",
+      "paths": [
+        "memory_base/deploy.py"
+      ],
+      "sets": [
+        "history"
+      ],
+      "locations": [
+        {
+          "line": 32,
+          "key_form": "bare",
+          "value_form": "quoted_literal",
+          "criterion": "environment_variable_identifier"
+        },
+        {
+          "line": 215,
+          "key_form": "quoted",
+          "value_form": "quoted_literal",
+          "criterion": "empty_placeholder_or_syntax"
+        },
+        {
+          "line": 378,
+          "key_form": "quoted",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        },
+        {
+          "line": 584,
+          "key_form": "quoted",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        },
+        {
+          "line": 586,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        }
+      ]
+    },
+    {
+      "blob": "1c77197b1649777715baf4773a4bff4801e72dcd",
+      "paths": [
+        "tests/unit/test_memory_base_deploy.py"
+      ],
+      "sets": [
+        "history"
+      ],
+      "locations": [
+        {
+          "line": 217,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        }
+      ]
+    },
+    {
+      "blob": "21f66e5131a447ac8216b7555e101023fed6e756",
+      "paths": [
+        "tests/unit/test_memory_base_deploy.py"
+      ],
+      "sets": [
+        "history"
+      ],
+      "locations": [
+        {
+          "line": 193,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        }
+      ]
+    },
+    {
+      "blob": "222ff509f97474e855877b514bd847bbb46e0012",
+      "paths": [
+        "experiments/rerank-latency-survey/memory_census.json"
+      ],
+      "sets": [
+        "tree"
+      ],
+      "locations": [
+        {
+          "line": 6,
+          "key_form": "quoted",
+          "value_form": "bare",
+          "criterion": "number_boolean_null"
+        },
+        {
+          "line": 18,
+          "key_form": "quoted",
+          "value_form": "bare",
+          "criterion": "number_boolean_null"
+        },
+        {
+          "line": 24,
+          "key_form": "quoted",
+          "value_form": "bare",
+          "criterion": "number_boolean_null"
+        },
+        {
+          "line": 30,
+          "key_form": "quoted",
+          "value_form": "bare",
+          "criterion": "number_boolean_null"
+        },
+        {
+          "line": 36,
+          "key_form": "quoted",
+          "value_form": "bare",
+          "criterion": "number_boolean_null"
+        },
+        {
+          "line": 42,
+          "key_form": "quoted",
+          "value_form": "bare",
+          "criterion": "number_boolean_null"
+        },
+        {
+          "line": 48,
+          "key_form": "quoted",
+          "value_form": "bare",
+          "criterion": "number_boolean_null"
+        },
+        {
+          "line": 54,
+          "key_form": "quoted",
+          "value_form": "bare",
+          "criterion": "number_boolean_null"
+        },
+        {
+          "line": 60,
+          "key_form": "quoted",
+          "value_form": "bare",
+          "criterion": "number_boolean_null"
+        },
+        {
+          "line": 66,
+          "key_form": "quoted",
+          "value_form": "bare",
+          "criterion": "number_boolean_null"
+        },
+        {
+          "line": 72,
+          "key_form": "quoted",
+          "value_form": "bare",
+          "criterion": "number_boolean_null"
+        },
+        {
+          "line": 78,
+          "key_form": "quoted",
+          "value_form": "bare",
+          "criterion": "number_boolean_null"
+        },
+        {
+          "line": 84,
+          "key_form": "quoted",
+          "value_form": "bare",
+          "criterion": "number_boolean_null"
+        },
+        {
+          "line": 90,
+          "key_form": "quoted",
+          "value_form": "bare",
+          "criterion": "number_boolean_null"
+        },
+        {
+          "line": 96,
+          "key_form": "quoted",
+          "value_form": "bare",
+          "criterion": "number_boolean_null"
+        },
+        {
+          "line": 102,
+          "key_form": "quoted",
+          "value_form": "bare",
+          "criterion": "number_boolean_null"
+        },
+        {
+          "line": 108,
+          "key_form": "quoted",
+          "value_form": "bare",
+          "criterion": "number_boolean_null"
+        },
+        {
+          "line": 114,
+          "key_form": "quoted",
+          "value_form": "bare",
+          "criterion": "number_boolean_null"
+        },
+        {
+          "line": 120,
+          "key_form": "quoted",
+          "value_form": "bare",
+          "criterion": "number_boolean_null"
+        },
+        {
+          "line": 126,
+          "key_form": "quoted",
+          "value_form": "bare",
+          "criterion": "number_boolean_null"
+        },
+        {
+          "line": 132,
+          "key_form": "quoted",
+          "value_form": "bare",
+          "criterion": "number_boolean_null"
+        },
+        {
+          "line": 138,
+          "key_form": "quoted",
+          "value_form": "bare",
+          "criterion": "number_boolean_null"
+        },
+        {
+          "line": 144,
+          "key_form": "quoted",
+          "value_form": "bare",
+          "criterion": "number_boolean_null"
+        },
+        {
+          "line": 150,
+          "key_form": "quoted",
+          "value_form": "bare",
+          "criterion": "number_boolean_null"
+        },
+        {
+          "line": 156,
+          "key_form": "quoted",
+          "value_form": "bare",
+          "criterion": "number_boolean_null"
+        },
+        {
+          "line": 162,
+          "key_form": "quoted",
+          "value_form": "bare",
+          "criterion": "number_boolean_null"
+        },
+        {
+          "line": 168,
+          "key_form": "quoted",
+          "value_form": "bare",
+          "criterion": "number_boolean_null"
+        },
+        {
+          "line": 174,
+          "key_form": "quoted",
+          "value_form": "bare",
+          "criterion": "number_boolean_null"
+        },
+        {
+          "line": 180,
+          "key_form": "quoted",
+          "value_form": "bare",
+          "criterion": "number_boolean_null"
+        },
+        {
+          "line": 186,
+          "key_form": "quoted",
+          "value_form": "bare",
+          "criterion": "number_boolean_null"
+        },
+        {
+          "line": 192,
+          "key_form": "quoted",
+          "value_form": "bare",
+          "criterion": "number_boolean_null"
+        },
+        {
+          "line": 198,
+          "key_form": "quoted",
+          "value_form": "bare",
+          "criterion": "number_boolean_null"
+        },
+        {
+          "line": 204,
+          "key_form": "quoted",
+          "value_form": "bare",
+          "criterion": "number_boolean_null"
+        },
+        {
+          "line": 210,
+          "key_form": "quoted",
+          "value_form": "bare",
+          "criterion": "number_boolean_null"
+        },
+        {
+          "line": 216,
+          "key_form": "quoted",
+          "value_form": "bare",
+          "criterion": "number_boolean_null"
+        },
+        {
+          "line": 222,
+          "key_form": "quoted",
+          "value_form": "bare",
+          "criterion": "number_boolean_null"
+        },
+        {
+          "line": 228,
+          "key_form": "quoted",
+          "value_form": "bare",
+          "criterion": "number_boolean_null"
+        },
+        {
+          "line": 234,
+          "key_form": "quoted",
+          "value_form": "bare",
+          "criterion": "number_boolean_null"
+        },
+        {
+          "line": 240,
+          "key_form": "quoted",
+          "value_form": "bare",
+          "criterion": "number_boolean_null"
+        },
+        {
+          "line": 246,
+          "key_form": "quoted",
+          "value_form": "bare",
+          "criterion": "number_boolean_null"
+        },
+        {
+          "line": 252,
+          "key_form": "quoted",
+          "value_form": "bare",
+          "criterion": "number_boolean_null"
+        },
+        {
+          "line": 258,
+          "key_form": "quoted",
+          "value_form": "bare",
+          "criterion": "number_boolean_null"
+        },
+        {
+          "line": 264,
+          "key_form": "quoted",
+          "value_form": "bare",
+          "criterion": "number_boolean_null"
+        },
+        {
+          "line": 265,
+          "key_form": "quoted",
+          "value_form": "bare",
+          "criterion": "number_boolean_null"
+        },
+        {
+          "line": 270,
+          "key_form": "quoted",
+          "value_form": "bare",
+          "criterion": "number_boolean_null"
+        },
+        {
+          "line": 276,
+          "key_form": "quoted",
+          "value_form": "bare",
+          "criterion": "number_boolean_null"
+        },
+        {
+          "line": 282,
+          "key_form": "quoted",
+          "value_form": "bare",
+          "criterion": "number_boolean_null"
+        },
+        {
+          "line": 288,
+          "key_form": "quoted",
+          "value_form": "bare",
+          "criterion": "number_boolean_null"
+        },
+        {
+          "line": 294,
+          "key_form": "quoted",
+          "value_form": "bare",
+          "criterion": "number_boolean_null"
+        },
+        {
+          "line": 300,
+          "key_form": "quoted",
+          "value_form": "bare",
+          "criterion": "number_boolean_null"
+        },
+        {
+          "line": 306,
+          "key_form": "quoted",
+          "value_form": "bare",
+          "criterion": "number_boolean_null"
+        },
+        {
+          "line": 312,
+          "key_form": "quoted",
+          "value_form": "bare",
+          "criterion": "number_boolean_null"
+        },
+        {
+          "line": 318,
+          "key_form": "quoted",
+          "value_form": "bare",
+          "criterion": "number_boolean_null"
+        }
+      ]
+    },
+    {
+      "blob": "2255e7942c867bd6ecffa69ddce8be217a8ba86c",
+      "paths": [
+        "experiments/memory-base-live/runtime_probe.py"
+      ],
+      "sets": [
+        "tree",
+        "history"
+      ],
+      "locations": [
+        {
+          "line": 17,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        }
+      ]
+    },
+    {
+      "blob": "22df803e60613cfe2f9bc3f961a5c7905150dc7e",
+      "paths": [
+        "tests/unit/test_connect.py"
+      ],
+      "sets": [
+        "tree"
+      ],
+      "locations": [
+        {
+          "line": 208,
+          "key_form": "quoted",
+          "value_form": "quoted_literal",
+          "criterion": "fixture_existing_config_preservation"
+        },
+        {
+          "line": 242,
+          "key_form": "quoted",
+          "value_form": "quoted_literal",
+          "criterion": "fixture_existing_config_preservation"
+        }
+      ]
+    },
+    {
+      "blob": "24a2c7647b9148d0f0ceb8d02a3866be9e75aec0",
+      "paths": [
+        "experiments/memory-framework-spike/mvp/scripts/m5b_outofprocess_restore.py"
+      ],
+      "sets": [
+        "tree",
+        "history"
+      ],
+      "locations": [
+        {
+          "line": 70,
+          "key_form": "quoted",
+          "value_form": "quoted_literal",
+          "criterion": "fixture_local_embedding_placeholder"
+        },
+        {
+          "line": 95,
+          "key_form": "quoted",
+          "value_form": "quoted_literal",
+          "criterion": "environment_expansion_placeholder"
+        }
+      ]
+    },
+    {
+      "blob": "2b100eec44954e2fe18f68cc0194272372c48944",
+      "paths": [
+        "experiments/memory-framework-spike/mvp/scripts/spike_common.py"
+      ],
+      "sets": [
+        "history"
+      ],
+      "locations": [
+        {
+          "line": 50,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        },
+        {
+          "line": 51,
+          "key_form": "bare",
+          "value_form": "quoted_literal",
+          "criterion": "environment_variable_identifier"
+        },
+        {
+          "line": 86,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        }
+      ]
+    },
+    {
+      "blob": "2e7edc4aa18c6bcf5d593be0ac2778d6c03eabdb",
+      "paths": [
+        "memory_agent/settings.py"
+      ],
+      "sets": [
+        "tree"
+      ],
+      "locations": [
+        {
+          "line": 264,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "number_boolean_null"
+        },
+        {
+          "line": 304,
+          "key_form": "quoted",
+          "value_form": "quoted_literal",
+          "criterion": "environment_variable_identifier"
+        }
+      ]
+    },
+    {
+      "blob": "314ec242079c3390caebe86a5577b8cb89d81377",
+      "paths": [
+        "experiments/memory-base-live/bubble_bridge_probe.mjs"
+      ],
+      "sets": [
+        "tree",
+        "history"
+      ],
+      "locations": [
+        {
+          "line": 74,
+          "key_form": "bare",
+          "value_form": "quoted_literal",
+          "criterion": "fixture_no_external_llm_needed"
+        }
+      ]
+    },
+    {
+      "blob": "31753483a2f250352cbac2a36147ff171440a4b0",
+      "paths": [
+        "memory_base/deploy.py"
+      ],
+      "sets": [
+        "tree",
+        "history"
+      ],
+      "locations": [
+        {
+          "line": 40,
+          "key_form": "bare",
+          "value_form": "quoted_literal",
+          "criterion": "environment_variable_identifier"
+        },
+        {
+          "line": 385,
+          "key_form": "quoted",
+          "value_form": "quoted_literal",
+          "criterion": "empty_placeholder_or_syntax"
+        },
+        {
+          "line": 552,
+          "key_form": "quoted",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        },
+        {
+          "line": 761,
+          "key_form": "quoted",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        },
+        {
+          "line": 763,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        }
+      ]
+    },
+    {
+      "blob": "323f189425d78e2d53d81cd807662b1febead311",
+      "paths": [
+        "memory_base/embed.py"
+      ],
+      "sets": [
+        "tree",
+        "history"
+      ],
+      "locations": [
+        {
+          "line": 78,
+          "key_form": "quoted",
+          "value_form": "bare",
+          "criterion": "numeric_metric_or_inventory"
+        }
+      ]
+    },
+    {
+      "blob": "33f722deac8499774336829c1610129432c94762",
+      "paths": [
+        "experiments/memory-base-cold-start/wheel-final/automatic-default.json"
+      ],
+      "sets": [
+        "tree",
+        "history"
+      ],
+      "locations": [
+        {
+          "line": 106,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        }
+      ]
+    },
+    {
+      "blob": "36b6697fb5dfd7788ad6d4fdc2edd6068df4a0b5",
+      "paths": [
+        "experiments/memory-framework-spike/mvp/scripts/spike_common.py"
+      ],
+      "sets": [
+        "tree",
+        "history"
+      ],
+      "locations": [
+        {
+          "line": 50,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        },
+        {
+          "line": 51,
+          "key_form": "bare",
+          "value_form": "quoted_literal",
+          "criterion": "environment_variable_identifier"
+        },
+        {
+          "line": 91,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        }
+      ]
+    },
+    {
+      "blob": "37b34c38c8024a5ded4fdef0968b000753bb3cb1",
+      "paths": [
+        "experiments/memory-host-connect/host_server.py"
+      ],
+      "sets": [
+        "tree",
+        "history"
+      ],
+      "locations": [
+        {
+          "line": 57,
+          "key_form": "bare",
+          "value_form": "quoted_literal",
+          "criterion": "environment_variable_identifier"
+        },
+        {
+          "line": 137,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        }
+      ]
+    },
+    {
+      "blob": "39d27ada1bdbc19a98f68103a6f69c980c35a309",
+      "paths": [
+        "experiments/refusal-root-cause/llm_refusal_trace.txt"
+      ],
+      "sets": [
+        "tree"
+      ],
+      "locations": [
+        {
+          "line": 246,
+          "key_form": "quoted",
+          "value_form": "bare",
+          "criterion": "numeric_metric_or_inventory"
+        },
+        {
+          "line": 246,
+          "key_form": "quoted",
+          "value_form": "bare",
+          "criterion": "numeric_metric_or_inventory"
+        },
+        {
+          "line": 246,
+          "key_form": "quoted",
+          "value_form": "bare",
+          "criterion": "numeric_metric_or_inventory"
+        },
+        {
+          "line": 743,
+          "key_form": "quoted",
+          "value_form": "bare",
+          "criterion": "numeric_metric_or_inventory"
+        },
+        {
+          "line": 743,
+          "key_form": "quoted",
+          "value_form": "bare",
+          "criterion": "numeric_metric_or_inventory"
+        },
+        {
+          "line": 743,
+          "key_form": "quoted",
+          "value_form": "bare",
+          "criterion": "numeric_metric_or_inventory"
+        }
+      ]
+    },
+    {
+      "blob": "3dce663cb502eedc4c0b3113c11911dc21dec66a",
+      "paths": [
+        "tests/unit/test_memory_onnx_reranker.py"
+      ],
+      "sets": [
+        "tree"
+      ],
+      "locations": [
+        {
+          "line": 17,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "package_inventory_or_noncredential_field"
+        }
+      ]
+    },
+    {
+      "blob": "3f402e25559d8ffe9f7b6d7538ca843be391822a",
+      "paths": [
+        "experiments/memory-framework-spike/mvp/scripts/m5_backup.py"
+      ],
+      "sets": [
+        "tree",
+        "history"
+      ],
+      "locations": [
+        {
+          "line": 393,
+          "key_form": "quoted",
+          "value_form": "quoted_literal",
+          "criterion": "environment_expansion_placeholder"
+        }
+      ]
+    },
+    {
+      "blob": "45fc6ae553e1a7fa94dcf76b3b0463cbcdb287c0",
+      "paths": [
+        "experiments/memory-base-formal-restore/run_restore.py"
+      ],
+      "sets": [
+        "history"
+      ],
+      "locations": [
+        {
+          "line": 163,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        },
+        {
+          "line": 171,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        },
+        {
+          "line": 175,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        },
+        {
+          "line": 178,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        },
+        {
+          "line": 180,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        },
+        {
+          "line": 184,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        },
+        {
+          "line": 186,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        },
+        {
+          "line": 195,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        }
+      ]
+    },
+    {
+      "blob": "46d3e4a6d08425b39c981d184730138626ccc705",
+      "paths": [
+        "experiments/rerank-model-survey/bench_rerank_models.py"
+      ],
+      "sets": [
+        "tree"
+      ],
+      "locations": [
+        {
+          "line": 445,
+          "key_form": "quoted",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        }
+      ]
+    },
+    {
+      "blob": "48e43535681e855ef637c4e89ad56487d1a128bd",
+      "paths": [
+        "experiments/agentic-rag-census/phase_b/report.md"
+      ],
+      "sets": [
+        "tree"
+      ],
+      "locations": [
+        {
+          "line": 118,
+          "key_form": "quoted",
+          "value_form": "bare",
+          "criterion": "numeric_metric_or_inventory"
+        },
+        {
+          "line": 118,
+          "key_form": "quoted",
+          "value_form": "bare",
+          "criterion": "numeric_metric_or_inventory"
+        }
+      ]
+    },
+    {
+      "blob": "4c135e9f5327f79fcf0a11bb212a1c45a24d9aec",
+      "paths": [
+        "experiments/memory-base-package/recheck-2026-10-12/evidence_audit.json"
+      ],
+      "sets": [
+        "tree",
+        "history"
+      ],
+      "locations": [
+        {
+          "line": 3,
+          "key_form": "quoted",
+          "value_form": "bare",
+          "criterion": "number_boolean_null"
+        }
+      ]
+    },
+    {
+      "blob": "4cc9b6251616d3e70fc52c2bde591dd06908bf33",
+      "paths": [
+        "memory_agent/memory/store.py"
+      ],
+      "sets": [
+        "tree"
+      ],
+      "locations": [
+        {
+          "line": 229,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "empty_placeholder_or_syntax"
+        },
+        {
+          "line": 241,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        },
+        {
+          "line": 252,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        },
+        {
+          "line": 335,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        },
+        {
+          "line": 357,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        }
+      ]
+    },
+    {
+      "blob": "50711aababf5e9efaf5a89f5c49b9d0d3921eb39",
+      "paths": [
+        "experiments/memory-spike-verify/verify_env.py"
+      ],
+      "sets": [
+        "tree",
+        "history"
+      ],
+      "locations": [
+        {
+          "line": 152,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        },
+        {
+          "line": 156,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        }
+      ]
+    },
+    {
+      "blob": "51622082cfc44c8d0ed27cbb164fc6bbe77e3e98",
+      "paths": [
+        "experiments/query-rewrite-optimizer/eval_service.py"
+      ],
+      "sets": [
+        "tree"
+      ],
+      "locations": [
+        {
+          "line": 58,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "numeric_metric_or_inventory"
+        }
+      ]
+    },
+    {
+      "blob": "52cbc9ead6431eeb809a105b2eb4fb6cf02be41e",
+      "paths": [
+        "experiments/bge-m3-sparse-colbert/cache/scores.stats.json"
+      ],
+      "sets": [
+        "tree"
+      ],
+      "locations": [
+        {
+          "line": 7,
+          "key_form": "quoted",
+          "value_form": "bare",
+          "criterion": "number_boolean_null"
+        },
+        {
+          "line": 8,
+          "key_form": "quoted",
+          "value_form": "bare",
+          "criterion": "number_boolean_null"
+        },
+        {
+          "line": 9,
+          "key_form": "quoted",
+          "value_form": "bare",
+          "criterion": "number_boolean_null"
+        }
+      ]
+    },
+    {
+      "blob": "53b4ce8091286a1714f747f9a4159a58788f1076",
+      "paths": [
+        "experiments/memory-base-note-intent/artifacts/server/tests/memory-base.test.ts"
+      ],
+      "sets": [
+        "tree",
+        "history"
+      ],
+      "locations": [
+        {
+          "line": 437,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "unresolved_literal_owner_review"
+        },
+        {
+          "line": 438,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        }
+      ]
+    },
+    {
+      "blob": "5571e5948541015e0431e8076c1ee69a768ebf5e",
+      "paths": [
+        "experiments/memory-framework-spike/mvp/evidence/m5b_outofprocess_restore.json"
+      ],
+      "sets": [
+        "history"
+      ],
+      "locations": [
+        {
+          "line": 16,
+          "key_form": "quoted",
+          "value_form": "quoted_literal",
+          "criterion": "fixture_local_embedding_placeholder"
+        },
+        {
+          "line": 96,
+          "key_form": "quoted",
+          "value_form": "quoted_literal",
+          "criterion": "fixture_local_embedding_placeholder"
+        },
+        {
+          "line": 258,
+          "key_form": "quoted",
+          "value_form": "quoted_literal",
+          "criterion": "fixture_local_embedding_placeholder"
+        }
+      ]
+    },
+    {
+      "blob": "561518549c74e267efee390c3c6ce4a3f1c4cff5",
+      "paths": [
+        "experiments/memory-base-cold-start/wheel-final/explicit-fresh.json"
+      ],
+      "sets": [
+        "tree",
+        "history"
+      ],
+      "locations": [
+        {
+          "line": 106,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        }
+      ]
+    },
+    {
+      "blob": "5616fb332d81d18d5870f77828d2451f4f34741a",
+      "paths": [
+        "memory_base/gateway.py"
+      ],
+      "sets": [
+        "history"
+      ],
+      "locations": [
+        {
+          "line": 265,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        }
+      ]
+    },
+    {
+      "blob": "56463e0e7a5203cf1a496f68d5375de95ccfc2eb",
+      "paths": [
+        "tests/unit/test_agent_loop.py"
+      ],
+      "sets": [
+        "tree"
+      ],
+      "locations": [
+        {
+          "line": 369,
+          "key_form": "bare",
+          "value_form": "quoted_literal",
+          "criterion": "fixture_repr_redaction_assertion"
+        }
+      ]
+    },
+    {
+      "blob": "5747d36ba5372cd6948cea4b8fbeba87d0ed50eb",
+      "paths": [
+        "experiments/refusal-root-cause/trace_result.txt"
+      ],
+      "sets": [
+        "tree"
+      ],
+      "locations": [
+        {
+          "line": 249,
+          "key_form": "quoted",
+          "value_form": "bare",
+          "criterion": "numeric_metric_or_inventory"
+        },
+        {
+          "line": 249,
+          "key_form": "quoted",
+          "value_form": "bare",
+          "criterion": "numeric_metric_or_inventory"
+        },
+        {
+          "line": 249,
+          "key_form": "quoted",
+          "value_form": "bare",
+          "criterion": "numeric_metric_or_inventory"
+        },
+        {
+          "line": 697,
+          "key_form": "quoted",
+          "value_form": "bare",
+          "criterion": "numeric_metric_or_inventory"
+        },
+        {
+          "line": 697,
+          "key_form": "quoted",
+          "value_form": "bare",
+          "criterion": "numeric_metric_or_inventory"
+        },
+        {
+          "line": 697,
+          "key_form": "quoted",
+          "value_form": "bare",
+          "criterion": "numeric_metric_or_inventory"
+        },
+        {
+          "line": 989,
+          "key_form": "quoted",
+          "value_form": "bare",
+          "criterion": "numeric_metric_or_inventory"
+        },
+        {
+          "line": 989,
+          "key_form": "quoted",
+          "value_form": "bare",
+          "criterion": "numeric_metric_or_inventory"
+        },
+        {
+          "line": 989,
+          "key_form": "quoted",
+          "value_form": "bare",
+          "criterion": "numeric_metric_or_inventory"
+        }
+      ]
+    },
+    {
+      "blob": "584057da8ce0b131e91edb8bb9a1e4d1d6ade52d",
+      "paths": [
+        "tests/unit/test_memory_base_deploy.py"
+      ],
+      "sets": [
+        "history"
+      ],
+      "locations": [
+        {
+          "line": 193,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        }
+      ]
+    },
+    {
+      "blob": "5b31adfd38571b796b80c6b3aed94023051e362e",
+      "paths": [
+        "experiments/memory-base-package/cold-final-2026-10-12/command-022-target-origins.log"
+      ],
+      "sets": [
+        "tree",
+        "history"
+      ],
+      "locations": [
+        {
+          "line": 919,
+          "key_form": "quoted",
+          "value_form": "quoted_literal",
+          "criterion": "package_inventory_or_noncredential_field"
+        },
+        {
+          "line": 922,
+          "key_form": "quoted",
+          "value_form": "quoted_literal",
+          "criterion": "package_inventory_or_noncredential_field"
+        }
+      ]
+    },
+    {
+      "blob": "5bcabdf79758da09b7e0fe036eaa06f6ea32b544",
+      "paths": [
+        "memory_agent/memory/onnx_reranker.py"
+      ],
+      "sets": [
+        "tree"
+      ],
+      "locations": [
+        {
+          "line": 22,
+          "key_form": "bare",
+          "value_form": "quoted_literal",
+          "criterion": "package_inventory_or_noncredential_field"
+        },
+        {
+          "line": 54,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "package_inventory_or_noncredential_field"
+        }
+      ]
+    },
+    {
+      "blob": "5d988ecb4001c4983157b853a32747703c9a84b9",
+      "paths": [
+        "memory_agent/eval/perf_70.py"
+      ],
+      "sets": [
+        "tree"
+      ],
+      "locations": [
+        {
+          "line": 569,
+          "key_form": "quoted",
+          "value_form": "quoted_literal",
+          "criterion": "number_boolean_null"
+        },
+        {
+          "line": 920,
+          "key_form": "bare",
+          "value_form": "quoted_literal",
+          "criterion": "computed_code_expression"
+        }
+      ]
+    },
+    {
+      "blob": "645cab59a4af4e52680d2991bdd917c5916c1e39",
+      "paths": [
+        "docs/adr/0025-personal-mode-knowledge-database-model.md"
+      ],
+      "sets": [
+        "tree"
+      ],
+      "locations": [
+        {
+          "line": 92,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "prose_or_markdown_delimiter"
+        }
+      ]
+    },
+    {
+      "blob": "6543dd1039e2d765d536e6199308c5fe9e4fa756",
+      "paths": [
+        "memory_base/credentials.py"
+      ],
+      "sets": [
+        "tree",
+        "history"
+      ],
+      "locations": [
+        {
+          "line": 1,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        }
+      ]
+    },
+    {
+      "blob": "65aefa3fd641ff0f426900abcbb9793d4052c733",
+      "paths": [
+        "memory_agent/gateway/context.py"
+      ],
+      "sets": [
+        "tree"
+      ],
+      "locations": [
+        {
+          "line": 20,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        },
+        {
+          "line": 24,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        }
+      ]
+    },
+    {
+      "blob": "67a09a35a8c786911a6bacb2012f6a2ab68c5d42",
+      "paths": [
+        "memory_base/deploy.py"
+      ],
+      "sets": [
+        "history"
+      ],
+      "locations": [
+        {
+          "line": 32,
+          "key_form": "bare",
+          "value_form": "quoted_literal",
+          "criterion": "environment_variable_identifier"
+        },
+        {
+          "line": 206,
+          "key_form": "quoted",
+          "value_form": "quoted_literal",
+          "criterion": "empty_placeholder_or_syntax"
+        },
+        {
+          "line": 334,
+          "key_form": "quoted",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        },
+        {
+          "line": 417,
+          "key_form": "quoted",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        },
+        {
+          "line": 419,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        }
+      ]
+    },
+    {
+      "blob": "6a29f94071dde14e2166cc6fbf62ed01d596974e",
+      "paths": [
+        "memory_base/deploy.py"
+      ],
+      "sets": [
+        "history"
+      ],
+      "locations": [
+        {
+          "line": 32,
+          "key_form": "bare",
+          "value_form": "quoted_literal",
+          "criterion": "environment_variable_identifier"
+        },
+        {
+          "line": 211,
+          "key_form": "quoted",
+          "value_form": "quoted_literal",
+          "criterion": "empty_placeholder_or_syntax"
+        },
+        {
+          "line": 369,
+          "key_form": "quoted",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        },
+        {
+          "line": 460,
+          "key_form": "quoted",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        },
+        {
+          "line": 462,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        }
+      ]
+    },
+    {
+      "blob": "6a575eca90f1d655970f7d6193e67e90066a069f",
+      "paths": [
+        "memory_base/deploy.py"
+      ],
+      "sets": [
+        "history"
+      ],
+      "locations": [
+        {
+          "line": 32,
+          "key_form": "bare",
+          "value_form": "quoted_literal",
+          "criterion": "environment_variable_identifier"
+        },
+        {
+          "line": 205,
+          "key_form": "quoted",
+          "value_form": "quoted_literal",
+          "criterion": "empty_placeholder_or_syntax"
+        },
+        {
+          "line": 330,
+          "key_form": "quoted",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        },
+        {
+          "line": 413,
+          "key_form": "quoted",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        },
+        {
+          "line": 415,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        }
+      ]
+    },
+    {
+      "blob": "6a8cb832ceb61126bbb83c0a32bfe93c326f4470",
+      "paths": [
+        "memory_base/mcp_stdio.py"
+      ],
+      "sets": [
+        "history"
+      ],
+      "locations": [
+        {
+          "line": 26,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        },
+        {
+          "line": 28,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        },
+        {
+          "line": 29,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        },
+        {
+          "line": 102,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        }
+      ]
+    },
+    {
+      "blob": "6b3336c3a78d3e458db6a743915165fe8164a142",
+      "paths": [
+        "experiments/memory-base-package/recheck-2026-10-12/import_diagnosis.json"
+      ],
+      "sets": [
+        "tree",
+        "history"
+      ],
+      "locations": [
+        {
+          "line": 347,
+          "key_form": "quoted",
+          "value_form": "quoted_literal",
+          "criterion": "package_inventory_or_noncredential_field"
+        },
+        {
+          "line": 350,
+          "key_form": "quoted",
+          "value_form": "quoted_literal",
+          "criterion": "package_inventory_or_noncredential_field"
+        },
+        {
+          "line": 590,
+          "key_form": "quoted",
+          "value_form": "quoted_literal",
+          "criterion": "package_inventory_or_noncredential_field"
+        },
+        {
+          "line": 593,
+          "key_form": "quoted",
+          "value_form": "quoted_literal",
+          "criterion": "package_inventory_or_noncredential_field"
+        },
+        {
+          "line": 833,
+          "key_form": "quoted",
+          "value_form": "quoted_literal",
+          "criterion": "package_inventory_or_noncredential_field"
+        },
+        {
+          "line": 836,
+          "key_form": "quoted",
+          "value_form": "quoted_literal",
+          "criterion": "package_inventory_or_noncredential_field"
+        }
+      ]
+    },
+    {
+      "blob": "6bba3aaa84d8e99c25368814be9274b0bb8c0476",
+      "paths": [
+        "tests/unit/test_memory_base_sources.py"
+      ],
+      "sets": [
+        "tree",
+        "history"
+      ],
+      "locations": [
+        {
+          "line": 207,
+          "key_form": "quoted",
+          "value_form": "quoted_literal",
+          "criterion": "fixture_reject_embedded_credential"
+        }
+      ]
+    },
+    {
+      "blob": "6de0345662a46cb94825b9065b3a531c6a4ec1c1",
+      "paths": [
+        "experiments/memory-base-package/recheck-2026-10-12/native_probe.py"
+      ],
+      "sets": [
+        "history"
+      ],
+      "locations": [
+        {
+          "line": 79,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "number_boolean_null"
+        }
+      ]
+    },
+    {
+      "blob": "6ea1436782d2622d350bea1f29e462bc9a70abc8",
+      "paths": [
+        "ragcore/services/chat_service.py"
+      ],
+      "sets": [
+        "tree"
+      ],
+      "locations": [
+        {
+          "line": 77,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "numeric_metric_or_inventory"
+        },
+        {
+          "line": 84,
+          "key_form": "quoted",
+          "value_form": "bare",
+          "criterion": "numeric_metric_or_inventory"
+        },
+        {
+          "line": 85,
+          "key_form": "quoted",
+          "value_form": "bare",
+          "criterion": "numeric_metric_or_inventory"
+        },
+        {
+          "line": 86,
+          "key_form": "quoted",
+          "value_form": "bare",
+          "criterion": "numeric_metric_or_inventory"
+        }
+      ]
+    },
+    {
+      "blob": "6ee5b091f29df862cc970dfc3cca9623f991b9d7",
+      "paths": [
+        "memory_base/gateway.py"
+      ],
+      "sets": [
+        "tree",
+        "history"
+      ],
+      "locations": [
+        {
+          "line": 464,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        }
+      ]
+    },
+    {
+      "blob": "703b93c0864bb3c1725e2b69cb0ea3bc5bf90768",
+      "paths": [
+        "experiments/memory-base-package/recheck-2026-10-12/complete_import_census.json"
+      ],
+      "sets": [
+        "tree",
+        "history"
+      ],
+      "locations": [
+        {
+          "line": 395,
+          "key_form": "quoted",
+          "value_form": "quoted_literal",
+          "criterion": "package_inventory_or_noncredential_field"
+        },
+        {
+          "line": 398,
+          "key_form": "quoted",
+          "value_form": "quoted_literal",
+          "criterion": "package_inventory_or_noncredential_field"
+        },
+        {
+          "line": 776,
+          "key_form": "quoted",
+          "value_form": "quoted_literal",
+          "criterion": "package_inventory_or_noncredential_field"
+        },
+        {
+          "line": 779,
+          "key_form": "quoted",
+          "value_form": "quoted_literal",
+          "criterion": "package_inventory_or_noncredential_field"
+        },
+        {
+          "line": 1157,
+          "key_form": "quoted",
+          "value_form": "quoted_literal",
+          "criterion": "package_inventory_or_noncredential_field"
+        },
+        {
+          "line": 1160,
+          "key_form": "quoted",
+          "value_form": "quoted_literal",
+          "criterion": "package_inventory_or_noncredential_field"
+        }
+      ]
+    },
+    {
+      "blob": "72c55398b6cba9785a17197c11849bd178d7c246",
+      "paths": [
+        "experiments/memory-framework-spike/mvp/evidence/m0_env.json"
+      ],
+      "sets": [
+        "tree",
+        "history"
+      ],
+      "locations": [
+        {
+          "line": 111,
+          "key_form": "quoted",
+          "value_form": "quoted_literal",
+          "criterion": "package_inventory_or_noncredential_field"
+        }
+      ]
+    },
+    {
+      "blob": "758f808c4087e89705ca59933ad4d107a78cb0de",
+      "paths": [
+        "memory_agent/eval/nav_63_results.md"
+      ],
+      "sets": [
+        "tree"
+      ],
+      "locations": [
+        {
+          "line": 53,
+          "key_form": "bare",
+          "value_form": "quoted_literal",
+          "criterion": "unresolved_literal_owner_review"
+        },
+        {
+          "line": 241,
+          "key_form": "bare",
+          "value_form": "quoted_literal",
+          "criterion": "unresolved_literal_owner_review"
+        }
+      ]
+    },
+    {
+      "blob": "79330cc32a19f9415c3f2ce759227e5613c1f0c9",
+      "paths": [
+        "memory_agent/.env.example"
+      ],
+      "sets": [
+        "tree"
+      ],
+      "locations": [
+        {
+          "line": 17,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "empty_placeholder_or_syntax"
+        },
+        {
+          "line": 56,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "number_boolean_null"
+        },
+        {
+          "line": 59,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "number_boolean_null"
+        },
+        {
+          "line": 74,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "empty_placeholder_or_syntax"
+        }
+      ]
+    },
+    {
+      "blob": "798a2d61231bd5f166b9052087868496e9ac5097",
+      "paths": [
+        "experiments/memory-host-connect/host_identity.py"
+      ],
+      "sets": [
+        "tree",
+        "history"
+      ],
+      "locations": [
+        {
+          "line": 39,
+          "key_form": "bare",
+          "value_form": "quoted_literal",
+          "criterion": "environment_variable_identifier"
+        }
+      ]
+    },
+    {
+      "blob": "7a3481c876df42d4d2a1a3fa71573a87489e8dc9",
+      "paths": [
+        "experiments/agentic-rag-census/phase_a2/a3_grade_answers.py"
+      ],
+      "sets": [
+        "tree"
+      ],
+      "locations": [
+        {
+          "line": 204,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "numeric_metric_or_inventory"
+        },
+        {
+          "line": 215,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "numeric_metric_or_inventory"
+        },
+        {
+          "line": 490,
+          "key_form": "quoted",
+          "value_form": "bare",
+          "criterion": "numeric_metric_or_inventory"
+        }
+      ]
+    },
+    {
+      "blob": "7c127625f32bf09517df0001355820304506f834",
+      "paths": [
+        "experiments/memory-base-package/recheck-2026-10-12/native_start_failure.json"
+      ],
+      "sets": [
+        "tree",
+        "history"
+      ],
+      "locations": [
+        {
+          "line": 1748,
+          "key_form": "quoted",
+          "value_form": "quoted_literal",
+          "criterion": "package_inventory_or_noncredential_field"
+        },
+        {
+          "line": 1751,
+          "key_form": "quoted",
+          "value_form": "quoted_literal",
+          "criterion": "package_inventory_or_noncredential_field"
+        },
+        {
+          "line": 3262,
+          "key_form": "quoted",
+          "value_form": "quoted_literal",
+          "criterion": "package_inventory_or_noncredential_field"
+        },
+        {
+          "line": 3265,
+          "key_form": "quoted",
+          "value_form": "quoted_literal",
+          "criterion": "package_inventory_or_noncredential_field"
+        }
+      ]
+    },
+    {
+      "blob": "7e3b3e9c9552ef3634b3e4a6a1360a7b205e4420",
+      "paths": [
+        "memory_agent/mcp_server.py"
+      ],
+      "sets": [
+        "tree"
+      ],
+      "locations": [
+        {
+          "line": 145,
+          "key_form": "quoted",
+          "value_form": "bare",
+          "criterion": "numeric_metric_or_inventory"
+        }
+      ]
+    },
+    {
+      "blob": "87aa6507087bacddd94608eaacbc0e10e95cd167",
+      "paths": [
+        "tests/unit/test_memory_base_sources.py"
+      ],
+      "sets": [
+        "history"
+      ],
+      "locations": [
+        {
+          "line": 205,
+          "key_form": "quoted",
+          "value_form": "quoted_literal",
+          "criterion": "fixture_reject_embedded_credential"
+        }
+      ]
+    },
+    {
+      "blob": "89b551133488c76b6a7609d9a027c3ecb7abc145",
+      "paths": [
+        "ragcore/services/vector_store_service.py"
+      ],
+      "sets": [
+        "tree"
+      ],
+      "locations": [
+        {
+          "line": 70,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "prose_or_markdown_delimiter"
+        },
+        {
+          "line": 81,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        }
+      ]
+    },
+    {
+      "blob": "8c150a73a06b0bf5268605c3f4e1f209bc99ef09",
+      "paths": [
+        "ragcore/config/llm.py"
+      ],
+      "sets": [
+        "tree"
+      ],
+      "locations": [
+        {
+          "line": 51,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        },
+        {
+          "line": 59,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        }
+      ]
+    },
+    {
+      "blob": "8ceaec2d1afc3e5dc4a5fe7d066079c5072b68da",
+      "paths": [
+        "memory_agent/gateway/identity.py"
+      ],
+      "sets": [
+        "tree"
+      ],
+      "locations": [
+        {
+          "line": 6,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "prose_or_markdown_delimiter"
+        },
+        {
+          "line": 65,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        },
+        {
+          "line": 192,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        },
+        {
+          "line": 192,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        },
+        {
+          "line": 205,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        },
+        {
+          "line": 220,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        }
+      ]
+    },
+    {
+      "blob": "8d1118a09336642dd371cc1ac095239bfcc39095",
+      "paths": [
+        "experiments/memory-base-package/cold-final-2026-10-12/probe_installed.py",
+        "experiments/memory-base-package/probe_installed.py"
+      ],
+      "sets": [
+        "tree",
+        "history"
+      ],
+      "locations": [
+        {
+          "line": 133,
+          "key_form": "quoted",
+          "value_form": "quoted_literal",
+          "criterion": "unresolved_literal_owner_review"
+        }
+      ]
+    },
+    {
+      "blob": "8d1fe699e5a1db87a93c6781a57f4b50e9a9afcb",
+      "paths": [
+        "experiments/memory-base-live/bubble_bridge_probe.mjs"
+      ],
+      "sets": [
+        "history"
+      ],
+      "locations": [
+        {
+          "line": 73,
+          "key_form": "bare",
+          "value_form": "quoted_literal",
+          "criterion": "fixture_no_external_llm_needed"
+        }
+      ]
+    },
+    {
+      "blob": "8fa357d8fa3cb687a7c136f03e92e87c03a0daa3",
+      "paths": [
+        "experiments/bge-m3-sparse-colbert/cache/scores_qd.stats.json"
+      ],
+      "sets": [
+        "tree"
+      ],
+      "locations": [
+        {
+          "line": 7,
+          "key_form": "quoted",
+          "value_form": "bare",
+          "criterion": "number_boolean_null"
+        },
+        {
+          "line": 8,
+          "key_form": "quoted",
+          "value_form": "bare",
+          "criterion": "number_boolean_null"
+        },
+        {
+          "line": 9,
+          "key_form": "quoted",
+          "value_form": "bare",
+          "criterion": "number_boolean_null"
+        }
+      ]
+    },
+    {
+      "blob": "98c41ad7bb8bebea7052c25e88303b6c19193c10",
+      "paths": [
+        "experiments/query-rewrite-optimizer/rewrite_optimizer.py"
+      ],
+      "sets": [
+        "tree"
+      ],
+      "locations": [
+        {
+          "line": 177,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "numeric_metric_or_inventory"
+        }
+      ]
+    },
+    {
+      "blob": "98e9d91d7794ec850291fc7a682ef4c3eeca131a",
+      "paths": [
+        "memory_base/deploy.py"
+      ],
+      "sets": [
+        "history"
+      ],
+      "locations": [
+        {
+          "line": 32,
+          "key_form": "bare",
+          "value_form": "quoted_literal",
+          "criterion": "environment_variable_identifier"
+        },
+        {
+          "line": 211,
+          "key_form": "quoted",
+          "value_form": "quoted_literal",
+          "criterion": "empty_placeholder_or_syntax"
+        },
+        {
+          "line": 369,
+          "key_form": "quoted",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        },
+        {
+          "line": 534,
+          "key_form": "quoted",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        },
+        {
+          "line": 536,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        }
+      ]
+    },
+    {
+      "blob": "9988949f21acbd8acf87f9d5eb76ad540fcb8eff",
+      "paths": [
+        "memory_agent/eval/agent_loop_42.py"
+      ],
+      "sets": [
+        "tree"
+      ],
+      "locations": [
+        {
+          "line": 213,
+          "key_form": "quoted",
+          "value_form": "quoted_literal",
+          "criterion": "number_boolean_null"
+        }
+      ]
+    },
+    {
+      "blob": "9a1a6624b632e5358382c7f56cf920b7287d157d",
+      "paths": [
+        "experiments/memory-framework-spike/mvp/scripts/m5b_outofprocess_restore.py"
+      ],
+      "sets": [
+        "history"
+      ],
+      "locations": [
+        {
+          "line": 70,
+          "key_form": "quoted",
+          "value_form": "quoted_literal",
+          "criterion": "fixture_local_embedding_placeholder"
+        },
+        {
+          "line": 95,
+          "key_form": "quoted",
+          "value_form": "quoted_literal",
+          "criterion": "environment_expansion_placeholder"
+        }
+      ]
+    },
+    {
+      "blob": "9b3d1f2391756ac1dd569d9e405e63d8fbfccb9b",
+      "paths": [
+        "memory_base/deploy.py"
+      ],
+      "sets": [
+        "history"
+      ],
+      "locations": [
+        {
+          "line": 40,
+          "key_form": "bare",
+          "value_form": "quoted_literal",
+          "criterion": "environment_variable_identifier"
+        },
+        {
+          "line": 339,
+          "key_form": "quoted",
+          "value_form": "quoted_literal",
+          "criterion": "empty_placeholder_or_syntax"
+        },
+        {
+          "line": 502,
+          "key_form": "quoted",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        },
+        {
+          "line": 711,
+          "key_form": "quoted",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        },
+        {
+          "line": 713,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        }
+      ]
+    },
+    {
+      "blob": "9be877b90d995f3938984bef952ffe21b543a636",
+      "paths": [
+        "experiments/memory-base-package/cold-final-2026-10-12/command-035-target-origins.log"
+      ],
+      "sets": [
+        "tree",
+        "history"
+      ],
+      "locations": [
+        {
+          "line": 919,
+          "key_form": "quoted",
+          "value_form": "quoted_literal",
+          "criterion": "package_inventory_or_noncredential_field"
+        },
+        {
+          "line": 922,
+          "key_form": "quoted",
+          "value_form": "quoted_literal",
+          "criterion": "package_inventory_or_noncredential_field"
+        }
+      ]
+    },
+    {
+      "blob": "9c347300ab35180d152342631e7f6ef8e5b770e5",
+      "paths": [
+        "memory_base/mcp_stdio.py"
+      ],
+      "sets": [
+        "tree",
+        "history"
+      ],
+      "locations": [
+        {
+          "line": 52,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        },
+        {
+          "line": 54,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        },
+        {
+          "line": 55,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        },
+        {
+          "line": 142,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        }
+      ]
+    },
+    {
+      "blob": "9e31a48701fc324b86dda95cb3e85c53a2e07c17",
+      "paths": [
+        "experiments/memory-base-package/cold-final-2026-10-12/command-011-launcher-origins.log"
+      ],
+      "sets": [
+        "tree",
+        "history"
+      ],
+      "locations": [
+        {
+          "line": 924,
+          "key_form": "quoted",
+          "value_form": "quoted_literal",
+          "criterion": "package_inventory_or_noncredential_field"
+        },
+        {
+          "line": 927,
+          "key_form": "quoted",
+          "value_form": "quoted_literal",
+          "criterion": "package_inventory_or_noncredential_field"
+        }
+      ]
+    },
+    {
+      "blob": "9e37d06e5b2f01df981c153760d810fbd2503ce1",
+      "paths": [
+        "experiments/memory-host-connect/setup_authz_supplement.ps1"
+      ],
+      "sets": [
+        "tree",
+        "history"
+      ],
+      "locations": [
+        {
+          "line": 19,
+          "key_form": "bare",
+          "value_form": "quoted_literal",
+          "criterion": "package_inventory_or_noncredential_field"
+        }
+      ]
+    },
+    {
+      "blob": "a03185fb6cca41d13231e1adbbc36a9acb88424d",
+      "paths": [
+        "experiments/cloud-vector-db-spike/smoke.py"
+      ],
+      "sets": [
+        "tree"
+      ],
+      "locations": [
+        {
+          "line": 42,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        }
+      ]
+    },
+    {
+      "blob": "a4083b04a653101eebcb3f8a64b136fdbda882ac",
+      "paths": [
+        "experiments/memory-base-package/recheck-2026-10-12/results.json"
+      ],
+      "sets": [
+        "tree",
+        "history"
+      ],
+      "locations": [
+        {
+          "line": 1829,
+          "key_form": "quoted",
+          "value_form": "quoted_literal",
+          "criterion": "package_inventory_or_noncredential_field"
+        },
+        {
+          "line": 1832,
+          "key_form": "quoted",
+          "value_form": "quoted_literal",
+          "criterion": "package_inventory_or_noncredential_field"
+        },
+        {
+          "line": 3352,
+          "key_form": "quoted",
+          "value_form": "quoted_literal",
+          "criterion": "package_inventory_or_noncredential_field"
+        },
+        {
+          "line": 3355,
+          "key_form": "quoted",
+          "value_form": "quoted_literal",
+          "criterion": "package_inventory_or_noncredential_field"
+        },
+        {
+          "line": 4567,
+          "key_form": "quoted",
+          "value_form": "quoted_literal",
+          "criterion": "package_inventory_or_noncredential_field"
+        },
+        {
+          "line": 4570,
+          "key_form": "quoted",
+          "value_form": "quoted_literal",
+          "criterion": "package_inventory_or_noncredential_field"
+        }
+      ]
+    },
+    {
+      "blob": "a4b839e172fcd6ee994e11d3000d09493594c955",
+      "paths": [
+        "memory_agent/eval/build_eval_set.py"
+      ],
+      "sets": [
+        "tree"
+      ],
+      "locations": [
+        {
+          "line": 90,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "numeric_metric_or_inventory"
+        }
+      ]
+    },
+    {
+      "blob": "a5bd034bde160214a4043b0353e49bc4e733eca3",
+      "paths": [
+        "experiments/memory-source-study/memos-python.md"
+      ],
+      "sets": [
+        "tree",
+        "history"
+      ],
+      "locations": [
+        {
+          "line": 397,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "numeric_metric_or_inventory"
+        },
+        {
+          "line": 398,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "numeric_metric_or_inventory"
+        }
+      ]
+    },
+    {
+      "blob": "aa0c0fa5f4962d29c5be07242c698eec5e818376",
+      "paths": [
+        "experiments/memory-base-cold-start/native_probe_91.py"
+      ],
+      "sets": [
+        "tree",
+        "history"
+      ],
+      "locations": [
+        {
+          "line": 82,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "number_boolean_null"
+        }
+      ]
+    },
+    {
+      "blob": "ab359b33e9735e784bf1939fe97c4ab1b8dbde9a",
+      "paths": [
+        "experiments/agentic-rag-census/phase_a2/a3_results.json"
+      ],
+      "sets": [
+        "tree"
+      ],
+      "locations": [
+        {
+          "line": 6026,
+          "key_form": "quoted",
+          "value_form": "bare",
+          "criterion": "numeric_metric_or_inventory"
+        }
+      ]
+    },
+    {
+      "blob": "acc33912e3ea42e110ad96222624e5a58a28529f",
+      "paths": [
+        "ragcore/agents/router_graph.py"
+      ],
+      "sets": [
+        "tree"
+      ],
+      "locations": [
+        {
+          "line": 51,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "numeric_metric_or_inventory"
+        }
+      ]
+    },
+    {
+      "blob": "ae838001b5af068d623fc40139290c56d5912f04",
+      "paths": [
+        "memory_agent/agent_loop/llm.py"
+      ],
+      "sets": [
+        "tree"
+      ],
+      "locations": [
+        {
+          "line": 41,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        },
+        {
+          "line": 88,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        },
+        {
+          "line": 99,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        }
+      ]
+    },
+    {
+      "blob": "aebe3125538f4a12d24213c9aa79955e88798d3d",
+      "paths": [
+        "tests/unit/test_memory_base_deploy.py"
+      ],
+      "sets": [
+        "history"
+      ],
+      "locations": [
+        {
+          "line": 285,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        }
+      ]
+    },
+    {
+      "blob": "b320ca6037cd348f9f468d9dff718044cf567caf",
+      "paths": [
+        "ragcore/services/rag_service.py"
+      ],
+      "sets": [
+        "tree"
+      ],
+      "locations": [
+        {
+          "line": 231,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "numeric_metric_or_inventory"
+        },
+        {
+          "line": 234,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "numeric_metric_or_inventory"
+        },
+        {
+          "line": 246,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "numeric_metric_or_inventory"
+        },
+        {
+          "line": 343,
+          "key_form": "quoted",
+          "value_form": "bare",
+          "criterion": "numeric_metric_or_inventory"
+        },
+        {
+          "line": 344,
+          "key_form": "quoted",
+          "value_form": "bare",
+          "criterion": "numeric_metric_or_inventory"
+        },
+        {
+          "line": 345,
+          "key_form": "quoted",
+          "value_form": "bare",
+          "criterion": "numeric_metric_or_inventory"
+        },
+        {
+          "line": 412,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "numeric_metric_or_inventory"
+        },
+        {
+          "line": 418,
+          "key_form": "quoted",
+          "value_form": "bare",
+          "criterion": "numeric_metric_or_inventory"
+        },
+        {
+          "line": 419,
+          "key_form": "quoted",
+          "value_form": "bare",
+          "criterion": "numeric_metric_or_inventory"
+        },
+        {
+          "line": 420,
+          "key_form": "quoted",
+          "value_form": "bare",
+          "criterion": "numeric_metric_or_inventory"
+        }
+      ]
+    },
+    {
+      "blob": "b5b1fcaa0271064a5d29b49abfa3963bc74d0894",
+      "paths": [
+        "experiments/memory-spike-verify/verify_acl.py"
+      ],
+      "sets": [
+        "tree",
+        "history"
+      ],
+      "locations": [
+        {
+          "line": 36,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        }
+      ]
+    },
+    {
+      "blob": "b5dff60bf84a9a90ab307f7ea7e397690d4fdd70",
+      "paths": [
+        "experiments/memory-base-live/verify.py"
+      ],
+      "sets": [
+        "tree",
+        "history"
+      ],
+      "locations": [
+        {
+          "line": 12,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        }
+      ]
+    },
+    {
+      "blob": "b6eab804e692612cbba81981db4c865bed116e62",
+      "paths": [
+        "experiments/memory-host-connect/host_server.py"
+      ],
+      "sets": [
+        "history"
+      ],
+      "locations": [
+        {
+          "line": 57,
+          "key_form": "bare",
+          "value_form": "quoted_literal",
+          "criterion": "environment_variable_identifier"
+        },
+        {
+          "line": 137,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        }
+      ]
+    },
+    {
+      "blob": "b7658e2ce7c479926da0037e99711264619808e0",
+      "paths": [
+        "experiments/agentic-rag-census/phase_a2/a3_results.md"
+      ],
+      "sets": [
+        "tree"
+      ],
+      "locations": [
+        {
+          "line": 70,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "numeric_metric_or_inventory"
+        }
+      ]
+    },
+    {
+      "blob": "bf5b32c89ab6f703501da3d5ef6f38abdd101ddd",
+      "paths": [
+        "memory_base/deploy.py"
+      ],
+      "sets": [
+        "history"
+      ],
+      "locations": [
+        {
+          "line": 32,
+          "key_form": "bare",
+          "value_form": "quoted_literal",
+          "criterion": "environment_variable_identifier"
+        },
+        {
+          "line": 211,
+          "key_form": "quoted",
+          "value_form": "quoted_literal",
+          "criterion": "empty_placeholder_or_syntax"
+        },
+        {
+          "line": 371,
+          "key_form": "quoted",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        },
+        {
+          "line": 577,
+          "key_form": "quoted",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        },
+        {
+          "line": 579,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        }
+      ]
+    },
+    {
+      "blob": "c1480ebf4435ef6df4035b3c3e31ed17c1d4e74d",
+      "paths": [
+        "experiments/memory-base-formal-restore/run_restore.py"
+      ],
+      "sets": [
+        "tree",
+        "history"
+      ],
+      "locations": [
+        {
+          "line": 170,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        },
+        {
+          "line": 178,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        },
+        {
+          "line": 182,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        },
+        {
+          "line": 190,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        },
+        {
+          "line": 192,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        },
+        {
+          "line": 196,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        },
+        {
+          "line": 198,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        },
+        {
+          "line": 207,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        }
+      ]
+    },
+    {
+      "blob": "c305f05b34c670080079f3bc6a79a8966e469d5d",
+      "paths": [
+        "experiments/memory-base-package/cold-final-2026-10-12/final-audit.json"
+      ],
+      "sets": [
+        "tree",
+        "history"
+      ],
+      "locations": [
+        {
+          "line": 207,
+          "key_form": "quoted",
+          "value_form": "bare",
+          "criterion": "numeric_metric_or_inventory"
+        }
+      ]
+    },
+    {
+      "blob": "c44a83fd3baf70b42293d603e7ff8f5351597a7a",
+      "paths": [
+        "tests/unit/test_memory_base_deploy.py"
+      ],
+      "sets": [
+        "history"
+      ],
+      "locations": [
+        {
+          "line": 216,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        }
+      ]
+    },
+    {
+      "blob": "c4ea29f61e7be1ab677bfa9747bca86754c7e229",
+      "paths": [
+        "experiments/memory-framework-spike/mvp/scripts/spike_common.py"
+      ],
+      "sets": [
+        "history"
+      ],
+      "locations": [
+        {
+          "line": 50,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        },
+        {
+          "line": 51,
+          "key_form": "bare",
+          "value_form": "quoted_literal",
+          "criterion": "environment_variable_identifier"
+        },
+        {
+          "line": 91,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        }
+      ]
+    },
+    {
+      "blob": "c509bf40102d0f7a24efb257856751b4568a7604",
+      "paths": [
+        "tests/unit/test_gateway_authz.py"
+      ],
+      "sets": [
+        "tree"
+      ],
+      "locations": [
+        {
+          "line": 49,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "number_boolean_null"
+        },
+        {
+          "line": 54,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "number_boolean_null"
+        },
+        {
+          "line": 62,
+          "key_form": "bare",
+          "value_form": "quoted_literal",
+          "criterion": "fixture_assert_audit_redaction"
+        },
+        {
+          "line": 63,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "number_boolean_null"
+        },
+        {
+          "line": 183,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "number_boolean_null"
+        },
+        {
+          "line": 201,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "number_boolean_null"
+        }
+      ]
+    },
+    {
+      "blob": "c86a308329f70bccf86f3863c7171e6bfc5e6a9e",
+      "paths": [
+        "experiments/rerank-model-survey/models.json"
+      ],
+      "sets": [
+        "tree"
+      ],
+      "locations": [
+        {
+          "line": 10,
+          "key_form": "quoted",
+          "value_form": "bare",
+          "criterion": "number_boolean_null"
+        },
+        {
+          "line": 23,
+          "key_form": "quoted",
+          "value_form": "bare",
+          "criterion": "number_boolean_null"
+        },
+        {
+          "line": 36,
+          "key_form": "quoted",
+          "value_form": "bare",
+          "criterion": "number_boolean_null"
+        },
+        {
+          "line": 49,
+          "key_form": "quoted",
+          "value_form": "bare",
+          "criterion": "number_boolean_null"
+        },
+        {
+          "line": 62,
+          "key_form": "quoted",
+          "value_form": "bare",
+          "criterion": "number_boolean_null"
+        },
+        {
+          "line": 77,
+          "key_form": "quoted",
+          "value_form": "bare",
+          "criterion": "number_boolean_null"
+        }
+      ]
+    },
+    {
+      "blob": "c9298e7749785871c41e31c9f11ba1143590bd52",
+      "paths": [
+        "experiments/memory-base-package/cold-final-2026-10-12/native_probe.py"
+      ],
+      "sets": [
+        "tree",
+        "history"
+      ],
+      "locations": [
+        {
+          "line": 86,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "number_boolean_null"
+        }
+      ]
+    },
+    {
+      "blob": "caf6d6e0ca950dc8c68b45e290bd4415de0d3c35",
+      "paths": [
+        "tests/unit/test_memory_base_deploy.py"
+      ],
+      "sets": [
+        "history"
+      ],
+      "locations": [
+        {
+          "line": 297,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        },
+        {
+          "line": 560,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        }
+      ]
+    },
+    {
+      "blob": "cc4dc618383242471817f47b47ec6577153228f6",
+      "paths": [
+        "memory_base/deploy.py"
+      ],
+      "sets": [
+        "history"
+      ],
+      "locations": [
+        {
+          "line": 32,
+          "key_form": "bare",
+          "value_form": "quoted_literal",
+          "criterion": "environment_variable_identifier"
+        },
+        {
+          "line": 208,
+          "key_form": "quoted",
+          "value_form": "quoted_literal",
+          "criterion": "empty_placeholder_or_syntax"
+        },
+        {
+          "line": 333,
+          "key_form": "quoted",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        },
+        {
+          "line": 416,
+          "key_form": "quoted",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        },
+        {
+          "line": 418,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        }
+      ]
+    },
+    {
+      "blob": "d26cad43a4f64f0034b9b23e3b49f1b3c9dd71f9",
+      "paths": [
+        "experiments/agent-loop-subagent/README.md"
+      ],
+      "sets": [
+        "tree"
+      ],
+      "locations": [
+        {
+          "line": 31,
+          "key_form": "quoted",
+          "value_form": "quoted_literal",
+          "criterion": "unresolved_literal_owner_review"
+        }
+      ]
+    },
+    {
+      "blob": "d40f17c90bd367cb27c762a3ca5a79d4144c1af9",
+      "paths": [
+        "tests/unit/test_memory_base_deploy.py"
+      ],
+      "sets": [
+        "history"
+      ],
+      "locations": [
+        {
+          "line": 474,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        }
+      ]
+    },
+    {
+      "blob": "d5fb8272a996334c8da88c7e5318b3d4a192b090",
+      "paths": [
+        "memory_agent/README.md"
+      ],
+      "sets": [
+        "tree"
+      ],
+      "locations": [
+        {
+          "line": 139,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "prose_or_markdown_delimiter"
+        }
+      ]
+    },
+    {
+      "blob": "d6fd4b979a4ab742a63beddefab5fcb31a183ecc",
+      "paths": [
+        "memory_agent/memory/sparse.py"
+      ],
+      "sets": [
+        "tree"
+      ],
+      "locations": [
+        {
+          "line": 61,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        }
+      ]
+    },
+    {
+      "blob": "d9c466f4dcc4cd48d0c07ef68f77aaa742826ca5",
+      "paths": [
+        "experiments/memory-base-package/recheck-2026-10-12/short_path_platform_failure.json"
+      ],
+      "sets": [
+        "tree",
+        "history"
+      ],
+      "locations": [
+        {
+          "line": 1564,
+          "key_form": "quoted",
+          "value_form": "quoted_literal",
+          "criterion": "package_inventory_or_noncredential_field"
+        },
+        {
+          "line": 1567,
+          "key_form": "quoted",
+          "value_form": "quoted_literal",
+          "criterion": "package_inventory_or_noncredential_field"
+        }
+      ]
+    },
+    {
+      "blob": "da125bcaf3035748d2ff13a6e1de25ee6e2d0a45",
+      "paths": [
+        "experiments/memory-base-package/cold-final-2026-10-12/results.json"
+      ],
+      "sets": [
+        "tree",
+        "history"
+      ],
+      "locations": [
+        {
+          "line": 1854,
+          "key_form": "quoted",
+          "value_form": "quoted_literal",
+          "criterion": "package_inventory_or_noncredential_field"
+        },
+        {
+          "line": 1857,
+          "key_form": "quoted",
+          "value_form": "quoted_literal",
+          "criterion": "package_inventory_or_noncredential_field"
+        },
+        {
+          "line": 3467,
+          "key_form": "quoted",
+          "value_form": "quoted_literal",
+          "criterion": "package_inventory_or_noncredential_field"
+        },
+        {
+          "line": 3470,
+          "key_form": "quoted",
+          "value_form": "quoted_literal",
+          "criterion": "package_inventory_or_noncredential_field"
+        },
+        {
+          "line": 4722,
+          "key_form": "quoted",
+          "value_form": "quoted_literal",
+          "criterion": "package_inventory_or_noncredential_field"
+        },
+        {
+          "line": 4725,
+          "key_form": "quoted",
+          "value_form": "quoted_literal",
+          "criterion": "package_inventory_or_noncredential_field"
+        }
+      ]
+    },
+    {
+      "blob": "db887b0516cec02c3b371f06afdccc9ceb1efdab",
+      "paths": [
+        "memory_base/deploy.py"
+      ],
+      "sets": [
+        "history"
+      ],
+      "locations": [
+        {
+          "line": 32,
+          "key_form": "bare",
+          "value_form": "quoted_literal",
+          "criterion": "environment_variable_identifier"
+        },
+        {
+          "line": 211,
+          "key_form": "quoted",
+          "value_form": "quoted_literal",
+          "criterion": "empty_placeholder_or_syntax"
+        },
+        {
+          "line": 371,
+          "key_form": "quoted",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        },
+        {
+          "line": 574,
+          "key_form": "quoted",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        },
+        {
+          "line": 576,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        }
+      ]
+    },
+    {
+      "blob": "dd97faf29499838b79adbc0e67f9e911aeda97d2",
+      "paths": [
+        "experiments/memory-base-formal-restore/run_restore.py"
+      ],
+      "sets": [
+        "history"
+      ],
+      "locations": [
+        {
+          "line": 169,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        },
+        {
+          "line": 177,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        },
+        {
+          "line": 181,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        },
+        {
+          "line": 184,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        },
+        {
+          "line": 186,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        },
+        {
+          "line": 190,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        },
+        {
+          "line": 192,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        },
+        {
+          "line": 201,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        }
+      ]
+    },
+    {
+      "blob": "df53c1433835a8a0364e1cbdfbc99a5ff2d3d6c7",
+      "paths": [
+        "memory_agent/eval/shared_service_41.py"
+      ],
+      "sets": [
+        "tree"
+      ],
+      "locations": [
+        {
+          "line": 20,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "prose_or_markdown_delimiter"
+        },
+        {
+          "line": 80,
+          "key_form": "bare",
+          "value_form": "quoted_literal",
+          "criterion": "fixture_local_host_identity"
+        },
+        {
+          "line": 81,
+          "key_form": "bare",
+          "value_form": "quoted_literal",
+          "criterion": "fixture_local_host_identity"
+        },
+        {
+          "line": 239,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "prose_or_markdown_delimiter"
+        },
+        {
+          "line": 245,
+          "key_form": "quoted",
+          "value_form": "quoted_literal",
+          "criterion": "number_boolean_null"
+        },
+        {
+          "line": 314,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        },
+        {
+          "line": 330,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        },
+        {
+          "line": 352,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        },
+        {
+          "line": 353,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        },
+        {
+          "line": 584,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        },
+        {
+          "line": 590,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        },
+        {
+          "line": 604,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        },
+        {
+          "line": 611,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        }
+      ]
+    },
+    {
+      "blob": "e37e2226ecba2a053d2097abbcb98c2adad069f2",
+      "paths": [
+        "experiments/memory-base-formal-restore/run_restore.py"
+      ],
+      "sets": [
+        "history"
+      ],
+      "locations": [
+        {
+          "line": 164,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        },
+        {
+          "line": 172,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        },
+        {
+          "line": 176,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        },
+        {
+          "line": 179,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        },
+        {
+          "line": 181,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        },
+        {
+          "line": 185,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        },
+        {
+          "line": 187,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        },
+        {
+          "line": 196,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        }
+      ]
+    },
+    {
+      "blob": "e3fc1e11414a1f08a5424a532e5e29f6dd1a91b0",
+      "paths": [
+        "experiments/memory-framework-spike/mvp/evidence/m5b_outofprocess_restore.json"
+      ],
+      "sets": [
+        "tree",
+        "history"
+      ],
+      "locations": [
+        {
+          "line": 65,
+          "key_form": "quoted",
+          "value_form": "quoted_literal",
+          "criterion": "fixture_local_embedding_placeholder"
+        },
+        {
+          "line": 145,
+          "key_form": "quoted",
+          "value_form": "quoted_literal",
+          "criterion": "fixture_local_embedding_placeholder"
+        },
+        {
+          "line": 379,
+          "key_form": "quoted",
+          "value_form": "quoted_literal",
+          "criterion": "fixture_local_embedding_placeholder"
+        }
+      ]
+    },
+    {
+      "blob": "e61b713fe3f00df41529da05471ad6dbfc0d0ca8",
+      "paths": [
+        "memory_base/mcp_stdio.py"
+      ],
+      "sets": [
+        "history"
+      ],
+      "locations": [
+        {
+          "line": 24,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        },
+        {
+          "line": 26,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        },
+        {
+          "line": 27,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        },
+        {
+          "line": 94,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        }
+      ]
+    },
+    {
+      "blob": "e98be5e2c418b66c9fd3ba4e3a8f6cd5e5fd79a7",
+      "paths": [
+        "experiments/memory-framework-spike/mvp/RECOVERY.md"
+      ],
+      "sets": [
+        "history"
+      ],
+      "locations": [
+        {
+          "line": 43,
+          "key_form": "bare",
+          "value_form": "quoted_literal",
+          "criterion": "environment_expansion_placeholder"
+        }
+      ]
+    },
+    {
+      "blob": "ea717caf7c522b37a7c2ce45fb337a607a3c06bd",
+      "paths": [
+        "memory_agent/eval/bge_m3_embeddings_43.py"
+      ],
+      "sets": [
+        "tree"
+      ],
+      "locations": [
+        {
+          "line": 166,
+          "key_form": "quoted",
+          "value_form": "quoted_literal",
+          "criterion": "fixture_preserve_existing_profile"
+        }
+      ]
+    },
+    {
+      "blob": "eaa313ee3c6296c294732430588584adfd8a7ae7",
+      "paths": [
+        "experiments/memory-framework-spike/mvp/RECOVERY.md"
+      ],
+      "sets": [
+        "tree",
+        "history"
+      ],
+      "locations": [
+        {
+          "line": 43,
+          "key_form": "bare",
+          "value_form": "quoted_literal",
+          "criterion": "environment_expansion_placeholder"
+        }
+      ]
+    },
+    {
+      "blob": "ed58a76f27807e577a209e0b4bee939f4caf30c4",
+      "paths": [
+        "experiments/memory-base-cold-start/native_probe_resume.py"
+      ],
+      "sets": [
+        "tree",
+        "history"
+      ],
+      "locations": [
+        {
+          "line": 82,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "number_boolean_null"
+        }
+      ]
+    },
+    {
+      "blob": "edd4f71bdb9189280cf7e183c3d000a4c50c1677",
+      "paths": [
+        "experiments/memory-framework-spike/mvp/evidence/m0_env.md"
+      ],
+      "sets": [
+        "tree",
+        "history"
+      ],
+      "locations": [
+        {
+          "line": 18,
+          "key_form": "quoted",
+          "value_form": "quoted_literal",
+          "criterion": "package_inventory_or_noncredential_field"
+        }
+      ]
+    },
+    {
+      "blob": "ee5bec3019983111302ceb592b3ad99a6b971197",
+      "paths": [
+        "ragcore/strategies/default.py"
+      ],
+      "sets": [
+        "tree"
+      ],
+      "locations": [
+        {
+          "line": 61,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        }
+      ]
+    },
+    {
+      "blob": "eeb05f965e6c57c6ad6a30e527db4c1a3e51769f",
+      "paths": [
+        "tests/unit/test_gateway_isolation_bypass.py"
+      ],
+      "sets": [
+        "tree"
+      ],
+      "locations": [
+        {
+          "line": 227,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "number_boolean_null"
+        }
+      ]
+    },
+    {
+      "blob": "f109ca365215237d859919a094f9637998f1f1d3",
+      "paths": [
+        "experiments/memory-base-package/recheck-2026-10-12/native_probe.py"
+      ],
+      "sets": [
+        "history"
+      ],
+      "locations": [
+        {
+          "line": 79,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "number_boolean_null"
+        }
+      ]
+    },
+    {
+      "blob": "f1ac1b0623b87f40ad5886956563b716e3b8c0e6",
+      "paths": [
+        "memory_agent/eval/gateway_authz_32.py"
+      ],
+      "sets": [
+        "tree"
+      ],
+      "locations": [
+        {
+          "line": 109,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "number_boolean_null"
+        },
+        {
+          "line": 114,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "number_boolean_null"
+        }
+      ]
+    },
+    {
+      "blob": "f589dff3fc448cd9fa7f73e53c8eee6fa6410b7f",
+      "paths": [
+        "tests/unit/test_memory_base_deploy.py"
+      ],
+      "sets": [
+        "tree",
+        "history"
+      ],
+      "locations": [
+        {
+          "line": 426,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        },
+        {
+          "line": 728,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        }
+      ]
+    },
+    {
+      "blob": "fa588f5c3dc5ce5473c7f5e867d00e821c8e2209",
+      "paths": [
+        "memory_base/deploy.py"
+      ],
+      "sets": [
+        "history"
+      ],
+      "locations": [
+        {
+          "line": 32,
+          "key_form": "bare",
+          "value_form": "quoted_literal",
+          "criterion": "environment_variable_identifier"
+        },
+        {
+          "line": 208,
+          "key_form": "quoted",
+          "value_form": "quoted_literal",
+          "criterion": "empty_placeholder_or_syntax"
+        },
+        {
+          "line": 336,
+          "key_form": "quoted",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        },
+        {
+          "line": 419,
+          "key_form": "quoted",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        },
+        {
+          "line": 421,
+          "key_form": "bare",
+          "value_form": "bare",
+          "criterion": "code_reference_annotation_or_comparison"
+        }
+      ]
+    },
+    {
+      "blob": "fd54f68481295281cbc2218c8f8769bc1f57423d",
+      "paths": [
+        "experiments/memory-framework-spike/mvp/scripts/embed_server.py"
+      ],
+      "sets": [
+        "tree",
+        "history"
+      ],
+      "locations": [
+        {
+          "line": 104,
+          "key_form": "quoted",
+          "value_form": "bare",
+          "criterion": "numeric_metric_or_inventory"
+        }
+      ]
+    }
+  ],
+  "limits": [
+    "Raw generic report retained unchanged; classification does not delete findings.",
+    "Finite manual fixture dispositions are tied to path and line within fixed blob hashes.",
+    "Unresolved literals remain owner-review items; no literal or context is serialized.",
+    "No additional vault, environment or HTTP content reads."
+  ]
+}
