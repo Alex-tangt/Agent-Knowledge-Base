@@ -1,0 +1,67 @@
+{
+  "date": "20261012T133936Z",
+  "combined_candidate_commit": "8e13fae4dba5d6b90e18de72cf4a8189d6e54381",
+  "host_candidate_commit": "ba8b5b5c557fceee93c9e5738b43ecee7ec9b156",
+  "actual": "D:\\python_work\\work2026-10\\Agent-bubble",
+  "backup": "D:\\python_work\\work2026-4\\memory-base-bubble-bridge-assets\\20261012\\actual-host-state-backup-20261012T133936Z",
+  "files": {
+    "scripts/host-state.mjs": {
+      "before": null,
+      "after": "6482f8b05cf7a42aba7de431fba339f0ab9be1a716f63fdabb8a917a23eb43c0"
+    },
+    "scripts/tests/local-backend.test.mjs": {
+      "before": "336e0f96252bbe46539db0abd1bafb5310d9f4decc0640de2f4be91a0ce89119",
+      "after": "9d0f1fae875ca8da4a1ac24bd6ac1c981962bf22c3362ab40c9f3ef91a303b7a"
+    },
+    "scripts/local-backend.mjs": {
+      "before": "b4896de296d068f7605d93b5549ee623ff58f6fe44bff1caee5edd3ec5d9c6ad",
+      "after": "fb63de37a3c6f7e358fc0862badf4982557bc23bd788874219f338d64ae5cb5d"
+    }
+  },
+  "baseline_all_verified_before_write": true,
+  "active_tasks_before_apply": 0,
+  "scope": "Three scripts only, no credentials, data or server TS changes",
+  "production_scripts_syntax_checks": true,
+  "production_server_compiled_files_match_combined_candidate": {
+    "dist/server/memory-tools.js": true,
+    "dist/server/memory-base.js": true
+  },
+  "lead_combined_gates": {
+    "candidate_commit": "8e13fae4dba5d6b90e18de72cf4a8189d6e54381",
+    "app_passed": 73,
+    "host_passed": 13,
+    "failed": 0,
+    "commands": [
+      {
+        "gate": "build",
+        "exit": 0,
+        "seconds": 17.4414346
+      },
+      {
+        "gate": "test",
+        "exit": 0,
+        "seconds": 25.9415386
+      },
+      {
+        "gate": "test:host",
+        "exit": 0,
+        "seconds": 110.259729
+      }
+    ],
+    "exec_session": 26093
+  },
+  "services_restarted": true,
+  "restart_exec": 1179,
+  "active_tasks_before_restart": 0,
+  "previous_manager": {
+    "pid": 44100,
+    "child_pid": 34768
+  },
+  "current_manager": {
+    "pid": 18752,
+    "child_pid": 41396,
+    "phase": "running",
+    "backend_healthy": true
+  },
+  "boundary": "Lead reviewed, combined #92/#93 and fully ran frozen build/app73/host13. Exact actual script preimages backed up, helper first, no TS/data/credential writes; actual own manager restarted healthy with zero active tasks. Production compiled memory files remain exactly the combined candidate; prior real pi/formal gateway evidence remains applicable. Original EPERM and fault RED retained; successful injected failures do not claim reproducing the original native lock."
+}
