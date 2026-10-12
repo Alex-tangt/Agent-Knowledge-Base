@@ -41,3 +41,26 @@ Lead 明确批准后，独立预登记 `7b8cef4`，限定同一 Lark 非 force �
 该结果是有限准备后首次成功初始化工作区的正向信号；d 之前失败启动产生过部分 SDK 缓存，不能替代完全全新 runtime 的独立复验。**产品当前默认 start 每组件 180 秒，实验 300 秒不等于默认通过**；不修改默认服务 timeout。Lead 批准安装时 Lark-only 准备阶段单独 600 秒预算（基于实测累计341.750秒），准备失败先于部署配置/凭据写入，使用所选 target 的实际 own-site，拒绝写继承 provider cache。
 
 R2 原始报告/命令/manager 日志与归属记录封存在本目录 `r2/`，`evidence-manifest.json` 记录各资产 raw SHA256；原件仍在 `C:\Users\Tan\.mb86\r4\cold-start-91\r2`。d workspace 此后已含本票合成测量基座，保留，不能再称空 workspace 或用于新的 fresh 首次启动。
+
+## 安装修复与回归
+
+冻结实现提交：`0c13d13ae5252fd5848b3979c4e2a3e39cc50031`，仅修改 `memory_base/deploy.py` 和其单测。
+
+install 仍应用原固定依赖约束、保持 source editable / 显式 wheel / PEP610 / adopt 路径，然后校验目标自身运行包来源。新增 Lark-only 准备使用目标解释器与实际模块来源，要求 SDK 为目标 own-site；不写继承 provider 的 cache。只编译 opt0、non-force，已有有效缓存保持字节和 mtime。SDK 定位用 `-B` 防止隐式缓存写入；准备失败（含预算耗尽）显式报错，不传播可能引用源码或凭据的编译错误正文，且发生在模型/成功部署配置/凭据阶段之前。准备阶段独立 600 秒预算，默认服务启动仍每组件 180 秒。
+
+Lead review 发现用户 PYTHONPYCACHEPREFIX / PYTHONOPTIMIZE 会让准备和服务使用不同缓存。真实 `_spawn` HTTP fixture 已先复现红信号（child 继承 user-cache 和 opt2）；修复只在 prepare 与 `_spawn` 的子进程环境清除两变量，不修改用户全局环境。准备成功报告给出 cache_tag/prefix/实际优化状态；真实子进程回归确认默认缓存位置、opt0、调用者环境未改，并通过原 manager 的 owned stop 清理。
+
+| 回归命令 | 结果 | 证据 |
+| --- | --- | --- |
+| `pytest tests/unit/test_memory_base_deploy.py -k 'prepares_selected_runtime or preparation_failure_preserves' -q`（修复前） | 4 failed，3.39 秒 | install-red.txt |
+| `pytest ... -k 'actual_spawn_uses_prepared_cache_policy or actual_target_preparation' -q`（环境修复前） | 2 failed，13.15 秒 | environment-red.txt |
+| `pytest tests/unit/test_memory_base_deploy.py -k 'not real_wheel' -q`（冻结实现） | 62 passed / 2 deselected，25.74 秒 | unit-final.txt |
+| `pytest tests/unit/test_memory_base_deploy.py -k real_wheel --basetemp <独立 wheel-final 资产> -q -s`（冻结实现） | 2 passed / 62 deselected，66.34 秒 | wheel-final.txt |
+
+62 项包括真实小型自有 Lark fixture 的编译、有效缓存不重写、caller优化设置下拒绝继承 provider、编译失败不泄漏源码、source/fresh/wheel/adopt/same-runtime调用链，以及失败保持既有数据和配置、不发凭据。小型 SDK 是两文件 fixture，不能代表真实 10,727 文件的准备成本；真实成本来自前述 R1/R2 测量。
+
+保留 #89 的两例实际 wheel build→独立 launcher/目标 venv→自身包 pip 安装→实际模块来源→模块与 console CLI 验证。**上游依赖安装/版本查询、新冷启动准备与凭据阶段仍明确为 fixture**，不是完全新依赖栈或首次 native 测量。最终 proof 在本目录 `wheel-final/`，真实 wheel、venv 与原件保留在 `C:\Users\Tan\.mb86\r4\cold-start-91\wheel-final-20261012-91`；此前首轮 wheel 回归资产 `wheel-tests-20261012-91` 同样保留。
+
+`delivery.json` 记录冻结提交、两个实际 wheel raw SHA256、wheel 的 deploy.py 与工作树 raw 字节及 Git CRLF归一化源码一致性、命令结果及 fixture 边界。automatic-default wheel SHA256 `c8e05fd251ad1bb68ade53f16659c7de21b8ba4e225201969f1e063a87588fe0`；explicit-fresh wheel SHA256 `80ba679dc92739849e4b262dafce93a42cee92fedbf967f27706bdb6198d81ea`。
+
+尚未验证：修复后完全全新 runtime 的完整依赖安装、真实 Lark 准备成本和默认 180 秒首次 native 启动。该最终 #86 独立复验归 Lead；本票不会用已经初始化的 d 或 warm 第二次启动冒充 fresh 首次通过。正式更新、全量既有闸门和跨域文档由 Lead 负责。

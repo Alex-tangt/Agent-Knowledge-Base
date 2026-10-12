@@ -1,0 +1,133 @@
+FFFF                                                                     [100%]
+================================== FAILURES ===================================
+___ test_install_prepares_selected_runtime_before_credentials[source-fresh] ___
+
+tmp_path = WindowsPath('C:/Users/Tan/AppData/Local/Temp/pytest-of-Tan/pytest-109/test_install_prepares_selected0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x0000015872ACF020>
+mode = 'source-fresh'
+
+    @pytest.mark.parametrize("mode", ["source-fresh", "wheel-adopt", "same-runtime"])
+    def test_install_prepares_selected_runtime_before_credentials(tmp_path, monkeypatch, mode):
+        target, site, model, _ = _stub_install_runtime(tmp_path, monkeypatch)
+        home = tmp_path / "home"
+        events = []
+        monkeypatch.setattr(deploy, "_installed_source", lambda *_: events.append("verified") or site)
+        monkeypatch.setattr(deploy, "_prepare_runtime", lambda python: events.append(("prepared", python)), raising=False)
+        monkeypatch.setattr(deploy, "_ensure_secret", lambda *_: events.append("credential") or "synthetic")
+        if mode == "source-fresh":
+            expected = (home / "runtime" / ("Scripts/python.exe" if os.name == "nt" else "bin/python")).resolve()
+            deploy.install(home, model=str(model), fresh_runtime=True)
+        elif mode == "wheel-adopt":
+            expected = target.resolve()
+            deploy.install(home, str(target), str(model), wheel=str(_wheel_fixture(tmp_path)))
+        else:
+            _wheel_launcher(tmp_path, monkeypatch)
+            expected = Path(sys.executable).resolve()
+            deploy.install(home, sys.executable, str(model))
+>       assert events[:3] == ["verified", ("prepared", expected), "credential"]
+E       AssertionError: assert ['verified', ... 'credential'] == ['verified', ... 'credential']
+E         
+E         At index 1 diff: 'credential' != ('prepared', WindowsPath('C:/Users/Tan/AppData/Local/Temp/pytest-of-Tan/pytest-109/test_install_prepares_selected0/home/runtime/Scripts/python.exe'))
+E         Use -v to get more diff
+
+tests\unit\test_memory_base_deploy.py:106: AssertionError
+___ test_install_prepares_selected_runtime_before_credentials[wheel-adopt] ____
+
+tmp_path = WindowsPath('C:/Users/Tan/AppData/Local/Temp/pytest-of-Tan/pytest-109/test_install_prepares_selected1')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x0000015872ACDA30>
+mode = 'wheel-adopt'
+
+    @pytest.mark.parametrize("mode", ["source-fresh", "wheel-adopt", "same-runtime"])
+    def test_install_prepares_selected_runtime_before_credentials(tmp_path, monkeypatch, mode):
+        target, site, model, _ = _stub_install_runtime(tmp_path, monkeypatch)
+        home = tmp_path / "home"
+        events = []
+        monkeypatch.setattr(deploy, "_installed_source", lambda *_: events.append("verified") or site)
+        monkeypatch.setattr(deploy, "_prepare_runtime", lambda python: events.append(("prepared", python)), raising=False)
+        monkeypatch.setattr(deploy, "_ensure_secret", lambda *_: events.append("credential") or "synthetic")
+        if mode == "source-fresh":
+            expected = (home / "runtime" / ("Scripts/python.exe" if os.name == "nt" else "bin/python")).resolve()
+            deploy.install(home, model=str(model), fresh_runtime=True)
+        elif mode == "wheel-adopt":
+            expected = target.resolve()
+            deploy.install(home, str(target), str(model), wheel=str(_wheel_fixture(tmp_path)))
+        else:
+            _wheel_launcher(tmp_path, monkeypatch)
+            expected = Path(sys.executable).resolve()
+            deploy.install(home, sys.executable, str(model))
+>       assert events[:3] == ["verified", ("prepared", expected), "credential"]
+E       AssertionError: assert ['verified', ... 'credential'] == ['verified', ... 'credential']
+E         
+E         At index 1 diff: 'credential' != ('prepared', WindowsPath('C:/Users/Tan/AppData/Local/Temp/pytest-of-Tan/pytest-109/test_install_prepares_selected1/target/Scripts/python.exe'))
+E         Use -v to get more diff
+
+tests\unit\test_memory_base_deploy.py:106: AssertionError
+___ test_install_prepares_selected_runtime_before_credentials[same-runtime] ___
+
+tmp_path = WindowsPath('C:/Users/Tan/AppData/Local/Temp/pytest-of-Tan/pytest-109/test_install_prepares_selected2')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x0000015872ACD490>
+mode = 'same-runtime'
+
+    @pytest.mark.parametrize("mode", ["source-fresh", "wheel-adopt", "same-runtime"])
+    def test_install_prepares_selected_runtime_before_credentials(tmp_path, monkeypatch, mode):
+        target, site, model, _ = _stub_install_runtime(tmp_path, monkeypatch)
+        home = tmp_path / "home"
+        events = []
+        monkeypatch.setattr(deploy, "_installed_source", lambda *_: events.append("verified") or site)
+        monkeypatch.setattr(deploy, "_prepare_runtime", lambda python: events.append(("prepared", python)), raising=False)
+        monkeypatch.setattr(deploy, "_ensure_secret", lambda *_: events.append("credential") or "synthetic")
+        if mode == "source-fresh":
+            expected = (home / "runtime" / ("Scripts/python.exe" if os.name == "nt" else "bin/python")).resolve()
+            deploy.install(home, model=str(model), fresh_runtime=True)
+        elif mode == "wheel-adopt":
+            expected = target.resolve()
+            deploy.install(home, str(target), str(model), wheel=str(_wheel_fixture(tmp_path)))
+        else:
+            _wheel_launcher(tmp_path, monkeypatch)
+            expected = Path(sys.executable).resolve()
+            deploy.install(home, sys.executable, str(model))
+>       assert events[:3] == ["verified", ("prepared", expected), "credential"]
+E       AssertionError: assert ['verified', ... 'credential'] == ['verified', ... 'credential']
+E         
+E         At index 1 diff: 'credential' != ('prepared', WindowsPath('D:/python_work/work2026-4/Agent-Knowledge-Base/venv/Scripts/python.exe'))
+E         Use -v to get more diff
+
+tests\unit\test_memory_base_deploy.py:106: AssertionError
+_ test_preparation_failure_preserves_deployment_and_data_without_provisioning_credentials _
+
+tmp_path = WindowsPath('C:/Users/Tan/AppData/Local/Temp/pytest-of-Tan/pytest-109/test_preparation_failure_prese0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x0000015872ACD8E0>
+
+    def test_preparation_failure_preserves_deployment_and_data_without_provisioning_credentials(tmp_path, monkeypatch):
+        target, _, model, _ = _stub_install_runtime(tmp_path, monkeypatch)
+        home = tmp_path / "home"
+        home.mkdir()
+        previous = json.dumps({"python": str(target), "model": str(model), "unchanged": True}).encode()
+        (home / "deployment.json").write_bytes(previous)
+        (home / "openviking.conf").write_bytes(b"existing-config")
+        (home / "data").mkdir()
+        (home / "data" / "original.md").write_bytes(b"existing-data")
+        monkeypatch.setattr(deploy, "_prepare_runtime", lambda _: (_ for _ in ()).throw(RuntimeError("preparation-failed")), raising=False)
+        monkeypatch.setattr(deploy, "_ensure_secret", lambda *_: pytest.fail("must prepare before credentials"))
+        with pytest.raises(RuntimeError, match="preparation-failed"):
+>           deploy.install(home)
+
+tests\unit\test_memory_base_deploy.py:121: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+memory_base\deploy.py:312: in install
+    _ensure_secret(secret, home)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+_ = ('root-key', WindowsPath('C:/Users/Tan/AppData/Local/Temp/pytest-of-Tan/pytest-109/test_preparation_failure_prese0/home'))
+
+>   monkeypatch.setattr(deploy, "_ensure_secret", lambda *_: pytest.fail("must prepare before credentials"))
+                                                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: must prepare before credentials
+
+tests\unit\test_memory_base_deploy.py:119: Failed
+=========================== short test summary info ===========================
+FAILED tests/unit/test_memory_base_deploy.py::test_install_prepares_selected_runtime_before_credentials[source-fresh]
+FAILED tests/unit/test_memory_base_deploy.py::test_install_prepares_selected_runtime_before_credentials[wheel-adopt]
+FAILED tests/unit/test_memory_base_deploy.py::test_install_prepares_selected_runtime_before_credentials[same-runtime]
+FAILED tests/unit/test_memory_base_deploy.py::test_preparation_failure_preserves_deployment_and_data_without_provisioning_credentials
+4 failed, 55 deselected in 3.39s

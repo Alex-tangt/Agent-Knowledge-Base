@@ -1,0 +1,52 @@
+{
+  "implementation_commit": "0c13d13ae5252fd5848b3979c4e2a3e39cc50031",
+  "frozen_source_parent": "609d88a278fe1187e20afb24f890f93d03e98e01",
+  "product_default_start_seconds": 180,
+  "preparation_budget_seconds": 600,
+  "cases": [
+    {
+      "mode": "automatic-default",
+      "proof_asset": "C:\\Users\\Tan\\.mb86\\r4\\cold-start-91\\wheel-final-20261012-91\\test_real_wheel_bootstraps_ind0\\real-wheel-proof.json",
+      "wheel_asset": "C:\\Users\\Tan\\.mb86\\r4\\cold-start-91\\wheel-final-20261012-91\\test_real_wheel_bootstraps_ind0\\wheels\\agent_memory_base-0.1.0-py3-none-any.whl",
+      "wheel_sha256": "c8e05fd251ad1bb68ade53f16659c7de21b8ba4e225201969f1e063a87588fe0",
+      "deploy_raw_sha256": "f7948a4d4dc50e5f4545de996e874ede7f133471c10915146ca6f88157dcf619",
+      "deploy_source_bytes_match": true,
+      "normalized_git_source_match": true,
+      "boundary": "Real wheel build/package pip installs. Upstream dependency install/version checks, SDK cold-start preparation and vault writes are fixtures; no clean dependency-stack installation or cold startup is claimed."
+    },
+    {
+      "mode": "explicit-fresh",
+      "proof_asset": "C:\\Users\\Tan\\.mb86\\r4\\cold-start-91\\wheel-final-20261012-91\\test_real_wheel_bootstraps_ind1\\real-wheel-proof.json",
+      "wheel_asset": "C:\\Users\\Tan\\.mb86\\r4\\cold-start-91\\wheel-final-20261012-91\\test_real_wheel_bootstraps_ind1\\wheels\\agent_memory_base-0.1.0-py3-none-any.whl",
+      "wheel_sha256": "80ba679dc92739849e4b262dafce93a42cee92fedbf967f27706bdb6198d81ea",
+      "deploy_raw_sha256": "f7948a4d4dc50e5f4545de996e874ede7f133471c10915146ca6f88157dcf619",
+      "deploy_source_bytes_match": true,
+      "normalized_git_source_match": true,
+      "boundary": "Real wheel build/package pip installs. Upstream dependency install/version checks, SDK cold-start preparation and vault writes are fixtures; no clean dependency-stack installation or cold startup is claimed."
+    }
+  ],
+  "tests": {
+    "non_wheel": {
+      "passed": 62,
+      "deselected": 2,
+      "pytest_seconds": 25.74,
+      "output": "unit-final.txt"
+    },
+    "real_wheel": {
+      "passed": 2,
+      "deselected": 62,
+      "pytest_seconds": 66.34,
+      "output": "wheel-final.txt"
+    },
+    "red_install_before_fix": {
+      "failed": 4,
+      "pytest_seconds": 3.39,
+      "output": "install-red.txt"
+    },
+    "red_environment_before_fix": {
+      "failed": 2,
+      "pytest_seconds": 13.15,
+      "output": "environment-red.txt"
+    }
+  }
+}

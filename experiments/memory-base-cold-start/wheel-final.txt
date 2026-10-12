@@ -1,0 +1,4 @@
+{"mode": "automatic-default", "proof": "C:\\Users\\Tan\\.mb86\\r4\\cold-start-91\\wheel-final-20261012-91\\test_real_wheel_bootstraps_ind0\\real-wheel-proof.json", "target_origin": "C:\\Users\\Tan\\.mb86\\r4\\cold-start-91\\wheel-final-20261012-91\\test_real_wheel_bootstraps_ind0\\deployment\\runtime\\Lib\\site-packages\\memory_base\\__init__.py", "wheel_sha256": "c8e05fd251ad1bb68ade53f16659c7de21b8ba4e225201969f1e063a87588fe0"}
+.{"mode": "explicit-fresh", "proof": "C:\\Users\\Tan\\.mb86\\r4\\cold-start-91\\wheel-final-20261012-91\\test_real_wheel_bootstraps_ind1\\real-wheel-proof.json", "target_origin": "C:\\Users\\Tan\\.mb86\\r4\\cold-start-91\\wheel-final-20261012-91\\test_real_wheel_bootstraps_ind1\\deployment\\runtime\\Lib\\site-packages\\memory_base\\__init__.py", "wheel_sha256": "80ba679dc92739849e4b262dafce93a42cee92fedbf967f27706bdb6198d81ea"}
+.
+2 passed, 62 deselected in 66.34s (0:01:06)
