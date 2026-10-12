@@ -1,6 +1,7 @@
 """Independent R2: real wheel, dependency installs, native behavior and cleanup."""
 from __future__ import annotations
 
+import argparse
 import base64
 from datetime import datetime, timezone
 from email.parser import BytesParser
@@ -62,13 +63,19 @@ def ports():
 def main():
     assert Path(sys.executable).resolve() == MAIN.resolve(), "Activate the main venv before running R2"
     stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
-    store = HERE / "store" / ("run-" + stamp)
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--run-name", default="run-" + stamp, help="New unique store directory name; use a short name on Windows")
+    args = parser.parse_args()
+    assert args.run_name not in {".", ".."} and Path(args.run_name).name == args.run_name
+    store = HERE / "store" / args.run_name
     store.mkdir(parents=True, exist_ok=False)
     report = {"frozen_sha": FROZEN, "store": str(store), "started_utc": stamp, "commands": [], "checks": {},
               "script_hashes": {path.name: sha(path.read_bytes()) for path in HERE.glob("*.py")},
               "limitations": ["Windows/Python 3.12 only; POSIX first credential persistence is not verified.",
                               "Launcher explicitly reuses formal dependencies; the two target runtimes do not.",
                               "No LLM/summary generation; native search uses the existing local GGUF model."]}
+    report["fixture_path_layout"] = {"launcher": "l", "default_home": "d", "fresh_home": "f",
+                                    "short_home_evidence_only": True, "windows_long_paths_not_enabled_by_test": True}
     # R2 method correction: preserve this machine's existing credential-free
     # loopback network proxy; private pip configuration remains excluded.
     proxy_policy = {}
@@ -202,7 +209,7 @@ def main():
                 "entry_points": entrypoints, "requires_python": metadata["Requires-Python"],
                 "requires_dist": metadata.get_all("Requires-Dist")}
         checked("wheel_inventory_source_metadata_record")
-        launcher = store / "launcher"
+        launcher = store / "l"
         run([MAIN, "-m", "venv", launcher], stage="create-launcher")
         launcher_python = launcher / "Scripts/python.exe"
         site = Path(json.loads(run([launcher_python, "-c", identity_code], stage="launcher-identity"))["purelib"])
@@ -230,7 +237,7 @@ def main():
         report["synthetic_protocol"] = json.loads(run([launcher_python, original_probe, "mcp", "--store", protocol_store], stage="synthetic-mcp"))
         checked("real_mcp_four_tools_synthetic_protocol_only")
         launcher_cli = launcher / "Scripts/memory-base.exe"
-        default_home = store / "default-home"
+        default_home = store / "d"
         assert not default_home.exists()
         run([launcher_cli, "install", "--home", default_home, "--model", MODEL], stage="default-real-install")
         target_python = default_home / "runtime/Scripts/python.exe"
@@ -245,7 +252,7 @@ def main():
         report["native"] = json.loads(run([target_python, HERE / "native_probe.py", "--home", default_home, "--store", store], stage="default-native"))
         assert report["native"]["overall"] == "PASS"
         checked("default_native_http_permissions_search_list_stdio_cleanup")
-        fresh_home = store / "adopt-then-fresh-home"
+        fresh_home = store / "f"
         assert not fresh_home.exists()
         run([launcher_cli, "install", "--home", fresh_home, "--runtime-python", launcher_python, "--model", MODEL], stage="adopt-real-install")
         adopted = set_fixture_ports(fresh_home)
