@@ -1,0 +1,53 @@
+{
+  "base": "09b8ed8213c7c02166fcde7ec0cb8a38458354c8",
+  "windows_python": "3.12.14",
+  "full_deploy_tests": {
+    "exit": 0,
+    "passed": 68,
+    "seconds": 88.44,
+    "code_state": "Product identical to final; test file before last pure-mock entry expectation correction."
+  },
+  "final_mock_entry_expectation_recheck": {
+    "exit": 0,
+    "passed": 1,
+    "deselected": 67,
+    "seconds": 0.96,
+    "code_state": "Final test file, focused rerun; final full main/CI validation remains Lead-owned."
+  },
+  "early_regression_fixture_failure": {
+    "exit": 1,
+    "passed": 3,
+    "failed": 1,
+    "cause": "New fixture lacked the required PEP610 archive SHA256; corrected the fixture, no weakening of provenance validation."
+  },
+  "wsl_symlink_differential": {
+    "python": "3.10.12",
+    "before": "red",
+    "after": "green",
+    "runs_naturally_finished": true
+  },
+  "real_wheel_proofs": [
+    {
+      "mode": "automatic-default",
+      "wheel_sha256": "f548e96399f5f6338947883450ec26545383e195ce2fd898369f0538f48bf046",
+      "target_origin": "C:\\Users\\Tan\\AppData\\Local\\Temp\\mb97-pytest-20261012\\test_real_wheel_bootstraps_ind0\\deployment\\runtime\\Lib\\site-packages\\memory_base\\__init__.py",
+      "boundary": "Real wheel build/package pip installs. Upstream dependency install/version checks, SDK cold-start preparation and vault writes are fixtures; no clean dependency-stack installation or cold startup is claimed."
+    },
+    {
+      "mode": "explicit-fresh",
+      "wheel_sha256": "c666252245d3df973042e376d2b1e20b727d057cb78822f5ccb8a9f6df33b7fb",
+      "target_origin": "C:\\Users\\Tan\\AppData\\Local\\Temp\\mb97-pytest-20261012\\test_real_wheel_bootstraps_ind1\\deployment\\runtime\\Lib\\site-packages\\memory_base\\__init__.py",
+      "boundary": "Real wheel build/package pip installs. Upstream dependency install/version checks, SDK cold-start preparation and vault writes are fixtures; no clean dependency-stack installation or cold startup is claimed."
+    }
+  ],
+  "limits": [
+    "Windows real package-wheel build and installs; upstream deps, SDK preparation and vault stages in wheel tests remain existing fixtures.",
+    "WSL3.10 proves POSIX symlink mechanism only; Ubuntu3.12 CI outstanding.",
+    "No formal/R4/R5/94/Bubble runtime, service, data or vault changes; old CI/R5 evidence retained."
+  ],
+  "implementation_commit": "8d832817a0f59223ddf12036b7b397b780715f2d",
+  "final_normalized_source_sha256": {
+    "memory_base/deploy.py": "bdf5417a530062f52afa724b47bf9f827bf1e10cc211625262ba4a1d1c4e9aee",
+    "tests/unit/test_memory_base_deploy.py": "35a42dc1d245e63a7e6053a07ac222bdc27c6c00a0ee3ee34bd3a845d2a1d2c8"
+  }
+}
