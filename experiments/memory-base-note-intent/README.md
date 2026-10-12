@@ -30,6 +30,8 @@
 
 [delivery.json](delivery.json) 包含实际原文件raw基线、候选raw/normalized SHA及LF artifact SHA。两artifact与冻结 Git blob逐字节相同；候选工作树为CRLF，正式基线与交付为LF。
 
+本目录局部 `.gitattributes` 固定 artifact/patch 为LF，避免主仓autocrlf在cherry-pick后改变交付字节。patch 的空上下文行只有一个格式空格，按补丁数据排除whitespace检查；候选源码及artifact代码仍正常检查。
+
 - [memory-tools.ts](artifacts/server/memory-tools.ts)：`2dfe82df62eb129564a76586bebdb40998e06a964c1e99393310ef911d1353de`。
 - [memory-base.test.ts](artifacts/server/tests/memory-base.test.ts)：`1d1e25b86c1b5168a0ebaec3fad1a5e9a415a90440ac23ca358b6b8ca1c6a13c`。
 - [两文件 patch](note-intent-two-files.patch)：`e65750b6e5b9af3be35e76f5dd78fac1d04989d7ba9c42ea7d080770dc6d467c`。

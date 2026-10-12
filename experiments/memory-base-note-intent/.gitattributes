@@ -1,0 +1,2 @@
+artifacts/**/*.ts text eol=lf
+*.patch text eol=lf -whitespace
