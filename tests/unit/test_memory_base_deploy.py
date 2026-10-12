@@ -105,7 +105,7 @@ def test_install_prepares_selected_runtime_before_credentials(tmp_path, monkeypa
         deploy.install(home, str(target), str(model), wheel=str(_wheel_fixture(tmp_path)))
     else:
         _wheel_launcher(tmp_path, monkeypatch)
-        expected = Path(sys.executable).resolve()
+        expected = Path(sys.executable).parent.resolve() / Path(sys.executable).name
         deploy.install(home, sys.executable, str(model))
     assert events[:3] == ["verified", ("prepared", expected), "credential"]
 
@@ -147,7 +147,48 @@ def _preparation_venv(tmp_path):
     python = root / ("Scripts/python.exe" if os.name == "nt" else "bin/python")
     output = subprocess.run([str(python), "-B", "-c", "import sysconfig;print(sysconfig.get_path('purelib'))"],
                             check=True, capture_output=True, text=True, timeout=30)
-    return python.resolve(), Path(output.stdout.strip())
+    return python.parent.resolve() / python.name, Path(output.stdout.strip())
+
+
+@pytest.mark.parametrize("mode", ["explicit", "previous", "fresh"])
+def test_actual_venv_selection_keeps_entry_prefix_and_site(tmp_path, mode):
+    python, site = _preparation_venv(tmp_path)
+    home = python.parent.parent.parent
+    if mode == "previous":
+        (home / "deployment.json").write_text(json.dumps({"python": str(python)}))
+    _, selected = deploy._install_state(home, str(python) if mode == "explicit" else None, mode == "fresh")
+    assert selected == python
+    if os.name == "posix":
+        assert python.is_symlink() and selected != python.resolve()
+    output = subprocess.run([str(selected), "-B", "-c",
+                             "import sys,sysconfig,json;print(json.dumps([sys.prefix,sysconfig.get_path('purelib')]))"],
+                            check=True, capture_output=True, text=True, timeout=30)
+    prefix, actual_site = json.loads(output.stdout)
+    assert Path(prefix) == python.parent.parent and Path(actual_site) == site
+
+
+def test_distinct_real_venvs_need_wheel_and_reject_other_interpreter_identity(tmp_path, monkeypatch):
+    launcher, _ = _preparation_venv(tmp_path / "launcher")
+    target, site = _preparation_venv(tmp_path / "target")
+    assert launcher != target
+    if os.name == "posix":
+        assert launcher.is_symlink() and target.is_symlink() and launcher.resolve() == target.resolve()
+    wheel = _wheel_fixture(tmp_path)
+    _wheel_launcher(tmp_path, monkeypatch, {"url": wheel.as_uri(), "archive_info": {
+        "hashes": {"sha256": hashlib.sha256(wheel.read_bytes()).hexdigest()}}})
+    monkeypatch.setattr(sys, "executable", str(launcher))
+    _, selected = deploy._install_state(tmp_path / "home", str(target), False)
+    assert deploy._package_input(selected, None) == (None, wheel.resolve())
+    assert deploy._package_input(launcher, None) == (None, None)
+    imported = {"python": str(selected), "file": str(site / "memory_base/__init__.py"),
+                "version": deploy.__version__, "distribution_version": deploy.__version__,
+                "site": str(site), "distribution_root": str(site)}
+    monkeypatch.setattr(deploy.subprocess, "run", lambda *_args, **_kwargs:
+                        subprocess.CompletedProcess([], 0, json.dumps(imported), ""))
+    assert deploy._installed_source(selected, None) == site.resolve()
+    imported["python"] = str(launcher)
+    with pytest.raises(RuntimeError, match="Target runtime did not import"):
+        deploy._installed_source(selected, None)
 
 
 def test_actual_target_preparation_compiles_only_own_lark_and_keeps_valid_caches(tmp_path, monkeypatch):
@@ -195,7 +236,7 @@ def test_actual_preparation_failure_is_explicit_without_exposing_compiler_source
 
 
 def test_preparation_uses_selected_python_and_separate_budget_without_echoing_failed_output(tmp_path, monkeypatch):
-    python = Path(sys.executable).resolve()
+    python = Path(sys.executable).parent.resolve() / Path(sys.executable).name
     monkeypatch.setenv("PYTHONPYCACHEPREFIX", "do-not-use-cache")
 
     def failed(command, **kwargs):
@@ -326,11 +367,11 @@ def test_same_installed_runtime_does_not_need_original_wheel(tmp_path, monkeypat
     monkeypatch.setattr(deploy, "_local_wheel_origin", lambda: pytest.fail("current runtime already has package"))
     config = deploy.install(tmp_path / "home", sys.executable, str(model))
     assert len(calls) == 1 and calls[0][1:5] == ["-m", "pip", "install", "--no-compile"]
-    assert config["python"] == str(Path(sys.executable).resolve())
+    assert config["python"] == str(Path(sys.executable).parent.resolve() / Path(sys.executable).name)
 
 
 def test_target_import_verification_rejects_launchers_package_and_clears_pythonpath(tmp_path, monkeypatch):
-    python = Path(sys.executable).resolve()
+    python = Path(sys.executable).parent.resolve() / Path(sys.executable).name
     site = tmp_path / "target-site"
     payload = {"python": str(python), "file": str(tmp_path / "launcher" / "memory_base" / "__init__.py"),
                "site": str(site), "version": "0.1.0", "distribution_version": "0.1.0", "distribution_root": str(site)}
@@ -436,8 +477,9 @@ def test_real_wheel_bootstraps_independent_target_runtime(tmp_path, mode):
     proof = json.loads(next(line.removeprefix("WHEEL_PROOF=") for line in stdout.splitlines() if line.startswith("WHEEL_PROOF=")))
     assert Path(proof["launcher_origin"]) == launcher_site / "memory_base" / "deploy.py"
     assert proof["config"]["source"] == str(target_site)
-    assert proof["config"]["python"] == str(target.resolve())
-    assert [str(target.resolve()), "-m", "pip", "install", "--no-deps", "--ignore-installed", str(wheel.resolve())] in proof["calls"]
+    target_entry = target.parent.resolve() / target.name
+    assert proof["config"]["python"] == str(target_entry)
+    assert [str(target_entry), "-m", "pip", "install", "--no-deps", "--ignore-installed", str(wheel.resolve())] in proof["calls"]
     origin = run([target, "-c", "import memory_base;print(memory_base.__file__)"]).strip()
     assert Path(origin) == target_site / "memory_base" / "__init__.py"
     assert "usage:" in run([target, "-m", "memory_base", "--help"])

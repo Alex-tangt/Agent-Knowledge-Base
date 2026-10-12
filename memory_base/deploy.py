@@ -223,13 +223,19 @@ def _local_wheel_origin() -> Path:
         raise RuntimeError("No verified local wheel origin is available; pass --wheel <path>") from None
 
 
+def _python_entry(value: str | Path) -> Path:
+    """Canonicalize the directory but keep a venv's final Python symlink."""
+    path = Path(value).expanduser()
+    return path.parent.resolve() / path.name
+
+
 def _install_state(home: Path, runtime_python: str | None, fresh_runtime: bool) -> tuple[dict, Path]:
     config_path = home / "deployment.json"
     previous = json.loads(config_path.read_text()) if config_path.exists() else {}
     if fresh_runtime and runtime_python:
         raise ValueError("Choose either --fresh-runtime or --runtime-python")
-    python = Path(runtime_python or (None if fresh_runtime else previous.get("python")) or
-                  home / "runtime" / ("Scripts/python.exe" if os.name == "nt" else "bin/python")).resolve()
+    python = _python_entry(runtime_python or (None if fresh_runtime else previous.get("python")) or
+                           home / "runtime" / ("Scripts/python.exe" if os.name == "nt" else "bin/python"))
     if runtime_python and not python.exists():
         raise FileNotFoundError("Selected runtime Python does not exist")
     return previous, python
@@ -241,7 +247,7 @@ def _package_input(python: Path, wheel: str | None) -> tuple[Path | None, Path |
     source = Path(__file__).resolve().parent
     if (source / "pyproject.toml").is_file():
         return source, None
-    if python == Path(sys.executable).resolve():
+    if _python_entry(python) == _python_entry(sys.executable):
         return None, None  # The current wheel runtime already contains this package.
     return None, _local_wheel_origin()
 
@@ -262,7 +268,7 @@ def _installed_source(python: Path, source: Path | None) -> Path:
         actual = Path(imported["file"]).resolve()
         site = Path(imported["site"]).resolve()
         expected = (source if source is not None else site / "memory_base") / "__init__.py"
-        if (Path(imported["python"]).resolve() != python or imported["version"] != __version__
+        if (_python_entry(imported["python"]) != _python_entry(python) or imported["version"] != __version__
                 or imported["distribution_version"] != __version__ or actual != expected.resolve()
                 or (source is None and Path(imported["distribution_root"]).resolve() != site)):
             raise ValueError("Wrong target installation")
@@ -275,7 +281,10 @@ def _prepare_runtime(python: Path) -> dict:
     """Prepare the measured cold import without touching inherited SDK providers."""
     script = """import compileall,importlib.metadata as m,importlib.util,json,sys,sysconfig,time
 from pathlib import Path
-if Path(sys.executable).resolve()!=Path(sys.argv[1]).resolve():
+def python_entry(value):
+ path=Path(value).expanduser()
+ return path.parent.resolve()/path.name
+if python_entry(sys.executable)!=python_entry(sys.argv[1]):
  raise RuntimeError('Unexpected target interpreter')
 site=Path(sysconfig.get_path('purelib')).resolve()
 dist=m.distribution('lark-oapi')
