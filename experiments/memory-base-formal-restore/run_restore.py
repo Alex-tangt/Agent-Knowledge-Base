@@ -117,12 +117,12 @@ def request(url, method="GET", body=None, *, token=None, key=None):
         return error.code,json.loads(error.read())
 
 
-async def mcp_probe(gateway, receipts):
+async def mcp_probe(gateway, receipts, prefix=""):
     from mcp import ClientSession,StdioServerParameters
     from mcp.client.stdio import stdio_client
     params=StdioServerParameters(command=str(PYTHON),args=["-B","-m","memory_base.mcp_stdio","--home",str(HOME),
         "--profile","reader","--url",gateway],env=env(),cwd=os.environ["TEMP"])
-    with (ROOT/"mcp.stderr.log").open("w",encoding="utf-8") as err:
+    with (ROOT/(prefix+"mcp.stderr.log")).open("w",encoding="utf-8") as err:
         async with stdio_client(params,errlog=err) as (read,write):
             async with ClientSession(read,write) as client:
                 await client.initialize()
@@ -145,9 +145,10 @@ async def mcp_probe(gateway, receipts):
             "reader_list":True,"project_search":True}
 
 
-def live_probe():
+def live_probe(prefix=""):
     from memory_base import deploy
     from memory_base.credentials import get_secret
+    from memory_base.gateway import AddRequest
     config=deploy.load_config(HOME)
     assert Path(sys.executable).resolve()==PYTHON.resolve()
     gateway=f"http://127.0.0.1:{config['ports']['gateway']}"
@@ -162,7 +163,7 @@ def live_probe():
     records=deploy._records(HOME)
     assert set(records)==set(deploy.COMPONENTS)
     assert all(deploy.owned_component(n,HOME,config,r) for n,r in records.items())
-    (ROOT/"processes-started.json").write_text(json.dumps(records,indent=2)+"\n",encoding="utf-8")
+    (ROOT/(prefix+"processes-started.json")).write_text(json.dumps(records,indent=2)+"\n",encoding="utf-8")
     receipts=[]
     for label,(capture_id,digest) in RECEIPTS.items():
         uri=f"viking://resources/captures/{capture_id}/content.md"
@@ -181,7 +182,12 @@ def live_probe():
     code,listed=request(gateway+"/api/memory/list","POST",{"scope":"captures","limit":20},token=reader)
     assert code==200 and {r["uri"] for r in receipts}.issubset(i["uri"] for i in listed["items"])
     count_before=listed["completeness"]["total"]
-    code,_=request(gateway+"/api/memory/add","POST",{"request_id":"mb94-reader-denied","content":"synthetic denied probe","kind":"note"},token=reader)
+    rejected_fixture={"request_id":"mb94-reader-denied","title":"Restore permission probe",
+                      "content":"synthetic denied probe","kind":"note"}
+    # A malformed 422 request cannot prove reader authorization. Validate against
+    # the actual installed model before making the permitted denial probe.
+    AddRequest.model_validate(rejected_fixture)
+    code,_=request(gateway+"/api/memory/add","POST",rejected_fixture,token=reader)
     assert code==403
     code,after=request(gateway+"/api/memory/list","POST",{"scope":"captures","limit":20},token=reader)
     assert code==200 and after["completeness"]["total"]==count_before
@@ -218,8 +224,9 @@ def live_probe():
         "native_gateway_key_hash_rotated":True,"native_foreign_account_read_status":native_denied_status,
         "native_foreign_account_read_403":True,"receipts":receipts,"projects":project_receipts,
         "reader_write_403_no_new_capture":True,"anonymous_401":True,"scope_403":True,"stale_revision_409":True,
-        "capture_count":count_before,"mcp":asyncio.run(mcp_probe(gateway,receipts))}
-    (ROOT/"live-probe.json").write_text(json.dumps(result,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
+        "capture_count":count_before,"denied_fixture_schema_validated":True,
+        "mcp":asyncio.run(mcp_probe(gateway,receipts,prefix))}
+    (ROOT/(prefix+"live.json")).write_text(json.dumps(result,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
     print(json.dumps({"overall":"PASS","originals":len(receipts),"projects":len(project_receipts),
                       "native_foreign_account_read_403":True},ensure_ascii=False))
 
@@ -267,9 +274,10 @@ def main():
     parser.add_argument("--live-probe",action="store_true")
     parser.add_argument("--runtime-audit",action="store_true")
     parser.add_argument("--continue-installed",action="store_true")
+    parser.add_argument("--probe-prefix",default="",choices=("","probe-continuation-"))
     args=parser.parse_args()
     if args.live_probe:
-        live_probe()
+        live_probe(args.probe_prefix)
         return
     if args.runtime_audit:
         runtime_audit()
