@@ -1,0 +1,63 @@
+{
+  "frozen_sha": "9252d5281ab69ad418c76e1672af4dc6fbdff9e5",
+  "home": "C:\\Users\\Tan\\.mb86\\r4\\f",
+  "report_root": "C:\\Users\\Tan\\.mb86\\r4\\normal-native",
+  "script_commit": "f68c7c46257cf8663f83672c594e0ee4c5468e15",
+  "script_sha256": "9e97e66b8e9eeb3cb0fe4c4ee500ab758ba1f3f0aff8772cb7eab82a7fc11f5e",
+  "native_probe_sha256": "ed55737e73436be2e9b30f9ce26626ad78b6e15c7fd8e449ef1f1e1ba0a390f0",
+  "original_artifact_hashes": {
+    "C:\\Users\\Tan\\.mb86\\r4\\results.json": "5858d3edc0e31c1cff751553a772325c4f650aa14efa9bcc75f09b6ebf7a27a9",
+    "C:\\Users\\Tan\\.mb86\\r4\\native.json": "f35e81b9e58afaa512b9d05d4a771096a24bdba46502df8b01bd7767fb785b44",
+    "C:\\Users\\Tan\\.mb86\\r4\\results-before-fresh.json": "5014af4a6d7c34216171011287ed30e0d282fc37dea6589f61b13c216f46d0d5"
+  },
+  "command": [
+    "C:\\Users\\Tan\\.mb86\\r4\\f\\runtime\\Scripts\\python.exe",
+    "C:\\Users\\Tan\\.codex\\worktrees\\memory-bootstrap-fix\\Agent-Knowledge-Base\\experiments\\memory-base-package\\recheck-2026-10-12\\native_probe.py",
+    "--home",
+    "C:\\Users\\Tan\\.mb86\\r4\\f",
+    "--store",
+    "C:\\Users\\Tan\\.mb86\\r4\\normal-native",
+    "--asset-root",
+    "C:\\Users\\Tan\\.mb86\\r4"
+  ],
+  "cwd": "C:\\Users\\Tan\\AppData\\Local\\Temp",
+  "environment": {
+    "extra_bytecode_prohibition_removed": true,
+    "memory_python_path_home_cleared": true
+  },
+  "precondition": {
+    "fresh_install_pass": true,
+    "openviking_workspace_uninitialized": true,
+    "preserved_marker_sha256": "a107864c0bddb2c7da359daf9022f0f6cb3ae156188325f6ee9403ada6cbd5de",
+    "lark_pyc": 0,
+    "volcengine_pyc": 0
+  },
+  "method": "Same frozen installed wheel and 300s manager timeout; no precompile, new dependencies, fork, LLM or service changes.",
+  "pid": 38568,
+  "exit_code": 1,
+  "wall_seconds": 331.88260480000463,
+  "native": {
+    "home": "C:\\Users\\Tan\\.mb86\\r4\\f",
+    "ports": {
+      "upstream": 53653,
+      "gateway": 53654,
+      "embed": 53655
+    },
+    "checks": {
+      "owned_process_cleanup_no_residual": true
+    },
+    "boundary": "New isolated native OpenViking; only synthetic fixture and local GGUF embedding. No LLM generation.",
+    "start_exit_code": 1,
+    "start_seconds": 314.51858289999655,
+    "overall": "FAIL",
+    "failure": {
+      "type": "AssertionError",
+      "message": "Native manager start failed; see preserved log"
+    },
+    "stop_exit_code": 0,
+    "stop_seconds": 12.287185499997577
+  },
+  "marker_preserved_after_native": true,
+  "original_artifacts_unchanged": true,
+  "overall": "FAIL"
+}

@@ -49,3 +49,5 @@ Lead 已确认可继续独立的 adopt→fresh 安装判据，不重启任何服
 `normal_native.py` 先核 frozen/fresh gate/config/model/source/marker 与不存在的报告根，实际调用 f/runtime 的 `native_probe.py`，分别传 `--asset-root r4` 和 `--store r4/normal-native`。脚本分开 home 资产根和报告根；新子目录报告、process records 快照与日志不覆盖原 r4/native.json、results.json、results-before-fresh.json，并在完成后核验它们的字节哈希。
 
 标准条件实际运行三服务 readiness、native Unicode/CRLF 合成 append、reader get/hash/list/search、anonymous 401/reader 403、SDK1.30 stdio 四工具/get/list；只允许本地 GGUF embedding，不生成总结。finally 由本 f home manager 精确归属清理，保存 stop 前 records、核端口无残留。PASS/FAIL 均另存 [normal_native_result.json](normal_native_result.json)；不改原 FAIL，不因观察等待超时重启或增加服务 timeout。结束后再追加实际结果。
+
+实际标准条件 probe 自然结束退出 1，start 314.52s（embed阶段+上游原300s）仍 `upstream did not become healthy before timeout`；upstream out/err 0字节、gateway未启，未进入任何 native 读写/MCP。stop 退出0，保留 partial PID/birth/完整命令，records={}、三端口无残留。marker 与三份原R4报告hash均未变，完整结果见 [normal_native_result.json](normal_native_result.json)，清理证据见 [normal_cleanup_evidence.json](normal_cleanup_evidence.json)。不将原额外变量作为标准条件失败的解释；产品首次启动缺陷尚需 Lead 后续定位，不在本轮修改实现或再跑。

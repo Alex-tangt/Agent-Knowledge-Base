@@ -21,10 +21,14 @@ def main():
     paths += [path for path in asset.iterdir() if path.suffix in (".json", ".log")]
     paths += [path for path in (asset / "normal-native").iterdir() if path.suffix in (".json", ".log")]
     for home in (asset / "d", asset / "f"):
-        paths += [path for path in home.iterdir() if path.suffix == ".json"]
+        paths += [path for path in home.iterdir() if path.suffix in (".json", ".conf")]
         paths += list((home / "logs").glob("*"))
     paths = sorted(set(path for path in paths if path.is_file()))
-    hits = [str(path) for path in paths if any(value in path.read_bytes() for value in values)]
+    hits = []
+    for path in paths:
+        content = path.read_bytes()
+        if any(value in content for value in values):
+            hits.append(str(path))
     report = {"checked_files": len(paths), "fixture_secret_values_checked": len(values),
               "only_fixture_namespaces_read": True, "plaintext_fixture_secret_found": bool(hits),
               "files_with_hits": hits}
