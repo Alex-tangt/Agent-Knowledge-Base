@@ -1,0 +1,51 @@
+{
+  "status": "ready",
+  "home": "C:\\Users\\Tan\\.mb94\\a",
+  "url": "http://127.0.0.1:58181",
+  "versions": {
+    "openviking": "0.4.23",
+    "openviking-sdk": "0.1.13",
+    "mcp": "1.30.0",
+    "llama-cpp-python": "0.3.36",
+    "volcengine-python-sdk": "5.0.51",
+    "openai": "2.54.0"
+  },
+  "services": {
+    "embed": {
+      "pid": 5644,
+      "owned": true,
+      "port": 58182,
+      "health": {
+        "status": "ok",
+        "service": "memory-base-embedding",
+        "model": "bge-small-zh-v1.5-f16",
+        "serialized": true,
+        "pid": 18064,
+        "calls": 0,
+        "items": 0
+      }
+    },
+    "upstream": {
+      "pid": 25360,
+      "owned": true,
+      "port": 58180,
+      "health": {
+        "status": "ok",
+        "healthy": true,
+        "version": "0.4.23",
+        "auth_mode": "api_key"
+      }
+    },
+    "gateway": {
+      "pid": 29368,
+      "owned": true,
+      "port": 58181,
+      "health": {
+        "service": "memory-base-gateway",
+        "pid": 1968,
+        "status": "ready",
+        "scope": "viking://resources/captures"
+      }
+    }
+  }
+}

@@ -1,0 +1,59 @@
+{
+  "started_at": "2026-10-12T13:23:17.193462+00:00",
+  "snapshot": {
+    "manifest_sha256": "27dc14f772e61a351be62bf3c5dfb24397c27cec8894612065139a8677541c65",
+    "files": 67,
+    "directories": 39,
+    "inventory_sha256": "0d0187c9e26bcb3a5cc4b08958db9882992af848480adbb2e2e0c7a478ced50c",
+    "bytes": 7229794
+  },
+  "commands": [
+    {
+      "stage": "install",
+      "command": [
+        "C:\\Users\\Tan\\.mb86\\r5\\f\\runtime\\Scripts\\python.exe",
+        "-B",
+        "-m",
+        "memory_base",
+        "install",
+        "--home",
+        "C:\\Users\\Tan\\.mb94\\a",
+        "--runtime-python",
+        "C:\\Users\\Tan\\.mb86\\r5\\f\\runtime\\Scripts\\python.exe",
+        "--wheel",
+        "C:\\Users\\Tan\\.mb86\\r5\\wheels\\agent_memory_base-0.1.0-py3-none-any.whl",
+        "--model",
+        "C:\\Users\\Tan\\.cache\\openviking\\models\\bge-small-zh-v1.5-f16.gguf"
+      ],
+      "status": "completed",
+      "log": "C:\\Users\\Tan\\.mb94\\install.log",
+      "pid": 7336,
+      "exit_code": 0,
+      "seconds": 52.276441200010595
+    }
+  ],
+  "checks": {
+    "independent_snapshot_67_inventory": true
+  },
+  "wheel_sha256": "baa5877bc55a834f7abf16c833d9e869c0768624efdd63de9ad1ef8b2768bfde",
+  "product_frozen_sha": "45296a58fe2559e0b92f4af851c018b56148865a",
+  "runtime_reuse": {
+    "python": "C:\\Users\\Tan\\.mb86\\r5\\f\\runtime\\Scripts\\python.exe",
+    "new_dependency_stack": false,
+    "own_site": true
+  },
+  "cache_before": {
+    "lark_pyc": 10727,
+    "volc_sdk_pyc": 0
+  },
+  "original_r5_immutable_file_count": 132,
+  "overall": "FAIL",
+  "failure": {
+    "type": "AssertionError",
+    "message": "R5 non-cache bytes changed after install"
+  },
+  "cleanup_failure": {
+    "type": "AssertionError",
+    "message": ""
+  }
+}

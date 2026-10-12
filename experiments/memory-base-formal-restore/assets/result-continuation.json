@@ -1,0 +1,166 @@
+{
+  "started_at": "2026-10-12T13:30:47.931396+00:00",
+  "snapshot": {
+    "manifest_sha256": "27dc14f772e61a351be62bf3c5dfb24397c27cec8894612065139a8677541c65",
+    "files": 67,
+    "directories": 39,
+    "inventory_sha256": "0d0187c9e26bcb3a5cc4b08958db9882992af848480adbb2e2e0c7a478ced50c",
+    "bytes": 7229794
+  },
+  "commands": [
+    {
+      "stage": "runtime-audit",
+      "command": [
+        "C:\\Users\\Tan\\.mb86\\r5\\f\\runtime\\Scripts\\python.exe",
+        "-B",
+        "C:\\Users\\Tan\\.codex\\worktrees\\memory-package-acceptance\\Agent-Knowledge-Base\\experiments\\memory-base-formal-restore\\run_restore.py",
+        "--runtime-audit"
+      ],
+      "status": "completed",
+      "log": "C:\\Users\\Tan\\.mb94\\continuation-runtime-audit.log",
+      "pid": 34608,
+      "exit_code": 0,
+      "seconds": 1.2218210999999428
+    },
+    {
+      "stage": "restore",
+      "command": [
+        "C:\\Users\\Tan\\.mb86\\r5\\f\\runtime\\Scripts\\python.exe",
+        "-B",
+        "-m",
+        "memory_base",
+        "restore",
+        "--home",
+        "C:\\Users\\Tan\\.mb94\\a",
+        "--backup",
+        "D:\\python_work\\work2026-4\\memory-base-backups\\formal-20261012T014904"
+      ],
+      "status": "completed",
+      "log": "C:\\Users\\Tan\\.mb94\\continuation-restore.log",
+      "pid": 28856,
+      "exit_code": 0,
+      "seconds": 3.794235800000024
+    },
+    {
+      "stage": "start",
+      "command": [
+        "C:\\Users\\Tan\\.mb86\\r5\\f\\runtime\\Scripts\\memory-base.exe",
+        "start",
+        "--home",
+        "C:\\Users\\Tan\\.mb94\\a"
+      ],
+      "status": "completed",
+      "log": "C:\\Users\\Tan\\.mb94\\continuation-start.log",
+      "pid": 40360,
+      "exit_code": 0,
+      "seconds": 182.21763559999818
+    },
+    {
+      "stage": "live-probe",
+      "command": [
+        "C:\\Users\\Tan\\.mb86\\r5\\f\\runtime\\Scripts\\python.exe",
+        "-B",
+        "C:\\Users\\Tan\\.codex\\worktrees\\memory-package-acceptance\\Agent-Knowledge-Base\\experiments\\memory-base-formal-restore\\run_restore.py",
+        "--live-probe"
+      ],
+      "status": "completed",
+      "log": "C:\\Users\\Tan\\.mb94\\continuation-live-probe.log",
+      "pid": 28696,
+      "exit_code": 1,
+      "seconds": 35.4549326000124
+    },
+    {
+      "stage": "stop",
+      "command": [
+        "C:\\Users\\Tan\\.mb86\\r5\\f\\runtime\\Scripts\\memory-base.exe",
+        "stop",
+        "--home",
+        "C:\\Users\\Tan\\.mb94\\a"
+      ],
+      "status": "completed",
+      "log": "C:\\Users\\Tan\\.mb94\\continuation-stop.log",
+      "pid": 39616,
+      "exit_code": 0,
+      "seconds": 19.28605760000937
+    }
+  ],
+  "checks": {
+    "independent_snapshot_67_inventory": true,
+    "restore_cli_exact_67_pre_start": true,
+    "directories_exact_pre_start": true,
+    "sources_bytes_retained": true,
+    "access_absence_retained": true,
+    "identity_reissue_pending_before_start": true,
+    "default_180_three_service_start": true,
+    "owned_manager_stop_and_ports_clear": true,
+    "snapshot_original_byte_hash_unchanged": true,
+    "r5_current_install_baseline_non_cache_bytes_unchanged": true
+  },
+  "wheel_sha256": "baa5877bc55a834f7abf16c833d9e869c0768624efdd63de9ad1ef8b2768bfde",
+  "product_frozen_sha": "45296a58fe2559e0b92f4af851c018b56148865a",
+  "runtime_reuse": {
+    "python": "C:\\Users\\Tan\\.mb86\\r5\\f\\runtime\\Scripts\\python.exe",
+    "new_dependency_stack": false,
+    "own_site": true
+  },
+  "cache_before": {
+    "lark_pyc": 10727,
+    "volc_sdk_pyc": 0
+  },
+  "original_r5_immutable_file_count": 133,
+  "continued_successful_install": true,
+  "no_install_rerun": true,
+  "boundary": "Actual 67-file formal snapshot recovery only. Shared R5 runtime; not a third new dependency stack or a new cold-install gate.",
+  "runtime_current_audit": {
+    "overall": "PASS",
+    "own_site": true,
+    "pins": {
+      "openviking": "0.4.23",
+      "openviking-sdk": "0.1.13",
+      "mcp": "1.30.0",
+      "llama-cpp-python": "0.3.36",
+      "volcengine-python-sdk": "5.0.51",
+      "openai": "2.54.0"
+    },
+    "product_payload_files": 15,
+    "product_payload_equals_frozen_wheel": true,
+    "installed_record_rows_checked": 36,
+    "installed_record_sha256": "dc22ac1a556a226d5ea7ea5873e0af41845424e42e434b98202238fe46a8f314",
+    "console_launcher_sha256": "3f9429d600b91b0cee1f34996f313d7bedc9e78f5ae911f00982a5518e5d3e89",
+    "direct_url_sha256": "184938703c23adcecdba677e8a42e164745b535689fd667b854f6c5dd3b4e66f",
+    "local_wheel_provenance": true,
+    "wheel_sha256": "baa5877bc55a834f7abf16c833d9e869c0768624efdd63de9ad1ef8b2768bfde"
+  },
+  "pre_restore": {
+    "empty_data": true,
+    "sources_access_restore_absent": true,
+    "ports": {
+      "upstream": 58180,
+      "gateway": 58181,
+      "embed": 58182
+    },
+    "ports_fixture": "Only unstarted target deployment config adjusted; not a CLI ports feature"
+  },
+  "overall": "FAIL",
+  "failure": {
+    "type": "AssertionError",
+    "message": "live-probe failed; preserve original log"
+  },
+  "cleanup": {
+    "ports_busy": {
+      "upstream": false,
+      "gateway": false,
+      "embed": false
+    },
+    "records_after": {}
+  },
+  "cache_after": {
+    "lark_pyc": 10727,
+    "volc_sdk_pyc": 472
+  },
+  "formal_health_readonly": {
+    "upstream": 200,
+    "gateway": 200,
+    "embed": 200
+  }
+}

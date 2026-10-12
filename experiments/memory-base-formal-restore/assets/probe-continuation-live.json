@@ -1,0 +1,69 @@
+{
+  "overall": "PASS",
+  "three_owned_services": true,
+  "identity_reissue_pending": false,
+  "target_credentials_distinct_count": 7,
+  "target_credentials_distinct": true,
+  "native_identity_roster_retained_sha256": "d813a2345bd499f03569661656fb6ff8004dad4214cfb357f1a5a5fa18e1e563",
+  "native_gateway_key_hash_rotated": true,
+  "native_foreign_account_read_status": 403,
+  "native_foreign_account_read_403": true,
+  "receipts": [
+    {
+      "result": "PASS",
+      "uri": "viking://resources/captures/4b24c835877cfaa5666c2ba322431a663aab3fdd17c3196ac99274e94fcf591d/content.md",
+      "sha256": "a773d1d44eb19f2b3e061417b37aabfc728a1878bf50f0918eb994e1746b8095",
+      "source_metadata_sha256": "95f9eaf0744d75d5920638370dd00819b8f5721aaf25f97c7b997451d1fa9b6c",
+      "source_and_task_provenance_retained": true,
+      "native_search_found": true
+    },
+    {
+      "result": "PASS",
+      "uri": "viking://resources/captures/0ada0a7776fcf4e646f0b3b54d69972334f01b04a7da6488c4044fa6f46dbd7b/content.md",
+      "sha256": "5f6ba7e2e05b205484c0034111404a363151d35d95516871c61fd6d727eeadc7",
+      "source_metadata_sha256": "ae9c300d4e467ce50050b472f07b9850b1777318a965d3883c480a89ac887767",
+      "source_and_task_provenance_retained": true,
+      "native_search_found": true
+    },
+    {
+      "result": "PASS",
+      "uri": "viking://resources/captures/5a3c5791d6c61e7a5771ca7006d5d0498134c7076dcad2e3312177af4f47ce9c/content.md",
+      "sha256": "167b784b8f81f90927b6b3d656c0d3df8cec10f92d1601fb4c1901271f0ca6e0",
+      "source_metadata_sha256": "3b59bc2d6c0bfe9ef47812935e4228482f44398656c64d0daedc59bbfb82c9bc",
+      "source_and_task_provenance_retained": true,
+      "native_search_found": true
+    }
+  ],
+  "projects": [
+    {
+      "uri": "projects/agent-kb/README.md",
+      "sha256": "f1da1afeacfc7edd359307ccbcd9c146caf6811fbdbc6cc57b344a6103c9660c",
+      "result": "PASS",
+      "current_registered_source": true
+    },
+    {
+      "uri": "projects/agent-kb/docs/memory-base-deployment.md",
+      "sha256": "9ccb0d12c3e4f1dc0b18951c5773ef65eb10cb2609bcf942bc6593c99dd08f6d",
+      "result": "PASS",
+      "current_registered_source": true
+    }
+  ],
+  "reader_write_403_no_new_capture": true,
+  "anonymous_401": true,
+  "scope_403": true,
+  "stale_revision_409": true,
+  "capture_count": 4,
+  "denied_fixture_schema_validated": true,
+  "mcp": {
+    "sdk_version": "1.30.0",
+    "closed_tools": [
+      "memory_add",
+      "memory_get",
+      "memory_list",
+      "memory_search"
+    ],
+    "original_get_checks": 3,
+    "reader_list": true,
+    "project_search": true
+  }
+}

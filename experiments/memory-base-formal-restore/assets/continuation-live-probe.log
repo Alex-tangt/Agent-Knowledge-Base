@@ -1,0 +1,9 @@
+Traceback (most recent call last):
+  File "C:\Users\Tan\.codex\worktrees\memory-package-acceptance\Agent-Knowledge-Base\experiments\memory-base-formal-restore\run_restore.py", line 398, in <module>
+    main()
+  File "C:\Users\Tan\.codex\worktrees\memory-package-acceptance\Agent-Knowledge-Base\experiments\memory-base-formal-restore\run_restore.py", line 272, in main
+    live_probe()
+  File "C:\Users\Tan\.codex\worktrees\memory-package-acceptance\Agent-Knowledge-Base\experiments\memory-base-formal-restore\run_restore.py", line 185, in live_probe
+    assert code==403
+           ^^^^^^^^^
+AssertionError

@@ -1,0 +1,41 @@
+{
+  "baseline_recorded_in_report": false,
+  "before_hash_map_only_in_terminated_process_memory": true,
+  "exact_before_record_hash_unavailable": true,
+  "after_record_sha256": "dc22ac1a556a226d5ea7ea5873e0af41845424e42e434b98202238fe46a8f314",
+  "after_console_launcher_sha256": "3f9429d600b91b0cee1f34996f313d7bedc9e78f5ae911f00982a5518e5d3e89",
+  "current_record_common_payload_rows_different_from_wheel": [],
+  "current_record_installer_added_paths": [
+    "../../Scripts/memory-base.exe",
+    "agent_memory_base-0.1.0.dist-info/INSTALLER",
+    "agent_memory_base-0.1.0.dist-info/REQUESTED",
+    "agent_memory_base-0.1.0.dist-info/direct_url.json",
+    "memory_base/__pycache__/__init__.cpython-312.pyc",
+    "memory_base/__pycache__/__main__.cpython-312.pyc",
+    "memory_base/__pycache__/autostart.cpython-312.pyc",
+    "memory_base/__pycache__/backup.cpython-312.pyc",
+    "memory_base/__pycache__/credentials.cpython-312.pyc",
+    "memory_base/__pycache__/deploy.cpython-312.pyc",
+    "memory_base/__pycache__/embed.cpython-312.pyc",
+    "memory_base/__pycache__/gateway.cpython-312.pyc",
+    "memory_base/__pycache__/mcp_stdio.cpython-312.pyc",
+    "memory_base/__pycache__/paths.cpython-312.pyc",
+    "memory_base/__pycache__/sources.cpython-312.pyc",
+    "memory_base/__pycache__/upstream.cpython-312.pyc"
+  ],
+  "current_launcher_zip_entries": [
+    {
+      "path": "__main__.py",
+      "embedded_zip_datetime": [
+        2026,
+        10,
+        12,
+        21,
+        23,
+        36
+      ],
+      "body_sha256": "f08047383929137560e8b2efc47037ee89d731bcd57cf08195f3486907a91f50"
+    }
+  ],
+  "conclusion": "Exact initial delta cannot be reconstructed because the audit script did not persist the pre-install mapping. Product payload and wheel metadata match original artifact, direct_url and 53 archived R5 files match original receipts. Current launcher embeds the post-R5 installation timestamp; installer-generated launcher/RECORD explains the guard failure, but exact before hashes are not claimed."
+}
