@@ -69,6 +69,7 @@ Bubble 的 `scripts/smoke-memory-live.ts` 会创建新总结任务并实际调�
 | 正式冷备份 | 67 文件与完整目录清单独立核验；sources.json 原样保留；7 个已知凭据的 UTF-8/UTF-16 检查无明文命中；服务重启后原总结和教训读回一致 | [backup-2026-10-12.json](backup-2026-10-12.json) |
 | 新实现完整闸门 | 冻结 `9252d52`：824 passed / 5 skipped；harness 10/10；opencode 冒烟因无 server 为 SKIP | [gates-2026-10-12.json](gates-2026-10-12.json) |
 | 冷启动修复完整闸门 | 冻结 `45296a5`：833 passed / 5 skipped；harness 10/10；opencode server 缺席仍为 SKIP；独立新环境首次运行另列 #86 | [gates-cold-start-2026-10-12.json](gates-cold-start-2026-10-12.json) |
+| 冷启动后独立安装运行 | R5默认/fresh各175个自身distribution/173约束；默认第一次native start原180秒配置，168.13秒成功、12条checks；Lead53原件/产物字节与当前归属/端口清理核验；原FAIL保留 | [R5](../memory-base-package/cold-final-2026-10-12/README.md)、[Lead](lead-package-cold-2026-10-12.json) |
 | Bubble 四工具正式接入 | 候选 `0a86cb1` 四文件先核基线、备份再应用；Lead build、68/68 应用测试和 5/5 host 测试通过；零活跃任务时自有管理器重启后健康 | [应用与闸门](bubble-bridge-applied-2026-10-12.json)、[候选证据](../memory-base-bubble-bridge/README.md) |
 | Bubble 真实 SDK / 正式网关 | 本机 synthetic SSE 驱动实际 pi：四工具 schema、项目检索、两页 list、原文 revision、版本/目录冲突反馈、旧 capture 哈希通过；只读，不生成新总结 | [候选](bubble-bridge-candidate-2026-10-12.json)、[正式代码](bubble-bridge-formal-2026-10-12.json)、[复跑脚本](bubble_bridge_probe.mjs) |
 | Bubble 笔记保存意图 | 冻结 `36f9bf2` 只改两文件，Lead 73/73 应用与 5/5 host 通过，核实际基线/备份/构建、零活跃任务、自有 manager 重启健康；实际工具拒绝8条、允许5条，假client无正式笔记写入；正式 SDK/网关只读复核及旧文章 hash 与回执一致 | [应用](note-intent-applied-2026-10-12.json)、[工具](note-intent-formal-tool-2026-10-12.json)、[实际 pi](note-intent-formal-pi-2026-10-12.json)、[候选与原失败](../memory-base-note-intent/README.md) |

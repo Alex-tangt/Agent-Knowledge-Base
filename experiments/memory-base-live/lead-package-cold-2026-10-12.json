@@ -1,0 +1,28 @@
+{
+  "date": "2026-10-12",
+  "frozen_package": "45296a58fe2559e0b92f4af851c018b56148865a",
+  "asset_root": "C:/Users/Tan/.mb86/r5",
+  "lead_independent_evidence_assets_sha_size": 53,
+  "wheel_sha256": "baa5877bc55a834f7abf16c833d9e869c0768624efdd63de9ad1ef8b2768bfde",
+  "installed_product_files": {
+    "d": true,
+    "f": true
+  },
+  "file_count": 15,
+  "default_first_start_seconds": 168.13062770000397,
+  "default_start_command_without_timeout": true,
+  "native_checks": 12,
+  "owned_survivors": {
+    "embed": false,
+    "upstream": false,
+    "gateway": false
+  },
+  "ports_busy": {
+    "upstream": false,
+    "gateway": false,
+    "embed": false
+  },
+  "records_empty": true,
+  "overall": "PASS",
+  "boundary": "Root independently read archived/original bytes, wheel and installed product files, actual native command/record, and current process ownership/ports. No restart or model calls. Original R5 evidence proves initial native; this is not a second fresh launch."
+}

@@ -38,12 +38,12 @@ Lead 负责本文件、ADR、地图同步和集成验收；执行者各自工作
 | [#83 完整备份恢复与运维登记](https://github.com/Alex-tangt/Agent-Knowledge-Base/issues/83) | 实现已合入并关闭，最终单元 `474af7b`；原生证据由 #85 补齐 | `memory_base/backup.py`, `deploy.py`, 对应新增/原 deploy 单测 | 无；集成验收依赖映射格式稳定 | 冷备份哈希；空数据根恢复；ACL/登记/凭据边界；只管理自有进程 |
 | [#84 Windows 登录自动启动](https://github.com/Alex-tangt/Agent-Knowledge-Base/issues/84) | API 与 CLI 已合入并关闭，最终单元 `55be228`；真实登记由 #85 验证 | `memory_base/autostart.py`, 对应单测；CLI 由 #83 单写者接入 | 无 | 命令路径解析、归属冲突、幂等登记；真实登录另列限制 |
 | [#85 原生隔离验收](https://github.com/Alex-tangt/Agent-Knowledge-Base/issues/85) | 冻结 `d8a6709` 单次 11/11 通过；Lead 独立清单及恢复目标复核通过 | `experiments/memory-base-recovery/` | #82、#83、#84 | 冻结 SHA；真实路径过滤、变更、离线、完整备份、空根恢复、native ACL、SDK1.30 MCP；WAL 副本事后校核单列 |
-| [#86 独立包验收](https://github.com/Alex-tangt/Agent-Knowledge-Base/issues/86) | 原 FAIL 保留；#89 安装及 #91 冷启动实现已合入，冻结 `45296a5` 新 runtime/default timeout 独立复验 | `experiments/memory-base-package/cold-final-2026-10-12/`；独立执行者复用 package-acceptance 工作树 | #91（GitHub 原生边） | 新 wheel、全新目标依赖、默认 180 秒/组件首次启动、真实 HTTP/MCP、任意 cwd、清理；旧 runtime 不作为新环境证据 |
+| [#86 独立包验收](https://github.com/Alex-tangt/Agent-Knowledge-Base/issues/86) | 冻结 `45296a5` R5默认/fresh两个独立栈通过；默认首次start168.13秒、12 native checks；Lead53原件/产物/当前清理复核通过 | `experiments/memory-base-package/cold-final-2026-10-12/` | #91（已通过） | 175 own-site distributions/173约束、默认180秒/组件、真实HTTP/MCP、任意cwd；限Windows短路径/已有pip缓存与GGUF |
 | [#87 标准启动请求解析修复](https://github.com/Alex-tangt/Agent-Knowledge-Base/issues/87) | 已合入 `d8a6709` 并关闭 | `memory_base/deploy.py`, 对应单测 | 无 | 正式 runtime 请求 200/422；gateway 重启后 MCP 原文及 revision 一致 |
 | [#88 正式 MCP 四工具回归](https://github.com/Alex-tangt/Agent-Knowledge-Base/issues/88) | 已合入 `1e78f0d`，Lead 正式文章/视频复跑通过 | `experiments/memory-base-live/mcp_probe.py` | 无 | 旧 Bubble URI/hash，实际 stdio 四工具、列举、版本读回、只读写拒绝；无新 LLM/总结生成 |
-| [#89 wheel 专用 runtime 安装修复](https://github.com/Alex-tangt/Agent-Knowledge-Base/issues/89) | 已合入 `9252d52`；全量闸门与 #86 独立完整安装复验中 | `memory_base/deploy.py`, 对应单测 | 无 | 明确本地 artifact、拒绝发生在副作用前、目标实际包来源、源码入口兼容；实现者两例真实包安装通过，但依赖/凭据为 fixture |
+| [#89 wheel 专用 runtime 安装修复](https://github.com/Alex-tangt/Agent-Knowledge-Base/issues/89) | 实现 `9252d52` 已合入；#86 R5真实默认/fresh安装、own-site来源及全量闸门通过 | `memory_base/deploy.py`, 对应单测 | 无 | 本地artifact及副作用前校验、目标来源、源码兼容；实现者fixture回归与独立完整安装分别保留 |
 | [#90 Bubble 四工具与版本接入](https://github.com/Alex-tangt/Agent-Knowledge-Base/issues/90) | 冻结候选 `0a86cb1` 已应用正式目录；Lead build、68/68 应用测试、5/5 host 测试及实际网关/SDK 复验通过，后端健康 | Bubble 候选 `server/memory-base.ts`, `server/memory-tools.ts`, `server/agent.ts`, `server/tests/memory-base.test.ts`；本仓 `experiments/memory-base-bubble-bridge/` | 无 | 真实 pi SDK 的四工具、项目 scope/list 分页/revision 往返、错误可区分；原四文件基线先核对并保留备份；读回旧总结；未使用新的付费模型 |
-| [#91 首次冷启动](https://github.com/Alex-tangt/Agent-Knowledge-Base/issues/91) | 实现 `dc3168d`、记录 `45296a5` 已合入；Lead 全量闸门及 #86 新环境复验中 | `memory_base/deploy.py`, 对应单测；`experiments/memory-base-cold-start/`，d runtime 的 bytecode 实验资产 | 无；#86最终运行通过依赖本票 | 安装限目标 own-site Lark 准备（独立 600 秒预算，实测累计 341.750 秒）；不扩大服务默认 180 秒；不改上游/不借正式缓存；实际新环境默认首次就绪及完整读写/MCP |
+| [#91 首次冷启动](https://github.com/Alex-tangt/Agent-Knowledge-Base/issues/91) | 实现 `dc3168d`、记录 `45296a5` 已合入；Lead833单测、harness10/10及#86新环境默认首次运行通过 | `memory_base/deploy.py`, 对应单测；`experiments/memory-base-cold-start/` | 无 | 安装限目标own-site Lark准备（独立600秒预算，探针累计341.750秒；R5实际自动准备）；服务默认180不变；上游/正式缓存未改 |
 | [#92 Bubble 笔记写入意图](https://github.com/Alex-tangt/Agent-Knowledge-Base/issues/92) | 冻结 `36f9bf2` 两文件已备份应用；Lead build、73/73 应用及 5/5 host 闸门、正式工具入口与只读 pi/网关通过；正式 manager 重启健康 | Bubble 候选 `server/memory-tools.ts`, `server/tests/memory-base.test.ts`；本仓 `experiments/memory-base-note-intent/` 和 Lead live 记录 | 无 | 否定/询问/引用和撤回不调用add；明确中文/英文保存、原文和旧key兼容；有限规则拒绝未匹配表达并提供明确示例，不冒称通用语言理解 |
 | [#93 Bubble Windows 状态发布](https://github.com/Alex-tangt/Agent-Knowledge-Base/issues/93) | #92 既有生命周期测试实际 EPERM 导致 manager 退出；独立候选修复 | Bubble 独立候选 `scripts/local-backend.mjs`, 必要状态辅助模块和 scripts 测试；本仓 `experiments/memory-base-host-state/` | 无；不阻塞 #92 代码冻结，只独立核验 | 短暂 rename 失败有界处理、保持 JSON 原子发布/状态顺序；持续失败可见、仅清理自有 child；默认就绪 timeout 不变 |
 | [#94 正式快照隔离恢复](https://github.com/Alex-tangt/Agent-Knowledge-Base/issues/94) | 补齐实际 67 文件正式快照的恢复证明；独立空数据目标，正式实例不操作 | `experiments/memory-base-formal-restore/`，新隔离 home `.mb94/a`；已验 runtime 借用边界声明 | #86 通过是前置证据 | 独立清单/原件hash，真实恢复、三份原文/URI/hash、来源/权限与凭据重发、MCP/search、自有清理；原快照不变 |
@@ -68,14 +68,14 @@ Lead 负责本文件、ADR、地图同步和集成验收；执行者各自工作
 | 要求 | 当前判断与证据 | 仍须取得的证据 |
 |---|---|---|
 | S1 / I2 / A：人的共同记忆、新 agent 无迁移读取 | 正式 Bubble 与 Codex 读取同 URI，另 reader 身份原生 stdio 读回；真实宿主轨迹及哈希已保存 | DSH/opencode 登记与规约存在，其实际对话未验证 |
-| S2 / E：capture 与实时只读项目共同寻址 | #85 验增改删、未提交变化、失联/恢复与拒绝越界；正式项目读取字节 revision；#90 真实 SDK/正式网关的项目 scope、分页、revision 与错误反馈通过；不复制项目作第二主库 | 新独立 runtime 的实际读写尚须最终运行验收 |
-| S3 / I1：原样保存及回执追溯 | 正式文章/视频逐字节一致、重复请求 exists，变更请求拒覆盖；#85 的 Unicode/CRLF 和恢复原文通过 | 新独立 runtime 的实际读写尚须最终运行验收 |
-| I3 / F：共同写入合同、只读源权限 | HTTP/MCP 共用 gateway；普通 writer 只追加 capture，项目始终只读；原生双身份拒绝路径通过；#90 保留真实用户笔记授权，日期可省略且不从抓取/接收时间推定；旧 DB 的直接文件写入已退出产品写入面 | 新独立环境运行验收仍须成立 |
-| I4 / D：故障不是空记忆 | 正式上游停机 503、未认证 401、reader 写入 403；#90 在真实 SDK/网关往返中将版本与目录变化反馈为稳定错误并指导重新查询 | 新独立环境运行验收仍须成立 |
+| S2 / E：capture 与实时只读项目共同寻址 | #85验增改删/未提交变化/失联恢复/越界；正式项目读字节revision；#90/#92实际SDK/网关scope/分页/版本及错误通过；R5新包capture运行通过 | #94将核实际快照来源引用；不把R5 capture检索当项目语义检索 |
+| S3 / I1：原样保存及回执追溯 | 正式文章/视频逐字节一致、重复exists、变更拒覆盖；#85恢复原文及R5新包Unicode/CRLF/hash/幂等通过 | #94实际正式快照三条真实原文恢复读回待验 |
+| I3 / F：共同写入合同、只读源权限 | HTTP/MCP共用gateway，writer仅追加capture；#85项目拒写及R5新栈401/reader403/scope403通过；#92补否定/讨论不能授权笔记、日期省略不推定 | 有限命令规则不覆盖任意自然语言；实际快照恢复由#94核验 |
+| I4 / D：故障不是空记忆 | 正式上游503、未认证401、reader403；#90/#92实际SDK/网关版本和目录变化明确反馈；R5新栈权限/stale revision409通过 | #93实际Windows状态发布EPERM仍在修复，不能以最终一次host通过删去原故障 |
 | B / C：第二台设备与可见延迟 | 同机两个真实宿主共享已验；2026-10-12 ADB 枚举无连接设备，不能据同机结果宣称两台设备通过 | 实际手机/第二设备读写互查、可见延迟；只使用既有私有网络 |
 | G / D15：完整备份、空根恢复 | #85 冷备份、空根恢复、坏清单拒绝、重新签发凭据及 native ACL 通过；Lead 独立重算/启动恢复目标复核；正式 67 文件备份存在 | 正式快照本身尚未恢复；新包运行验收不可被旧恢复测试代替 |
-| D9 / D16：安装、运行与无人值守启动 | 正式三服务 ready，当前用户 Run 归属核验和同命令手动运行通过；新 wheel 默认/fresh 安装与运行分开核验 | 新环境运行结论待 #86；真实注销/登录触发未测；POSIX 不作为已交付平台 |
-| D4：独立产物、退出与维护 | `memory_base` wheel 排除旧三包；固定依赖、模块来源/许可声明、迁移/恢复和数据出口见产品计划；全量既有闸门通过 | 独立环境端到端运行、实际消费者新版使用；当前目标不是引入第二个原文库或学习管线 |
+| D9 / D16：安装、运行与无人值守启动 | 正式三服务ready，Run归属/同命令手动执行通过；R5新wheel默认/fresh安装、默认首次native168.13秒通过；清理无残留 | 真实注销/登录未测；POSIX非已交付平台；初次SDK准备仍有数分钟成本 |
+| D4：独立产物、退出与维护 | wheel排除旧三包；固定依赖/来源/迁移/出口见计划；833单测及R5独立native通过；新版Bubble#90/#92实际部署 | 实际快照恢复#94、host可靠性#93在做；跨设备/真实登录未验，不能宣称整个目标完成 |
 
 本表用于决定下一步，不替代原始证据。数据出口可以通过四工具 list/get 读取原文与引用；native 冷备份是恢复介质，不能称通用跨引擎格式。当前工作集测点为三服务树 273.97 MiB，仅是闲置 Windows 工作集相加，非峰值或私有内存，详见真实接入记录。
 
