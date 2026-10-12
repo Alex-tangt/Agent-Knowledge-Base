@@ -47,6 +47,8 @@ Bubble `.env` 只增加 `MEMORY_BASE_URL`、`MEMORY_BASE_PYTHON`、`MEMORY_BASE_
 
 2026-10-12 的 Bubble 接入已扩为四工具：可按项目 scope 检索、分页 list，并用 expected_revision 读原文；版本/目录变化提示重新查询，来源失联与权限错误不当作空结果。候选四文件备份后已应用正式目录，build 与既有测试通过，后端自有管理器重启后健康。Lead 用实际 pi SDK 和正式网关核验读路径，模型为本机 synthetic SSE，因此不将该证据声明为新增的真实模型对话。
 
+笔记工具现单独核对本轮用户的明确保存命令。否定保存、询问状态或建议、引用/来源指令与撤回不能授权写入；支持“请保存这条笔记到知识库”和“Can you save this note to memory?”等明确命令。未匹配表达返回明确示例，正文仍原样提交，未知接触日不填写。此次两文件修改已在正式 Bubble 应用、构建并受管理重启；Lead 全量应用 73/73、host 5/5 及真实工具/只读 pi 接入复核通过。它使用有限命令规则，不声称理解所有自然语言表述。原 host 状态发布 EPERM 的独立失败仍按 #93 修复，后续一次测试通过不抹除该失败。
+
 ## 数据和边界
 
 正文保存在 `viking://resources/captures/<请求地址哈希>/content.md`，同目录 `capture.json` 保存身份、时间、来源、请求及正文哈希。地址由身份和 request_id 派生；同一请求内容变更返回冲突，不能覆盖原文。并发保障以正式部署的单 gateway 进程为边界。

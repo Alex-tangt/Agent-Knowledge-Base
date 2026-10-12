@@ -68,8 +68,10 @@ Bubble 的 `scripts/smoke-memory-live.ts` 会创建新总结任务并实际调�
 | 正式当前用户登录启动 | 登记命令归属准确，其它 HKCU Run 项不变；手动执行该 pythonw 命令退出 0，三个受管理服务就绪；实际登录触发未测 | [autostart-2026-10-12.json](autostart-2026-10-12.json) |
 | 正式冷备份 | 67 文件与完整目录清单独立核验；sources.json 原样保留；7 个已知凭据的 UTF-8/UTF-16 检查无明文命中；服务重启后原总结和教训读回一致 | [backup-2026-10-12.json](backup-2026-10-12.json) |
 | 新实现完整闸门 | 冻结 `9252d52`：824 passed / 5 skipped；harness 10/10；opencode 冒烟因无 server 为 SKIP | [gates-2026-10-12.json](gates-2026-10-12.json) |
+| 冷启动修复完整闸门 | 冻结 `45296a5`：833 passed / 5 skipped；harness 10/10；opencode server 缺席仍为 SKIP；独立新环境首次运行另列 #86 | [gates-cold-start-2026-10-12.json](gates-cold-start-2026-10-12.json) |
 | Bubble 四工具正式接入 | 候选 `0a86cb1` 四文件先核基线、备份再应用；Lead build、68/68 应用测试和 5/5 host 测试通过；零活跃任务时自有管理器重启后健康 | [应用与闸门](bubble-bridge-applied-2026-10-12.json)、[候选证据](../memory-base-bubble-bridge/README.md) |
 | Bubble 真实 SDK / 正式网关 | 本机 synthetic SSE 驱动实际 pi：四工具 schema、项目检索、两页 list、原文 revision、版本/目录冲突反馈、旧 capture 哈希通过；只读，不生成新总结 | [候选](bubble-bridge-candidate-2026-10-12.json)、[正式代码](bubble-bridge-formal-2026-10-12.json)、[复跑脚本](bubble_bridge_probe.mjs) |
+| Bubble 笔记保存意图 | 冻结 `36f9bf2` 只改两文件，Lead 73/73 应用与 5/5 host 通过，核实际基线/备份/构建、零活跃任务、自有 manager 重启健康；实际工具拒绝8条、允许5条，假client无正式笔记写入；正式 SDK/网关只读复核及旧文章 hash 与回执一致 | [应用](note-intent-applied-2026-10-12.json)、[工具](note-intent-formal-tool-2026-10-12.json)、[实际 pi](note-intent-formal-pi-2026-10-12.json)、[候选与原失败](../memory-base-note-intent/README.md) |
 | 当前闲置工作集 | 核对 PID、创建时间和完整命令后采集三个进程树，共 273.97 MiB；包含控制台子进程，可能重复计算共享页，非峰值/私有内存；不与旧测点作优化幅度比较 | [resources-2026-10-12.json](resources-2026-10-12.json) |
 | 宿主规约同步 | Codex、DSH、opencode 的 personal-memory SKILL 均与仓库规约一致，SHA256 `72527b6cc7e74c5c8266f01f85d3dcbe398415ed24404facfe722d1468c5d964`；旧副本保留本机备份 | 只证明规约落位，DSH/opencode 实际会话仍未验 |
 
