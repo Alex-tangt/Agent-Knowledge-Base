@@ -14,7 +14,7 @@ CI 只安装旧 `memory_agent/deploy-requirements.txt`，其中明确排除 Fast
 
 只在原有 CI 依赖步骤增加 `fastapi==0.143.0`，与 `memory_base/constraints.txt` 的正式版本一致。保留两平台、既有测试/harness/冒烟与只读 GitHub 权限；不安装已排除的 legal_web，不装 OpenViking/native 模型栈，不跳过网关测试，不修改应用源码或正式环境。
 
-修复后实际远端两腿结果仍待取得。原失败保留；不能用本机已有 FastAPI 的导入成功代替干净 runner 复验。复验入口仍为现有 CI 的三个命令。
+该依赖修复后的第二轮和最终结果分别记录于下文。原失败保留；不以本机已有 FastAPI 的导入代替干净 runner 复验。复验入口仍为现有 CI 的三个命令。
 
 ## 第二轮实际结果与入口缺陷
 
@@ -24,4 +24,17 @@ Ubuntu 为 **3 failed /831 passed /4 skipped /1 warning，26.33秒**，不再缺
 
 新 [#97](https://github.com/Alex-tangt/Agent-Knowledge-Base/issues/97) 保留解释器入口的venv身份，仍严格验证目标own-site、继承provider拒绝和生命周期归属；不通过跳过POSIX测试消除失败。小机制探针可用现有WSL Python3.10，但不能据此声称正式3.12 wheel或完整POSIX部署。源码修复后另冻结完整闸门，旧45296a5独立native证据的版本范围保持。
 
-该修复已合入`4498aea`。Lead在最终`4fc5aa9`复跑所有既有单测，837 passed /5 skipped /1既有warning，harness10/10，opencode脚本无服务器而SKIP；包括两个真实wheel fixture模式。源码摘要与执行者最终冻结一致，[最终本机闸门](../memory-base-live/gates-runtime-path-2026-10-12.json)已保存。最终远端Ubuntu3.12/Windows结果另行取得，不以WSL3.10或本机通过替代。
+该修复已合入`4498aea`。Lead在最终`4fc5aa9`复跑所有既有单测，837 passed /5 skipped /1既有warning，harness10/10，opencode脚本无服务器而SKIP；包括两个真实wheel fixture模式。源码摘要与执行者最终冻结一致，[最终本机闸门](../memory-base-live/gates-runtime-path-2026-10-12.json)已保存。最终远端 Ubuntu3.12/Windows 结果见下节，不以 WSL3.10 或本机通过替代。
+
+## 最终两平台通过
+
+2026-10-13 保存远端终态与原始三个闸门输出。固定 head `a852fab33db109e72a19665877f573e7bd6c2d15`，[run 38271905054](https://github.com/Alex-tangt/Agent-Knowledge-Base/actions/runs/38271905054) 两腿均 completed/success：
+
+| Python 3.12 runner | 单测 | harness | opencode 脚本 |
+|---|---|---|---|
+| Ubuntu | 838 passed /4 skipped /1 warning，27.13秒 | 3+7=10/10 预期匹配 | 实际执行，4096 无服务而 SKIP |
+| Windows | 839 passed /3 skipped /1 warning，69.75秒 | 3+7=10/10 预期匹配 | 实际执行，4096 无服务而 SKIP |
+
+[终态与本机原件 SHA256](final-run.json)、[Ubuntu 三闸门日志](final-ubuntu-gate.log)、[Windows 三闸门日志](final-windows-gate.log) 保留；旧失败不覆盖。日志是 GitHub 原始输出中这三个步骤的完整片段，以 UTF-8 归档；哈希表示本机归档字节，Git 可能规范化换行。
+
+该结果证明 #97 入口修复在两个干净 3.12 runner 的既有源码回归中通过，包括真实 wheel fixture 路径；不证明 Ubuntu 原生 OpenViking 部署、新的 Windows native 冷启动或实际 opencode 模型对话。最后一项由独立 #98 有限验收处理，脚本 SKIP 继续按 SKIP 记录。

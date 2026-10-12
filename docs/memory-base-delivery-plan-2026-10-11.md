@@ -13,7 +13,7 @@
 | 路径表达日期、类型与项目范围 | #85/#86/#90 范围、日期及版本读回通过 | 接触日明确由提交方提供；未知日期保留 unknown；list/search/get 在同一授权范围，越界被拒；至少两种宿主身份实测 |
 | 历史与完整恢复 | #94 实际67文件快照空根恢复与权限/凭据重发通过；自定义 ACL 对象未存在于该快照 | 自动留存提交回执；备份包含正文、ACL/身份状态、来源登记、路径权限和必要控制状态；凭据另行重发；干净数据根恢复后重验正文与拒绝路径 |
 | 安装、生命周期与错误 | #86 R5 默认/fresh 独立安装及默认首次运行通过；Windows 实际登录触发仍未测 | 更新后的独立包可安装；状态/索引/来源失败可见；停启限于本部署进程；POSIX 的可复现边界写清 |
-| 产品计划与退出 | 固定源码研究与产品计划已保存；发布前复核 #95 执行中 | 保留/剥离清单、模块来源、升级、迁移、数据出口、恢复与维护责任有可执行文档 |
+| 产品计划与退出 | 固定源码研究与产品计划已保存；#95 发布前复核完成，PR #96 为草稿 | 保留/剥离清单、模块来源、升级、迁移、数据出口、恢复与维护责任有可执行文档 |
 
 学习、偏好晋升和自动经验演化仍为后续层。#78 涉及人的批准，不以 owner 的开发授权替代对某一偏好的批准。没有真实任务及反馈证据时不启动完整 MemOS 学习管线。
 
@@ -47,8 +47,8 @@ Lead 负责本文件、ADR、地图同步和集成验收；执行者各自工作
 | [#92 Bubble 笔记写入意图](https://github.com/Alex-tangt/Agent-Knowledge-Base/issues/92) | 冻结 `36f9bf2` 两文件已备份应用；Lead build、73/73 应用及 5/5 host 闸门、正式工具入口与只读 pi/网关通过；正式 manager 重启健康 | Bubble 候选 `server/memory-tools.ts`, `server/tests/memory-base.test.ts`；本仓 `experiments/memory-base-note-intent/` 和 Lead live 记录 | 无 | 否定/询问/引用和撤回不调用add；明确中文/英文保存、原文和旧key兼容；有限规则拒绝未匹配表达并提供明确示例，不冒称通用语言理解 |
 | [#93 Bubble Windows 状态发布](https://github.com/Alex-tangt/Agent-Knowledge-Base/issues/93) | 冻结`ba8b5b5`；Lead组合#92为`8e13fae`，build/73应用/13host全通过；实际三scripts已备份应用，自有manager重启健康 | Bubble `scripts/local-backend.mjs`, `host-state.mjs`, 对应scripts测试；本仓`experiments/memory-base-host-state/` | 无 | rename短错误至多暂停200ms，保持原子JSON/同步顺序；持续失败关闭自有child并清理本instance；原120s就绪上限不变，原FAIL保留 |
 | [#94 正式快照隔离恢复](https://github.com/Alex-tangt/Agent-Knowledge-Base/issues/94) | 固定67文件/39目录实际快照→空data恢复、三原文/来源/权限/凭据重发/MCP通过；Lead独立31原件/清单及实际读回/权限/清理通过 | `experiments/memory-base-formal-restore/`，隔离`.mb94/a`；借R5 f runtime，重装launcher/RECORD及缓存副作用声明 | #86（原生边，已通过） | 原快照不变，target已停；所有方法FAIL保留；不冒称第三新栈、任意ACL对象或真实登录/设备验证 |
-| [#95 交付分支复核](https://github.com/Alex-tangt/Agent-Knowledge-Base/issues/95) | 已合入`0113d3c`：1131 blobs/47当前凭据/3原文/1私有URL无实际匹配；131候选411位置保留分类、6项Lead复核通过；后续25新blob单独核对，准备草稿交付 | `experiments/memory-base-publication/`，Lead负责PR与地图 | 无 | 不输出秘密、不改历史/用户文件/正式实例；当前树与历史分开、判据/漏项明确；发布前复核根venv闸门/产品freeze/实际证据链接 |
-| [#97 虚拟环境入口识别](https://github.com/Alex-tangt/Agent-Knowledge-Base/issues/97) | 已合入`4498aea`，WSL真实符号链接RED→GREEN；冻结`4fc5aa9` Lead837单测/5skip、harness10/10、opencode脚本SKIP；最终Ubuntu3.12 CI待复验 | `memory_base/deploy.py`、对应单测、`experiments/memory-base-runtime-path/` | 无 | 实际venv符号链接红/绿；不同环境共享基础exe不能视作同一runtime；own-site与缓存/身份安全边界保持；真实wheel自动/fresh与冻结全量复验 |
+| [#95 交付分支复核](https://github.com/Alex-tangt/Agent-Knowledge-Base/issues/95) | 已合入`0113d3c`：1131 blobs/47当前凭据/3原文/1私有URL无实际匹配；131候选411位置保留分类、6项Lead复核通过；后续25新blob单独核对；草稿PR #96已建立 | `experiments/memory-base-publication/`，Lead负责PR与地图 | 无 | 不输出秘密、不改历史/用户文件/正式实例；当前树与历史分开、判据/漏项明确；发布前复核根venv闸门/产品freeze/实际证据链接 |
+| [#97 虚拟环境入口识别](https://github.com/Alex-tangt/Agent-Knowledge-Base/issues/97) | 已合入`4498aea`，WSL真实符号链接RED→GREEN；冻结`4fc5aa9` Lead837单测/5skip、harness10/10、opencode脚本SKIP；最终 `a852fab` 远端 Ubuntu838/4skip、Windows839/3skip及两腿harness10/10通过；脚本均SKIP | `memory_base/deploy.py`、对应单测、`experiments/memory-base-runtime-path/` | 无 | 实际venv符号链接红/绿；不同环境共享基础exe不能视作同一runtime；own-site与缓存/身份安全边界保持；真实wheel自动/fresh与冻结全量复验 |
 | [#98 本地模型实际 opencode 对话](https://github.com/Alex-tangt/Agent-Knowledge-Base/issues/98) | 已登记，有限只读验收待执行 | `experiments/memory-base-opencode-dialogue/**`；隔离临时 cwd、仅子进程配置 | 无 | 既有本地模型实际完成 MCP 读取、源 revision 独立校核；禁止远端回落/新增模型/写记忆/改日常配置；真实对话与 SDK 冒烟分别判断 |
 | 产品化计划、实际项目接入与复跑 | 执行中 | Lead 文档、地图与正式接入记录 | 上述实现和验收单元 | 冻结版本全量单测、已有 harness/冒烟、正式实例与旧消费者兼容 |
 
@@ -84,6 +84,6 @@ Lead 负责本文件、ADR、地图同步和集成验收；执行者各自工作
 
 尚缺的第二设备、真实登录和 DSH/opencode 对话按[剩余真实验收步骤](memory-base-remaining-acceptance.md)取得证据。步骤本身不计为通过，不强制注销用户，不用同机模拟或配置登记替代真实行为。
 
-草稿交付已建立[PR #96](https://github.com/Alex-tangt/Agent-Knowledge-Base/pull/96)。首远端两腿缺FastAPI收集失败，现有CI依赖步骤已补正式约束的版本，原失败在[干净CI记录](../experiments/memory-base-ci/README.md)。后续Ubuntu已跑完，831 passed /4 skipped /3 failed定位为虚拟环境入口解析，#97处理；远端通过前不能把本机833闸门扩大为干净两平台通过。Windows同轮状态由实际CI确定。
+草稿交付已建立[PR #96](https://github.com/Alex-tangt/Agent-Knowledge-Base/pull/96)。首远端两腿缺 FastAPI 收集失败，第二轮 Ubuntu 的 3 failed 定位为虚拟环境入口解析，#97 已修复；旧失败在[干净CI记录](../experiments/memory-base-ci/README.md)保留。最终 `a852fab` 的[run 38271905054](https://github.com/Alex-tangt/Agent-Knowledge-Base/actions/runs/38271905054) 两平台 Python3.12 均通过：Ubuntu838 passed/4 skipped，Windows839 passed/3 skipped，两腿 harness10/10。opencode 脚本都实际执行但无4096服务而 SKIP，不计为真实对话或原生POSIX部署。#98 已登记，仅使用既有本地模型、子进程配置及项目只读工具验证实际会话；结果尚未取得。
 
 **早期标准环境启动失败（2026-10-12，修复前）**：#86 对从未启动的 fresh home 去掉额外 bytecode 禁止后，仍在原 300 秒上限未等到 upstream 健康；start 总耗时 314.52 秒包含 embedding 启动，整个验收 331.88 秒。gateway 与后续读写/MCP 没有运行，owned stop 退出 0，端口与进程无残留，旧 FAIL 原字节未变。该结果当时证明普通冷启动仍阻塞部署，不能据安装成功关闭 #86。随后 #91 修复与 #86 R5 默认首次运行通过，当前状态以上方逐项核验和 R5 原始记录为准；此段保留失败历史，不表示当前仍阻塞。
