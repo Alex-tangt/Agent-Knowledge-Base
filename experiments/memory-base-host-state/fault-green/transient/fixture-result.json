@@ -1,0 +1,13 @@
+{
+  "mode": "transient",
+  "instance": "03410178-facd-4d53-8b9f-dadbf018eb9c",
+  "launcherPid": 31484,
+  "launcherExit": 0,
+  "childPid": 43680,
+  "childStillAlive": false,
+  "backendHealthy": false,
+  "fallbackCleanup": false,
+  "state": null,
+  "lock": null,
+  "boundary": "Actual candidate launcher/backend, explicit rename fault injection; no paid model"
+}

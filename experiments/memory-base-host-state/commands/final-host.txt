@@ -1,0 +1,25 @@
+
+> agent-bubble@0.1.0 test:host
+> node --test scripts/tests/backend-readiness.test.mjs scripts/tests/local-backend.test.mjs
+
+✔ a 61 second Windows cold start must not be reported as a failed startup (6.9928ms)
+✔ an existing launcher in starting phase is not a successful backend until HTTP is healthy (0.8612ms)
+✔ a failed launcher stops waiting immediately (1.0927ms)
+✔ an alive launcher with a permanently unreachable HTTP backend cannot report ready (0.5675ms)
+✔ state publication transient EPERM recovers through the actual ready callback (19996.701ms)
+✔ state publication persistent EPERM exits visibly and cleans its owned backend and state (20108.8294ms)
+✔ state publication failure at initial ends its instance even without a live child (1358.2193ms)
+✔ state publication failure at restarting ends its instance even without a live child (22228.1335ms)
+✔ atomic state retries EPERM synchronously without partial JSON or stale phases (41.0572ms)
+✔ atomic state retries EACCES synchronously without partial JSON or stale phases (37.9126ms)
+✔ atomic state retries EBUSY synchronously without partial JSON or stale phases (36.7831ms)
+✔ persistent rename retry is bounded and cleanup preserves foreign owner files (28.4329ms)
+✔ local launcher: start, duplicate start, crash recovery, graceful stop, unmanaged process (39681.8159ms)
+ℹ tests 13
+ℹ suites 0
+ℹ pass 13
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 103776.2959
