@@ -1,0 +1,13 @@
+{
+  "cli_sha256": "83567c13cc5e361ded7e48351cb024cd4503285960d82c30fc585194da46d757",
+  "adapter_mapping_candidates": [
+    "\"@ai-sdk/openai-compatible\":if($.api.id.toLowerCase().includes(\"north-mini-code\"))return Object.fromEntries([\"none\",\"high\"].map((B)=>[B,{reasoningEffort:B}]));let W=[...a",
+    "\"@ai-sdk/openai-compatible\":case\"@ai-sdk/xai\":case\"@ai-sdk/mistral\":case\"@ai-sdk/groq\":case\"@ai-sdk/cerebras\":case\"@ai-sdk/deepinfra\":case\"@ai-sdk/togetherai\":case\"venice",
+    "\"@ai-sdk/openai-compatible\":case\"@ai-sdk/perplexity\":case\"@ai-sdk/togetherai\":case\"@ai-sdk/vercel\":case\"@ai-sdk/xai\":case\"ai-gateway-provider\":case\"gitlab-ai-provider\":ca",
+    "\"@ai-sdk/openai-compatible\":()=>import(\"B:/~BUN/root/chunk-jat3gdkd.js\").then(($)=>$.createOpenAICompatible),\"@openrouter/ai-sdk-provider\":()=>import(\"B:/~BUN/root/chunk-",
+    "\"@ai-sdk/openai-compatible\":l,\"@ai-sdk/cerebras\":l,\"@ai-sdk/deepinfra\":l,\"@ai-sdk/groq\":l,\"@ai-sdk/mistral\":l,\"@ai-sdk/togetherai\":l,\"@ai-sdk/xai\":l,\"@openrouter/ai-sdk-p"
+  ],
+  "mcp_naming_candidates": [
+    ",content:W}}).filter((Y)=>Y!==void 0&&Y.content!==\"\");if(Z.api.id.includes(\"claude\")){let Y=(W)=>W.replace(/[^a-zA-Z0-9_-]/g,\"_\");$=$.map((W)=>{if(W.role===\"assistant\"&&Array.isArray(W.content))return{...W,content:W.content.map((G)=>{if(G.type===\"tool-call\"||G.type===\"tool-result\")return{...G,toolCallId:Y(G.toolCallId)};return G})};if(W.role===\"tool\"&&Array.isArray(W."
+  ]
+}

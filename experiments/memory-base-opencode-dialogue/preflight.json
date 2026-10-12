@@ -1,0 +1,162 @@
+{
+  "asset": "C:\\Users\\Tan\\AppData\\Local\\Temp\\memory-base-opencode-98-ysneij2m",
+  "cli": "C:\\Users\\Tan\\AppData\\Roaming\\npm\\node_modules\\opencode-ai\\bin\\opencode.exe",
+  "cli_version": "1.18.35",
+  "before": {
+    "global_sha256": "8fa909de30803f0943cce4c9e80c4d0e51c37fe92c8f5cd9d1c9aef5b8f38d15",
+    "source_file": "D:\\python_work\\work2026-4\\Agent-Knowledge-Base\\README.md",
+    "source_sha256": "3612771cabaf820bd4d09aeb72459d2184ee1755848620525094e5fab48148fb",
+    "source_bytes": 10053,
+    "health": {
+      "embed": 200,
+      "upstream": 200,
+      "gateway": 200
+    },
+    "capture_file_count": 8
+  },
+  "models": {
+    "qwen3:0.6B": {
+      "digest": "7df6b6e09427a769808717c0a93cadc4ae99ed4eb8bf5ca557c90846becea435",
+      "size": 522653767,
+      "capabilities": [
+        "completion",
+        "tools",
+        "thinking"
+      ]
+    },
+    "qwen2.5:3b-instruct-q4_k_m": {
+      "digest": "357c53fb659c5076de1d65ccb0b397446227b71a42be9d1603d46168015c9e4b",
+      "size": 1929912432,
+      "capabilities": [
+        "completion",
+        "tools"
+      ]
+    }
+  },
+  "mcp_command": [
+    "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Scripts\\python.exe",
+    "-m",
+    "memory_base.mcp_stdio",
+    "--profile",
+    "opencode",
+    "--home",
+    "C:\\Users\\Tan\\.agent-memory-base"
+  ],
+  "resolved_safe": {
+    "model": "ollama/qwen3:0.6B",
+    "small_model": "ollama/qwen3:0.6B",
+    "enabled_providers": [
+      "ollama"
+    ],
+    "permission": {
+      "*": "deny",
+      "*memory_get": "allow",
+      "*memory_list": "allow",
+      "*memory_search": "allow",
+      "*memory_add": "deny"
+    },
+    "autoupdate": false,
+    "mcp": {
+      "memory-agent": {
+        "enabled": false,
+        "type": "local",
+        "command": [
+          "D:\\python_work\\work2026-4\\Agent-Knowledge-Base\\venv\\Scripts\\python.exe",
+          "D:\\python_work\\work2026-4\\Agent-Knowledge-Base\\memory_agent\\proxy.py"
+        ]
+      },
+      "personal-memory": {
+        "enabled": true,
+        "type": "local",
+        "command": [
+          "C:\\Users\\Tan\\.agent-memory-base\\runtime\\Scripts\\python.exe",
+          "-m",
+          "memory_base.mcp_stdio",
+          "--profile",
+          "opencode",
+          "--home",
+          "C:\\Users\\Tan\\.agent-memory-base"
+        ]
+      },
+      "markitdown": {
+        "enabled": true,
+        "type": "local",
+        "command": [
+          "markitdown-mcp"
+        ]
+      },
+      "github": {
+        "enabled": true,
+        "type": "local",
+        "command": [
+          "npx",
+          "-y",
+          "@modelcontextprotocol/server-github"
+        ]
+      },
+      "playwright": {
+        "enabled": false,
+        "type": "local",
+        "command": [
+          "npx",
+          "-y",
+          "@playwright/mcp@latest",
+          "--browser",
+          "chrome"
+        ]
+      },
+      "kaggle": {
+        "enabled": false,
+        "type": "remote",
+        "command": null
+      }
+    },
+    "provider": {
+      "ollama": {
+        "npm": "@ai-sdk/openai-compatible",
+        "baseURL": "http://127.0.0.1:11434/v1",
+        "models": [
+          "qwen3:0.6B"
+        ]
+      }
+    }
+  },
+  "resolved_raw_sha256": "c5441a2f67e36d3e4d16c7cc2eab1f581b8464ce836a52b4b47f4f6347d4871d",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "configuration_probe_exit": 0,
+  "wall_seconds": 6.046999999991385,
+  "adapter_evidence": [
+    "@ai-sdk/openai-compatible"
+  ],
+  "overlay": {
+    "model": "ollama/qwen3:0.6B",
+    "small_model": "ollama/qwen3:0.6B",
+    "enabled_providers": [
+      "ollama"
+    ],
+    "autoupdate": false,
+    "plugin": [],
+    "provider": {
+      "ollama": {
+        "npm": "@ai-sdk/openai-compatible",
+        "name": "Ollama local #98",
+        "options": {
+          "baseURL": "http://127.0.0.1:11434/v1"
+        },
+        "models": {
+          "qwen3:0.6B": {
+            "name": "qwen3:0.6B",
+            "toolcall": true
+          }
+        }
+      }
+    },
+    "permission": {
+      "*": "deny",
+      "*memory_get": "allow",
+      "*memory_list": "allow",
+      "*memory_search": "allow",
+      "*memory_add": "deny"
+    }
+  }
+}
