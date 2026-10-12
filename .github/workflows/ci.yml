@@ -44,9 +44,11 @@ jobs:
 
       # memory_agent/deploy-requirements.txt = 运行时**权威依赖源**（ADR-0028 D3），
       # 并显式固定 sentence-transformers==5.4.1 / transformers==4.57.6 这一已知可用组合（BGE-M3 兼容）。
-      # pytest 只为跑本 workflow。
-      - name: 装运行时依赖 + pytest
-        run: python -m pip install -r memory_agent/deploy-requirements.txt pytest
+      # pytest 为回归闸门；FastAPI 是 memory_base 网关测试的显式依赖，版本与其约束一致。
+      # 旧 memory_agent 运行时不依赖 FastAPI，不能用已排除的 legal_web 依赖补齐 CI。
+      # 单测使用本地 fixture，无需安装 OpenViking/native 模型栈。
+      - name: 装运行时依赖 + pytest + 网关测试依赖
+        run: python -m pip install -r memory_agent/deploy-requirements.txt pytest fastapi==0.143.0
 
       - name: 装两个本地包（editable）
         run: python -m pip install -e ragcore -e memory_agent
