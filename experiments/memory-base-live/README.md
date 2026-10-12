@@ -73,6 +73,7 @@ Bubble 的 `scripts/smoke-memory-live.ts` 会创建新总结任务并实际调�
 | Bubble 四工具正式接入 | 候选 `0a86cb1` 四文件先核基线、备份再应用；Lead build、68/68 应用测试和 5/5 host 测试通过；零活跃任务时自有管理器重启后健康 | [应用与闸门](bubble-bridge-applied-2026-10-12.json)、[候选证据](../memory-base-bubble-bridge/README.md) |
 | Bubble 真实 SDK / 正式网关 | 本机 synthetic SSE 驱动实际 pi：四工具 schema、项目检索、两页 list、原文 revision、版本/目录冲突反馈、旧 capture 哈希通过；只读，不生成新总结 | [候选](bubble-bridge-candidate-2026-10-12.json)、[正式代码](bubble-bridge-formal-2026-10-12.json)、[复跑脚本](bubble_bridge_probe.mjs) |
 | Bubble 笔记保存意图 | 冻结 `36f9bf2` 只改两文件，Lead 73/73 应用与 5/5 host 通过，核实际基线/备份/构建、零活跃任务、自有 manager 重启健康；实际工具拒绝8条、允许5条，假client无正式笔记写入；正式 SDK/网关只读复核及旧文章 hash 与回执一致 | [应用](note-intent-applied-2026-10-12.json)、[工具](note-intent-formal-tool-2026-10-12.json)、[实际 pi](note-intent-formal-pi-2026-10-12.json)、[候选与原失败](../memory-base-note-intent/README.md) |
+| Windows 状态发布恢复 | #93冻结三scripts与#92组合`8e13fae`，Lead build、73应用/13host通过；原子同步200ms有界重试、持续失败自有child退出/instance清理；精确actual基线备份应用、零活跃任务重启健康；编译记忆模块与组合版本逐字节相等 | [应用](host-state-applied-2026-10-12.json)、[候选、真实原FAIL与注入](../memory-base-host-state/README.md) |
 | 当前闲置工作集 | 核对 PID、创建时间和完整命令后采集三个进程树，共 273.97 MiB；包含控制台子进程，可能重复计算共享页，非峰值/私有内存；不与旧测点作优化幅度比较 | [resources-2026-10-12.json](resources-2026-10-12.json) |
 | 宿主规约同步 | Codex、DSH、opencode 的 personal-memory SKILL 均与仓库规约一致，SHA256 `72527b6cc7e74c5c8266f01f85d3dcbe398415ed24404facfe722d1468c5d964`；旧副本保留本机备份 | 只证明规约落位，DSH/opencode 实际会话仍未验 |
 
